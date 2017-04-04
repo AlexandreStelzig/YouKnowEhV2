@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/practice"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="Practice" />
+        <item
+            android:id="@+id/word_list"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Word List" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/help"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Help" />
+            <item
+                android:id="@+id/about"
+                android:icon="@drawable/ic_menu_send"
+                android:title="About" />
+        </menu>
+    </item>
+
+</menu>
