@@ -1,28 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/menuGroup_top"
+        android:checkableBehavior="single">
+
         <item
             android:id="@+id/practice"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_question_answer_black_24dp"
             android:title="Practice" />
         <item
             android:id="@+id/word_list"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_note_black_24dp"
             android:title="Word List" />
+        <item
+            android:id="@+id/deck_list"
+            android:icon="@drawable/ic_folder_black_24dp"
+            android:title="Deck List" />
     </group>
 
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/help"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Help" />
-            <item
-                android:id="@+id/about"
-                android:icon="@drawable/ic_menu_send"
-                android:title="About" />
-        </menu>
-    </item>
+
+    <group android:id="@+id/menuGroup_bottom"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/settings"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="Settings" />
+        <item
+            android:id="@+id/about"
+            android:icon="@drawable/ic_info_black_24dp"
+            android:title="About" />
+    </group>
+
 
 </menu>
