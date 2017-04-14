@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by Alexandre on 4/25/2016.
  */
 public class Database extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 5;
     public static final String DATABASE_NAME = "YouKnowEh.db";
 
 
@@ -21,16 +21,16 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_WORD);
+        db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_CARD);
         db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_DECK);
-        db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_WORD_DECK);
+        db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_CARD_DECK);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_DECK);
-        db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_WORD);
-        db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_WORD_DECK);
+        db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_CARD);
+        db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_CARD_DECK);
         onCreate(db);
     }
 

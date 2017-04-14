@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/edit"
+
+    <item android:id="@+id/info_deck"
+        android:title="Info"/>
+
+    <item android:id="@+id/edit_deck"
         android:title="Edit" />
 
-    <item android:id="@+id/delete"
+    <item android:id="@+id/delete_deck"
         android:title="Delete" />
 
-    <item android:id="@+id/info"
-        android:title="Info"/>
 </menu>

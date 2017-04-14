@@ -3,30 +3,30 @@ package stelztech.youknowehv4.model;
 /**
  * Created by Alexandre on 4/25/2016.
  */
-public class WordDeck {
+public class CardDeck {
 
-    private String idDeck;
-    private String idWord;
+    private String deckId;
+    private String cardId;
     private boolean isPractice;
     private String dateAdded;
 
-    WordDeck() {
+    CardDeck() {
     }
 
-    public WordDeck(String idDeck, String idWord, boolean isPractice, String dateAdded) {
-        this.idDeck = idDeck;
-        this.idWord = idWord;
+    public CardDeck(String deckId, String cardId, boolean isPractice, String dateAdded) {
+        this.deckId = deckId;
+        this.cardId = cardId;
         this.isPractice = isPractice;
         this.dateAdded = dateAdded;
     }
 
 
-    public String getIdDeck() {
-        return idDeck;
+    public String getDeckId() {
+        return deckId;
     }
 
-    public void setIdDeck(String idDeck) {
-        this.idDeck = idDeck;
+    public void setDeckId(String deckId) {
+        this.deckId = deckId;
     }
 
     public boolean isPractice() {
@@ -45,11 +45,11 @@ public class WordDeck {
         this.dateAdded = dateAdded;
     }
 
-    public String getIdWord() {
-        return idWord;
+    public String getCardId() {
+        return cardId;
     }
 
-    public void setIdWord(String idWord) {
-        this.idWord = idWord;
+    public void setCardId(String cardId) {
+        this.cardId = cardId;
     }
 }

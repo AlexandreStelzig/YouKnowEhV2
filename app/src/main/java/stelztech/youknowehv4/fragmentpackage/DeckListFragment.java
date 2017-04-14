@@ -18,17 +18,18 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.activitypackage.ApplicationManager;
+import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.model.Deck;
-import stelztech.youknowehv4.state.ActionButtonStateManager;
-import stelztech.youknowehv4.state.ToolbarStateManager;
+import stelztech.youknowehv4.manager.ActionButtonManager;
+import stelztech.youknowehv4.manager.MainMenuToolbarManager;
 
 /**
  * Created by alex on 2017-04-03.
@@ -39,6 +40,7 @@ public class DeckListFragment extends Fragment {
     // views
     private View view;
     private ListView listView;
+    private TextView textView;
 
     // database
     private DatabaseManager dbManager;
@@ -57,13 +59,15 @@ public class DeckListFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_list, container, false);
 
-        ActionButtonStateManager.getInstance().setState(ActionButtonStateManager.actionButtonState.DECK, getActivity());
+        ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.DECK, getActivity());
         setHasOptionsMenu(true);
 
         // init variables
         deckNameHolder = "";
         indexSelected = -1;
         listView = (ListView) view.findViewById(R.id.listview);
+        textView = (TextView) view.findViewById(R.id.list_text);
+        textView.setText("NO DECKS");
         dbManager = DatabaseManager.getInstance(getActivity());
 
         deckList = new ArrayList<Deck>();
@@ -84,27 +88,36 @@ public class DeckListFragment extends Fragment {
 
         deckList = dbManager.getDecks();
 
-        for (int i = 0; i < deckList.size(); i++) {
-            adapterDeckName.add(deckList.get(i).getDeckName());
-        }
-        adapter = new ArrayAdapter<String>(getActivity(),
-                R.layout.custom_deck_item, adapterDeckName);
+        if (!deckList.isEmpty()) {
 
-        listView.setAdapter(adapter);
-        registerForContextMenu(listView);
+            textView.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-//                openPackageInfo(position);
-                String deckId = "";
-
-                deckId = deckList.get(position).getIdDeck();
-
-                ((ApplicationManager) getActivity()).displayDeckInfo(deckId);
+            for (int i = 0; i < deckList.size(); i++) {
+                adapterDeckName.add(deckList.get(i).getDeckName());
             }
-        });
+            adapter = new ArrayAdapter<String>(getActivity(),
+                    R.layout.custom_deck_item, adapterDeckName);
+
+            listView.setAdapter(adapter);
+            registerForContextMenu(listView);
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+//                openPackageInfo(position);
+                    String deckId = "";
+
+                    deckId = deckList.get(position).getDeckId();
+
+                    ((MainActivityManager) getActivity()).displayDeckInfo(deckId);
+                }
+            });
+        } else {
+            textView.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        }
     }
 
     ////// HOLD MENU //////
@@ -124,18 +137,24 @@ public class DeckListFragment extends Fragment {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.edit:
+            case R.id.edit_deck:
                 updateDeck();
                 populateListView();
                 return true;
-            case R.id.delete:
-                deleteFromDatabase();
+            case R.id.delete_deck:
+                displayDeleteConfirmationDialog();
+                return true;
+            case R.id.info_deck:
+                showQuickInfoDeck();
                 populateListView();
                 return true;
             default:
                 indexSelected = -1;
                 return super.onContextItemSelected(item);
         }
+    }
+
+    private void showQuickInfoDeck() {
     }
 
 
@@ -149,6 +168,12 @@ public class DeckListFragment extends Fragment {
         alertDialog.show();
     }
 
+    private void deleteDeckFromDatabase() {
+        dbManager.deleteDeck((String) deckList.get(indexSelected).getDeckId());
+        populateListView();
+        Toast.makeText(getContext(), "deck deleted", Toast.LENGTH_SHORT).show();
+    }
+
 
     // DIALOG
     private AlertDialog createUpdateDeckDialog(final DeckDialogOption dialogType) {
@@ -160,8 +185,8 @@ public class DeckListFragment extends Fragment {
 
         switch (dialogType) {
             case NEW:
-                input.setHint("Package name");
-                builder.setTitle("New Package");
+                input.setHint("Deck name");
+                builder.setTitle("New Deck");
                 break;
             case UPDATE:
                 input.setText((String) adapterDeckName.get(indexSelected));
@@ -190,13 +215,13 @@ public class DeckListFragment extends Fragment {
                         case NEW:
                             addToDatabase();
                             dialog.dismiss();
-                            Toast.makeText(getContext(), "package added", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Deck added", Toast.LENGTH_SHORT).show();
                             populateListView();
                             break;
                         case UPDATE:
                             updateDatabase();
                             dialog.dismiss();
-                            Toast.makeText(getContext(), "package updated", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Deck updated", Toast.LENGTH_SHORT).show();
                             populateListView();
                             break;
                         default:
@@ -223,6 +248,32 @@ public class DeckListFragment extends Fragment {
 
     }
 
+    private void displayDeleteConfirmationDialog() {
+        final android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(getContext());
+        alertDialog.setMessage("Are you sure you want to delete:\n \'" +
+                deckList.get(indexSelected).getDeckName()+ "\'?");
+        alertDialog.setTitle("Delete Deck");
+
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                onOkClick();
+            }
+        });
+
+        // Setting cancel Button
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                //do nothing
+            }
+        });
+        // Showing Alert Message
+        alertDialog.show();
+    }
+
+    private void onOkClick() {
+        deleteDeckFromDatabase();
+    }
+
 
     // DATABASE HANDLING
 
@@ -230,16 +281,13 @@ public class DeckListFragment extends Fragment {
         dbManager.createDeck(deckNameHolder);
     }
 
-    private void deleteFromDatabase() {
-        dbManager.deleteDeck((String) deckList.get(indexSelected).getIdDeck());
-        Toast.makeText(getContext(), "package deleted", Toast.LENGTH_SHORT).show();
-    }
+
 
     private void updateDatabase() {
 
         if (!deckNameHolder.equals((String) adapterDeckName.get(indexSelected))) {
-            dbManager.updateDeck((String) deckList.get(indexSelected).getIdDeck(), deckNameHolder);
-            Toast.makeText(getContext(), "package name changed", Toast.LENGTH_SHORT).show();
+            dbManager.updateDeck((String) deckList.get(indexSelected).getDeckId(), deckNameHolder);
+            Toast.makeText(getContext(), "deck name changed", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getContext(), "invalid: same name", Toast.LENGTH_SHORT).show();
 
@@ -252,7 +300,7 @@ public class DeckListFragment extends Fragment {
     }
 
     public void onPrepareOptionsMenu(Menu menu) {
-        ToolbarStateManager.getInstance().setState(ToolbarStateManager.toolbarState.DECK, menu, getActivity());
+        MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.DECK, menu, getActivity());
     }
 
 }

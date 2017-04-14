@@ -14,9 +14,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import stelztech.youknowehv4.model.Card;
+import stelztech.youknowehv4.model.CardDeck;
 import stelztech.youknowehv4.model.Deck;
-import stelztech.youknowehv4.model.Word;
-import stelztech.youknowehv4.model.WordDeck;
 
 /**
  * Created by Alexandre on 4/25/2016.
@@ -41,22 +41,22 @@ public class DatabaseManager {
 
     ////////////// GET //////////////
 
-    public List<Word> getWords() {
+    public List<Card> getCards() {
         SQLiteDatabase db = database.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableWord.TABLE_NAME, null);
-        List<Word> wordList = new ArrayList<Word>();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableCard.TABLE_NAME, null);
+        List<Card> cardList = new ArrayList<Card>();
 
         if (cursor.moveToFirst()) {
             while (cursor.isAfterLast() == false) {
-                wordList.add(fetchWordFromCursor(cursor));
+                cardList.add(fetchCardFromCursor(cursor));
                 cursor.moveToNext();
             }
         }
         cursor.close();
 
-        wordList = sortAlphabetically_Word(wordList);
+        cardList = sortAlphabetically_Card(cardList);
 
-        return wordList;
+        return cardList;
     }
 
     public List<Deck> getDecks() {
@@ -79,24 +79,24 @@ public class DatabaseManager {
     }
 
 
-    public Word getWordFromId(String idWord) {
+    public Card getCardFromId(String cardId) {
         SQLiteDatabase db = database.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableWord.TABLE_NAME + " WHERE "
-                + DatabaseVariables.TableWord.COLUMN_NAME_ID_WORD + "=" + idWord, null);
-        Word word = null;
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableCard.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TableCard.COLUMN_NAME_CARD_ID + "=" + cardId, null);
+        Card card = null;
 
         if (cursor.moveToFirst()) {
-            word = fetchWordFromCursor(cursor);
+            card = fetchCardFromCursor(cursor);
             cursor.moveToNext();
         }
         cursor.close();
-        return word;
+        return card;
     }
 
-    public Deck getDeckFromId(String idDeck) {
+    public Deck getDeckFromId(String deckId) {
         SQLiteDatabase db = database.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableDeck.TABLE_NAME + " WHERE "
-                + DatabaseVariables.TableDeck.COLUMN_NAME_ID_DECK + "=" + idDeck, null);
+                + DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deckId, null);
         Deck deck = null;
 
         if (cursor.moveToFirst()) {
@@ -107,64 +107,68 @@ public class DatabaseManager {
         return deck;
     }
 
-    public WordDeck getWordDeck(String idWord, String idDeck) {
+    public CardDeck getCardDeck(String cardId, String deckId) {
         SQLiteDatabase db = database.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableWordDeck.TABLE_NAME + " WHERE " +
-                DatabaseVariables.TableWordDeck.COLUMN_NAME_ID_WORD + "=" + idWord + " AND "
-                + DatabaseVariables.TableWordDeck.COLUMN_NAME_ID_DECK + "=" + idDeck, null);
-        WordDeck wordDeck = null;
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableCardDeck.TABLE_NAME + " WHERE " +
+                DatabaseVariables.TableCardDeck.COLUMN_NAME_CARD_ID + "=" + cardId + " AND "
+                + DatabaseVariables.TableCardDeck.COLUMN_NAME_DECK_ID + "=" + deckId, null);
+        CardDeck cardDeck = null;
 
         if (cursor.moveToFirst()) {
-            wordDeck = (fetchWordDeckFromCursor(cursor));
+            cardDeck = (fetchCardDeckFromCursor(cursor));
             cursor.moveToNext();
         }
         cursor.close();
-        return wordDeck;
+        return cardDeck;
     }
 
 
-    public List<Word> getWordsFormDeck(String idDeck) {
+    public List<Card> getCardsFromDeck(String deckId) {
         SQLiteDatabase db = database.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableWordDeck.TABLE_NAME + " WHERE "
-                + DatabaseVariables.TableWordDeck.COLUMN_NAME_ID_DECK + "=" + idDeck, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableCardDeck.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TableCardDeck.COLUMN_NAME_DECK_ID + "=" + deckId, null);
 
-        // get all word-deck
-        List<WordDeck> wordDecks = new ArrayList<>();
+        // get all card-deck
+        List<CardDeck> cardDecks = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
-            wordDecks.add(fetchWordDeckFromCursor(cursor));
-            cursor.moveToNext();
+            while (cursor.isAfterLast() == false) {
+                cardDecks.add(fetchCardDeckFromCursor(cursor));
+                cursor.moveToNext();
+            }
         }
 
-        // get all words
-        List<Word> words = new ArrayList<>();
-        for (int i = 0; i < wordDecks.size(); i++) {
-            words.add(getWordFromId(wordDecks.get(i).getIdWord()));
+        // get all cards
+        List<Card> cards = new ArrayList<>();
+        for (int i = 0; i < cardDecks.size(); i++) {
+            cards.add(getCardFromId(cardDecks.get(i).getCardId()));
         }
 
-        words = sortAlphabetically_Word(words);
+        cards = sortAlphabetically_Card(cards);
 
         cursor.close();
-        return words;
+        return cards;
     }
 
-    public List<Deck> getDecksFromWord(String idWord) {
+    public List<Deck> getDecksFromCard(String cardId) {
         SQLiteDatabase db = database.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableWordDeck.TABLE_NAME + " WHERE "
-                + DatabaseVariables.TableWordDeck.COLUMN_NAME_ID_WORD + "=" + idWord, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableCardDeck.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TableCardDeck.COLUMN_NAME_CARD_ID + "=" + cardId, null);
 
-        // get all word-deck
-        List<WordDeck> wordDecks = new ArrayList<>();
+        // get all card-deck
+        List<CardDeck> cardDecks = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
-            wordDecks.add(fetchWordDeckFromCursor(cursor));
-            cursor.moveToNext();
+            while (cursor.isAfterLast() == false) {
+                cardDecks.add(fetchCardDeckFromCursor(cursor));
+                cursor.moveToNext();
+            }
         }
 
         // get all decks
         List<Deck> decks = new ArrayList<>();
-        for (int i = 0; i < wordDecks.size(); i++) {
-            decks.add(getDeckFromId(wordDecks.get(i).getIdDeck()));
+        for (int i = 0; i < cardDecks.size(); i++) {
+            decks.add(getDeckFromId(cardDecks.get(i).getDeckId()));
         }
 
         decks = sortAlphabetically_Deck(decks);
@@ -174,71 +178,73 @@ public class DatabaseManager {
     }
 
 
-    public List<Word> getDeckPracticeWords(String idDeck) {
+    public List<Card> getDeckPracticeCards(String deckId) {
         SQLiteDatabase db = database.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableWordDeck.TABLE_NAME + " WHERE "
-                + DatabaseVariables.TableWordDeck.COLUMN_NAME_ID_DECK + "=" + idDeck, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableCardDeck.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TableCardDeck.COLUMN_NAME_DECK_ID + "=" + deckId, null);
 
-        // get all word-deck
-        List<WordDeck> wordDecks = new ArrayList<>();
+        // get all card-deck
+        List<CardDeck> cardDecks = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
-            wordDecks.add(fetchWordDeckFromCursor(cursor));
-            cursor.moveToNext();
+            while (cursor.isAfterLast() == false) {
+                cardDecks.add(fetchCardDeckFromCursor(cursor));
+                cursor.moveToNext();
+            }
         }
 
-        // get all words isPractice
-        List<Word> words = new ArrayList<>();
-        for (int i = 0; i < wordDecks.size(); i++) {
-            if(wordDecks.get(i).isPractice())
-                words.add(getWordFromId(wordDecks.get(i).getIdWord()));
+        // get all cards isPractice
+        List<Card> cards = new ArrayList<>();
+        for (int i = 0; i < cardDecks.size(); i++) {
+            if (cardDecks.get(i).isPractice())
+                cards.add(getCardFromId(cardDecks.get(i).getCardId()));
         }
 
         cursor.close();
-        return words;
+        return cards;
 
     }
 
 
     ////////////// DELETE //////////////
 
-    public boolean deleteDeck(String idDeck) {
+    public boolean deleteDeck(String deckId) {
         SQLiteDatabase db = database.getReadableDatabase();
 
-        List<Word> words = getWordsFormDeck(idDeck);
-        // delete word-deck
-        for (int counter = 0; counter < words.size(); counter++) {
-            deleteWordDeck(words.get(counter).getIdWord(), idDeck);
+        List<Card> cards = getCardsFromDeck(deckId);
+        // delete card-deck
+        for (int counter = 0; counter < cards.size(); counter++) {
+            deleteCardDeck(cards.get(counter).getCardId(), deckId);
         }
 
         return db.delete(DatabaseVariables.TableDeck.TABLE_NAME,
-                DatabaseVariables.TableDeck.COLUMN_NAME_ID_DECK + "=" + idDeck, null) > 0;
+                DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deckId, null) > 0;
     }
 
 
-    public boolean deleteWord(String idWord) {
+    public boolean deleteCard(String cardId) {
         SQLiteDatabase db = database.getReadableDatabase();
 
-        List<Deck> decks = getDecksFromWord(idWord);
-        // delete word-deck
+        List<Deck> decks = getDecksFromCard(cardId);
+        // delete card-deck
         for (int counter = 0; counter < decks.size(); counter++) {
-            deleteWordDeck(idWord, decks.get(counter).getIdDeck());
+            deleteCardDeck(cardId, decks.get(counter).getDeckId());
         }
 
-        return db.delete(DatabaseVariables.TableWord.TABLE_NAME, DatabaseVariables.TableWord.COLUMN_NAME_ID_WORD
-                + "=" + idWord, null) > 0;
+        return db.delete(DatabaseVariables.TableCard.TABLE_NAME, DatabaseVariables.TableCard.COLUMN_NAME_CARD_ID
+                + "=" + cardId, null) > 0;
     }
 
-    public boolean deleteWordDeck(String idWord, String idDeck) {
+    public boolean deleteCardDeck(String cardId, String deckId) {
         SQLiteDatabase db = database.getReadableDatabase();
-        return db.delete(DatabaseVariables.TableWordDeck.TABLE_NAME,
-                DatabaseVariables.TableWordDeck.COLUMN_NAME_ID_WORD + "=" + idWord + " AND "
-                        + DatabaseVariables.TableDeck.COLUMN_NAME_ID_DECK + "=" + idDeck, null) > 0;
+        return db.delete(DatabaseVariables.TableCardDeck.TABLE_NAME,
+                DatabaseVariables.TableCardDeck.COLUMN_NAME_CARD_ID + "=" + cardId + " AND "
+                        + DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deckId, null) > 0;
     }
 
     ////////////// CREATE //////////////
 
-    public long createDeck(String name) {
+    public String createDeck(String name) {
         SQLiteDatabase db = database.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -248,72 +254,66 @@ public class DatabaseManager {
         values.put(DatabaseVariables.TableDeck.COLUMN_NAME_DATE_CREATED, date);
         values.put(DatabaseVariables.TableDeck.COLUMN_NAME_DATE_MODIFIED, date);
 
-        long newRowId;
+        long newRowId = -1;
         newRowId = db.insert(
                 DatabaseVariables.TableDeck.TABLE_NAME,
                 null,
                 values);
-        return newRowId;
-    }
-
-    public long createDeck(String name, String idWord){
-        long idDeck = createDeck(name) ;
-        createWordDeck(idWord, idDeck+"");
-        return idDeck;
+        return Long.toString(newRowId);
     }
 
 
-    public long createWord(String question, String answer, String moreInfo) {
+    public String createCard(String question, String answer, String moreInfo) {
         SQLiteDatabase db = database.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         String date = getDateNow();
 
 
-        values.put(DatabaseVariables.TableWord.COLUMN_NAME_QUESTION, question);
-        values.put(DatabaseVariables.TableWord.COLUMN_NAME_ANSWER, answer);
-        values.put(DatabaseVariables.TableWord.COLUMN_NAME_MORE_INFORMATION, moreInfo);
-        values.put(DatabaseVariables.TableWord.COLUMN_NAME_DATE_CREATED, date);
-        values.put(DatabaseVariables.TableWord.COLUMN_NAME_DATE_MODIFIED, date);
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_QUESTION, question);
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_ANSWER, answer);
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_MORE_INFORMATION, moreInfo);
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_DATE_CREATED, date);
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_DATE_MODIFIED, date);
 
-        long newRowId;
+        long newRowId = -1;
         newRowId = db.insert(
-                DatabaseVariables.TableWord.TABLE_NAME,
+                DatabaseVariables.TableCard.TABLE_NAME,
                 null,
                 values);
-        return newRowId;
+        return Long.toString(newRowId);
     }
 
-    public long createWord(String question, String answer, String moreInfo, String idDeck) {
-        long idWord = createWord(question,answer,moreInfo);
-        createWordDeck(idWord+"",idDeck);
-        return idWord;
-    }
+//    public String createCard(String question, String answer, String moreInfo, String deckId) {
+//        String cardId = createCard(question, answer, moreInfo);
+//        createCardDeck(cardId + "", deckId);
+//        return cardId;
+//    }
 
 
-    public long createWordDeck(String idWord, String idDeck){
+    public String createCardDeck(String cardId, String deckId) {
         SQLiteDatabase db = database.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         String date = getDateNow();
 
-        values.put(DatabaseVariables.TableWordDeck.COLUMN_NAME_ID_DECK, idDeck);
-        values.put(DatabaseVariables.TableWordDeck.COLUMN_NAME_ID_WORD, idWord);
-        values.put(DatabaseVariables.TableWordDeck.COLUMN_NAME_DATE_ADDED, date);
-        values.put(DatabaseVariables.TableWordDeck.COLUMN_NAME_IS_PRACTICE, 1);
+        values.put(DatabaseVariables.TableCardDeck.COLUMN_NAME_DECK_ID, deckId);
+        values.put(DatabaseVariables.TableCardDeck.COLUMN_NAME_CARD_ID, cardId);
+        values.put(DatabaseVariables.TableCardDeck.COLUMN_NAME_DATE_ADDED, date);
+        values.put(DatabaseVariables.TableCardDeck.COLUMN_NAME_IS_PRACTICE, 1);
 
-        long newRowId;
+        long newRowId = -1;
         newRowId = db.insert(
-                DatabaseVariables.TableWordDeck.TABLE_NAME,
+                DatabaseVariables.TableCardDeck.TABLE_NAME,
                 null,
                 values);
-        return newRowId;
+        return Long.toString(newRowId);
     }
 
 
     ////////////// UPDATE //////////////
 
-    public void updateDeck(String idDeck, String name) {
+    public void updateDeck(String deckId, String name) {
         SQLiteDatabase db = database.getReadableDatabase();
         ContentValues values = new ContentValues();
 
@@ -322,66 +322,66 @@ public class DatabaseManager {
         values.put(DatabaseVariables.TableDeck.COLUMN_NAME_DECK_NAME, name);
         values.put(DatabaseVariables.TableDeck.COLUMN_NAME_DATE_MODIFIED, date);
         db.update(DatabaseVariables.TableDeck.TABLE_NAME, values,
-                DatabaseVariables.TableDeck.COLUMN_NAME_ID_DECK + "=" + idDeck, null);
+                DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deckId, null);
 
     }
 
 
-    public void updateWord(String idWord, String question, String answer, String moreInfo) {
+    public void updateCard(String cardId, String question, String answer, String moreInfo) {
         SQLiteDatabase db = database.getReadableDatabase();
         ContentValues values = new ContentValues();
 
         String date = getDateNow();
 
-        values.put(DatabaseVariables.TableWord.COLUMN_NAME_QUESTION, question);
-        values.put(DatabaseVariables.TableWord.COLUMN_NAME_ANSWER, answer);
-        values.put(DatabaseVariables.TableWord.COLUMN_NAME_MORE_INFORMATION, moreInfo);
-        values.put(DatabaseVariables.TableWord.COLUMN_NAME_DATE_MODIFIED, date);
-        db.update(DatabaseVariables.TableWord.TABLE_NAME, values,
-                DatabaseVariables.TableWord.COLUMN_NAME_ID_WORD + "=" + idWord, null);
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_QUESTION, question);
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_ANSWER, answer);
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_MORE_INFORMATION, moreInfo);
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_DATE_MODIFIED, date);
+        db.update(DatabaseVariables.TableCard.TABLE_NAME, values,
+                DatabaseVariables.TableCard.COLUMN_NAME_CARD_ID + "=" + cardId, null);
     }
 
     ////////////// OTHER //////////////
 
-    public void togglePractice_Word(String idWord, String idDeck) {
+    public void togglePractice_Card(String cardId, String deckId) {
 
-        WordDeck wordDeck = getWordDeck(idWord, idDeck);
+        CardDeck cardDeck = getCardDeck(cardId, deckId);
 
-        boolean isPracticeCurrent = wordDeck.isPractice();
+        boolean isPracticeCurrent = cardDeck.isPractice();
         boolean newIsPractice = !isPracticeCurrent;
 
         SQLiteDatabase db = database.getReadableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(DatabaseVariables.TableWordDeck.COLUMN_NAME_IS_PRACTICE, newIsPractice);
-        db.update(DatabaseVariables.TableWordDeck.TABLE_NAME, values, DatabaseVariables.TableWord.COLUMN_NAME_ID_WORD
-                + "=" + idWord + " AND " + DatabaseVariables.TableWordDeck.COLUMN_NAME_ID_DECK + "=" + idDeck, null);
+        values.put(DatabaseVariables.TableCardDeck.COLUMN_NAME_IS_PRACTICE, newIsPractice);
+        db.update(DatabaseVariables.TableCardDeck.TABLE_NAME, values, DatabaseVariables.TableCard.COLUMN_NAME_CARD_ID
+                + "=" + cardId + " AND " + DatabaseVariables.TableCardDeck.COLUMN_NAME_DECK_ID + "=" + deckId, null);
 
     }
 
 
     ////////////// HELPERS //////////////
 
-    private Word fetchWordFromCursor(Cursor cursor) {
+    private Card fetchCardFromCursor(Cursor cursor) {
 
         String id = cursor.getString(cursor
-                .getColumnIndex(DatabaseVariables.TableWord.COLUMN_NAME_ID_WORD));
+                .getColumnIndex(DatabaseVariables.TableCard.COLUMN_NAME_CARD_ID));
         String question = cursor.getString(cursor
-                .getColumnIndex(DatabaseVariables.TableWord.COLUMN_NAME_QUESTION));
+                .getColumnIndex(DatabaseVariables.TableCard.COLUMN_NAME_QUESTION));
         String answer = cursor.getString(cursor
-                .getColumnIndex(DatabaseVariables.TableWord.COLUMN_NAME_ANSWER));
+                .getColumnIndex(DatabaseVariables.TableCard.COLUMN_NAME_ANSWER));
         String moreInfo = cursor.getString(cursor
-                .getColumnIndex(DatabaseVariables.TableWord.COLUMN_NAME_MORE_INFORMATION));
+                .getColumnIndex(DatabaseVariables.TableCard.COLUMN_NAME_MORE_INFORMATION));
         String dateCreated = cursor.getString(cursor
-                .getColumnIndex(DatabaseVariables.TableWord.COLUMN_NAME_DATE_CREATED));
+                .getColumnIndex(DatabaseVariables.TableCard.COLUMN_NAME_DATE_CREATED));
         String dateModified = cursor.getString(cursor
-                .getColumnIndex(DatabaseVariables.TableWord.COLUMN_NAME_DATE_MODIFIED));
-        return new Word(id, question, answer, moreInfo, dateCreated, dateModified);
+                .getColumnIndex(DatabaseVariables.TableCard.COLUMN_NAME_DATE_MODIFIED));
+        return new Card(id, question, answer, moreInfo, dateCreated, dateModified);
     }
 
     private Deck fetchDeckFromCursor(Cursor cursor) {
         String id = cursor.getString(cursor
-                .getColumnIndex(DatabaseVariables.TableDeck.COLUMN_NAME_ID_DECK));
+                .getColumnIndex(DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID));
         String name = cursor.getString(cursor
                 .getColumnIndex(DatabaseVariables.TableDeck.COLUMN_NAME_DECK_NAME));
         String dateCreated = cursor.getString(cursor
@@ -393,26 +393,37 @@ public class DatabaseManager {
     }
 
 
-    private WordDeck fetchWordDeckFromCursor(Cursor cursor) {
-        String idDeck = cursor.getString(cursor
-                .getColumnIndex(DatabaseVariables.TableWordDeck.COLUMN_NAME_ID_DECK));
-        String idWord = cursor.getString(cursor
-                .getColumnIndex(DatabaseVariables.TableWordDeck.COLUMN_NAME_ID_WORD));
+    private CardDeck fetchCardDeckFromCursor(Cursor cursor) {
+        String deckId = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TableCardDeck.COLUMN_NAME_DECK_ID));
+        String cardId = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TableCardDeck.COLUMN_NAME_CARD_ID));
         boolean isPractice = cursor.getInt(cursor
-                .getColumnIndex(DatabaseVariables.TableWordDeck.COLUMN_NAME_IS_PRACTICE)) > 0;
+                .getColumnIndex(DatabaseVariables.TableCardDeck.COLUMN_NAME_IS_PRACTICE)) > 0;
         String dateAdded = cursor.getString(cursor
-                .getColumnIndex(DatabaseVariables.TableWordDeck.COLUMN_NAME_DATE_ADDED));
+                .getColumnIndex(DatabaseVariables.TableCardDeck.COLUMN_NAME_DATE_ADDED));
 
 
-        return new WordDeck(idDeck, idWord, isPractice, dateAdded);
+        return new CardDeck(deckId, cardId, isPractice, dateAdded);
     }
 
-    private List<Word> sortAlphabetically_Word(List<Word> list) {
+    private List<Card> sortAlphabetically_Card(List<Card> list) {
 
-        Collections.sort(list, new Comparator<Word>() {
+        Collections.sort(list, new Comparator<Card>() {
             @Override
-            public int compare(Word lhs, Word rhs) {
-                return extractInt(lhs.getQuestion()) - extractInt(rhs.getQuestion());
+            public int compare(Card o1, Card o2) {
+
+                String o1String = o1.getQuestion().toLowerCase();
+                String o2String = o2.getQuestion().toLowerCase();
+
+                String o1StringPart = o1String.replaceAll("\\d", "");
+                String o2StringPart = o2String.replaceAll("\\d", "");
+
+
+                if (o1StringPart.equalsIgnoreCase(o2StringPart)) {
+                    return extractInt(o1String) - extractInt(o2String);
+                }
+                return o1String.compareTo(o2String);
             }
 
             int extractInt(String s) {
@@ -421,7 +432,6 @@ public class DatabaseManager {
                 return num.isEmpty() ? 0 : Integer.parseInt(num);
             }
         });
-
         return list;
 
     }
@@ -432,15 +442,18 @@ public class DatabaseManager {
             @Override
             public int compare(Deck o1, Deck o2) {
 
-                String o1StringPart = o1.getDeckName().replaceAll("\\d", "");
-                String o2StringPart = o2.getDeckName().replaceAll("\\d", "");
+                String o1String = o1.getDeckName().toLowerCase();
+                String o2String = o2.getDeckName().toLowerCase();
 
 
-                if(o1StringPart.equalsIgnoreCase(o2StringPart))
-                {
-                    return extractInt(o1.getDeckName()) - extractInt(o2.getDeckName());
+                String o1StringPart = o1String.replaceAll("\\d", "");
+                String o2StringPart = o2String.replaceAll("\\d", "");
+
+
+                if (o1StringPart.equalsIgnoreCase(o2StringPart)) {
+                    return extractInt(o1String) - extractInt(o2String);
                 }
-                return o1.getDeckName().compareTo(o2.getDeckName());
+                return o1String.compareTo(o2String);
             }
 
             int extractInt(String s) {
@@ -453,7 +466,7 @@ public class DatabaseManager {
 
     }
 
-    private String getDateNow(){
+    private String getDateNow() {
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         Date now = Calendar.getInstance().getTime();
         return df.format(now);

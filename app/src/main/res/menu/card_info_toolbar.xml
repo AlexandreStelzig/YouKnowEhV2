@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_done_card_info"
+        android:orderInCategory="1"
+        android:title="done"
+        app:showAsAction="always|withText"
+        android:icon="@drawable/ic_done_white_24dp" />
+
+    <item
+        android:id="@+id/action_next_card_info"
+        android:orderInCategory="2"
+        android:title="next"
+        app:showAsAction="always|withText"
+        android:icon="@drawable/ic_navigate_next_white_24dp"/>
+
+
+</menu>

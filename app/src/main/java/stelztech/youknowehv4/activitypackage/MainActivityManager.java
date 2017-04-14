@@ -1,10 +1,10 @@
 package stelztech.youknowehv4.activitypackage;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,46 +18,47 @@ import android.widget.FrameLayout;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.fragmentpackage.AboutFragment;
+import stelztech.youknowehv4.fragmentpackage.AccountFragment;
+import stelztech.youknowehv4.fragmentpackage.CardListFragment;
 import stelztech.youknowehv4.fragmentpackage.DeckListFragment;
 import stelztech.youknowehv4.fragmentpackage.PracticeFragment;
 import stelztech.youknowehv4.fragmentpackage.SettingsFragment;
-import stelztech.youknowehv4.fragmentpackage.WordListFragment;
-import stelztech.youknowehv4.state.ActionButtonStateManager;
-import stelztech.youknowehv4.state.ToolbarStateManager;
+import stelztech.youknowehv4.helper.Helper;
+import stelztech.youknowehv4.manager.ActionButtonManager;
+import stelztech.youknowehv4.manager.MainMenuToolbarManager;
 
-public class ApplicationManager extends AppCompatActivity
+public class MainActivityManager extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-
-    private String test;
-
     // fragments
-    private DeckListFragment deckListFragment;
-    private WordListFragment wordListFragment;
-    private boolean viewIsAtHome;
+    private DeckListFragment mDeckListFragment;
+    private CardListFragment mCardListFragment;
+    private boolean mViewIsAtHome;
 
-    private float lastTranslate = 0.0f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_menu_activity);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setContentView(R.layout.activity_main_menu);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main_menu);
         setSupportActionBar(toolbar);
 
         // init
-        viewIsAtHome = true;
+        mViewIsAtHome = true;
 
         // action button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         final FrameLayout frame = (FrameLayout) findViewById(R.id.content_frame);
 
-        ActionButtonStateManager actionButtonStateManager = ActionButtonStateManager.getInstance();
-        actionButtonStateManager.setContext(this);
-        actionButtonStateManager.setState(ActionButtonStateManager.actionButtonState.GONE, this);
+        ActionButtonManager actionButtonManager = ActionButtonManager.getInstance();
+        actionButtonManager.setContext(this);
+        actionButtonManager.setState(ActionButtonManager.ActionButtonState.GONE, this);
 
-        ToolbarStateManager toolbarStateManager = ToolbarStateManager.getInstance();
-        toolbarStateManager.setContext(this);
+        MainMenuToolbarManager mainMenuToolbarManager = MainMenuToolbarManager.getInstance();
+        mainMenuToolbarManager.setContext(this);
+
+        Helper helper = Helper.getInstance();
+        helper.setContext(this);
 
         // drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -94,18 +95,18 @@ public class ApplicationManager extends AppCompatActivity
         navigationView.setCheckedItem(R.id.practice);
 
         // init fragments
-        deckListFragment = new DeckListFragment();
-        wordListFragment = new WordListFragment();
+        mDeckListFragment = new DeckListFragment();
+        mCardListFragment = new CardListFragment();
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-
+        // default page
         displayFragment(R.id.practice);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
+        getMenuInflater().inflate(R.menu.main_menu_toolbar, menu);
 
+        // search menu option
         final MenuItem myActionMenuItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) myActionMenuItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -153,7 +154,7 @@ public class ApplicationManager extends AppCompatActivity
     }
 
     public void createDeck() {
-        deckListFragment.createDeck();
+        mDeckListFragment.createDeck();
     }
 
 
@@ -167,12 +168,12 @@ public class ApplicationManager extends AppCompatActivity
                 fragment = new PracticeFragment();
                 title = "Practice";
                 break;
-            case R.id.word_list:
-                fragment = wordListFragment;
+            case R.id.card_list:
+                fragment = mCardListFragment;
                 title = "";
                 break;
             case R.id.deck_list:
-                fragment = deckListFragment;
+                fragment = mDeckListFragment;
                 title = "Deck List";
                 break;
             case R.id.settings:
@@ -182,6 +183,10 @@ public class ApplicationManager extends AppCompatActivity
             case R.id.about:
                 fragment = new AboutFragment();
                 title = "About";
+                break;
+            case R.id.account:
+                fragment = new AccountFragment();
+                title = "Account";
                 break;
         }
 
@@ -196,10 +201,11 @@ public class ApplicationManager extends AppCompatActivity
             getSupportActionBar().setTitle(title);
         }
 
+        // set hardware back button boolean
         if (fragmentId == R.id.practice) {
-            viewIsAtHome = true;
+            mViewIsAtHome = true;
         } else {
-            viewIsAtHome = false;
+            mViewIsAtHome = false;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -207,16 +213,18 @@ public class ApplicationManager extends AppCompatActivity
 
     }
 
+    //
     public void displayDeckInfo(String deckId) {
-        displayFragment(R.id.word_list);
-        wordListFragment.displayDeckInfo(deckId);
+        displayFragment(R.id.card_list);
+        mCardListFragment.displayDeckInfo(deckId);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setCheckedItem(R.id.word_list);
+        navigationView.setCheckedItem(R.id.card_list);
     }
+
 
     @Override
     public void onBackPressed() {
-
+        // set hardware back button logic
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -226,7 +234,7 @@ public class ApplicationManager extends AppCompatActivity
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
             }
-            if (!viewIsAtHome) { //if the current view is not the News fragment
+            if (!mViewIsAtHome) { //if the current view is not the News fragment
                 displayFragment(R.id.practice);
             } else {
                 moveTaskToBack(true);  //If view is in News fragment, exit application
@@ -234,14 +242,44 @@ public class ApplicationManager extends AppCompatActivity
         }
     }
 
+    // transition animation
     public void replaceFragmentWithAnimation(android.support.v4.app.Fragment fragment, String tag) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//        transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+        //transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
 
 
         transaction.replace(R.id.content_frame, fragment, tag);
         transaction.commit();
+    }
+
+    // returns the currently selected deck in card list
+    public String getCurrentDeckIdSelected() {
+        return mCardListFragment.getCurrentDeckIdSelected();
+    }
+
+    // activity to create a new card
+    public void startActivityNewCard() {
+        Intent i = new Intent(this, CardInfoActivity.class);
+        i.putExtra("initialDeckId", getCurrentDeckIdSelected());
+        i.putExtra("initialState", "NEW");
+        this.startActivityForResult(i, 1);
+    }
+
+    // activity to view a new card
+    public void startActivityViewCard(String cardId) {
+        Intent i = new Intent(this, CardInfoActivity.class);
+        i.putExtra("initialState", "EDIT");
+        i.putExtra("cardId", cardId);
+        this.startActivityForResult(i, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //TODO add if statements
+        // resets card list
+        mCardListFragment.populateListView(getCurrentDeckIdSelected());
+
     }
 
 }

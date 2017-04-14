@@ -3,19 +3,19 @@ package stelztech.youknowehv4.model;
 /**
  * Created by Alexandre on 4/25/2016.
  */
-public class Word {
+public class Card {
 
 
-    private String idWord;
+    private String cardId;
     private String question;
     private String answer;
     private String moreInfo;
     private String dateCreated;
     private String dateModified;
 
-    public Word(String idWord, String question, String answer, String moreInfo, String dateCreated,
-         String dateModified) {
-        this.idWord = idWord;
+    public Card(String cardId, String question, String answer, String moreInfo, String dateCreated,
+                String dateModified) {
+        this.cardId = cardId;
         this.question = question;
         this.answer = answer;
         this.moreInfo = moreInfo;
@@ -24,12 +24,12 @@ public class Word {
 
     }
 
-    public String getIdWord() {
-        return idWord;
+    public String getCardId() {
+        return cardId;
     }
 
-    public void setIdWord(String idWord) {
-        this.idWord = idWord;
+    public void setCardId(String cardId) {
+        this.cardId = cardId;
     }
 
     public String getQuestion() {

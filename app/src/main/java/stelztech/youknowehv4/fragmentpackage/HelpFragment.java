@@ -9,8 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.state.ActionButtonStateManager;
-import stelztech.youknowehv4.state.ToolbarStateManager;
+import stelztech.youknowehv4.manager.ActionButtonManager;
+import stelztech.youknowehv4.manager.MainMenuToolbarManager;
 
 /**
  * Created by alex on 2017-04-03.
@@ -25,7 +25,7 @@ public class HelpFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_help, container, false);
 
-        ActionButtonStateManager.getInstance().setState(ActionButtonStateManager.actionButtonState.GONE, getActivity());
+        ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
         setHasOptionsMenu(true);
 
 
@@ -33,7 +33,7 @@ public class HelpFragment extends Fragment {
     }
 
     public void onPrepareOptionsMenu(Menu menu) {
-        ToolbarStateManager.getInstance().setState(ToolbarStateManager.toolbarState.DEFAULT, menu, getActivity());
+        MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.DEFAULT, menu, getActivity());
     }
 }
 

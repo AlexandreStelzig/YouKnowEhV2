@@ -5,7 +5,7 @@ package stelztech.youknowehv4.model;
  */
 public class Deck {
 
-    private String idDeck;
+    private String deckId;
     private String deckName;
     private String dateCreated;
     private String dateModified;
@@ -13,20 +13,20 @@ public class Deck {
     Deck() {
     }
 
-    public Deck(String idDeck, String deckName, String dateCreated, String dateModified) {
-        this.idDeck = idDeck;
+    public Deck(String deckId, String deckName, String dateCreated, String dateModified) {
+        this.deckId = deckId;
         this.deckName = deckName;
         this.dateModified = dateModified;
         this.dateCreated = dateCreated;
     }
 
 
-    public String getIdDeck() {
-        return idDeck;
+    public String getDeckId() {
+        return deckId;
     }
 
-    public void setIdDeck(String idDeck) {
-        this.idDeck = idDeck;
+    public void setDeckId(String deckId) {
+        this.deckId = deckId;
     }
 
     public String getDeckName() {

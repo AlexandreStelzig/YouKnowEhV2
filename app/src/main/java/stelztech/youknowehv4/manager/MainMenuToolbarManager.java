@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.state;
+package stelztech.youknowehv4.manager;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,25 +7,25 @@ import android.view.Menu;
 import android.view.View;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.activitypackage.ApplicationManager;
+import stelztech.youknowehv4.activitypackage.MainActivityManager;
 
 /**
  * Created by alex on 2017-04-06.
  */
 
-public class ToolbarStateManager {
+public class MainMenuToolbarManager {
 
-    public enum toolbarState {
+    public enum MainMenuToolbarState {
         WORD,
         DECK,
         DEFAULT
     }
 
-    private static ToolbarStateManager instance;
+    private static MainMenuToolbarManager instance;
     private Context context;
 
 
-    private ToolbarStateManager(){
+    private MainMenuToolbarManager(){
 
     }
 
@@ -33,14 +33,14 @@ public class ToolbarStateManager {
         this.context = context;
     }
 
-    public static ToolbarStateManager getInstance(){
+    public static MainMenuToolbarManager getInstance(){
         if(instance == null){
-            instance = new ToolbarStateManager();
+            instance = new MainMenuToolbarManager();
         }
         return instance;
     }
 
-    public void setState(toolbarState state, Menu menu, final Activity activity) {
+    public void setState(MainMenuToolbarState state, Menu menu, final Activity activity) {
 
 
         switch (state){
@@ -61,7 +61,7 @@ public class ToolbarStateManager {
     private void setMenuItemVisibility(Activity activity, Menu menu, boolean isDropdownVisible, boolean isSearchVisible,
                                        boolean isSortVisible, boolean isSettingsVisible){
 
-        ActionBar actionBar = ((ApplicationManager) activity).getSupportActionBar();
+        ActionBar actionBar = ((MainActivityManager) activity).getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(!isDropdownVisible);
 
         if(isDropdownVisible){
@@ -70,7 +70,6 @@ public class ToolbarStateManager {
             activity.findViewById(R.id.spinner_nav_layout).setVisibility(View.GONE);
         }
         menu.findItem(R.id.action_search).setVisible(isSearchVisible);
-        menu.findItem(R.id.action_search_hidden).setVisible(isSearchVisible);
         menu.findItem(R.id.action_sort).setVisible(isSortVisible);
         menu.findItem(R.id.action_settings).setVisible(isSettingsVisible);
 
