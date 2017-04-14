@@ -25,6 +25,7 @@ import stelztech.youknowehv4.fragmentpackage.PracticeFragment;
 import stelztech.youknowehv4.fragmentpackage.SettingsFragment;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.ActionButtonManager;
+import stelztech.youknowehv4.manager.CardInfoToolbarManager;
 import stelztech.youknowehv4.manager.MainMenuToolbarManager;
 
 public class MainActivityManager extends AppCompatActivity
@@ -35,6 +36,10 @@ public class MainActivityManager extends AppCompatActivity
     private CardListFragment mCardListFragment;
     private boolean mViewIsAtHome;
 
+    private final int INT_NULL = -1;
+
+    private boolean backToPreviousActivity = false;
+    private String lastWordInfoSeen = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +59,8 @@ public class MainActivityManager extends AppCompatActivity
         actionButtonManager.setContext(this);
         actionButtonManager.setState(ActionButtonManager.ActionButtonState.GONE, this);
 
-        MainMenuToolbarManager mainMenuToolbarManager = MainMenuToolbarManager.getInstance();
-        mainMenuToolbarManager.setContext(this);
+        MainMenuToolbarManager.getInstance().setContext(this);
+        CardInfoToolbarManager.getInstance().setContext(this);
 
         Helper helper = Helper.getInstance();
         helper.setContext(this);
@@ -104,7 +109,7 @@ public class MainActivityManager extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu_toolbar, menu);
+        getMenuInflater().inflate(R.menu.toolbar_main_menu, menu);
 
         // search menu option
         final MenuItem myActionMenuItem = menu.findItem(R.id.action_search);
@@ -170,6 +175,7 @@ public class MainActivityManager extends AppCompatActivity
                 break;
             case R.id.card_list:
                 fragment = mCardListFragment;
+                mCardListFragment.setToSelectDeckId("-1");
                 title = "";
                 break;
             case R.id.deck_list:
@@ -216,7 +222,7 @@ public class MainActivityManager extends AppCompatActivity
     //
     public void displayDeckInfo(String deckId) {
         displayFragment(R.id.card_list);
-        mCardListFragment.displayDeckInfo(deckId);
+        mCardListFragment.setToSelectDeckId(deckId);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setCheckedItem(R.id.card_list);
     }
@@ -229,17 +235,23 @@ public class MainActivityManager extends AppCompatActivity
 
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (backToPreviousActivity) {
+            startActivityViewCard(lastWordInfoSeen);
         } else {
 
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
-            }
-            if (!mViewIsAtHome) { //if the current view is not the News fragment
-                displayFragment(R.id.practice);
             } else {
-                moveTaskToBack(true);  //If view is in News fragment, exit application
+                if (!mViewIsAtHome) { //if the current view is not the News fragment
+                    displayFragment(R.id.practice);
+                } else {
+                    moveTaskToBack(true);  //If view is in News fragment, exit application
+                }
             }
+
         }
+        backToPreviousActivity = false;
+        lastWordInfoSeen = "";
     }
 
     // transition animation
@@ -262,14 +274,15 @@ public class MainActivityManager extends AppCompatActivity
     public void startActivityNewCard() {
         Intent i = new Intent(this, CardInfoActivity.class);
         i.putExtra("initialDeckId", getCurrentDeckIdSelected());
-        i.putExtra("initialState", "NEW");
+        i.putExtra("initialState", CardInfoActivity.CardInfoState.NEW);
         this.startActivityForResult(i, 1);
     }
 
     // activity to view a new card
     public void startActivityViewCard(String cardId) {
+        lastWordInfoSeen = cardId;
         Intent i = new Intent(this, CardInfoActivity.class);
-        i.putExtra("initialState", "EDIT");
+        i.putExtra("initialState", CardInfoActivity.CardInfoState.VIEW);
         i.putExtra("cardId", cardId);
         this.startActivityForResult(i, 1);
     }
@@ -277,8 +290,15 @@ public class MainActivityManager extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //TODO add if statements
-        // resets card list
+
+
+        if (data != null && data.getStringExtra("deckIdReturn") != null) {
+            mCardListFragment.setToSelectDeckId(data.getStringExtra("deckIdReturn"));
+            backToPreviousActivity = true;
+            mCardListFragment.setSpinnerSelected();
+        }
         mCardListFragment.populateListView(getCurrentDeckIdSelected());
+
 
     }
 

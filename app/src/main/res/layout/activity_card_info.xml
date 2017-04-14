@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="10dp">
 
     <LinearLayout
@@ -66,22 +66,23 @@
                     android:layout_gravity="left"
                     android:text="Question"
                     android:textColor="@color/textPrimary"
-                    android:textSize="@dimen/text_info" />
+                    android:textSize="@dimen/word_info_header" />
 
                 <EditText
                     android:id="@+id/question_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="textAutoComplete"
                     android:maxLines="1"
-                    android:inputType="text"
-                    android:textColor="@color/textPrimary" />
+                    android:textColor="@color/textPrimary"
+                    android:textSize="@dimen/text_info" />
             </LinearLayout>
 
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp" />
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -95,22 +96,23 @@
                     android:layout_gravity="left"
                     android:text="Answer"
                     android:textColor="@color/textPrimary"
-                    android:textSize="@dimen/text_info" />
+                    android:textSize="@dimen/word_info_header" />
 
                 <EditText
                     android:id="@+id/answer_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="textAutoComplete"
                     android:maxLines="1"
-                    android:inputType="text"
-                    android:textColor="@color/textPrimary" />
+                    android:textColor="@color/textPrimary"
+                    android:textSize="@dimen/text_info" />
             </LinearLayout>
 
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp" />
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -125,18 +127,19 @@
                     android:layout_gravity="left"
                     android:text="Note"
                     android:textColor="@color/textPrimary"
-                    android:textSize="@dimen/text_info" />
+                    android:textSize="@dimen/word_info_header" />
 
                 <EditText
                     android:id="@+id/note_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top|left"
+                    android:inputType="textMultiLine"
                     android:maxLines="7"
                     android:minLines="7"
-                    android:inputType="textMultiLine"
                     android:scrollbars="vertical"
-                    android:textColor="@color/textPrimary"/>
+                    android:textColor="@color/textPrimary"
+                    android:textSize="@dimen/text_info" />
             </LinearLayout>
 
         </LinearLayout>

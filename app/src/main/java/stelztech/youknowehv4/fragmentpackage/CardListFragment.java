@@ -2,6 +2,7 @@ package stelztech.youknowehv4.fragmentpackage;
 
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -47,15 +49,15 @@ public class CardListFragment extends Fragment {
     private Spinner spinner;
     private ArrayAdapter<String> deckArrayAdapter;
     private List<Deck> deckList;
-    private String toSelectPosition = ALL_DECKS_ITEM;
+    private String toSelectDeckId = ALL_DECKS_ITEM;
 
     // database
     private DatabaseManager dbManager;
 
     // list
     private List<Card> cardList;
-    private List<String> adapterWordName;
-    private ArrayAdapter<String> adapter;
+    private List<String> mCardListString;
+    private CustomListAdapter customListAdapter;
     private ListView listView;
     private TextView textView;
 
@@ -78,10 +80,10 @@ public class CardListFragment extends Fragment {
         dbManager = DatabaseManager.getInstance(getActivity());
         listView = (ListView) view.findViewById(R.id.listview);
         textView = (TextView) view.findViewById(R.id.list_text);
-        textView.setText("NO WORDS");
+        textView.setText("NO CARDS");
 
         cardList = new ArrayList<Card>();
-        adapterWordName = new ArrayList<String>();
+        mCardListString = new ArrayList<String>();
 
         populateSpinner();
         populateListView(ALL_DECKS_ITEM);
@@ -206,24 +208,28 @@ public class CardListFragment extends Fragment {
             }
         });
 
-        if (!toSelectPosition.isEmpty()) {
+        setSpinnerSelected();
+
+
+    }
+
+    public void setSpinnerSelected() {
+        if (!toSelectDeckId.isEmpty()) {
             for (int counter = 0; counter < deckList.size(); counter++) {
-                if (deckList.get(counter).getDeckId().equals(toSelectPosition)) {
+                if (deckList.get(counter).getDeckId().equals(toSelectDeckId)) {
                     spinner.setSelection(counter + SPINNER_OFFSET);
                     return;
                 }
             }
-            toSelectPosition = "-1";
+            toSelectDeckId = "-1";
         }
-
-
     }
 
     public void populateListView(String idDeck) {
         if (cardList != null)
             cardList.clear();
-        if (adapterWordName != null)
-            adapterWordName.clear();
+        if (mCardListString != null)
+            mCardListString.clear();
 
 
         if (idDeck.equals("-1"))
@@ -236,20 +242,19 @@ public class CardListFragment extends Fragment {
             listView.setVisibility(View.VISIBLE);
 
             for (int i = 0; i < cardList.size(); i++) {
-                adapterWordName.add(cardList.get(i).getQuestion());
+                mCardListString.add(cardList.get(i).getQuestion());
             }
-            adapter = new ArrayAdapter<String>(getActivity(),
-                    R.layout.custom_deck_item, adapterWordName);
 
-            listView.setAdapter(adapter);
+            customListAdapter = new CustomListAdapter(getContext());
+
+            listView.setAdapter(customListAdapter);
             registerForContextMenu(listView);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 @Override
                 public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                    String wordId = cardList.get(position).getCardId();
-                    ((MainActivityManager) getActivity()).startActivityViewCard(wordId);
+
                 }
             });
 
@@ -260,8 +265,8 @@ public class CardListFragment extends Fragment {
 
     }
 
-    public void displayDeckInfo(String deckId) {
-        toSelectPosition = deckId;
+    public void setToSelectDeckId(String deckId) {
+        toSelectDeckId = deckId;
     }
 
     public String getCurrentDeckIdSelected() {
@@ -269,5 +274,79 @@ public class CardListFragment extends Fragment {
             return ALL_DECKS_ITEM;
         else
             return deckList.get(spinner.getSelectedItemPosition() - SPINNER_OFFSET).getDeckId();
+    }
+
+    ////// CUSTOM ADAPTER //////
+
+    private class CustomListAdapter extends BaseAdapter {
+        Context context;
+
+        private LayoutInflater inflater = null;
+
+        public CustomListAdapter(Context context) {
+            // TODO Auto-generated constructor stub
+            super();
+            this.context = context;
+            inflater = (LayoutInflater) context.
+                    getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        @Override
+        public int getCount() {
+            // TODO Auto-generated method stub
+            return cardList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            // TODO Auto-generated method stub
+            return position;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            // TODO Auto-generated method stub
+            return position;
+        }
+
+        public class Holder {
+            TextView questionHolder;
+            TextView answerHolder;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+
+            Holder holder = new Holder();
+            View rowView;
+            rowView = inflater.inflate(R.layout.custom_card_item, null);
+            holder.questionHolder = (TextView) rowView.findViewById(R.id.custom_card_item_question);
+            holder.answerHolder = (TextView) rowView.findViewById(R.id.custom_card_item_answer);
+            holder.questionHolder.setText(cardList.get(position).getQuestion());
+            holder.answerHolder.setText(cardList.get(position).getAnswer());
+
+            rowView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+
+                    String wordId = cardList.get(position).getCardId();
+                    ((MainActivityManager) getActivity()).startActivityViewCard(wordId);
+
+                }
+            });
+
+            rowView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    indexSelected = position;
+                    return false;
+                }
+            });
+
+            return rowView;
+
+        }
+
     }
 }
