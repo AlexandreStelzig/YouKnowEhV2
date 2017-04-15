@@ -448,14 +448,14 @@ public class CardInfoActivity extends AppCompatActivity {
                 toastMessageError = "Answer cannot be empty";
 
             Toast.makeText(this, (String) toastMessageError,
-                    Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_SHORT).show();
             return false;
         } else {
             // create new card
             String newCardId = dbManager.createCard(question, answer, note);
             if (newCardId == "-1") {
                 Toast.makeText(this, "Error while adding card to database",
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_SHORT).show();
                 return false;
             }
 
@@ -472,7 +472,7 @@ public class CardInfoActivity extends AppCompatActivity {
             }
 
             Toast.makeText(this, "Card successfully added",
-                    Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_SHORT).show();
             return true;
         }
     }
