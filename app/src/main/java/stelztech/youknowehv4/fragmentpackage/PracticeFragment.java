@@ -1,16 +1,30 @@
 package stelztech.youknowehv4.fragmentpackage;
 
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import stelztech.youknowehv4.R;
+import stelztech.youknowehv4.activitypackage.MainActivityManager;
+import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.manager.ActionButtonManager;
 import stelztech.youknowehv4.manager.MainMenuToolbarManager;
+import stelztech.youknowehv4.model.Card;
+import stelztech.youknowehv4.model.Deck;
 
 /**
  * Created by alex on 2017-04-03.
@@ -20,19 +34,276 @@ public class PracticeFragment extends Fragment {
 
     View view;
 
+    // Spinner
+    private Spinner spinner;
+    private ArrayAdapter<String> deckArrayAdapter;
+    private List<Deck> deckList;
+
+    // database
+    private DatabaseManager dbManager;
+
+    // components
+    private TextView questionTextView;
+    private TextView answerTextView;
+    private Button showButton;
+    private Button nextButton;
+    private Button infoButton;
+
+    // question answers
+    private List<String> questionList;
+    private List<String> answerList;
+    private int[] questionOrder;
+    private int currentQuestion;
+
+    // hidden text
+    private boolean answerHidden;
+    private String answerHiddenString = "----";
+
+    // reverse order
+    private boolean isReverseOrder;
+
+    private int selectedDeck;
+    private List<Card> mCardList;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         view = inflater.inflate(R.layout.fragment_practice, container, false);
 
         ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
         setHasOptionsMenu(true);
 
 
+        // init
+        dbManager = DatabaseManager.getInstance(getActivity());
+        spinner = ((Spinner) view.findViewById(R.id.practice_spinner));
+        questionTextView = (TextView) view.findViewById(R.id.practice_question);
+        answerTextView = (TextView) view.findViewById(R.id.practice_answer);
+        showButton = (Button) view.findViewById(R.id.practice_show_button);
+        nextButton = (Button) view.findViewById(R.id.practice_next_button);
+        infoButton = (Button) view.findViewById(R.id.practice_info);
+
+        questionList = new ArrayList<>();
+        answerList = new ArrayList<>();
+
+        currentQuestion = 0;
+        answerHidden = true;
+        isReverseOrder = false;
+
+        showButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (deckList.size() > 0) {
+                    showButtonClicked();
+                }
+                // TODO add warning toast
+            }
+        });
+
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (deckList.size() > 0) {
+                    nextButtonClicked();
+                }
+            }
+        });
+
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (deckList.size() > 0) {
+                    ((MainActivityManager) getActivity())
+                            .displayDeckInfo(deckList.get(spinner.getSelectedItemPosition()).getDeckId());
+                }
+
+            }
+        });
+
+        initSpinner();
+        switchPracticeCards();
+
         return view;
     }
 
     public void onPrepareOptionsMenu(Menu menu) {
-        MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.DEFAULT, menu, getActivity());
+        MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.PRACTICE, menu, getActivity());
+
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_reverse:
+                if (questionOrder.length > 0) {
+                    boolean temp = answerHidden;
+                    isReverseOrder = !isReverseOrder;
+                    setQuestionAnswerOrder();
+                    setQuestionAnswerText();
+
+                    if (!temp) {
+                        answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
+                        answerHidden = false;
+                    }
+
+                }
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void initSpinner() {
+        if (deckArrayAdapter != null)
+            deckArrayAdapter.clear();
+        if (deckList != null)
+            deckList.clear();
+
+        deckList = dbManager.getDecks();
+        final List<String> deckListString = new ArrayList<>();
+
+
+        for (int counter = 0; counter < deckList.size(); counter++) {
+            deckListString.add(deckList.get(counter).getDeckName());
+        }
+
+        deckArrayAdapter = new ArrayAdapter<String>(
+                getContext(), R.layout.custom_spinner_item_practice, deckListString);
+        deckArrayAdapter.setDropDownViewResource(R.layout.custom_spinner_item_practice);
+
+        deckArrayAdapter.setDropDownViewResource(R.layout.custom_spinner_item_practice);
+        spinner.setAdapter(deckArrayAdapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switchPracticeCards();
+                return;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                return;
+            }
+        });
+    }
+
+    private void switchPracticeCards() {
+        int selectedDeck = spinner.getSelectedItemPosition();
+
+        if (deckList.size() == 0)
+            return;
+        String deckId = deckList.get(selectedDeck).getDeckId();
+
+        mCardList = dbManager.getDeckPracticeCards(deckId);
+
+        questionOrder = new int[mCardList.size()];
+
+        // init order
+        for (int i = 0; i < questionOrder.length; i++) {
+            questionOrder[i] = i;
+        }
+
+        setQuestionAnswerOrder();
+        randomizeQuestionOrder();
+        setQuestionAnswerText();
+
+    }
+
+
+    // helpers
+    private void nextButtonClicked() {
+
+        if (questionOrder.length < 2) {
+            String message = "";
+            if (questionOrder.length == 0) {
+                message = "No Practice Cards";
+            } else if (questionOrder.length == 1) {
+                message = "Only one practice card in deck";
+            }
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        } else {
+            if ((currentQuestion + 1) < questionOrder.length) {
+                currentQuestion++;
+                setQuestionAnswerText();
+            } else {
+                // reset
+                randomizeQuestionOrder();
+                setQuestionAnswerText();
+            }
+        }
+    }
+
+    private void showButtonClicked() {
+        if (questionOrder.length == 0) {
+            Toast.makeText(getContext(), "No Cards", Toast.LENGTH_SHORT).show();
+        } else {
+            if (answerHidden) {
+                answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
+                answerHidden = false;
+                showButton.setText("hide");
+            } else {
+                answerTextView.setText(answerHiddenString);
+                answerHidden = true;
+                showButton.setText("show");
+            }
+        }
+    }
+
+    private void randomizeQuestionOrder() {
+
+        if (questionOrder.length > 1) {
+
+            int lastQuestion = questionOrder[currentQuestion];
+
+
+            for (int i = 0; i < questionOrder.length; i++) {
+                int random = (int) (Math.random() * questionOrder.length);
+
+                int temp = questionOrder[random];
+                questionOrder[random] = questionOrder[i];
+                questionOrder[i] = temp;
+            }
+
+            if (questionOrder[0] == lastQuestion) {
+                int random = (int) (Math.random() * (questionOrder.length - 1));
+                int temp = questionOrder[random + 1];
+                questionOrder[random + 1] = questionOrder[0];
+                questionOrder[0] = temp;
+            }
+
+        }
+        currentQuestion = 0;
+    }
+
+    private void setQuestionAnswerText() {
+        if (questionOrder.length == 0) {
+            questionTextView.setText("No Cards");
+            answerTextView.setText("");
+        } else {
+            questionTextView.setText(questionList.get(questionOrder[currentQuestion]));
+            answerTextView.setText(answerHiddenString);
+            answerHidden = true;
+        }
+    }
+
+    private void setQuestionAnswerOrder() {
+        questionList.clear();
+        answerList.clear();
+        if (!isReverseOrder) {
+            for (int counter = 0; counter < questionOrder.length; counter++) {
+                questionList.add(mCardList.get(counter).getQuestion());
+                answerList.add(mCardList.get(counter).getAnswer());
+            }
+        } else {
+            for (int counter = 0; counter < questionOrder.length; counter++) {
+                answerList.add(mCardList.get(counter).getQuestion());
+                questionList.add(mCardList.get(counter).getAnswer());
+            }
+        }
+    }
+
 }

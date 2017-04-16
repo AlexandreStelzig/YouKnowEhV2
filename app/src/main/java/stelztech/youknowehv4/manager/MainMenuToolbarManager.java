@@ -16,8 +16,10 @@ import stelztech.youknowehv4.activitypackage.MainActivityManager;
 public class MainMenuToolbarManager {
 
     public enum MainMenuToolbarState {
-        WORD,
+        CARD,
         DECK,
+        PRACTICE,
+        CARD_LIST_EDIT,
         DEFAULT
     }
 
@@ -25,16 +27,16 @@ public class MainMenuToolbarManager {
     private Context context;
 
 
-    private MainMenuToolbarManager(){
+    private MainMenuToolbarManager() {
 
     }
 
-    public void setContext(Context context){
+    public void setContext(Context context) {
         this.context = context;
     }
 
-    public static MainMenuToolbarManager getInstance(){
-        if(instance == null){
+    public static MainMenuToolbarManager getInstance() {
+        if (instance == null) {
             instance = new MainMenuToolbarManager();
         }
         return instance;
@@ -43,35 +45,46 @@ public class MainMenuToolbarManager {
     public void setState(MainMenuToolbarState state, Menu menu, final Activity activity) {
 
 
-        switch (state){
-            case WORD:
-                setMenuItemVisibility(activity, menu, true, true,true,true);
+        switch (state) {
+            case CARD:
+                setMenuItemVisibility(activity, menu, true, true, true, false, true, false, true);
                 break;
             case DECK:
-                setMenuItemVisibility(activity, menu, false, true,true,true);
+                setMenuItemVisibility(activity, menu, false, true, false, false, false, false, false);
+                break;
+            case PRACTICE:
+                setMenuItemVisibility(activity, menu, false, false, true, false, false, false, false);
+                break;
+            case CARD_LIST_EDIT:
+                setMenuItemVisibility(activity, menu, false, true, false, true, false, true, false);
                 break;
             case DEFAULT:
                 // same
             default:
-                setMenuItemVisibility(activity, menu, false, false,false,true);
+                setMenuItemVisibility(activity, menu, false, false, false, false, false, false, false);
                 break;
         }
     }
 
     private void setMenuItemVisibility(Activity activity, Menu menu, boolean isDropdownVisible, boolean isSearchVisible,
-                                       boolean isSortVisible, boolean isSettingsVisible){
+                                       boolean isReverseVisible, boolean isDoneVisible, boolean isEditDeckCardsVisible,
+                                       boolean isCancelVisible, boolean isTogglePracticeVisible) {
 
         ActionBar actionBar = ((MainActivityManager) activity).getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(!isDropdownVisible);
 
-        if(isDropdownVisible){
+        if (isDropdownVisible) {
             activity.findViewById(R.id.spinner_nav_layout).setVisibility(View.VISIBLE);
-        } else{
+        } else {
             activity.findViewById(R.id.spinner_nav_layout).setVisibility(View.GONE);
         }
         menu.findItem(R.id.action_search).setVisible(isSearchVisible);
-        menu.findItem(R.id.action_sort).setVisible(isSortVisible);
-        menu.findItem(R.id.action_settings).setVisible(isSettingsVisible);
+        menu.findItem(R.id.action_reverse).setVisible(isReverseVisible);
+
+        menu.findItem(R.id.action_done).setVisible(isDoneVisible);
+        menu.findItem(R.id.action_edit_deck_cards).setVisible(isEditDeckCardsVisible);
+        menu.findItem(R.id.action_cancel).setVisible(isCancelVisible);
+        menu.findItem(R.id.action_practice_toggle).setVisible(isTogglePracticeVisible);
 
 
     }

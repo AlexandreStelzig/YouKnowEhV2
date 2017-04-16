@@ -34,12 +34,18 @@ public class MainActivityManager extends AppCompatActivity
     // fragments
     private DeckListFragment mDeckListFragment;
     private CardListFragment mCardListFragment;
+    private PracticeFragment mPracticeFragment;
+    private SettingsFragment mSettingsFragment;
+    private AboutFragment mAboutFragment;
+    private AccountFragment mAccountFragment;
     private boolean mViewIsAtHome;
 
     private final int INT_NULL = -1;
 
     private boolean backToPreviousActivity = false;
     private String lastWordInfoSeen = "";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,25 +75,6 @@ public class MainActivityManager extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-//            public void onDrawerSlide(View drawerView, float slideOffset)
-//            {
-//                super.onDrawerSlide(drawerView, slideOffset);
-//                float moveFactor = (drawer.getWidth() * slideOffset);
-//
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-//                {
-//                    frame.setTranslationX(moveFactor);
-//                }
-//                else
-//                {
-//                    TranslateAnimation anim = new TranslateAnimation(lastTranslate, moveFactor, 0.0f, 0.0f);
-//                    anim.setDuration(0);
-//                    anim.setFillAfter(true);
-//                    frame.startAnimation(anim);
-//
-//                    lastTranslate = moveFactor;
-//                }
-//            }
         };
         drawer.addDrawerListener(toggle);
 
@@ -102,6 +89,10 @@ public class MainActivityManager extends AppCompatActivity
         // init fragments
         mDeckListFragment = new DeckListFragment();
         mCardListFragment = new CardListFragment();
+        mPracticeFragment = new PracticeFragment();
+        mSettingsFragment = new SettingsFragment();
+        mAboutFragment = new AboutFragment();
+        mAccountFragment = new AccountFragment();
 
         // default page
         displayFragment(R.id.practice);
@@ -144,10 +135,10 @@ public class MainActivityManager extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -170,7 +161,7 @@ public class MainActivityManager extends AppCompatActivity
 
         switch (fragmentId) {
             case R.id.practice:
-                fragment = new PracticeFragment();
+                fragment = mPracticeFragment;
                 title = "Practice";
                 break;
             case R.id.card_list:
@@ -183,15 +174,15 @@ public class MainActivityManager extends AppCompatActivity
                 title = "Deck List";
                 break;
             case R.id.settings:
-                fragment = new SettingsFragment();
+                fragment = mSettingsFragment;
                 title = "Settings";
                 break;
             case R.id.about:
-                fragment = new AboutFragment();
+                fragment = mAboutFragment;
                 title = "About";
                 break;
             case R.id.account:
-                fragment = new AccountFragment();
+                fragment = mAccountFragment;
                 title = "Account";
                 break;
         }

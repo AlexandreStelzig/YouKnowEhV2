@@ -11,16 +11,38 @@
         app:showAsAction="always|collapseActionView" />
 
     <item
-        android:id="@+id/action_sort"
+        android:id="@+id/action_reverse"
         android:orderInCategory="3"
+        android:icon="@drawable/ic_import_export_white_24dp"
         android:title="Sort"
-        app:showAsAction="never"/>
+        app:showAsAction="always" />
+
 
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_cancel"
         android:orderInCategory="4"
-        android:title="@string/action_settings"
+        android:icon="@drawable/ic_cancel_white_24dp"
+        android:title="Cancel"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_done"
+        android:orderInCategory="5"
+        android:icon="@drawable/ic_done_white_24dp"
+        android:title="Done"
+        app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/action_edit_deck_cards"
+        android:orderInCategory="555"
+        android:title="Edit Deck's Cards"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_practice_toggle"
+        android:orderInCategory="2034"
+        android:title="Practice toggle"
+        app:showAsAction="never" />
 
 </menu>

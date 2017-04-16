@@ -27,7 +27,7 @@ public class AboutFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_about, container, false);
 
         ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
-
+        setHasOptionsMenu(true);
 
 
         return view;

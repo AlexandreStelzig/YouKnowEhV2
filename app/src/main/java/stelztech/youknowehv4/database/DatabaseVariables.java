@@ -64,7 +64,7 @@ public final class DatabaseVariables {
     public static abstract class TableCardDeck implements BaseColumns{
         public static final String TABLE_NAME = "carddeck";
         public static final String COLUMN_NAME_DECK_ID = "deckid";
-        public static final String COLUMN_NAME_CARD_ID = "wordid";
+        public static final String COLUMN_NAME_CARD_ID = "cardid";
         public static final String COLUMN_NAME_DATE_ADDED = "dateadded";
         public static final String COLUMN_NAME_IS_PRACTICE = "ispractice";
     }

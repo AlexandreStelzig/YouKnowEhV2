@@ -237,6 +237,7 @@ public class DatabaseManager {
 
     public boolean deleteCardDeck(String cardId, String deckId) {
         SQLiteDatabase db = database.getReadableDatabase();
+
         return db.delete(DatabaseVariables.TableCardDeck.TABLE_NAME,
                 DatabaseVariables.TableCardDeck.COLUMN_NAME_CARD_ID + "=" + cardId + " AND "
                         + DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deckId, null) > 0;
@@ -253,6 +254,8 @@ public class DatabaseManager {
         values.put(DatabaseVariables.TableDeck.COLUMN_NAME_DECK_NAME, name);
         values.put(DatabaseVariables.TableDeck.COLUMN_NAME_DATE_CREATED, date);
         values.put(DatabaseVariables.TableDeck.COLUMN_NAME_DATE_MODIFIED, date);
+
+
 
         long newRowId = -1;
         newRowId = db.insert(
@@ -341,6 +344,7 @@ public class DatabaseManager {
                 DatabaseVariables.TableCard.COLUMN_NAME_CARD_ID + "=" + cardId, null);
     }
 
+
     ////////////// OTHER //////////////
 
     public void togglePractice_Card(String cardId, String deckId) {
@@ -354,7 +358,7 @@ public class DatabaseManager {
         ContentValues values = new ContentValues();
 
         values.put(DatabaseVariables.TableCardDeck.COLUMN_NAME_IS_PRACTICE, newIsPractice);
-        db.update(DatabaseVariables.TableCardDeck.TABLE_NAME, values, DatabaseVariables.TableCard.COLUMN_NAME_CARD_ID
+        db.update(DatabaseVariables.TableCardDeck.TABLE_NAME, values, DatabaseVariables.TableCardDeck.COLUMN_NAME_CARD_ID
                 + "=" + cardId + " AND " + DatabaseVariables.TableCardDeck.COLUMN_NAME_DECK_ID + "=" + deckId, null);
 
     }

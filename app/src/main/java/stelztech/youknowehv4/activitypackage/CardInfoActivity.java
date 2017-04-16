@@ -156,13 +156,13 @@ public class CardInfoActivity extends AppCompatActivity {
             }
         } else if (currentState == CardInfoState.EDIT && item.getItemId() == (R.id.action_done_card_info)) {
             boolean isAddingCardSuccessful = updateCard();
-            if (isAddingCardSuccessful){
+            if (isAddingCardSuccessful) {
                 resetNumberOfDecksCounter();
                 setStateView();
 
                 mCardSpecificDeck.clear();
-                for(int i = 0; i < mIsPartOfDeckList.length; i++){
-                    if(mIsPartOfDeckList[i]){
+                for (int i = 0; i < mIsPartOfDeckList.length; i++) {
+                    if (mIsPartOfDeckList[i]) {
                         mCardSpecificDeck.add(mDeckList.get(i));
                     }
                 }
@@ -185,6 +185,10 @@ public class CardInfoActivity extends AppCompatActivity {
                 setStateView();
             }
 
+        } else if (item.getItemId() == (R.id.action_switch_card_info) && currentState == CardInfoState.EDIT) {
+            String temp = questionEditTextView.getText().toString();
+            questionEditTextView.setText(answerEditTextView.getText());
+            answerEditTextView.setText(temp);
         }
 
         return super.onOptionsItemSelected(item);
@@ -231,17 +235,12 @@ public class CardInfoActivity extends AppCompatActivity {
 
 
         mDeckList = dbManager.getDecks();
-        if(mIsPartOfDeckList == null){
-            mIsPartOfDeckList = new boolean[mDeckList.size()];
-            for (int counter = 0; counter < mIsPartOfDeckList.length; counter++) {
-                if (mDeckList.get(counter).getDeckId().equals(mInitialDeckId))
-                    mIsPartOfDeckList[counter] = true;
-            }
-            mTempPartOfDeckList = mIsPartOfDeckList.clone();
-        }else{
-
+        mIsPartOfDeckList = new boolean[mDeckList.size()];
+        for (int counter = 0; counter < mIsPartOfDeckList.length; counter++) {
+            if (mDeckList.get(counter).getDeckId().equals(mInitialDeckId))
+                mIsPartOfDeckList[counter] = true;
         }
-
+        mTempPartOfDeckList = mIsPartOfDeckList.clone();
 
         mDeckListDisplayName = new CharSequence[mDeckList.size()];
 
@@ -369,13 +368,6 @@ public class CardInfoActivity extends AppCompatActivity {
                 this,
                 android.R.layout.simple_list_item_1);
 
-
-        List<CharSequence> displayName = new ArrayList<>();
-
-        for(int i = 0; i < mIsPartOfDeckList.length; i++){
-            if(mIsPartOfDeckList[i])
-                displayName.add(mDeckListDisplayName[i]);
-        }
 
         arrayAdapter.addAll(mDeckListDisplayName);
         deckListAlertDialog.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {

@@ -15,7 +15,7 @@ import stelztech.youknowehv4.activitypackage.MainActivityManager;
 public class ActionButtonManager {
 
     public enum ActionButtonState {
-        ADD_WORD,
+        ADD_CARD,
         DECK,
         GONE
     }
@@ -53,7 +53,7 @@ public class ActionButtonManager {
                     }
                 });
                 break;
-            case ADD_WORD:
+            case ADD_CARD:
                 fab.setVisibility(View.VISIBLE);
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override

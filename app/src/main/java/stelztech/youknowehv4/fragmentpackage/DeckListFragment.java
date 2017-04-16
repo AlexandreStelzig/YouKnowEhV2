@@ -27,9 +27,9 @@ import java.util.List;
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
-import stelztech.youknowehv4.model.Deck;
 import stelztech.youknowehv4.manager.ActionButtonManager;
 import stelztech.youknowehv4.manager.MainMenuToolbarManager;
+import stelztech.youknowehv4.model.Deck;
 
 /**
  * Created by alex on 2017-04-03.
@@ -155,6 +155,13 @@ public class DeckListFragment extends Fragment {
     }
 
     private void showQuickInfoDeck() {
+        Deck deck = deckList.get(indexSelected);
+        String deckName = "Deck name: " + deck.getDeckName();
+        String dateCreated = "Date Created: " + deck.getDateCreated();
+        String dateModified = "Date Modified: " + deck.getDateModified();
+        String message = deckName +"\n" + dateCreated + "\n" + dateModified;
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+        builder.setMessage(message).setPositiveButton("done", null).show();
     }
 
 
@@ -251,7 +258,7 @@ public class DeckListFragment extends Fragment {
     private void displayDeleteConfirmationDialog() {
         final android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(getContext());
         alertDialog.setMessage("Are you sure you want to delete:\n \'" +
-                deckList.get(indexSelected).getDeckName()+ "\'?");
+                deckList.get(indexSelected).getDeckName() + "\'?");
         alertDialog.setTitle("Delete Deck");
 
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -280,7 +287,6 @@ public class DeckListFragment extends Fragment {
     private void addToDatabase() {
         dbManager.createDeck(deckNameHolder);
     }
-
 
 
     private void updateDatabase() {

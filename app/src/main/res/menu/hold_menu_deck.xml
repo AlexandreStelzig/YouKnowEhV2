@@ -3,12 +3,12 @@
 
 
     <item android:id="@+id/info_deck"
-        android:title="Info"/>
+        android:title="Quick Info"/>
 
     <item android:id="@+id/edit_deck"
-        android:title="Edit" />
+        android:title="Edit Deck" />
 
     <item android:id="@+id/delete_deck"
-        android:title="Delete" />
+        android:title="Delete Deck" />
 
 </menu>
