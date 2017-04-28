@@ -1,12 +1,15 @@
 package stelztech.youknowehv4.fragmentpackage;
 
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.manager.ActionButtonManager;
@@ -18,6 +21,12 @@ import stelztech.youknowehv4.manager.MainMenuToolbarManager;
 
 public class AboutFragment extends Fragment {
 
+
+    private TextView facebook;
+    private TextView email;
+    private TextView website;
+
+
     View view;
 
     @Override
@@ -28,6 +37,43 @@ public class AboutFragment extends Fragment {
 
         ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
         setHasOptionsMenu(true);
+
+        facebook = (TextView) view.findViewById(R.id.about_facebook);
+        email = (TextView) view.findViewById(R.id.about_email);
+        website = (TextView) view.findViewById(R.id.about_website);
+
+        facebook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/alexandre.stelzig"));
+                startActivity(browserIntent);
+            }
+        });
+
+        website.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://alexandrestelzig.github.io/"));
+                startActivity(browserIntent);
+            }
+        });
+
+        email.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] emailTo = {"alexandre.stelzig@gmail.com"};
+                Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                emailIntent.setData(Uri.parse("mailto:"));
+                emailIntent.setType("text/plain");
+
+
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, emailTo);
+//                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "You Know Eh?");
+//                emailIntent.putExtra(Intent.EXTRA_TEXT, "Email message goes here");
+
+                startActivity(emailIntent);
+            }
+        });
 
 
         return view;

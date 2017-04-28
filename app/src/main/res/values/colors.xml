@@ -8,6 +8,7 @@
     <color name="textPrimary">#212121</color>
     <color name="textSecondary">#757575</color>
     <color name="colorDivider">#BDBDBD</color>
+    <color name="colorNotPractice">#ebebeb</color>
     <color name="white">#FFFFFF</color>
 
 </resources>

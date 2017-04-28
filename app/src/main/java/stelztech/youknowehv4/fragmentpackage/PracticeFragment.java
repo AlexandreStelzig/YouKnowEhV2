@@ -1,7 +1,10 @@
 package stelztech.youknowehv4.fragmentpackage;
 
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -65,6 +68,9 @@ public class PracticeFragment extends Fragment {
     private int selectedDeck;
     private List<Card> mCardList;
 
+    private final int SELECT_DECK_INDEX = 0;
+    private final int SPINNER_OFFSET = 1;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -114,9 +120,13 @@ public class PracticeFragment extends Fragment {
         infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(isSelectedDeckNothing()){
+                    Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if (deckList.size() > 0) {
                     ((MainActivityManager) getActivity())
-                            .displayDeckInfo(deckList.get(spinner.getSelectedItemPosition()).getDeckId());
+                            .displayDeckInfo(deckList.get(spinner.getSelectedItemPosition() - SPINNER_OFFSET).getDeckId());
                 }
 
             }
@@ -138,6 +148,13 @@ public class PracticeFragment extends Fragment {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_reverse:
+
+                if(isSelectedDeckNothing()){
+                    Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+
+
                 if (questionOrder.length > 0) {
                     boolean temp = answerHidden;
                     isReverseOrder = !isReverseOrder;
@@ -148,6 +165,8 @@ public class PracticeFragment extends Fragment {
                         answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
                         answerHidden = false;
                     }
+
+                    Toast.makeText(getContext(), "Order Reversed", Toast.LENGTH_SHORT).show();
 
                 }
                 return true;
@@ -165,16 +184,55 @@ public class PracticeFragment extends Fragment {
         deckList = dbManager.getDecks();
         final List<String> deckListString = new ArrayList<>();
 
-
+        deckListString.add("- Select Deck -");
         for (int counter = 0; counter < deckList.size(); counter++) {
             deckListString.add(deckList.get(counter).getDeckName());
         }
 
         deckArrayAdapter = new ArrayAdapter<String>(
-                getContext(), R.layout.custom_spinner_item_practice, deckListString);
-        deckArrayAdapter.setDropDownViewResource(R.layout.custom_spinner_item_practice);
+                getContext(), R.layout.custom_spinner_item_practice, deckListString){
 
-        deckArrayAdapter.setDropDownViewResource(R.layout.custom_spinner_item_practice);
+
+            @Override
+            public boolean isEnabled(int position) {
+                if(position == SELECT_DECK_INDEX){
+                    return false;
+                }
+                return true;
+            }
+
+            @NonNull
+            @Override
+            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+
+                View mView = super.getDropDownView(position, convertView, parent);
+                TextView mTextView = (TextView) mView;
+
+                if(position == SELECT_DECK_INDEX)
+                    mTextView.setTextColor(Color.GRAY);
+                else
+                    mTextView.setTextColor(Color.BLACK);
+
+                return mTextView;
+            }
+
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+
+                View mView = super.getDropDownView(position, convertView, parent);
+                TextView mTextView = (TextView) mView;
+
+                if(position == SELECT_DECK_INDEX)
+                    mTextView.setTextColor(Color.GRAY);
+                else
+                    mTextView.setTextColor(Color.BLACK);
+
+                return mTextView;
+            }
+        };
+
+
         spinner.setAdapter(deckArrayAdapter);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -194,9 +252,19 @@ public class PracticeFragment extends Fragment {
     private void switchPracticeCards() {
         int selectedDeck = spinner.getSelectedItemPosition();
 
+
+        if(isSelectedDeckNothing()){
+            setSelectDeck();
+            return;
+        }
+
+
         if (deckList.size() == 0)
             return;
-        String deckId = deckList.get(selectedDeck).getDeckId();
+
+
+
+        String deckId = deckList.get(selectedDeck - SPINNER_OFFSET).getDeckId();
 
         mCardList = dbManager.getDeckPracticeCards(deckId);
 
@@ -213,9 +281,18 @@ public class PracticeFragment extends Fragment {
 
     }
 
+    private void setSelectDeck() {
+        questionTextView.setText("Select a Deck");
+        answerTextView.setText("");
+    }
+
 
     // helpers
     private void nextButtonClicked() {
+        if(isSelectedDeckNothing()){
+            Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if (questionOrder.length < 2) {
             String message = "";
@@ -238,6 +315,12 @@ public class PracticeFragment extends Fragment {
     }
 
     private void showButtonClicked() {
+
+        if(isSelectedDeckNothing()){
+            Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (questionOrder.length == 0) {
             Toast.makeText(getContext(), "No Cards", Toast.LENGTH_SHORT).show();
         } else {
@@ -268,7 +351,7 @@ public class PracticeFragment extends Fragment {
                 questionOrder[i] = temp;
             }
 
-            if (questionOrder[0] == lastQuestion) {
+            if (questionOrder[0] == lastQuestion && currentQuestion != 0) {
                 int random = (int) (Math.random() * (questionOrder.length - 1));
                 int temp = questionOrder[random + 1];
                 questionOrder[random + 1] = questionOrder[0];
@@ -304,6 +387,10 @@ public class PracticeFragment extends Fragment {
                 questionList.add(mCardList.get(counter).getAnswer());
             }
         }
+    }
+
+    private boolean isSelectedDeckNothing(){
+        return spinner.getSelectedItemPosition() == SELECT_DECK_INDEX;
     }
 
 }

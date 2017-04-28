@@ -380,6 +380,8 @@ public class CardListFragment extends Fragment {
         if (mCardListString != null)
             mCardListString.clear();
 
+        customListAdapter = new CustomListAdapter(getContext());
+
 
         if (idDeck.equals(ALL_DECKS_ITEM)) {
             cardList = dbManager.getCards();
@@ -434,8 +436,6 @@ public class CardListFragment extends Fragment {
             for (int i = 0; i < cardList.size(); i++) {
                 mCardListString.add(cardList.get(i).getQuestion());
             }
-
-            customListAdapter = new CustomListAdapter(getContext());
 
             listView.setAdapter(customListAdapter);
 
@@ -624,7 +624,7 @@ public class CardListFragment extends Fragment {
                             holder.checkBox.setChecked(true);
                             holder.cardLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
                         } else {
-                            holder.cardLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.colorDivider));
+                            holder.cardLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.colorNotPractice));
                             holder.checkBox.setChecked(false);
                         }
                     }
@@ -633,8 +633,8 @@ public class CardListFragment extends Fragment {
             });
 
 
-            if (isPracticeList != null && !isPracticeList[position]) {
-                holder.cardLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.colorDivider));
+            if (isPracticeList != null && !isPracticeList[position] && currentState != CardListState.EDIT_DECK) {
+                holder.cardLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.colorNotPractice));
             } else {
                 holder.cardLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
             }

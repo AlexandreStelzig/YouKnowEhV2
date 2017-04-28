@@ -5,4 +5,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="about_email_string"><u>Alexandre.Stelzig@gmail.com</u></string>
+    <string name="facebook_about_string"><u>facebook.com/alexandre.stelzig</u></string>
+    <string name="website_about_string"><u>alexandrestelzig.github.io</u></string>
 </resources>

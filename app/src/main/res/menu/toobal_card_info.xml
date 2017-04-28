@@ -28,14 +28,6 @@
 
     <item
         android:actionMenuTextColor="@color/colorTextIcon"
-        android:id="@+id/action_next_card_info"
-        android:orderInCategory="3"
-        android:title="next"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_navigate_next_white_24dp"/>
-
-    <item
-        android:actionMenuTextColor="@color/colorTextIcon"
         android:id="@+id/action_edit_card_info"
         android:orderInCategory="4"
         android:title="edit"

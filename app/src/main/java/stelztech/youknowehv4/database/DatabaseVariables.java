@@ -36,6 +36,13 @@ public final class DatabaseVariables {
             + " REFERENCES " + TableDeck.TABLE_NAME + "(" + TableDeck.COLUMN_NAME_DECK_ID + ")"
             + " PRIMARY KEY (" + TableCardDeck.COLUMN_NAME_CARD_ID + ", " + TableCardDeck.COLUMN_NAME_DECK_ID + ") " + ");";
 
+    public static final String SQL_CREATE_TABLE_PROFILE = "CREATE TABLE "
+            + TableProfile.TABLE_NAME + " ("
+            + TableProfile.COLUMN_NAME_PROFILE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + TableProfile.COLUMN_NAME_PROFILE_NAME + " TEXT NOT NULL,"
+            + TableProfile.COLUMN_NAME_DATE_CREATED + " DATE" + " );";
+
+
 
 
     public static final String SQL_DELETE_TABLE_CARD = "DROP TABLE IF EXISTS " + TableCard.TABLE_NAME;
@@ -67,6 +74,13 @@ public final class DatabaseVariables {
         public static final String COLUMN_NAME_CARD_ID = "cardid";
         public static final String COLUMN_NAME_DATE_ADDED = "dateadded";
         public static final String COLUMN_NAME_IS_PRACTICE = "ispractice";
+    }
+
+    public static abstract class TableProfile implements BaseColumns{
+        public static final String TABLE_NAME = "profile";
+        public static final String COLUMN_NAME_PROFILE_ID = "profileid";
+        public static final String COLUMN_NAME_PROFILE_NAME = "profilename";
+        public static final String COLUMN_NAME_DATE_CREATED = "datecreated";
     }
 
 }

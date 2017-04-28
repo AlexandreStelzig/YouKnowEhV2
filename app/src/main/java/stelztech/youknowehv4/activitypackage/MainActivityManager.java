@@ -40,6 +40,9 @@ public class MainActivityManager extends AppCompatActivity
     private AccountFragment mAccountFragment;
     private boolean mViewIsAtHome;
 
+    // components
+    private NavigationView navigationView;
+
     private final int INT_NULL = -1;
 
     private boolean backToPreviousActivity = false;
@@ -60,6 +63,7 @@ public class MainActivityManager extends AppCompatActivity
         // action button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         final FrameLayout frame = (FrameLayout) findViewById(R.id.content_frame);
+
 
         ActionButtonManager actionButtonManager = ActionButtonManager.getInstance();
         actionButtonManager.setContext(this);
@@ -82,7 +86,7 @@ public class MainActivityManager extends AppCompatActivity
         toggle.syncState();
 
         // menu
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.practice);
 
@@ -181,7 +185,7 @@ public class MainActivityManager extends AppCompatActivity
                 fragment = mAboutFragment;
                 title = "About";
                 break;
-            case R.id.account:
+            case R.id.profile:
                 fragment = mAccountFragment;
                 title = "Account";
                 break;
@@ -235,6 +239,7 @@ public class MainActivityManager extends AppCompatActivity
             } else {
                 if (!mViewIsAtHome) { //if the current view is not the News fragment
                     displayFragment(R.id.practice);
+                    navigationView.setCheckedItem(R.id.practice);
                 } else {
                     moveTaskToBack(true);  //If view is in News fragment, exit application
                 }
@@ -289,8 +294,8 @@ public class MainActivityManager extends AppCompatActivity
             mCardListFragment.setSpinnerSelected();
         }
         mCardListFragment.populateListView(getCurrentDeckIdSelected());
-
-
     }
+
+
 
 }

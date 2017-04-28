@@ -15,7 +15,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,6 +69,9 @@ public class CardInfoActivity extends AppCompatActivity {
     private EditText answerEditTextView;
     private EditText noteEditTextView;
     private AlertDialog.Builder deckListAlertDialog;
+    private LinearLayout createAnotherCardLayout;
+    private CheckBox createAnotherCardCheckBox;
+    private Button deckInfoButton;
 
     // temp variables
     private String questionTemp = "";
@@ -73,9 +79,11 @@ public class CardInfoActivity extends AppCompatActivity {
     private String noteTemp = "";
     private boolean[] mInitPartOfDeckTemp;
 
+
     // mode
     private CardInfoState currentState;
     private String mCardId;
+    private boolean createAnotherCard;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +101,26 @@ public class CardInfoActivity extends AppCompatActivity {
         questionEditTextView = (EditText) findViewById(R.id.question_edit_text);
         answerEditTextView = (EditText) findViewById(R.id.answer_edit_text);
         noteEditTextView = (EditText) findViewById(R.id.note_edit_text);
+        createAnotherCardLayout = (LinearLayout) findViewById(R.id.another_card_layout);
+        deckInfoButton = (Button) findViewById(R.id.deck_info_button);
+        createAnotherCardCheckBox = (CheckBox) findViewById(R.id.another_card_checkbox);
+        createAnotherCard = createAnotherCardCheckBox.isChecked();
+
+
+
+        ((TextView) findViewById(R.id.create_another_card_string)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createAnotherCard = !createAnotherCard;
+                createAnotherCardCheckBox.setChecked(createAnotherCard);
+            }
+        });
+        createAnotherCardCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createAnotherCard = !createAnotherCard;
+            }
+        });
 
         // set tags to be remembered when switching between editable and non editable
         questionEditTextView.setTag(questionEditTextView.getKeyListener());
@@ -104,6 +132,8 @@ public class CardInfoActivity extends AppCompatActivity {
         CardInfoState initalStateFromIntent = (CardInfoState) getIntent().getSerializableExtra("initialState");
         initState(initalStateFromIntent);
     }
+
+
 
     /////// INITIALIZING ///////
 
@@ -148,12 +178,25 @@ public class CardInfoActivity extends AppCompatActivity {
         }
 
         if (currentState == CardInfoState.NEW && item.getItemId() == (R.id.action_done_card_info)) {
-            boolean isAddingCardSuccessful = addCardToDatabase();
-            if (isAddingCardSuccessful) {
-                Intent returnIntent = new Intent();
-                setResult(Activity.RESULT_CANCELED, returnIntent);
-                finish();
+
+
+
+
+            if (createAnotherCard) {
+                boolean isAddingCardSuccessful = addCardToDatabase();
+                if (isAddingCardSuccessful) {
+                    resetFields();
+                    questionEditTextView.requestFocus();
+                }
+            } else {
+                boolean isAddingCardSuccessful = addCardToDatabase();
+                if (isAddingCardSuccessful) {
+                    Intent returnIntent = new Intent();
+                    setResult(Activity.RESULT_CANCELED, returnIntent);
+                    finish();
+                }
             }
+
         } else if (currentState == CardInfoState.EDIT && item.getItemId() == (R.id.action_done_card_info)) {
             boolean isAddingCardSuccessful = updateCard();
             if (isAddingCardSuccessful) {
@@ -169,12 +212,6 @@ public class CardInfoActivity extends AppCompatActivity {
             }
 
 
-        } else if (item.getItemId() == (R.id.action_next_card_info)) {
-            boolean isAddingCardSuccessful = addCardToDatabase();
-            if (isAddingCardSuccessful) {
-                resetFields();
-                questionEditTextView.requestFocus();
-            }
         } else if (item.getItemId() == (R.id.action_edit_card_info)) {
             setStateEdit();
         } else if (item.getItemId() == (R.id.action_cancel_card_info)) {
@@ -208,6 +245,8 @@ public class CardInfoActivity extends AppCompatActivity {
         initActivityInformationNew();
         supportInvalidateOptionsMenu(); // call toolbar menu again
         setKeyboardVisibility(true);
+        createAnotherCardLayout.setVisibility(View.VISIBLE);
+        deckInfoButton.setText("EDIT");
     }
 
     private void setStateEdit() {
@@ -218,6 +257,8 @@ public class CardInfoActivity extends AppCompatActivity {
         setupTempVariables();
         supportInvalidateOptionsMenu(); // call toolbar menu again
         setKeyboardVisibility(true);
+        createAnotherCardLayout.setVisibility(View.GONE);
+        deckInfoButton.setText("EDIT");
     }
 
 
@@ -229,6 +270,8 @@ public class CardInfoActivity extends AppCompatActivity {
         setFieldsInfo();
         supportInvalidateOptionsMenu(); // call toolbar menu again
         setKeyboardVisibility(false);
+        createAnotherCardLayout.setVisibility(View.GONE);
+        deckInfoButton.setText("VIEW");
     }
 
     private void initActivityInformationNew() {
@@ -313,9 +356,9 @@ public class CardInfoActivity extends AppCompatActivity {
         deckListAlertDialog = new AlertDialog.Builder(this);
 
         if (currentState == CardInfoState.NEW) {
-            setupDialogNewEdit("Add Deck to Card:");
+            setupDialogNewEdit("Add Deck(s) to Card:");
         } else if (currentState == CardInfoState.EDIT) {
-            setupDialogNewEdit("Update Card\'s Deck:");
+            setupDialogNewEdit("Edit Card\'s Decks:");
         } else {
             setupDialogView();
         }

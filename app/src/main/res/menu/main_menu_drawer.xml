@@ -24,9 +24,9 @@
         android:checkableBehavior="single">
 
         <item
-            android:id="@+id/account"
+            android:id="@+id/profile"
             android:icon="@drawable/ic_account_circle_black_24dp"
-            android:title="Account" />
+            android:title="Profile" />
         <item
             android:id="@+id/settings"
             android:icon="@drawable/ic_settings_black_24dp"
