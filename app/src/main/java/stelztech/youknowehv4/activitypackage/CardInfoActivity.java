@@ -253,6 +253,7 @@ public class CardInfoActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Edit Card");
         currentState = CardInfoState.EDIT;
         initActivityInformationEdit();
+        setFieldsInfo();
         setEditTextEditable(true);
         setupTempVariables();
         supportInvalidateOptionsMenu(); // call toolbar menu again

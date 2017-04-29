@@ -190,6 +190,7 @@ public class DeckListFragment extends Fragment {
         final EditText input = new EditText(getActivity());
         input.setInputType(InputType.TYPE_CLASS_TEXT);
 
+
         switch (dialogType) {
             case NEW:
                 input.setHint("Deck name");

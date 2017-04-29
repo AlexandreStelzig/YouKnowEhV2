@@ -45,7 +45,7 @@ public class ActionButtonManager {
         FloatingActionButton fab = (FloatingActionButton) activity.findViewById(R.id.fab);
         switch (state) {
             case DECK:
-                fab.setVisibility(View.VISIBLE);
+                fab.show();
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -54,7 +54,7 @@ public class ActionButtonManager {
                 });
                 break;
             case ADD_CARD:
-                fab.setVisibility(View.VISIBLE);
+                fab.show();
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -64,7 +64,7 @@ public class ActionButtonManager {
                 break;
             case GONE:
                 // action button
-                fab.setVisibility(View.GONE);
+                fab.hide();
                 break;
             default:
                 fab.setVisibility(View.GONE);

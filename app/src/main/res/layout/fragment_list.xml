@@ -11,7 +11,7 @@
         android:layout_height="fill_parent"
         android:dividerHeight="2dp"
         android:padding="3dp"
-        android:listSelector="#00000000"></ListView>
+        android:listSelector="@drawable/ripple"></ListView>
 
 
     <TextView

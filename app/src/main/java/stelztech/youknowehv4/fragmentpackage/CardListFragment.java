@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,6 +33,7 @@ import java.util.List;
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.ActionButtonManager;
 import stelztech.youknowehv4.manager.MainMenuToolbarManager;
 import stelztech.youknowehv4.model.Card;
@@ -46,7 +49,8 @@ public class CardListFragment extends Fragment {
     public enum CardListState {
         VIEW,
         EDIT_DECK,
-        PRACTICE_TOGGLE
+        PRACTICE_TOGGLE,
+        SEARCH
     }
 
 
@@ -67,7 +71,7 @@ public class CardListFragment extends Fragment {
 
     // list
     private List<Card> cardList;
-    private List<String> mCardListString;
+    private List<Card> allCardsListSearch;
     private CustomListAdapter customListAdapter;
     private ListView listView;
     private TextView textView;
@@ -85,6 +89,7 @@ public class CardListFragment extends Fragment {
     // reverse
     private boolean isReverseOrder;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -92,7 +97,7 @@ public class CardListFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_list, container, false);
 
-        ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.ADD_CARD, getActivity());
+//        ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.ADD_CARD, getActivity());
         setHasOptionsMenu(true);
 
         // init
@@ -102,10 +107,10 @@ public class CardListFragment extends Fragment {
         listView = (ListView) view.findViewById(R.id.listview);
         textView = (TextView) view.findViewById(R.id.list_text);
         textView.setText("NO CARDS");
+        allCardsListSearch = new ArrayList<>();
 
 
         cardList = new ArrayList<Card>();
-        mCardListString = new ArrayList<String>();
 
         isReverseOrder = false;
 
@@ -119,11 +124,62 @@ public class CardListFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        if (currentState == CardListState.VIEW)
+        if (currentState == CardListState.VIEW) {
             MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.CARD, menu, getActivity());
-        else
+            ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.ADD_CARD, getActivity());
+        } else if (currentState == CardListState.SEARCH) {
+            MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.SEARCH, menu, getActivity());
+            ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
+        } else {
             MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.CARD_LIST_EDIT, menu, getActivity());
+            ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
 
+        }
+
+
+        final MenuItem myActionMenuItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) myActionMenuItem.getActionView();
+
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // Toast like print
+
+                if (!searchView.isIconified()) {
+                    searchView.setIconified(true);
+                }
+                searchView.setQuery(query, false);
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+
+                populateSearchListView(s);
+
+                return false;
+            }
+        });
+
+        MenuItemCompat.setOnActionExpandListener(myActionMenuItem, new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                currentState = CardListState.SEARCH;
+                allCardsListSearch = dbManager.getCards();
+                isPracticeList = null;
+                populateSearchListView("");
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                changeStateToView();
+                return true;
+            }
+        });
     }
 
     @Override
@@ -187,9 +243,56 @@ public class CardListFragment extends Fragment {
                 }
 
                 return true;
+            case R.id.action_sort:
+                showSortDialog();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showSortDialog() {
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View dialogView = inflater.inflate(R.layout.custom_scrollable_dialog_list, null, false);
+
+        AlertDialog.Builder deckListAlertDialog = new AlertDialog.Builder(getContext());
+
+        deckListAlertDialog.setView(dialogView);
+        deckListAlertDialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+
+            }
+        });
+
+        deckListAlertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+
+            }
+        });
+
+        // TODO array -> menu for sorting choices
+
+        deckListAlertDialog.setTitle("Sort");
+
+
+        String[] sortingChoices = new String[]{"A-Z", "Z-A", "Date Created", "Date Modified"};
+
+
+        deckListAlertDialog.setSingleChoiceItems(sortingChoices, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // todo add temp variable for selected
+            }
+        });
+
+        AlertDialog alert = deckListAlertDialog.create();
+        Helper.getInstance().hideKeyboard(getActivity());
+        alert.show();
     }
 
     ////// HOLD MENU //////
@@ -258,8 +361,7 @@ public class CardListFragment extends Fragment {
 
     private void editCard() {
         String cardId = cardList.get(indexSelected).getCardId();
-        // TODO set edit intent
-        ((MainActivityManager) getActivity()).startActivityViewCard(cardId);
+        ((MainActivityManager) getActivity()).startActivityEditCard(cardId);
     }
 
     private void toggleCardFromPractice() {
@@ -377,8 +479,6 @@ public class CardListFragment extends Fragment {
     public void populateListView(String idDeck) {
         if (cardList != null)
             cardList.clear();
-        if (mCardListString != null)
-            mCardListString.clear();
 
         customListAdapter = new CustomListAdapter(getContext());
 
@@ -433,10 +533,6 @@ public class CardListFragment extends Fragment {
             textView.setVisibility(View.GONE);
             listView.setVisibility(View.VISIBLE);
 
-            for (int i = 0; i < cardList.size(); i++) {
-                mCardListString.add(cardList.get(i).getQuestion());
-            }
-
             listView.setAdapter(customListAdapter);
 
             registerForContextMenu(listView);
@@ -456,6 +552,44 @@ public class CardListFragment extends Fragment {
         }
 
     }
+
+    private void populateSearchListView(String containsString) {
+
+
+        cardList.clear();
+
+        for (int counter = 0; counter < allCardsListSearch.size(); counter++) {
+            if (allCardsListSearch.get(counter).getAnswer().contains(containsString) ||
+                    allCardsListSearch.get(counter).getQuestion().contains(containsString)) {
+                cardList.add(allCardsListSearch.get(counter));
+            }
+        }
+
+
+        customListAdapter = new CustomListAdapter(getContext());
+
+        if (!cardList.isEmpty()) {
+            textView.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+
+            listView.setAdapter(customListAdapter);
+
+            registerForContextMenu(listView);
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+
+                }
+            });
+
+        } else {
+            textView.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        }
+    }
+
 
     private boolean areDecksDifferent() {
         for (int counter = 0; counter < isPartOfList.length; counter++) {
@@ -546,6 +680,7 @@ public class CardListFragment extends Fragment {
             View rowView;
             rowView = inflater.inflate(R.layout.custom_card_item, null);
 
+
             holder.questionHolder = (TextView) rowView.findViewById(R.id.custom_card_item_question);
             holder.answerHolder = (TextView) rowView.findViewById(R.id.custom_card_item_answer);
             holder.checkBox = (CheckBox) rowView.findViewById(R.id.custom_card_item_checkbox);
@@ -562,7 +697,7 @@ public class CardListFragment extends Fragment {
             }
 
 
-            if (currentState == CardListState.VIEW) {
+            if (currentState == CardListState.VIEW || currentState == CardListState.SEARCH) {
                 holder.checkboxLayout.setVisibility(View.GONE);
             } else if (currentState == CardListState.EDIT_DECK) {
                 holder.checkboxLayout.setVisibility(View.VISIBLE);
@@ -585,7 +720,7 @@ public class CardListFragment extends Fragment {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         isPracticeList[position] = isChecked;
                         if (!isPracticeList[position])
-                            holder.cardLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.colorDivider));
+                            holder.cardLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.colorNotPractice));
                         else
                             holder.cardLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
 
@@ -594,7 +729,8 @@ public class CardListFragment extends Fragment {
 
             }
 
-            if (currentState == CardListState.VIEW) {
+
+            if (currentState == CardListState.VIEW || currentState == CardListState.SEARCH) {
                 rowView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
@@ -613,11 +749,12 @@ public class CardListFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     // TODO Auto-generated method stub
-                    if (currentState == CardListState.VIEW) {
+                    if (currentState == CardListState.VIEW || currentState == CardListState.SEARCH) {
                         String cardId = cardList.get(position).getCardId();
                         ((MainActivityManager) getActivity()).startActivityViewCard(cardId);
                     } else if (currentState == CardListState.EDIT_DECK) {
                         isPartOfList[position] = !isPartOfList[position];
+                        holder.checkBox.setChecked(isPartOfList[position]);
                     } else if (currentState == CardListState.PRACTICE_TOGGLE) {
                         isPracticeList[position] = !isPracticeList[position];
                         if (isPracticeList[position]) {

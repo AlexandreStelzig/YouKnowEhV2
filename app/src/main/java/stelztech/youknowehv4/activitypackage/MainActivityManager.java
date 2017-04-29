@@ -48,8 +48,6 @@ public class MainActivityManager extends AppCompatActivity
     private boolean backToPreviousActivity = false;
     private String lastWordInfoSeen = "";
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +61,6 @@ public class MainActivityManager extends AppCompatActivity
         // action button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         final FrameLayout frame = (FrameLayout) findViewById(R.id.content_frame);
-
 
         ActionButtonManager actionButtonManager = ActionButtonManager.getInstance();
         actionButtonManager.setContext(this);
@@ -124,6 +121,8 @@ public class MainActivityManager extends AppCompatActivity
             @Override
             public boolean onQueryTextChange(String s) {
                 // UserFeedback.show( "SearchOnQueryTextChanged: " + s);
+
+
                 return false;
             }
         });
@@ -283,6 +282,15 @@ public class MainActivityManager extends AppCompatActivity
         this.startActivityForResult(i, 1);
     }
 
+    public void startActivityEditCard(String cardId) {
+        lastWordInfoSeen = cardId;
+        Intent i = new Intent(this, CardInfoActivity.class);
+        i.putExtra("initialState", CardInfoActivity.CardInfoState.EDIT);
+        i.putExtra("cardId", cardId);
+        this.startActivityForResult(i, 1);
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //TODO add if statements
@@ -295,7 +303,6 @@ public class MainActivityManager extends AppCompatActivity
         }
         mCardListFragment.populateListView(getCurrentDeckIdSelected());
     }
-
 
 
 }

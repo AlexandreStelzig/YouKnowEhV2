@@ -20,6 +20,7 @@ public class MainMenuToolbarManager {
         DECK,
         PRACTICE,
         CARD_LIST_EDIT,
+        SEARCH,
         DEFAULT
     }
 
@@ -47,37 +48,43 @@ public class MainMenuToolbarManager {
 
         switch (state) {
             case CARD:
-                setMenuItemVisibility(activity, menu, true, true, true, false, true, false, true);
+                setMenuItemVisibility(activity, menu, true, true, true, false, true, false, true, true);
                 break;
             case DECK:
-                setMenuItemVisibility(activity, menu, false, true, false, false, false, false, false);
+                setMenuItemVisibility(activity, menu, false, false, false, false, false, false, false, false);
                 break;
             case PRACTICE:
-                setMenuItemVisibility(activity, menu, false, false, true, false, false, false, false);
+                setMenuItemVisibility(activity, menu, false, false, true, false, false, false, false, false);
                 break;
             case CARD_LIST_EDIT:
-                setMenuItemVisibility(activity, menu, false, true, false, true, false, true, false);
+                setMenuItemVisibility(activity, menu, false, true, false, true, false, true, false, false);
+                break;
+            case SEARCH:
+                setMenuItemVisibility(activity, menu, false, true, false, false, false, false, false, false);
                 break;
             case DEFAULT:
                 // same
             default:
-                setMenuItemVisibility(activity, menu, false, false, false, false, false, false, false);
+                setMenuItemVisibility(activity, menu, false, false, false, false, false, false, false, false);
                 break;
         }
     }
 
     private void setMenuItemVisibility(Activity activity, Menu menu, boolean isDropdownVisible, boolean isSearchVisible,
                                        boolean isReverseVisible, boolean isDoneVisible, boolean isEditDeckCardsVisible,
-                                       boolean isCancelVisible, boolean isTogglePracticeVisible) {
+                                       boolean isCancelVisible, boolean isTogglePracticeVisible, boolean isSortVsible) {
 
         ActionBar actionBar = ((MainActivityManager) activity).getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(!isDropdownVisible);
 
-        if (isDropdownVisible) {
-            activity.findViewById(R.id.spinner_nav_layout).setVisibility(View.VISIBLE);
-        } else {
-            activity.findViewById(R.id.spinner_nav_layout).setVisibility(View.GONE);
+        if(activity.findViewById(R.id.spinner_nav_layout) != null){
+            if (isDropdownVisible) {
+                activity.findViewById(R.id.spinner_nav_layout).setVisibility(View.VISIBLE);
+            } else {
+                activity.findViewById(R.id.spinner_nav_layout).setVisibility(View.GONE);
+            }
         }
+
         menu.findItem(R.id.action_search).setVisible(isSearchVisible);
         menu.findItem(R.id.action_reverse).setVisible(isReverseVisible);
 
@@ -86,7 +93,7 @@ public class MainMenuToolbarManager {
         menu.findItem(R.id.action_cancel).setVisible(isCancelVisible);
         menu.findItem(R.id.action_practice_toggle).setVisible(isTogglePracticeVisible);
 
-
+        menu.findItem(R.id.action_sort).setVisible(isSortVsible);
     }
 
 
