@@ -7,4 +7,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_info">20dp</dimen>
     <dimen name="word_info_header">15dp</dimen>
+    <dimen name="default_padding">10dp</dimen>
 </resources>

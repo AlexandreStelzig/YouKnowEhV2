@@ -47,6 +47,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/quick_create"
+        android:orderInCategory="2034"
+        android:title="Quick Create"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_sort"
         android:orderInCategory="238492"
         android:title="Sort"

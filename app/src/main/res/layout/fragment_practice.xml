@@ -68,10 +68,11 @@
             android:layout_height="0dp"
             android:layout_gravity="center"
             android:layout_weight="3"
-            android:background="@drawable/custom_border_background"
             android:orientation="vertical"
             android:padding="5dp">
 
+
+            <!--android:background="@drawable/custom_border_background"-->
 
             <TextView
                 android:id="@+id/practice_question"

@@ -408,21 +408,26 @@ public class CardInfoActivity extends AppCompatActivity {
     private void setupDialogView() {
         deckListAlertDialog.setTitle("Decks:");
         // display a normal list
-        final ArrayAdapter<CharSequence> arrayAdapter = new ArrayAdapter<CharSequence>(
-                this,
-                android.R.layout.simple_list_item_1);
 
-
-        arrayAdapter.addAll(mDeckListDisplayName);
-        deckListAlertDialog.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int indexSelected) {
-                String deckIdReturn = mCardSpecificDeck.get(indexSelected).getDeckId();
-                getIntent().putExtra("deckIdReturn", deckIdReturn);
-                setResult(1, getIntent());
-                finish();
-            }
-        });
+        if(mDeckListDisplayName.length == 0){
+            final TextView input = new TextView (this);
+            deckListAlertDialog.setMessage("No decks");
+            deckListAlertDialog.setView(input);
+        }else{
+            final ArrayAdapter<CharSequence> arrayAdapter = new ArrayAdapter<CharSequence>(
+                    this,
+                    android.R.layout.simple_list_item_1);
+            arrayAdapter.addAll(mDeckListDisplayName);
+            deckListAlertDialog.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int indexSelected) {
+                    String deckIdReturn = mCardSpecificDeck.get(indexSelected).getDeckId();
+                    getIntent().putExtra("deckIdReturn", deckIdReturn);
+                    setResult(1, getIntent());
+                    finish();
+                }
+            });
+        }
     }
 
     private void cancelDialogAction() {
@@ -474,13 +479,13 @@ public class CardInfoActivity extends AppCompatActivity {
         String note = noteEditTextView.getText().toString();
 
         // fields validation
-        if (question.isEmpty() || answer.isEmpty()) {
+        if (question.trim().isEmpty() || answer.trim().isEmpty()) {
             String toastMessageError = "";
-            if (question.isEmpty() && answer.isEmpty())
+            if (question.trim().isEmpty() && answer.trim().isEmpty())
                 toastMessageError = "Question and Answer cannot be empty";
-            else if (question.isEmpty() && !answer.isEmpty())
+            else if (question.trim().isEmpty() && !answer.trim().isEmpty())
                 toastMessageError = "Question cannot be empty";
-            else if (!question.isEmpty() && answer.isEmpty())
+            else if (!question.trim().isEmpty() && answer.trim().isEmpty())
                 toastMessageError = "Answer cannot be empty";
 
             Toast.makeText(this, (String) toastMessageError,
@@ -523,13 +528,13 @@ public class CardInfoActivity extends AppCompatActivity {
                 String answer = answerEditTextView.getText().toString();
                 String note = noteEditTextView.getText().toString();
 
-                if (question.isEmpty() || answer.isEmpty()) {
+                if (question.trim().isEmpty() || answer.trim().isEmpty()) {
                     String toastMessageError = "";
-                    if (question.isEmpty() && answer.isEmpty())
+                    if (question.trim().isEmpty() && answer.trim().isEmpty())
                         toastMessageError = "Question and Answer cannot be empty";
-                    else if (question.isEmpty() && !answer.isEmpty())
+                    else if (question.trim().isEmpty() && !answer.trim().isEmpty())
                         toastMessageError = "Question cannot be empty";
-                    else if (!question.isEmpty() && answer.isEmpty())
+                    else if (!question.trim().isEmpty() && answer.trim().isEmpty())
                         toastMessageError = "Answer cannot be empty";
 
                     Toast.makeText(this, (String) toastMessageError,

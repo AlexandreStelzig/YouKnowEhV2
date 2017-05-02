@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +37,12 @@ import stelztech.youknowehv4.model.Deck;
  */
 
 public class DeckListFragment extends Fragment {
+
+
+    public enum DeckDialogOption {
+        NEW,
+        UPDATE
+    }
 
     // views
     private View view;
@@ -159,7 +166,7 @@ public class DeckListFragment extends Fragment {
         String deckName = "Deck name: " + deck.getDeckName();
         String dateCreated = "Date Created: " + deck.getDateCreated();
         String dateModified = "Date Modified: " + deck.getDateModified();
-        String message = deckName +"\n" + dateCreated + "\n" + dateModified;
+        String message = deckName + "\n" + dateCreated + "\n" + dateModified;
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
         builder.setMessage(message).setPositiveButton("done", null).show();
     }
@@ -189,7 +196,15 @@ public class DeckListFragment extends Fragment {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final EditText input = new EditText(getActivity());
         input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setSingleLine();
 
+        FrameLayout container = new FrameLayout(getActivity());
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.leftMargin = getResources().getDimensionPixelSize(R.dimen.default_padding);
+        params.rightMargin = getResources().getDimensionPixelSize(R.dimen.default_padding);
+
+        input.setLayoutParams(params);
+        container.addView(input);
 
         switch (dialogType) {
             case NEW:
@@ -205,7 +220,7 @@ public class DeckListFragment extends Fragment {
                 break;
         }
 
-        builder.setView(input);
+        builder.setView(container);
 
         // Set up the buttons
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -215,7 +230,7 @@ public class DeckListFragment extends Fragment {
 
                 deckNameHolder = input.getText().toString();
                 // check if valid name
-                if (deckNameHolder.equals("")) {
+                if (deckNameHolder.trim().isEmpty()) {
                     Toast.makeText(getContext(), "invalid name", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
@@ -301,10 +316,6 @@ public class DeckListFragment extends Fragment {
         }
     }
 
-    public enum DeckDialogOption {
-        NEW,
-        UPDATE
-    }
 
     public void onPrepareOptionsMenu(Menu menu) {
         MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.DECK, menu, getActivity());

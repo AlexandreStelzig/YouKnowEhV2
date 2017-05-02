@@ -6,4 +6,5 @@
     android:gravity="left"
     android:padding="5dip"
     android:textColor="@color/colorTextIcon"
-    android:textSize="20sp" />
+    android:textSize="20sp"
+    android:ellipsize="marquee"/>

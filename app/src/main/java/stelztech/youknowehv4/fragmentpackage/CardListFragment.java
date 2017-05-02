@@ -16,11 +16,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -44,6 +46,12 @@ import stelztech.youknowehv4.model.Deck;
  */
 
 public class CardListFragment extends Fragment {
+
+
+    public enum CardQuickDialogOption {
+        QUICK_NEW,
+        QUICK_UPDATE
+    }
 
 
     public enum CardListState {
@@ -89,6 +97,9 @@ public class CardListFragment extends Fragment {
     // reverse
     private boolean isReverseOrder;
 
+    // quick create holder
+    private String questionHolder;
+    private String answerHolder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -139,7 +150,6 @@ public class CardListFragment extends Fragment {
 
         final MenuItem myActionMenuItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) myActionMenuItem.getActionView();
-
 
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -244,14 +254,18 @@ public class CardListFragment extends Fragment {
 
                 return true;
             case R.id.action_sort:
-                showSortDialog();
+                sortDialog().show();
+                return true;
+            case R.id.quick_create:
+                quickCreateUpdateDialog(CardQuickDialogOption.QUICK_NEW).show();
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void showSortDialog() {
+    // DIALOG
+    private AlertDialog sortDialog() {
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View dialogView = inflater.inflate(R.layout.custom_scrollable_dialog_list, null, false);
@@ -280,7 +294,8 @@ public class CardListFragment extends Fragment {
         deckListAlertDialog.setTitle("Sort");
 
 
-        String[] sortingChoices = new String[]{"A-Z", "Z-A", "Date Created", "Date Modified"};
+        String[] sortingChoices = new String[]{"Question: A-Z", "Question: Z-A", "Answer: A-Z", "Answer: Z-A",
+                "Date Created", "Date Modified"};
 
 
         deckListAlertDialog.setSingleChoiceItems(sortingChoices, 0, new DialogInterface.OnClickListener() {
@@ -292,7 +307,122 @@ public class CardListFragment extends Fragment {
 
         AlertDialog alert = deckListAlertDialog.create();
         Helper.getInstance().hideKeyboard(getActivity());
-        alert.show();
+        return alert;
+    }
+
+
+    private AlertDialog quickCreateUpdateDialog(final CardQuickDialogOption dialogType) {
+
+        questionHolder = "";
+        answerHolder = "";
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        switch (dialogType) {
+            case QUICK_NEW:
+                builder.setTitle("Quick Create Card");
+                break;
+            case QUICK_UPDATE:
+
+                break;
+            default:
+                Toast.makeText(getContext(), "Error in deck dialog - wrong type", Toast.LENGTH_SHORT).show();
+                break;
+        }
+
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+
+        View dialogView = inflater.inflate(R.layout.custom_dialog_quick_create_card, null);
+
+
+        builder.setView(dialogView);
+
+
+        final EditText questionEditTextView = (EditText) dialogView.findViewById(R.id.quick_create_question);
+        final EditText answerEditTextView = (EditText) dialogView.findViewById(R.id.quick_create_answer);
+        final TextView deckPlaceHolder = (TextView) dialogView.findViewById(R.id.quick_create_deck_placeholder);
+
+        final String currentSelectedDeckId = getCurrentDeckIdSelected();
+
+
+        if (dialogType == CardQuickDialogOption.QUICK_NEW) {
+            if (currentSelectedDeckId == ALL_DECKS_ITEM)
+                deckPlaceHolder.setText("No Deck");
+            else
+                deckPlaceHolder.setText(dbManager.getDeckFromId(currentSelectedDeckId).getDeckName());
+        } else {
+            // todo number of deck
+        }
+
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            // when button OK is press
+            public void onClick(DialogInterface dialog, int which) {
+                answerHolder = answerEditTextView.getText().toString();
+                questionHolder = questionEditTextView.getText().toString();
+
+
+                boolean answerEmpty = answerHolder.trim().isEmpty();
+                boolean questionEmpty = questionHolder.trim().isEmpty();
+
+                if (answerEmpty || questionEmpty) {
+                    String message = "";
+                    if (answerEmpty && questionEmpty) {
+                        message = "Error - Answer and Question cannot be empty";
+                    } else if (!answerEmpty && questionEmpty) {
+                        message = "Error - Question cannot be empty";
+                    } else {
+                        message = "Error - Answer cannot be empty";
+                    }
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                } else {
+
+                    if (dialogType == CardQuickDialogOption.QUICK_NEW) {
+                        String newCardId = dbManager.createCard(questionHolder, answerHolder, "");
+                        if (currentSelectedDeckId != ALL_DECKS_ITEM) {
+                            dbManager.createCardDeck(newCardId, currentSelectedDeckId);
+                        }
+
+                        Toast.makeText(getContext(), "Card created", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // todo update function
+                    }
+
+                }
+
+                Toast.makeText(getContext(), answerHolder, Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+        // if cancel button is press, close dialog
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.setNeutralButton("Next", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+
+        // opens keyboard on creation with selection at the end
+        AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+//        input.setSelection(input.getText().length());
+        return dialog;
+
+
     }
 
     ////// HOLD MENU //////
@@ -437,7 +567,7 @@ public class CardListFragment extends Fragment {
 
         deckArrayAdapter = new ArrayAdapter<String>(
                 getContext(), R.layout.custom_spinner_item_card, deckListString);
-        deckArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        deckArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(deckArrayAdapter);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -535,7 +665,11 @@ public class CardListFragment extends Fragment {
 
             listView.setAdapter(customListAdapter);
 
-            registerForContextMenu(listView);
+            if (currentState == CardListState.VIEW) {
+                registerForContextMenu(listView);
+            } else {
+                unregisterForContextMenu(listView);
+            }
 
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -574,7 +708,11 @@ public class CardListFragment extends Fragment {
 
             listView.setAdapter(customListAdapter);
 
-            registerForContextMenu(listView);
+            if (currentState == CardListState.VIEW) {
+                registerForContextMenu(listView);
+            } else {
+                unregisterForContextMenu(listView);
+            }
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -730,7 +868,7 @@ public class CardListFragment extends Fragment {
             }
 
 
-            if (currentState == CardListState.VIEW || currentState == CardListState.SEARCH) {
+            if (currentState == CardListState.VIEW ) {
                 rowView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
