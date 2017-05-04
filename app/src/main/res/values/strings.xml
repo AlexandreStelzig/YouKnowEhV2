@@ -8,4 +8,15 @@
     <string name="about_email_string"><u>Alexandre.Stelzig@gmail.com</u></string>
     <string name="facebook_about_string"><u>facebook.com/alexandre.stelzig</u></string>
     <string name="website_about_string"><u>alexandrestelzig.github.io</u></string>
+
+
+    <string-array name="sort_options">
+        <item>Question: A-Z</item>
+        <item>Question: Z-A</item>
+        <item>Answer: A-Z</item>
+        <item>Answer: Z-A</item>
+        <item>Date Created</item>
+        <item>Date Modified</item>
+    </string-array>
+
 </resources>

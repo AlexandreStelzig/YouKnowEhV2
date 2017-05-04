@@ -16,7 +16,7 @@ import stelztech.youknowehv4.manager.MainMenuToolbarManager;
  * Created by alex on 2017-04-03.
  */
 
-public class AccountFragment extends Fragment {
+public class ProfileFragment extends Fragment {
 
     View view;
 

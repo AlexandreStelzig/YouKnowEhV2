@@ -14,9 +14,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +54,10 @@ public class PracticeFragment extends Fragment {
     private Button showButton;
     private Button nextButton;
     private Button infoButton;
+    private TextView alwaysShowAnswerTV;
+
+    private CheckBox practiceCheckbox;
+    private TextView praticeNbCards;
 
     // question answers
     private List<String> questionList;
@@ -90,6 +97,9 @@ public class PracticeFragment extends Fragment {
         showButton = (Button) view.findViewById(R.id.practice_show_button);
         nextButton = (Button) view.findViewById(R.id.practice_next_button);
         infoButton = (Button) view.findViewById(R.id.practice_info);
+        practiceCheckbox = (CheckBox) view.findViewById(R.id.practice_checkbox);
+        praticeNbCards = (TextView) view.findViewById(R.id.practice_nb_cards);
+        alwaysShowAnswerTV = (TextView) view.findViewById(R.id.always_show_answer_tv);
 
         questionList = new ArrayList<>();
         answerList = new ArrayList<>();
@@ -105,6 +115,16 @@ public class PracticeFragment extends Fragment {
                     showButtonClicked();
                 }
                 // TODO add warning toast
+            }
+        });
+
+        alwaysShowAnswerTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                practiceCheckbox.setChecked(!practiceCheckbox.isChecked());
+                if(!isSelectedDeckNothing()){
+                    setQuestionAnswerText();
+                }
             }
         });
 
@@ -127,6 +147,17 @@ public class PracticeFragment extends Fragment {
                 if (deckList.size() > 0) {
                     ((MainActivityManager) getActivity())
                             .displayDeckInfo(deckList.get(spinner.getSelectedItemPosition() - SPINNER_OFFSET).getDeckId());
+                }
+
+            }
+        });
+
+        practiceCheckbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(!isSelectedDeckNothing()){
+                    setQuestionAnswerText();
                 }
 
             }
@@ -184,7 +215,11 @@ public class PracticeFragment extends Fragment {
         deckList = dbManager.getDecks();
         final List<String> deckListString = new ArrayList<>();
 
-        deckListString.add("- Select Deck -");
+        if(deckList.isEmpty()){
+            deckListString.add("- No Decks -");
+        }else{
+            deckListString.add("- Select Deck -");
+        }
         for (int counter = 0; counter < deckList.size(); counter++) {
             deckListString.add(deckList.get(counter).getDeckName());
         }
@@ -268,6 +303,16 @@ public class PracticeFragment extends Fragment {
 
         mCardList = dbManager.getDeckPracticeCards(deckId);
 
+        int nbCardsPractice = mCardList.size();
+        String nbCardsString = nbCardsPractice + " ";
+
+        if(nbCardsPractice == 1)
+            nbCardsString += "Practice Card";
+        else
+            nbCardsString += "Practice Cards";
+
+        praticeNbCards.setText(nbCardsString);
+
         questionOrder = new int[mCardList.size()];
 
         // init order
@@ -284,6 +329,7 @@ public class PracticeFragment extends Fragment {
     private void setSelectDeck() {
         questionTextView.setText("Select a Deck");
         answerTextView.setText("");
+        praticeNbCards.setText("0 Practice Cards");
     }
 
 
@@ -310,6 +356,7 @@ public class PracticeFragment extends Fragment {
                 // reset
                 randomizeQuestionOrder();
                 setQuestionAnswerText();
+                Toast.makeText(getContext(), "Practice Reset", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -329,7 +376,10 @@ public class PracticeFragment extends Fragment {
                 answerHidden = false;
                 showButton.setText("hide");
             } else {
-                answerTextView.setText(answerHiddenString);
+                if(!practiceCheckbox.isChecked())
+                    answerTextView.setText(answerHiddenString);
+                else
+                    answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
                 answerHidden = true;
                 showButton.setText("show");
             }
@@ -368,7 +418,10 @@ public class PracticeFragment extends Fragment {
             answerTextView.setText("");
         } else {
             questionTextView.setText(questionList.get(questionOrder[currentQuestion]));
-            answerTextView.setText(answerHiddenString);
+            if(!practiceCheckbox.isChecked())
+                answerTextView.setText(answerHiddenString);
+            else
+                answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
             answerHidden = true;
         }
     }

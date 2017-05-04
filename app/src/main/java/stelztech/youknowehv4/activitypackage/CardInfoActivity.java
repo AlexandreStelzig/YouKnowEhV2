@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -22,7 +23,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import stelztech.youknowehv4.R;
@@ -72,6 +77,9 @@ public class CardInfoActivity extends AppCompatActivity {
     private LinearLayout createAnotherCardLayout;
     private CheckBox createAnotherCardCheckBox;
     private Button deckInfoButton;
+    private LinearLayout dateInfoLayout;
+    private TextView dateCreatedTV;
+    private TextView dateModifiedTV;
 
     // temp variables
     private String questionTemp = "";
@@ -105,7 +113,9 @@ public class CardInfoActivity extends AppCompatActivity {
         deckInfoButton = (Button) findViewById(R.id.deck_info_button);
         createAnotherCardCheckBox = (CheckBox) findViewById(R.id.another_card_checkbox);
         createAnotherCard = createAnotherCardCheckBox.isChecked();
-
+        dateInfoLayout = (LinearLayout) findViewById(R.id.card_info_date_layout);
+        dateCreatedTV = (TextView) findViewById(R.id.card_date_created);
+        dateModifiedTV = (TextView) findViewById(R.id.card_date_modified);
 
 
         ((TextView) findViewById(R.id.create_another_card_string)).setOnClickListener(new View.OnClickListener() {
@@ -132,7 +142,6 @@ public class CardInfoActivity extends AppCompatActivity {
         CardInfoState initalStateFromIntent = (CardInfoState) getIntent().getSerializableExtra("initialState");
         initState(initalStateFromIntent);
     }
-
 
 
     /////// INITIALIZING ///////
@@ -178,8 +187,6 @@ public class CardInfoActivity extends AppCompatActivity {
         }
 
         if (currentState == CardInfoState.NEW && item.getItemId() == (R.id.action_done_card_info)) {
-
-
 
 
             if (createAnotherCard) {
@@ -246,6 +253,7 @@ public class CardInfoActivity extends AppCompatActivity {
         supportInvalidateOptionsMenu(); // call toolbar menu again
         setKeyboardVisibility(true);
         createAnotherCardLayout.setVisibility(View.VISIBLE);
+        dateInfoLayout.setVisibility(View.GONE);
         deckInfoButton.setText("EDIT");
     }
 
@@ -257,9 +265,10 @@ public class CardInfoActivity extends AppCompatActivity {
         setEditTextEditable(true);
         setupTempVariables();
         supportInvalidateOptionsMenu(); // call toolbar menu again
-        setKeyboardVisibility(true);
         createAnotherCardLayout.setVisibility(View.GONE);
+        dateInfoLayout.setVisibility(View.VISIBLE);
         deckInfoButton.setText("EDIT");
+        setKeyboardVisibility(true);
     }
 
 
@@ -272,6 +281,7 @@ public class CardInfoActivity extends AppCompatActivity {
         supportInvalidateOptionsMenu(); // call toolbar menu again
         setKeyboardVisibility(false);
         createAnotherCardLayout.setVisibility(View.GONE);
+        dateInfoLayout.setVisibility(View.VISIBLE);
         deckInfoButton.setText("VIEW");
     }
 
@@ -409,11 +419,11 @@ public class CardInfoActivity extends AppCompatActivity {
         deckListAlertDialog.setTitle("Decks:");
         // display a normal list
 
-        if(mDeckListDisplayName.length == 0){
-            final TextView input = new TextView (this);
+        if (mDeckListDisplayName.length == 0) {
+            final TextView input = new TextView(this);
             deckListAlertDialog.setMessage("No decks");
             deckListAlertDialog.setView(input);
-        }else{
+        } else {
             final ArrayAdapter<CharSequence> arrayAdapter = new ArrayAdapter<CharSequence>(
                     this,
                     android.R.layout.simple_list_item_1);
@@ -586,6 +596,11 @@ public class CardInfoActivity extends AppCompatActivity {
         answerEditTextView.setText(card.getAnswer());
         questionEditTextView.setText(card.getQuestion());
         noteEditTextView.setText(card.getMoreInfo());
+
+
+
+        dateCreatedTV.setText(Helper.getInstance().getDateFormatted(card.getDateCreated()));
+        dateModifiedTV.setText(Helper.getInstance().getDateFormatted(card.getDateModified()));
     }
 
     private void setEditTextEditable(boolean isEditable) {
@@ -626,7 +641,7 @@ public class CardInfoActivity extends AppCompatActivity {
     private void setViewEnable(EditText view, boolean isEnable) {
 
         if (!isEnable) {
-            view.setKeyListener(null);
+            view.setKeyListener( null );
         } else {
             view.setKeyListener((KeyListener) view.getTag());
         }
@@ -635,8 +650,12 @@ public class CardInfoActivity extends AppCompatActivity {
 
     private void setKeyboardVisibility(boolean isVisible) {
         if (isVisible) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(questionEditTextView, InputMethodManager.SHOW_IMPLICIT);
+
+            if(questionEditTextView.requestFocus()) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(questionEditTextView, InputMethodManager.SHOW_IMPLICIT);
+            }
+
         } else {
             Helper.getInstance().hideKeyboard(this);
         }
@@ -666,6 +685,5 @@ public class CardInfoActivity extends AppCompatActivity {
         mTempPartOfDeckList = mIsPartOfDeckList.clone();
 
     }
-
 
 }

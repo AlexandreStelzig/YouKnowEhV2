@@ -6,9 +6,13 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.content.Context;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import stelztech.youknowehv4.model.Deck;
@@ -57,6 +61,26 @@ public class Helper {
             }
         }
         return output;
+    }
+
+    public String getDateFormatted(String dateString){
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
+        Date date = null;
+        try {
+            date = format.parse(dateString);
+        } catch (ParseException e) {
+            //Handle exception here, most of the time you will just log it.
+            e.printStackTrace();
+        }
+
+        String formattedDate = "";
+
+        if(date != null)
+            formattedDate = date.toString();
+
+
+        return formattedDate;
     }
 
 }

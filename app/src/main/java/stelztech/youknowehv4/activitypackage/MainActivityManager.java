@@ -18,10 +18,10 @@ import android.widget.FrameLayout;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.fragmentpackage.AboutFragment;
-import stelztech.youknowehv4.fragmentpackage.AccountFragment;
 import stelztech.youknowehv4.fragmentpackage.CardListFragment;
 import stelztech.youknowehv4.fragmentpackage.DeckListFragment;
 import stelztech.youknowehv4.fragmentpackage.PracticeFragment;
+import stelztech.youknowehv4.fragmentpackage.ProfileFragment;
 import stelztech.youknowehv4.fragmentpackage.SettingsFragment;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.ActionButtonManager;
@@ -37,8 +37,15 @@ public class MainActivityManager extends AppCompatActivity
     private PracticeFragment mPracticeFragment;
     private SettingsFragment mSettingsFragment;
     private AboutFragment mAboutFragment;
-    private AccountFragment mAccountFragment;
+    private ProfileFragment mProfileFragment;
     private boolean mViewIsAtHome;
+
+    private Fragment previousFragment;
+
+
+    private boolean goBackToDecks;
+
+    private DrawerLayout drawer;
 
     // components
     private NavigationView navigationView;
@@ -47,6 +54,7 @@ public class MainActivityManager extends AppCompatActivity
 
     private boolean backToPreviousActivity = false;
     private String lastWordInfoSeen = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +65,7 @@ public class MainActivityManager extends AppCompatActivity
 
         // init
         mViewIsAtHome = true;
+        goBackToDecks = false;
 
         // action button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -73,19 +82,19 @@ public class MainActivityManager extends AppCompatActivity
         helper.setContext(this);
 
         // drawer
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
         };
-        drawer.addDrawerListener(toggle);
+        drawer.addDrawerListener(drawerToggle);
 
 
-        toggle.syncState();
+        drawerToggle.syncState();
 
         // menu
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.practice);
+
 
         // init fragments
         mDeckListFragment = new DeckListFragment();
@@ -93,7 +102,7 @@ public class MainActivityManager extends AppCompatActivity
         mPracticeFragment = new PracticeFragment();
         mSettingsFragment = new SettingsFragment();
         mAboutFragment = new AboutFragment();
-        mAccountFragment = new AccountFragment();
+        mProfileFragment = new ProfileFragment();
 
         // default page
         displayFragment(R.id.practice);
@@ -148,6 +157,7 @@ public class MainActivityManager extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        goBackToDecks = false;
         displayFragment(item.getItemId());
         return true;
     }
@@ -158,6 +168,7 @@ public class MainActivityManager extends AppCompatActivity
 
 
     public void displayFragment(int fragmentId) {
+
 
         Fragment fragment = null;
         String title = getString(R.string.app_name);
@@ -185,8 +196,8 @@ public class MainActivityManager extends AppCompatActivity
                 title = "About";
                 break;
             case R.id.profile:
-                fragment = mAccountFragment;
-                title = "Account";
+                fragment = mProfileFragment;
+                title = "Profile";
                 break;
         }
 
@@ -208,8 +219,19 @@ public class MainActivityManager extends AppCompatActivity
             mViewIsAtHome = false;
         }
 
+        if (previousFragment != null &&
+                previousFragment.equals(mDeckListFragment) && fragment.equals(mCardListFragment)) {
+            goBackToDecks = true;
+        } else {
+            goBackToDecks = false;
+        }
+
+        previousFragment = fragment;
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
+        navigationView.setCheckedItem(fragmentId);
 
     }
 
@@ -236,11 +258,15 @@ public class MainActivityManager extends AppCompatActivity
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
             } else {
-                if (!mViewIsAtHome) { //if the current view is not the News fragment
-                    displayFragment(R.id.practice);
-                    navigationView.setCheckedItem(R.id.practice);
-                } else {
-                    moveTaskToBack(true);  //If view is in News fragment, exit application
+                if(goBackToDecks)
+                    displayFragment(R.id.deck_list);
+                else{
+                    if (!mViewIsAtHome) { //if the current view is not the News fragment
+                        displayFragment(R.id.practice);
+                        navigationView.setCheckedItem(R.id.practice);
+                    } else {
+                        moveTaskToBack(true);  //If view is in News fragment, exit application
+                    }
                 }
             }
 
@@ -304,5 +330,20 @@ public class MainActivityManager extends AppCompatActivity
         mCardListFragment.populateListView(getCurrentDeckIdSelected());
     }
 
+    public void enableDrawerSwipe(boolean isSwippable) {
+        if (isSwippable) {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        } else {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        }
+    }
+
+    public boolean isGoBackToDecks() {
+        return goBackToDecks;
+    }
+
+    public void setGoBackToDecks(boolean goBackToDecks) {
+        this.goBackToDecks = goBackToDecks;
+    }
 
 }

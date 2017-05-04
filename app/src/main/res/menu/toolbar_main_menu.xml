@@ -15,7 +15,7 @@
         android:id="@+id/action_reverse"
         android:orderInCategory="3"
         android:icon="@drawable/ic_import_export_white_24dp"
-        android:title="Sort"
+        android:title="Reverse Order"
         app:showAsAction="always" />
 
 

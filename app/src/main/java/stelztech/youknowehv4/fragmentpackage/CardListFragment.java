@@ -14,12 +14,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -134,7 +136,9 @@ public class CardListFragment extends Fragment {
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(final Menu menu) {
+
+
         if (currentState == CardListState.VIEW) {
             MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.CARD, menu, getActivity());
             ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.ADD_CARD, getActivity());
@@ -151,6 +155,7 @@ public class CardListFragment extends Fragment {
         final MenuItem myActionMenuItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) myActionMenuItem.getActionView();
 
+        searchView.setQueryHint("Search Cards...");
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -178,6 +183,11 @@ public class CardListFragment extends Fragment {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 currentState = CardListState.SEARCH;
+
+                MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.SEARCH, menu, getActivity());
+                ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
+
+                ((MainActivityManager) getActivity()).enableDrawerSwipe(false);
                 allCardsListSearch = dbManager.getCards();
                 isPracticeList = null;
                 populateSearchListView("");
@@ -186,7 +196,9 @@ public class CardListFragment extends Fragment {
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
+//                ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.ADD_CARD, getActivity());
                 changeStateToView();
+                ((MainActivityManager) getActivity()).enableDrawerSwipe(true);
                 return true;
             }
         });
@@ -294,14 +306,38 @@ public class CardListFragment extends Fragment {
         deckListAlertDialog.setTitle("Sort");
 
 
-        String[] sortingChoices = new String[]{"Question: A-Z", "Question: Z-A", "Answer: A-Z", "Answer: Z-A",
-                "Date Created", "Date Modified"};
-
+        final String[] sortingChoices = getContext().getResources().getStringArray(R.array.sort_options);
 
         deckListAlertDialog.setSingleChoiceItems(sortingChoices, 0, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // todo add temp variable for selected
+                switch (which) {
+                    // Question: A-Z
+                    case 0:
+
+                        break;
+                    // Question: Z-A
+                    case 1:
+
+                        break;
+                    // Answer: A-Z
+                    case 2:
+
+                        break;
+                    // Answer: Z-A
+                    case 3:
+
+                        break;
+                    // Date Created
+                    case 4:
+
+                        break;
+                    // Date Modified
+                    case 5:
+
+                        break;
+                }
             }
         });
 
@@ -362,40 +398,6 @@ public class CardListFragment extends Fragment {
             @Override
             // when button OK is press
             public void onClick(DialogInterface dialog, int which) {
-                answerHolder = answerEditTextView.getText().toString();
-                questionHolder = questionEditTextView.getText().toString();
-
-
-                boolean answerEmpty = answerHolder.trim().isEmpty();
-                boolean questionEmpty = questionHolder.trim().isEmpty();
-
-                if (answerEmpty || questionEmpty) {
-                    String message = "";
-                    if (answerEmpty && questionEmpty) {
-                        message = "Error - Answer and Question cannot be empty";
-                    } else if (!answerEmpty && questionEmpty) {
-                        message = "Error - Question cannot be empty";
-                    } else {
-                        message = "Error - Answer cannot be empty";
-                    }
-                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-                } else {
-
-                    if (dialogType == CardQuickDialogOption.QUICK_NEW) {
-                        String newCardId = dbManager.createCard(questionHolder, answerHolder, "");
-                        if (currentSelectedDeckId != ALL_DECKS_ITEM) {
-                            dbManager.createCardDeck(newCardId, currentSelectedDeckId);
-                        }
-
-                        Toast.makeText(getContext(), "Card created", Toast.LENGTH_SHORT).show();
-                    } else {
-                        // todo update function
-                    }
-
-                }
-
-                Toast.makeText(getContext(), answerHolder, Toast.LENGTH_SHORT).show();
-
 
             }
         });
@@ -415,15 +417,63 @@ public class CardListFragment extends Fragment {
         });
 
 
-        // opens keyboard on creation with selection at the end
-        AlertDialog dialog = builder.create();
+        final AlertDialog aDialog = builder.create();
 
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        aDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialog) {
+
+                Button okButton = aDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                okButton.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        answerHolder = answerEditTextView.getText().toString();
+                        questionHolder = questionEditTextView.getText().toString();
+
+
+                        boolean answerEmpty = answerHolder.trim().isEmpty();
+                        boolean questionEmpty = questionHolder.trim().isEmpty();
+
+                        if (answerEmpty || questionEmpty) {
+                            String message = "";
+                            if (answerEmpty && questionEmpty) {
+                                message = "Error - Question and Answer cannot be empty";
+                            } else if (!answerEmpty && questionEmpty) {
+                                message = "Error - Question cannot be empty";
+                            } else {
+                                message = "Error - Answer cannot be empty";
+                            }
+                            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            if (dialogType == CardQuickDialogOption.QUICK_NEW) {
+                                String newCardId = dbManager.createCard(questionHolder, answerHolder, "");
+                                if (currentSelectedDeckId != ALL_DECKS_ITEM) {
+                                    dbManager.createCardDeck(newCardId, currentSelectedDeckId);
+                                }
+
+                                Toast.makeText(getContext(), "Card created", Toast.LENGTH_SHORT).show();
+                                populateListView(getCurrentDeckIdSelected());
+                                aDialog.dismiss();
+                            } else {
+                                // todo update function
+                            }
+
+                        }
+                    }
+                });
+            }
+        });
+
+        aDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 //        input.setSelection(input.getText().length());
-        return dialog;
+        return aDialog;
 
 
     }
+
 
     ////// HOLD MENU //////
 
@@ -459,6 +509,15 @@ public class CardListFragment extends Fragment {
                     Toast.makeText(getContext(), "Card toggle from practice", Toast.LENGTH_SHORT).show();
                 } else
                     Toast.makeText(getContext(), "Please select a deck", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.remove_from_deck:
+                if (getCurrentDeckIdSelected() != ALL_DECKS_ITEM) {
+                    dbManager.deleteCardDeck(cardList.get(indexSelected).getCardId(), getCurrentDeckIdSelected());
+                    Toast.makeText(getContext(), "Card removed from deck", Toast.LENGTH_SHORT).show();
+                    populateListView(getCurrentDeckIdSelected());
+                } else {
+                    Toast.makeText(getContext(), "Please select a deck", Toast.LENGTH_SHORT).show();
+                }
                 return true;
             default:
                 indexSelected = -1;
@@ -815,7 +874,7 @@ public class CardListFragment extends Fragment {
         public View getView(final int position, View convertView, ViewGroup parent) {
 
             final Holder holder = new Holder();
-            View rowView;
+            final View rowView;
             rowView = inflater.inflate(R.layout.custom_card_item, null);
 
 
@@ -868,7 +927,7 @@ public class CardListFragment extends Fragment {
             }
 
 
-            if (currentState == CardListState.VIEW ) {
+            if (currentState == CardListState.VIEW) {
                 rowView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
@@ -908,11 +967,20 @@ public class CardListFragment extends Fragment {
             });
 
 
-            if (isPracticeList != null && !isPracticeList[position] && currentState != CardListState.EDIT_DECK) {
+            if (isPracticeList != null && isPracticeList.length >= position && !isPracticeList[position] && currentState != CardListState.EDIT_DECK) {
                 holder.cardLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.colorNotPractice));
             } else {
                 holder.cardLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
             }
+
+            rowView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    return false;
+                }
+            });
+
 
             return rowView;
 

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
@@ -124,7 +123,6 @@
                         android:inputType="textAutoComplete"
                         android:maxLines="1"
                         android:textColor="@color/textPrimary"
-                        android:textIsSelectable="true"
                         android:textSize="@dimen/text_info" />
                 </LinearLayout>
 
@@ -155,7 +153,6 @@
                         android:inputType="textAutoComplete"
                         android:maxLines="1"
                         android:textColor="@color/textPrimary"
-                        android:textIsSelectable="true"
                         android:textSize="@dimen/text_info" />
                 </LinearLayout>
 
@@ -190,26 +187,75 @@
                         android:minLines="7"
                         android:scrollbars="vertical"
                         android:textColor="@color/textPrimary"
-                        android:textIsSelectable="true"
                         android:textSize="@dimen/text_info" />
                 </LinearLayout>
 
+
             </LinearLayout>
 
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp" />
+
+            <LinearLayout
+                android:id="@+id/card_info_date_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Date Created:  " />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Date Modified: " />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/card_date_created"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DateCreatedPlaceHolder" />
+
+                    <TextView
+                        android:id="@+id/card_date_modified"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DateModifiedPlaceHolder" />
+                </LinearLayout>
+
+
+            </LinearLayout>
 
 
         </LinearLayout>
     </ScrollView>
 
     <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/fab"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="bottom|end"-->
-        <!--android:layout_margin="@dimen/fab_margin"-->
-        <!--android:tint="@color/colorTextIcon"-->
-        <!--app:rippleColor="@color/white"-->
-        <!--app:backgroundTint="@color/colorPrimary"-->
-        <!--app:srcCompat="@android:drawable/ic_menu_edit" />-->
+    <!--android:id="@+id/fab"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="bottom|end"-->
+    <!--android:layout_margin="@dimen/fab_margin"-->
+    <!--android:tint="@color/colorTextIcon"-->
+    <!--app:rippleColor="@color/white"-->
+    <!--app:backgroundTint="@color/colorPrimary"-->
+    <!--app:srcCompat="@android:drawable/ic_menu_edit" />-->
 
 </FrameLayout>

@@ -1,9 +1,11 @@
 package stelztech.youknowehv4.fragmentpackage;
 
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.ContextMenu;
@@ -11,13 +13,18 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,8 +61,7 @@ public class DeckListFragment extends Fragment {
 
     // list
     private List<Deck> deckList;
-    private List<String> adapterDeckName;
-    private ArrayAdapter<String> adapter;
+    private CustomListAdapter customListAdapter;
 
     // dialog
     private String deckNameHolder;
@@ -78,7 +84,6 @@ public class DeckListFragment extends Fragment {
         dbManager = DatabaseManager.getInstance(getActivity());
 
         deckList = new ArrayList<Deck>();
-        adapterDeckName = new ArrayList<String>();
 
         populateListView();
 
@@ -90,41 +95,26 @@ public class DeckListFragment extends Fragment {
 
         if (deckList != null)
             deckList.clear();
-        if (adapterDeckName != null)
-            adapterDeckName.clear();
 
         deckList = dbManager.getDecks();
+
+        customListAdapter = new CustomListAdapter(getContext());
 
         if (!deckList.isEmpty()) {
 
             textView.setVisibility(View.GONE);
             listView.setVisibility(View.VISIBLE);
 
-            for (int i = 0; i < deckList.size(); i++) {
-                adapterDeckName.add(deckList.get(i).getDeckName());
-            }
-            adapter = new ArrayAdapter<String>(getActivity(),
-                    R.layout.custom_deck_item, adapterDeckName);
+            listView.setAdapter(customListAdapter);
+            listView.smoothScrollToPosition(0);
 
-            listView.setAdapter(adapter);
             registerForContextMenu(listView);
 
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                @Override
-                public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-//                openPackageInfo(position);
-                    String deckId = "";
-
-                    deckId = deckList.get(position).getDeckId();
-
-                    ((MainActivityManager) getActivity()).displayDeckInfo(deckId);
-                }
-            });
         } else {
             textView.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
         }
+
     }
 
     ////// HOLD MENU //////
@@ -164,9 +154,14 @@ public class DeckListFragment extends Fragment {
     private void showQuickInfoDeck() {
         Deck deck = deckList.get(indexSelected);
         String deckName = "Deck name: " + deck.getDeckName();
+
+        int nbCardsNumber = dbManager.getCardsFromDeck(deck.getDeckId()).size();
+
+        String nbCards = "Number of Cards: " + nbCardsNumber;
+
         String dateCreated = "Date Created: " + deck.getDateCreated();
         String dateModified = "Date Modified: " + deck.getDateModified();
-        String message = deckName + "\n" + dateCreated + "\n" + dateModified;
+        String message = deckName + "\n" + nbCards + "\n" + dateCreated + "\n" + dateModified;
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
         builder.setMessage(message).setPositiveButton("done", null).show();
     }
@@ -212,8 +207,8 @@ public class DeckListFragment extends Fragment {
                 builder.setTitle("New Deck");
                 break;
             case UPDATE:
-                input.setText((String) adapterDeckName.get(indexSelected));
-                builder.setTitle("Updating \'" + adapterDeckName.get(indexSelected) + "\'");
+                input.setText((String) deckList.get(indexSelected).getDeckName());
+                builder.setTitle("Updating \'" + deckList.get(indexSelected).getDeckName() + "\'");
                 break;
             default:
                 Toast.makeText(getContext(), "Error in deck dialog - wrong type", Toast.LENGTH_SHORT).show();
@@ -307,7 +302,7 @@ public class DeckListFragment extends Fragment {
 
     private void updateDatabase() {
 
-        if (!deckNameHolder.equals((String) adapterDeckName.get(indexSelected))) {
+        if (!deckNameHolder.equals((String) deckList.get(indexSelected).getDeckName())) {
             dbManager.updateDeck((String) deckList.get(indexSelected).getDeckId(), deckNameHolder);
             Toast.makeText(getContext(), "deck name changed", Toast.LENGTH_SHORT).show();
         } else {
@@ -320,5 +315,112 @@ public class DeckListFragment extends Fragment {
     public void onPrepareOptionsMenu(Menu menu) {
         MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.DECK, menu, getActivity());
     }
+
+    ////// CUSTOM ADAPTER //////
+
+    private class CustomListAdapter extends BaseAdapter {
+        Context context;
+
+        private LayoutInflater inflater = null;
+
+        public CustomListAdapter(Context context) {
+            // TODO Auto-generated constructor stub
+            super();
+            this.context = context;
+            inflater = (LayoutInflater) context.
+                    getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        @Override
+        public int getCount() {
+            // TODO Auto-generated method stub
+            return deckList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            // TODO Auto-generated method stub
+            return position;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            // TODO Auto-generated method stub
+            return position;
+        }
+
+        public class Holder {
+            TextView deckName;
+            TextView numberOfCardsTV;
+            TextView numberOfCardsLabel;
+            LinearLayout deckLayout;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+
+            final Holder holder = new Holder();
+            final View rowView;
+            rowView = inflater.inflate(R.layout.custom_deck_item, null);
+
+
+            holder.deckName = (TextView) rowView.findViewById(R.id.custom_deck_item_name);
+            holder.numberOfCardsTV = (TextView) rowView.findViewById(R.id.custom_deck_item_nb_cards);
+            holder.numberOfCardsLabel =  (TextView) rowView.findViewById(R.id.custom_deck_item_nb_cards_label);
+            holder.deckLayout = (LinearLayout) rowView.findViewById(R.id.custom_deck_item_layout);
+
+            holder.deckName.setText(deckList.get(position).getDeckName());
+
+            int nbCards = dbManager.getCardsFromDeck(deckList.get(position).getDeckId()).size();
+            holder.numberOfCardsTV.setText(nbCards + " ");
+
+            if(nbCards == 1)
+                holder.numberOfCardsLabel.setText("Card");
+            else
+                holder.numberOfCardsLabel.setText("Cards");
+
+
+
+            rowView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    indexSelected = position;
+
+                    return false;
+                }
+            });
+
+            rowView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    indexSelected = position;
+                    ((MainActivityManager) getActivity()).displayDeckInfo(deckList.get(indexSelected).getDeckId());
+
+
+
+                }
+            });
+
+            holder.deckLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
+
+            rowView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+//                    rowView.setBackgroundResource(R.drawable.custom_listview_background);
+                    return false;
+                }
+            });
+
+
+//            Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_top_to_bottom);
+//            rowView.startAnimation(animation);
+
+
+            return rowView;
+
+        }
+
+    }
+
 
 }

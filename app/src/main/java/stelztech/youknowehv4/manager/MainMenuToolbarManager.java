@@ -48,31 +48,32 @@ public class MainMenuToolbarManager {
 
         switch (state) {
             case CARD:
-                setMenuItemVisibility(activity, menu, true, true, true, false, true, false, true, true);
+                setMenuItemVisibility(activity, menu, true, true, true, false, true, false, true, true, true);
                 break;
             case DECK:
-                setMenuItemVisibility(activity, menu, false, false, false, false, false, false, false, false);
+                setMenuItemVisibility(activity, menu, false, false, false, false, false, false, false, false, false);
                 break;
             case PRACTICE:
-                setMenuItemVisibility(activity, menu, false, false, true, false, false, false, false, false);
+                setMenuItemVisibility(activity, menu, false, false, true, false, false, false, false, false, false);
                 break;
             case CARD_LIST_EDIT:
-                setMenuItemVisibility(activity, menu, false, true, false, true, false, true, false, false);
+                setMenuItemVisibility(activity, menu, false, false, false, true, false, true, false, false, false);
                 break;
             case SEARCH:
-                setMenuItemVisibility(activity, menu, false, true, false, false, false, false, false, false);
+                setMenuItemVisibility(activity, menu, false, true, true, false, false, false, false, true, false);
                 break;
             case DEFAULT:
                 // same
             default:
-                setMenuItemVisibility(activity, menu, false, false, false, false, false, false, false, false);
+                setMenuItemVisibility(activity, menu, false, false, false, false, false, false, false, false, false);
                 break;
         }
     }
 
     private void setMenuItemVisibility(Activity activity, Menu menu, boolean isDropdownVisible, boolean isSearchVisible,
                                        boolean isReverseVisible, boolean isDoneVisible, boolean isEditDeckCardsVisible,
-                                       boolean isCancelVisible, boolean isTogglePracticeVisible, boolean isSortVsible) {
+                                       boolean isCancelVisible, boolean isTogglePracticeVisible, boolean isSortVisible,
+                                       boolean isQuickCreateVisible) {
 
         ActionBar actionBar = ((MainActivityManager) activity).getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(!isDropdownVisible);
@@ -93,7 +94,8 @@ public class MainMenuToolbarManager {
         menu.findItem(R.id.action_cancel).setVisible(isCancelVisible);
         menu.findItem(R.id.action_practice_toggle).setVisible(isTogglePracticeVisible);
 
-        menu.findItem(R.id.action_sort).setVisible(isSortVsible);
+        menu.findItem(R.id.action_sort).setVisible(isSortVisible);
+        menu.findItem(R.id.quick_create).setVisible(isQuickCreateVisible);
     }
 
 
