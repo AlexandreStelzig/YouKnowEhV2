@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.model.Card;
 import stelztech.youknowehv4.model.CardDeck;
 import stelztech.youknowehv4.model.Deck;
@@ -54,7 +55,7 @@ public class DatabaseManager {
         }
         cursor.close();
 
-        cardList = sortAlphabetically_Card_Question(cardList);
+        cardList = SortingStateManager.getInstance().sortCardList(cardList);
 
         return cardList;
     }
@@ -71,7 +72,7 @@ public class DatabaseManager {
             }
         }
 
-        deckList = sortAlphabetically_Deck_Question(deckList);
+        deckList = SortingStateManager.getInstance().sortAlphabetically_Deck_Question(deckList);
 
 
         cursor.close();
@@ -144,7 +145,7 @@ public class DatabaseManager {
             cards.add(getCardFromId(cardDecks.get(i).getCardId()));
         }
 
-        cards = sortAlphabetically_Card_Question(cards);
+        cards = SortingStateManager.getInstance().sortCardList(cards);
 
         cursor.close();
         return cards;
@@ -171,7 +172,7 @@ public class DatabaseManager {
             decks.add(getDeckFromId(cardDecks.get(i).getDeckId()));
         }
 
-        decks = sortAlphabetically_Deck_Question(decks);
+        decks = SortingStateManager.getInstance().sortAlphabetically_Deck_Question(decks);
 
         cursor.close();
         return decks;
@@ -286,12 +287,6 @@ public class DatabaseManager {
                 values);
         return Long.toString(newRowId);
     }
-
-//    public String createCard(String question, String answer, String moreInfo, String deckId) {
-//        String cardId = createCard(question, answer, moreInfo);
-//        createCardDeck(cardId + "", deckId);
-//        return cardId;
-//    }
 
 
     public String createCardDeck(String cardId, String deckId) {
@@ -410,131 +405,6 @@ public class DatabaseManager {
 
         return new CardDeck(deckId, cardId, isPractice, dateAdded);
     }
-
-    private List<Card> sortAlphabetically_Card_Question(List<Card> list) {
-
-        Collections.sort(list, new Comparator<Card>() {
-            @Override
-            public int compare(Card o1, Card o2) {
-
-                String o1String = o1.getQuestion().toLowerCase();
-                String o2String = o2.getQuestion().toLowerCase();
-
-                String o1StringPart = o1String.replaceAll("\\d", "");
-                String o2StringPart = o2String.replaceAll("\\d", "");
-
-
-                if (o1StringPart.equalsIgnoreCase(o2StringPart)) {
-                    return extractInt(o1String) - extractInt(o2String);
-                }
-                return o1String.compareTo(o2String);
-            }
-
-            int extractInt(String s) {
-                String num = s.replaceAll("\\D", "");
-                // return 0 if no digits found
-                return num.isEmpty() ? 0 : Integer.parseInt(num);
-            }
-        });
-        return list;
-
-    }
-
-    private List<Card> sortAlphabetically_Card_Answer(List<Card> list) {
-
-        Collections.sort(list, new Comparator<Card>() {
-            @Override
-            public int compare(Card o1, Card o2) {
-
-                String o1String = o1.getAnswer().toLowerCase();
-                String o2String = o2.getAnswer().toLowerCase();
-
-                String o1StringPart = o1String.replaceAll("\\d", "");
-                String o2StringPart = o2String.replaceAll("\\d", "");
-
-
-                if (o1StringPart.equalsIgnoreCase(o2StringPart)) {
-                    return extractInt(o1String) - extractInt(o2String);
-                }
-                return o1String.compareTo(o2String);
-            }
-
-            int extractInt(String s) {
-                String num = s.replaceAll("\\D", "");
-                // return 0 if no digits found
-                return num.isEmpty() ? 0 : Integer.parseInt(num);
-            }
-        });
-        return list;
-
-    }
-
-    private List<Card> sortReverseAlphabetically_Card_Question(List<Card> list) {
-
-        Collections.sort(list, new Comparator<Card>() {
-            @Override
-            public int compare(Card o1, Card o2) {
-
-                String o1String = o1.getQuestion().toLowerCase();
-                String o2String = o2.getQuestion().toLowerCase();
-
-                String o1StringPart = o1String.replaceAll("\\d", "");
-                String o2StringPart = o2String.replaceAll("\\d", "");
-
-
-                if (o1StringPart.equalsIgnoreCase(o2StringPart)) {
-                    return extractInt(o1String) - extractInt(o2String);
-                }
-                return o1String.compareTo(o2String);
-            }
-
-            int extractInt(String s) {
-                String num = s.replaceAll("\\D", "");
-                // return 0 if no digits found
-                return num.isEmpty() ? 0 : Integer.parseInt(num);
-            }
-        });
-        return list;
-
-    }
-
-    private List<Card> sortReverseAlphabetically_Card_Answer(List<Card> list) {
-        List<Card> tempList = sortAlphabetically_Card_Answer(list);
-        Collections.reverse(tempList);
-        return tempList;
-    }
-
-
-    private List<Deck> sortAlphabetically_Deck_Question(List<Deck> list) {
-
-        Collections.sort(list, new Comparator<Deck>() {
-            @Override
-            public int compare(Deck o1, Deck o2) {
-
-                String o1String = o1.getDeckName().toLowerCase();
-                String o2String = o2.getDeckName().toLowerCase();
-
-
-                String o1StringPart = o1String.replaceAll("\\d", "");
-                String o2StringPart = o2String.replaceAll("\\d", "");
-
-
-                if (o1StringPart.equalsIgnoreCase(o2StringPart)) {
-                    return extractInt(o1String) - extractInt(o2String);
-                }
-                return o1String.compareTo(o2String);
-            }
-
-            int extractInt(String s) {
-                String num = s.replaceAll("\\D", "");
-                // return 0 if no digits found
-                return num.isEmpty() ? 0 : Integer.parseInt(num);
-            }
-        });
-        return list;
-
-    }
-
 
     private String getDateNow() {
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");

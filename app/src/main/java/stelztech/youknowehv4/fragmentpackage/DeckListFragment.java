@@ -36,7 +36,9 @@ import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.manager.ActionButtonManager;
+import stelztech.youknowehv4.manager.ExportImportManager;
 import stelztech.youknowehv4.manager.MainMenuToolbarManager;
+import stelztech.youknowehv4.model.Card;
 import stelztech.youknowehv4.model.Deck;
 
 /**
@@ -144,6 +146,12 @@ public class DeckListFragment extends Fragment {
             case R.id.info_deck:
                 showQuickInfoDeck();
                 populateListView();
+                return true;
+            case R.id.export_deck:
+                Deck selectedDeck = deckList.get(indexSelected);
+                List<Card> cardList = dbManager.getCardsFromDeck(selectedDeck.getDeckId());
+                ExportImportManager.exportFileToEmail(getContext(),selectedDeck , cardList);
+
                 return true;
             default:
                 indexSelected = -1;

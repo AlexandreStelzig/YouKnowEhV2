@@ -4,8 +4,9 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
+    android:ellipsize="marquee"
     android:gravity="center"
+    android:maxLines="1"
     android:padding="5dip"
     android:textColor="@color/textPrimary"
-    android:textSize="20sp"
-    android:ellipsize="marquee"/>
+    android:textSize="20sp" />

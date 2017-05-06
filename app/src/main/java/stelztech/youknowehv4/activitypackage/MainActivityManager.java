@@ -55,6 +55,10 @@ public class MainActivityManager extends AppCompatActivity
     private boolean backToPreviousActivity = false;
     private String lastWordInfoSeen = "";
 
+    // Activity results
+    public final static int CARD_RESULT = 1;
+    public final static int EXPORT_RESULT = 2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,6 +162,7 @@ public class MainActivityManager extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         goBackToDecks = false;
+        previousFragment = mPracticeFragment;
         displayFragment(item.getItemId());
         return true;
     }
@@ -201,9 +206,12 @@ public class MainActivityManager extends AppCompatActivity
                 break;
         }
 
+        // animate the fragment switch
         if (fragment != null) {
             if (!fragment.isVisible()) {
+
                 replaceFragmentWithAnimation(fragment, "" + fragment);
+
             }
         }
 
@@ -258,9 +266,10 @@ public class MainActivityManager extends AppCompatActivity
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
             } else {
-                if(goBackToDecks)
+
+                if (goBackToDecks)
                     displayFragment(R.id.deck_list);
-                else{
+                else {
                     if (!mViewIsAtHome) { //if the current view is not the News fragment
                         displayFragment(R.id.practice);
                         navigationView.setCheckedItem(R.id.practice);
@@ -275,11 +284,30 @@ public class MainActivityManager extends AppCompatActivity
         lastWordInfoSeen = "";
     }
 
-    // transition animation
-    public void replaceFragmentWithAnimation(android.support.v4.app.Fragment fragment, String tag) {
+    // transition animation logic
+    public void replaceFragmentWithAnimation(Fragment fragment, String tag) {
+
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        //transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+
+        if (fragment.equals(mPracticeFragment) && previousFragment != null) {
+            transaction.setCustomAnimations(R.anim.slide_in_down, R.anim.slide_out_down);
+        } else if (fragment.equals(mCardListFragment)) {
+            if (previousFragment != null && previousFragment.equals(mDeckListFragment))
+                transaction.setCustomAnimations(R.anim.slide_in_down, R.anim.slide_out_down);
+            else
+                transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up);
+        } else if (fragment.equals(mDeckListFragment)) {
+            if (previousFragment != null && previousFragment.equals(mPracticeFragment)
+                    || previousFragment.equals(mCardListFragment))
+                transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up);
+            else
+                transaction.setCustomAnimations(R.anim.slide_in_down, R.anim.slide_out_down);
+        } else {
+            // only the three first fragments have a sliding animation
+            transaction.setCustomAnimations(android.R.anim.fade_in,
+                    android.R.anim.fade_out);
+        }
 
 
         transaction.replace(R.id.content_frame, fragment, tag);
@@ -296,7 +324,7 @@ public class MainActivityManager extends AppCompatActivity
         Intent i = new Intent(this, CardInfoActivity.class);
         i.putExtra("initialDeckId", getCurrentDeckIdSelected());
         i.putExtra("initialState", CardInfoActivity.CardInfoState.NEW);
-        this.startActivityForResult(i, 1);
+        this.startActivityForResult(i, MainActivityManager.CARD_RESULT);
     }
 
     // activity to view a new card
@@ -305,7 +333,7 @@ public class MainActivityManager extends AppCompatActivity
         Intent i = new Intent(this, CardInfoActivity.class);
         i.putExtra("initialState", CardInfoActivity.CardInfoState.VIEW);
         i.putExtra("cardId", cardId);
-        this.startActivityForResult(i, 1);
+        this.startActivityForResult(i, MainActivityManager.CARD_RESULT);
     }
 
     public void startActivityEditCard(String cardId) {
@@ -313,7 +341,7 @@ public class MainActivityManager extends AppCompatActivity
         Intent i = new Intent(this, CardInfoActivity.class);
         i.putExtra("initialState", CardInfoActivity.CardInfoState.EDIT);
         i.putExtra("cardId", cardId);
-        this.startActivityForResult(i, 1);
+        this.startActivityForResult(i, MainActivityManager.CARD_RESULT);
     }
 
 
@@ -321,18 +349,26 @@ public class MainActivityManager extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //TODO add if statements
 
+        if(requestCode == CARD_RESULT){
+            overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
 
-        if (data != null && data.getStringExtra("deckIdReturn") != null) {
-            mCardListFragment.setToSelectDeckId(data.getStringExtra("deckIdReturn"));
-            backToPreviousActivity = true;
-            mCardListFragment.setSpinnerSelected();
+            if (data != null && data.getStringExtra("deckIdReturn") != null) {
+                mCardListFragment.setToSelectDeckId(data.getStringExtra("deckIdReturn"));
+                backToPreviousActivity = true;
+                mCardListFragment.setSpinnerSelected();
+            }
+            mCardListFragment.populateListView(getCurrentDeckIdSelected());
         }
-        mCardListFragment.populateListView(getCurrentDeckIdSelected());
+        else if(requestCode == EXPORT_RESULT){
+
+        }
+
     }
 
     public void enableDrawerSwipe(boolean isSwippable) {
         if (isSwippable) {
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
         } else {
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         }

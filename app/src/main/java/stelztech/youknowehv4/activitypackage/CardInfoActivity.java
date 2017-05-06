@@ -87,6 +87,7 @@ public class CardInfoActivity extends AppCompatActivity {
     private String noteTemp = "";
     private boolean[] mInitPartOfDeckTemp;
 
+    private boolean goBackToViewModeFromEdit;
 
     // mode
     private CardInfoState currentState;
@@ -96,11 +97,15 @@ public class CardInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        overridePendingTransition(R.anim.enter, R.anim.exit);
+
         setContentView(R.layout.activity_card_info);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+
+        goBackToViewModeFromEdit = false;
 
         // init
         dbManager = DatabaseManager.getInstance(this);
@@ -182,7 +187,12 @@ public class CardInfoActivity extends AppCompatActivity {
                 setKeyboardVisibility(false);
                 confirmationDialog("Are you sure you want to cancel?\nAll modifications will be lost", ConfirmationEventId.HOME);
             } else {
-                finish(); // close this activity and return to preview activity (if there is any)
+                if(goBackToViewModeFromEdit){
+                    setStateView();
+                }else{
+                    finish();
+                }
+
             }
         }
 
@@ -220,6 +230,7 @@ public class CardInfoActivity extends AppCompatActivity {
 
 
         } else if (item.getItemId() == (R.id.action_edit_card_info)) {
+            goBackToViewModeFromEdit = true;
             setStateEdit();
         } else if (item.getItemId() == (R.id.action_cancel_card_info)) {
             if (cardHaveChanges()) {
@@ -243,6 +254,7 @@ public class CardInfoActivity extends AppCompatActivity {
         CardInfoToolbarManager.getInstance().setState(currentState, menu);
         return true;
     }
+
 
     // navigation options
 
@@ -273,6 +285,7 @@ public class CardInfoActivity extends AppCompatActivity {
 
 
     private void setStateView() {
+        goBackToViewModeFromEdit = false;
         getSupportActionBar().setTitle("View Card");
         currentState = CardInfoState.VIEW;
         initActivityInformationView();

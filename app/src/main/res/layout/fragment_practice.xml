@@ -129,16 +129,17 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:maxLines="3"
+                android:maxLines="4"
                 android:text="Question"
                 android:ellipsize="end"
                 android:textColor="@color/textPrimary"
-                android:textSize="35dp" />
+                android:textSize="32dp" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:background="@color/colorDivider" />
@@ -149,7 +150,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center|top"
-                android:maxLines="3"
+                android:maxLines="4"
                 android:text="Answer"
                 android:ellipsize="end"
                 android:textColor="@color/textPrimary"

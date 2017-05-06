@@ -267,7 +267,6 @@ public class PracticeFragment extends Fragment {
             }
         };
 
-
         spinner.setAdapter(deckArrayAdapter);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
