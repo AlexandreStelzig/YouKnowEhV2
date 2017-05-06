@@ -120,6 +120,7 @@ public class CardListFragment extends Fragment {
         dbManager = DatabaseManager.getInstance(getActivity());
         listView = (ListView) view.findViewById(R.id.listview);
         textView = (TextView) view.findViewById(R.id.list_text);
+
         textView.setText("NO CARDS");
         allCardsListSearch = new ArrayList<>();
 
@@ -183,22 +184,19 @@ public class CardListFragment extends Fragment {
         MenuItemCompat.setOnActionExpandListener(myActionMenuItem, new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                currentState = CardListState.SEARCH;
+
+                changeState(CardListState.SEARCH);
 
                 MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.SEARCH, menu, getActivity());
-                ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
 
-                ((MainActivityManager) getActivity()).enableDrawerSwipe(false);
-                allCardsListSearch = dbManager.getCards();
-                isPracticeList = null;
-                populateSearchListView("");
+
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
 //                ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.ADD_CARD, getActivity());
-                setStateView();
+                changeState(CardListState.VIEW);
                 ((MainActivityManager) getActivity()).enableDrawerSwipe(true);
                 return true;
             }
@@ -223,17 +221,7 @@ public class CardListFragment extends Fragment {
                     return true;
                 }
                 if (getCurrentDeckIdSelected() != ALL_DECKS_ITEM) {
-                    currentState = CardListState.EDIT_DECK;
-
-
-                    MainActivityManager mainActivityManager = ((MainActivityManager) getActivity());
-//                    mainActivityManager.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-//                    mainActivityManager.getSupportActionBar().setDisplayShowHomeEnabled(true);
-//                    mainActivityManager.enableDrawerSwipe(false);
-                    mainActivityManager.getSupportActionBar().setTitle("Edit Deck's Cards");
-
-                    populateListView(getCurrentDeckIdSelected());
-                    getActivity().invalidateOptionsMenu();
+                    changeState(CardListState.EDIT_DECK);
                 } else {
                     Toast.makeText(getContext(), "Please select a deck", Toast.LENGTH_SHORT).show();
                 }
@@ -244,17 +232,7 @@ public class CardListFragment extends Fragment {
                     return true;
                 }
                 if (getCurrentDeckIdSelected() != ALL_DECKS_ITEM) {
-
-
-                    MainActivityManager mainActivityManager = ((MainActivityManager) getActivity());
-//                    mainActivityManager.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-//                    mainActivityManager.getSupportActionBar().setDisplayShowHomeEnabled(true);
-//                    mainActivityManager.enableDrawerSwipe(false);
-                    mainActivityManager.getSupportActionBar().setTitle("Toggle Practice");
-
-                    currentState = CardListState.PRACTICE_TOGGLE;
-                    populateListView(getCurrentDeckIdSelected());
-                    getActivity().invalidateOptionsMenu();
+                    changeState(CardListState.PRACTICE_TOGGLE);
                 } else {
                     Toast.makeText(getContext(), "Please select a deck", Toast.LENGTH_SHORT).show();
                 }
@@ -270,7 +248,7 @@ public class CardListFragment extends Fragment {
                     if (arePracticeCardsDifferent())
                         toggleCardsFromPractice();
                 }
-                setStateView();
+                changeState(CardListState.VIEW);
                 return true;
             case R.id.action_cancel:
                 cancelClicked();
@@ -286,6 +264,37 @@ public class CardListFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    private void changeState(CardListState state) {
+        MainActivityManager mainActivityManager = ((MainActivityManager) getActivity());
+        switch (state) {
+            case VIEW:
+                currentState = CardListState.VIEW;
+                mainActivityManager.getSupportActionBar().setTitle("");
+                populateListView(getCurrentDeckIdSelected());
+                getActivity().invalidateOptionsMenu();
+                break;
+            case EDIT_DECK:
+                currentState = CardListState.EDIT_DECK;
+                mainActivityManager.getSupportActionBar().setTitle("Edit Deck's Cards");
+                populateListView(getCurrentDeckIdSelected());
+                getActivity().invalidateOptionsMenu();
+                break;
+            case PRACTICE_TOGGLE:
+                currentState = CardListState.PRACTICE_TOGGLE;
+                mainActivityManager.getSupportActionBar().setTitle("Toggle Practice");
+                populateListView(getCurrentDeckIdSelected());
+                getActivity().invalidateOptionsMenu();
+                break;
+            case SEARCH:
+                currentState = CardListState.SEARCH;
+                ((MainActivityManager) getActivity()).enableDrawerSwipe(false);
+                allCardsListSearch = dbManager.getCards();
+                isPracticeList = null;
+                populateSearchListView("");
+                ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
+                break;
+        }
+    }
 
     private void cancelClicked() {
         if (currentState == CardListState.EDIT_DECK && areDecksDifferent()) {
@@ -295,7 +304,7 @@ public class CardListFragment extends Fragment {
             displayConfirmationDialog();
 
         } else {
-            setStateView();
+            changeState(CardListState.VIEW);
         }
     }
 
@@ -323,40 +332,48 @@ public class CardListFragment extends Fragment {
 
         deckListAlertDialog.setSingleChoiceItems(sortingChoices,
                 SortingStateManager.getInstance().getSelectedPosition(), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
-                SortingStateManager sortingStateManager = SortingStateManager.getInstance();
-                switch (which) {
-                    // Question: A-Z
-                    case 0:
-                        sortingStateManager.changeSate(SortingStateManager.SortingStates.AZ_QUESTION);
-                        break;
-                    // Question: Z-A
-                    case 1:
-                        sortingStateManager.changeSate(SortingStateManager.SortingStates.ZA_QUESTION);
-                        break;
-                    // Answer: A-Z
-                    case 2:
-                        sortingStateManager.changeSate(SortingStateManager.SortingStates.AZ_ANSWER);
-                        break;
-                    // Answer: Z-A
-                    case 3:
-                        sortingStateManager.changeSate(SortingStateManager.SortingStates.ZA_ANSWER);
-                        break;
-                    // Date Created
-                    case 4:
-                        sortingStateManager.changeSate(SortingStateManager.SortingStates.DATE_CREATED);
-                        break;
-                    // Date Modified
-                    case 5:
-                        sortingStateManager.changeSate(SortingStateManager.SortingStates.DATE_MODIFIED);
-                        break;
-                }
-                populateListView(getCurrentDeckIdSelected());
-                dialog.dismiss();
-            }
-        });
+                        SortingStateManager sortingStateManager = SortingStateManager.getInstance();
+                        switch (which) {
+                            // Question: A-Z
+                            case 0:
+                                sortingStateManager.changeSate(SortingStateManager.SortingStates.AZ_QUESTION);
+                                break;
+                            // Question: Z-A
+                            case 1:
+                                sortingStateManager.changeSate(SortingStateManager.SortingStates.ZA_QUESTION);
+                                break;
+                            // Answer: A-Z
+                            case 2:
+                                sortingStateManager.changeSate(SortingStateManager.SortingStates.AZ_ANSWER);
+                                break;
+                            // Answer: Z-A
+                            case 3:
+                                sortingStateManager.changeSate(SortingStateManager.SortingStates.ZA_ANSWER);
+                                break;
+                            // Date Created NEW-OLD
+                            case 4:
+                                sortingStateManager.changeSate(SortingStateManager.SortingStates.DATE_CREATED_NEW_OLD);
+                                break;
+                            // Date Created OLD-NEW
+                            case 5:
+                                sortingStateManager.changeSate(SortingStateManager.SortingStates.DATE_CREATED_OLD_NEW);
+                                break;
+                            // Date Modified NEW-OLD
+                            case 6:
+                                sortingStateManager.changeSate(SortingStateManager.SortingStates.DATE_MODIFIED_NEW_OLD);
+                                break;
+                            // Date Modified OLD-NEW
+                            case 7:
+                                sortingStateManager.changeSate(SortingStateManager.SortingStates.DATE_MODIFIED_OLD_NEW);
+                                break;
+                        }
+                        populateListView(getCurrentDeckIdSelected());
+                        dialog.dismiss();
+                    }
+                });
 
         AlertDialog alert = deckListAlertDialog.create();
         Helper.getInstance().hideKeyboard(getActivity());
@@ -481,6 +498,47 @@ public class CardListFragment extends Fragment {
                         }
                     }
                 });
+                Button neutralButton = aDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+
+                neutralButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        answerHolder = answerEditTextView.getText().toString();
+                        questionHolder = questionEditTextView.getText().toString();
+
+                        boolean answerEmpty = answerHolder.trim().isEmpty();
+                        boolean questionEmpty = questionHolder.trim().isEmpty();
+
+                        if (answerEmpty || questionEmpty) {
+                            String message = "";
+                            if (answerEmpty && questionEmpty) {
+                                message = "Error - Question and Answer cannot be empty";
+                            } else if (!answerEmpty && questionEmpty) {
+                                message = "Error - Question cannot be empty";
+                            } else {
+                                message = "Error - Answer cannot be empty";
+                            }
+                            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            if (dialogType == CardQuickDialogOption.QUICK_NEW) {
+                                String newCardId = dbManager.createCard(questionHolder, answerHolder, "");
+                                if (currentSelectedDeckId != ALL_DECKS_ITEM) {
+                                    dbManager.createCardDeck(newCardId, currentSelectedDeckId);
+                                }
+
+                                Toast.makeText(getContext(), "Card created", Toast.LENGTH_SHORT).show();
+                                populateListView(getCurrentDeckIdSelected());
+
+                                answerEditTextView.setText("");
+                                questionEditTextView.setText("");
+                                questionEditTextView.requestFocus();
+
+                            }
+                        }
+                    }
+                });
+
             }
         });
 
@@ -616,23 +674,10 @@ public class CardListFragment extends Fragment {
         if (currentState == CardListState.VIEW) {
             deleteCardFromDatabase();
         } else {
-            setStateView();
+            changeState(CardListState.VIEW);
         }
     }
 
-    private void setStateView() {
-
-        MainActivityManager mainActivityManager = ((MainActivityManager) getActivity());
-//        mainActivityManager.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-//        mainActivityManager.getSupportActionBar().setDisplayShowHomeEnabled(false);
-//        mainActivityManager.enableDrawerSwipe(true);
-        mainActivityManager.getSupportActionBar().setTitle("");
-
-
-        currentState = CardListState.VIEW;
-        populateListView(getCurrentDeckIdSelected());
-        getActivity().invalidateOptionsMenu();
-    }
 
     private void populateSpinner() {
 
@@ -695,8 +740,12 @@ public class CardListFragment extends Fragment {
     }
 
     public void populateListView(String idDeck) {
-        if (cardList != null)
+
+
+        if (cardList != null) {
             cardList.clear();
+        }
+
 
         customListAdapter = new CustomListAdapter(getContext());
 
@@ -897,6 +946,7 @@ public class CardListFragment extends Fragment {
             CheckBox checkBox;
             LinearLayout checkboxLayout;
             LinearLayout cardLayout;
+            LinearLayout cardOptionLayout;
         }
 
         @Override
@@ -912,6 +962,20 @@ public class CardListFragment extends Fragment {
             holder.checkBox = (CheckBox) rowView.findViewById(R.id.custom_card_item_checkbox);
             holder.checkboxLayout = (LinearLayout) rowView.findViewById(R.id.checkbox_layout);
             holder.cardLayout = (LinearLayout) rowView.findViewById(R.id.custom_card_item_layout);
+            holder.cardOptionLayout = (LinearLayout) rowView.findViewById(R.id.card_option_layout);
+
+            if(currentState == CardListState.VIEW){
+                holder.cardOptionLayout.setVisibility(View.VISIBLE);
+                holder.cardOptionLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        indexSelected = position;
+                    }
+                });
+            }else{
+                holder.cardOptionLayout.setVisibility(View.GONE);
+                holder.cardOptionLayout.setOnClickListener(null);
+            }
 
 
             if (!isReverseOrder) {
@@ -1005,7 +1069,7 @@ public class CardListFragment extends Fragment {
             rowView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-
+//                    android:foreground="?android:attr/selectableItemBackground"
                     return false;
                 }
             });

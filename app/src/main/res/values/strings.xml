@@ -15,8 +15,10 @@
         <item>Question: Z-A</item>
         <item>Answer: A-Z</item>
         <item>Answer: Z-A</item>
-        <item>Date Created</item>
-        <item>Date Modified</item>
+        <item>Date Created: New - Old</item>
+        <item>Date Created: Old - New</item>
+        <item>Date Modified: New - Old</item>
+        <item>Date Modified: Old - New</item>
     </string-array>
 
 

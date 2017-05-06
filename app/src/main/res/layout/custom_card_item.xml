@@ -80,5 +80,23 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/card_option_layout"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginRight="5dp"
+        android:layout_weight="0.75"
+        android:gravity="center"
+        android:clickable="true">
+
+        <Button
+            android:id="@+id/card_option_button"
+            android:layout_width="20dp"
+            android:layout_height="25dp"
+            android:background="@drawable/ic_more_vert_black_24dp"
+            android:foreground="?selectableItemBackgroundBorderless"/>
+
+    </LinearLayout>
+
 
 </LinearLayout>

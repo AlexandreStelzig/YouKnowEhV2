@@ -86,8 +86,8 @@ public final class ExportImportManager {
             c.setCellValue(answer);
             c = row.createCell(2);
             c.setCellValue(moreinfo);
-            c = row.createCell(3);
-            c.setCellValue(id);
+//            c = row.createCell(3);
+//            c.setCellValue(id);
 
         }
 

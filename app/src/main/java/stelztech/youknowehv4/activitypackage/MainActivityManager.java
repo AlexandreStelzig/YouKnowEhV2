@@ -161,9 +161,8 @@ public class MainActivityManager extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        goBackToDecks = false;
-        previousFragment = mPracticeFragment;
         displayFragment(item.getItemId());
+        goBackToDecks = false; // if clicked from the drawer, dont go back to deck from cards
         return true;
     }
 
@@ -227,11 +226,10 @@ public class MainActivityManager extends AppCompatActivity
             mViewIsAtHome = false;
         }
 
+        // if previous fragment was deck and the next one is card, set back button functionality
         if (previousFragment != null &&
                 previousFragment.equals(mDeckListFragment) && fragment.equals(mCardListFragment)) {
             goBackToDecks = true;
-        } else {
-            goBackToDecks = false;
         }
 
         previousFragment = fragment;
@@ -267,14 +265,16 @@ public class MainActivityManager extends AppCompatActivity
                 drawer.closeDrawer(GravityCompat.START);
             } else {
 
-                if (goBackToDecks)
+                if (goBackToDecks){
                     displayFragment(R.id.deck_list);
+                    goBackToDecks = false;
+                }
                 else {
                     if (!mViewIsAtHome) { //if the current view is not the News fragment
                         displayFragment(R.id.practice);
                         navigationView.setCheckedItem(R.id.practice);
                     } else {
-                        moveTaskToBack(true);  //If view is in News fragment, exit application
+                        moveTaskToBack(true);  // if view is a practice, exit app
                     }
                 }
             }

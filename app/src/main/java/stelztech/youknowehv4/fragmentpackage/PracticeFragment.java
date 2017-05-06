@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,8 +19,6 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +53,7 @@ public class PracticeFragment extends Fragment {
     private Button showButton;
     private Button nextButton;
     private Button infoButton;
+    private Button reverseButton;
     private TextView alwaysShowAnswerTV;
 
     private CheckBox practiceCheckbox;
@@ -100,6 +100,7 @@ public class PracticeFragment extends Fragment {
         practiceCheckbox = (CheckBox) view.findViewById(R.id.practice_checkbox);
         praticeNbCards = (TextView) view.findViewById(R.id.practice_nb_cards);
         alwaysShowAnswerTV = (TextView) view.findViewById(R.id.always_show_answer_tv);
+        reverseButton = (Button) view.findViewById(R.id.practice_reverse_button);
 
         questionList = new ArrayList<>();
         answerList = new ArrayList<>();
@@ -117,6 +118,9 @@ public class PracticeFragment extends Fragment {
                 // TODO add warning toast
             }
         });
+
+        questionTextView.setMovementMethod(new ScrollingMovementMethod());
+        answerTextView.setMovementMethod(new ScrollingMovementMethod());
 
         alwaysShowAnswerTV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,6 +167,15 @@ public class PracticeFragment extends Fragment {
             }
         });
 
+        reverseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reserveButtonClicked();
+            }
+        });
+
+//        reverseButton.setVisibility(View.GONE);
+
         initSpinner();
         switchPracticeCards();
 
@@ -179,27 +192,8 @@ public class PracticeFragment extends Fragment {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_reverse:
+                reserveButtonClicked();
 
-                if(isSelectedDeckNothing()){
-                    Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-
-
-                if (questionOrder.length > 0) {
-                    boolean temp = answerHidden;
-                    isReverseOrder = !isReverseOrder;
-                    setQuestionAnswerOrder();
-                    setQuestionAnswerText();
-
-                    if (!temp) {
-                        answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
-                        answerHidden = false;
-                    }
-
-                    Toast.makeText(getContext(), "Order Reversed", Toast.LENGTH_SHORT).show();
-
-                }
                 return true;
         }
 
@@ -348,6 +342,9 @@ public class PracticeFragment extends Fragment {
             }
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         } else {
+            answerTextView.scrollTo(0,0);
+            questionTextView.scrollTo(0,0);
+
             if ((currentQuestion + 1) < questionOrder.length) {
                 currentQuestion++;
                 setQuestionAnswerText();
@@ -412,6 +409,10 @@ public class PracticeFragment extends Fragment {
     }
 
     private void setQuestionAnswerText() {
+
+        answerTextView.scrollTo(0,0);
+        questionTextView.scrollTo(0,0);
+
         if (questionOrder.length == 0) {
             questionTextView.setText("No Cards");
             answerTextView.setText("");
@@ -445,4 +446,26 @@ public class PracticeFragment extends Fragment {
         return spinner.getSelectedItemPosition() == SELECT_DECK_INDEX;
     }
 
+    private void reserveButtonClicked(){
+        if(isSelectedDeckNothing()){
+            Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
+        if (questionOrder.length > 0) {
+            boolean temp = answerHidden;
+            isReverseOrder = !isReverseOrder;
+            setQuestionAnswerOrder();
+            setQuestionAnswerText();
+
+            if (!temp) {
+                answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
+                answerHidden = false;
+            }
+
+            Toast.makeText(getContext(), "Order Reversed", Toast.LENGTH_SHORT).show();
+
+        }
+    }
 }

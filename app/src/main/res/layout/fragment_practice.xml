@@ -21,32 +21,31 @@
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_gravity="left"
-                android:layout_weight="0.75"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="5dp"
+                android:layout_weight="0.75"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/practice_nb_cards"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="#### Practice Cards"/>
+                    android:text="#### Practice Cards" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:gravity="right"
                 android:layout_weight="1"
+                android:gravity="right"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/always_show_answer_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Always show answer"/>
-
+                    android:text="Always show answer" />
 
 
                 <CheckBox
@@ -108,15 +107,11 @@
 
         </LinearLayout>
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="5dp" />
-
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_gravity="center"
-            android:layout_weight="3"
+            android:layout_weight="3.25"
             android:orientation="vertical"
             android:padding="5dp">
 
@@ -128,31 +123,50 @@
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:ellipsize="end"
                 android:gravity="center"
                 android:maxLines="4"
+                android:scrollbars="vertical"
                 android:text="Question"
-                android:ellipsize="end"
                 android:textColor="@color/textPrimary"
                 android:textSize="32dp" />
 
-            <View
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:background="@color/colorDivider" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="75"
+                    android:background="@color/colorDivider" />
+
+                <Button
+                    android:id="@+id/practice_reverse_button"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:background="@drawable/ic_import_export_black_24dp" />
+
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/practice_answer"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:ellipsize="end"
                 android:gravity="center|top"
                 android:maxLines="4"
+                android:scrollbars="vertical"
                 android:text="Answer"
-                android:ellipsize="end"
                 android:textColor="@color/textPrimary"
                 android:textSize="30dp" />
 
