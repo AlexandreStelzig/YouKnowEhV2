@@ -9,8 +9,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +16,7 @@ import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.model.Card;
 import stelztech.youknowehv4.model.CardDeck;
 import stelztech.youknowehv4.model.Deck;
+import stelztech.youknowehv4.model.Profile;
 
 /**
  * Created by Alexandre on 4/25/2016.
@@ -44,7 +43,11 @@ public class DatabaseManager {
 
     public List<Card> getCards() {
         SQLiteDatabase db = database.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableCard.TABLE_NAME, null);
+
+        String activeProfileId = getActiveProfile().getProfileId();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableCard.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TableCard.COLUMN_NAME_PROFILE_ID + "=" + activeProfileId, null);
         List<Card> cardList = new ArrayList<Card>();
 
         if (cursor.moveToFirst()) {
@@ -62,7 +65,11 @@ public class DatabaseManager {
 
     public List<Deck> getDecks() {
         SQLiteDatabase db = database.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableDeck.TABLE_NAME, null);
+
+        String activeProfileId = getActiveProfile().getProfileId();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableDeck.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TableDeck.COLUMN_NAME_PROFILE_ID + "=" + activeProfileId, null);
         List<Deck> deckList = new ArrayList<Deck>();
 
         if (cursor.moveToFirst()) {
@@ -206,6 +213,38 @@ public class DatabaseManager {
 
     }
 
+    public List<Profile> getProfiles() {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableProfile.TABLE_NAME, null);
+
+        // get all card-deck
+        List<Profile> profiles = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+            while (cursor.isAfterLast() == false) {
+                profiles.add(fetchProfileFromCursor(cursor));
+                cursor.moveToNext();
+            }
+        }
+
+        cursor.close();
+        return profiles;
+    }
+
+    public Profile getProfileFromId(String profileId) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableProfile.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_ID + "=" + profileId, null);
+        Profile profile = null;
+
+        if (cursor.moveToFirst()) {
+            profile = (fetchProfileFromCursor(cursor));
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return profile;
+    }
+
 
     ////////////// DELETE //////////////
 
@@ -244,6 +283,13 @@ public class DatabaseManager {
                         + DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deckId, null) > 0;
     }
 
+    public boolean deleteProfile(String profileId) {
+        SQLiteDatabase db = database.getReadableDatabase();
+
+        return db.delete(DatabaseVariables.TableProfile.TABLE_NAME, DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_ID
+                + "=" + profileId, null) > 0;
+    }
+
     ////////////// CREATE //////////////
 
     public String createDeck(String name) {
@@ -252,10 +298,12 @@ public class DatabaseManager {
 
         String date = getDateNow();
 
+        String activeProfileId = getActiveProfile().getProfileId();
+
         values.put(DatabaseVariables.TableDeck.COLUMN_NAME_DECK_NAME, name);
         values.put(DatabaseVariables.TableDeck.COLUMN_NAME_DATE_CREATED, date);
         values.put(DatabaseVariables.TableDeck.COLUMN_NAME_DATE_MODIFIED, date);
-
+        values.put(DatabaseVariables.TableDeck.COLUMN_NAME_PROFILE_ID, activeProfileId);
 
 
         long newRowId = -1;
@@ -273,12 +321,15 @@ public class DatabaseManager {
 
         String date = getDateNow();
 
+        String activeProfileId = getActiveProfile().getProfileId();
+
 
         values.put(DatabaseVariables.TableCard.COLUMN_NAME_QUESTION, question);
         values.put(DatabaseVariables.TableCard.COLUMN_NAME_ANSWER, answer);
         values.put(DatabaseVariables.TableCard.COLUMN_NAME_MORE_INFORMATION, moreInfo);
         values.put(DatabaseVariables.TableCard.COLUMN_NAME_DATE_CREATED, date);
         values.put(DatabaseVariables.TableCard.COLUMN_NAME_DATE_MODIFIED, date);
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_PROFILE_ID, activeProfileId);
 
         long newRowId = -1;
         newRowId = db.insert(
@@ -308,6 +359,32 @@ public class DatabaseManager {
         return Long.toString(newRowId);
     }
 
+
+    public String createProfile(String name) {
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        String date = getDateNow();
+
+        values.put(DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_NAME, name);
+        values.put(DatabaseVariables.TableProfile.COLUMN_NAME_DATE_CREATED, date);
+        values.put(DatabaseVariables.TableProfile.COLUMN_NAME_DATE_MODIFIED, date);
+        values.put(DatabaseVariables.TableProfile.COLUMN_NAME_ACTIVE, false);
+        values.put(DatabaseVariables.TableProfile.COLUMN_NAME_QUESTION_LABEL, "Question");
+        values.put(DatabaseVariables.TableProfile.COLUMN_NAME_ANSWER_LABEL, "Answer");
+
+
+        long newRowId = -1;
+        newRowId = db.insert(
+                DatabaseVariables.TableProfile.TABLE_NAME,
+                null,
+                values);
+
+        // set newly created profile to active
+        setActiveProfile(Long.toString(newRowId));
+
+        return Long.toString(newRowId);
+    }
 
     ////////////// UPDATE //////////////
 
@@ -339,6 +416,19 @@ public class DatabaseManager {
                 DatabaseVariables.TableCard.COLUMN_NAME_CARD_ID + "=" + cardId, null);
     }
 
+    public void updateProfile(String profileId, String name) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        String date = getDateNow();
+
+        values.put(DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_NAME, name);
+        values.put(DatabaseVariables.TableProfile.COLUMN_NAME_DATE_MODIFIED, date);
+        db.update(DatabaseVariables.TableProfile.TABLE_NAME, values,
+                DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_ID + "=" + profileId, null);
+
+    }
+
 
     ////////////// OTHER //////////////
 
@@ -355,6 +445,28 @@ public class DatabaseManager {
         values.put(DatabaseVariables.TableCardDeck.COLUMN_NAME_IS_PRACTICE, newIsPractice);
         db.update(DatabaseVariables.TableCardDeck.TABLE_NAME, values, DatabaseVariables.TableCardDeck.COLUMN_NAME_CARD_ID
                 + "=" + cardId + " AND " + DatabaseVariables.TableCardDeck.COLUMN_NAME_DECK_ID + "=" + deckId, null);
+
+    }
+
+    public void setActiveProfile(String profileId) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TableProfile.COLUMN_NAME_ACTIVE, true);
+        db.update(DatabaseVariables.TableProfile.TABLE_NAME, values,
+                DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_ID + "=" + profileId, null);
+
+        List<Profile> profileList = getProfiles();
+
+        for (int i = 0; i < profileList.size(); i++) {
+            Profile tempProfile = profileList.get(i);
+            // setting other profiles to not selected
+            if (!tempProfile.getProfileId().equals(profileId) && tempProfile.isActive()) {
+                values.put(DatabaseVariables.TableProfile.COLUMN_NAME_ACTIVE, false);
+                db.update(DatabaseVariables.TableProfile.TABLE_NAME, values,
+                        DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_ID + "=" + tempProfile.getProfileId(), null);
+            }
+        }
 
     }
 
@@ -406,10 +518,42 @@ public class DatabaseManager {
         return new CardDeck(deckId, cardId, isPractice, dateAdded);
     }
 
+    private Profile fetchProfileFromCursor(Cursor cursor) {
+        String profileId = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_ID));
+        String profileName = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_NAME));
+        boolean profileSelected = cursor.getInt(cursor
+                .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_ACTIVE)) > 0;
+        String dateAdded = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_DATE_CREATED));
+        String questionLabel = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_QUESTION_LABEL));
+        String answerLabel = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_ANSWER_LABEL));
+
+
+        return new Profile(profileId, profileName, dateAdded, profileSelected, questionLabel, answerLabel);
+    }
+
     private String getDateNow() {
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         Date now = Calendar.getInstance().getTime();
         return df.format(now);
+    }
+
+    public Profile getActiveProfile() {
+
+        List<Profile> profileList = getProfiles();
+
+        for (int i = 0; i < profileList.size(); i++) {
+            Profile tempProfile = profileList.get(i);
+            if (tempProfile.isActive()) {
+                return tempProfile;
+            }
+        }
+
+        return null;
     }
 
 

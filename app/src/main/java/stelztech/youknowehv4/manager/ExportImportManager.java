@@ -105,7 +105,8 @@ public final class ExportImportManager {
         if (!dir.exists()) {
             dir.mkdirs();
             if (!dir.exists()) {
-                Toast.makeText(context, "Error - give the app permission to access storage", Toast.LENGTH_SHORT);
+                Toast.makeText(context, "Error - give the app permission to access storage", Toast.LENGTH_SHORT).show();
+                return null;
             }
         }
 
@@ -118,10 +119,10 @@ public final class ExportImportManager {
             wb.write(os);
             success = true;
         } catch (IOException e) {
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT);
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
             return null;
         } catch (Exception e) {
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT);
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
             return null;
         } finally {
             try {

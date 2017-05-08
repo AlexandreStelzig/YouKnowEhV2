@@ -10,9 +10,10 @@
     <LinearLayout
         android:id="@+id/checkbox_layout"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:layout_marginRight="5dp"
         android:layout_weight="1"
+        android:layout_gravity="center"
         android:gravity="center">
 
         <CheckBox
@@ -22,38 +23,12 @@
 
     </LinearLayout>
 
-
-    <!--<LinearLayout-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="50dp"-->
-    <!--android:gravity="center|left"-->
-    <!--android:orientation="vertical">-->
-
-    <!--<TextView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:gravity="left"-->
-    <!--android:lines="1"-->
-    <!--android:text="Q:"-->
-    <!--android:textColor="@color/textPrimary"-->
-    <!--android:textSize="15dp" />-->
-
-    <!--<TextView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:gravity="left"-->
-    <!--android:lines="1"-->
-    <!--android:text="A:"-->
-    <!--android:textColor="@color/textPrimary"-->
-    <!--android:textSize="15dp" />-->
-
-    <!--</LinearLayout>-->
-
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:layout_weight="9"
         android:gravity="center|left"
+        android:layout_gravity="center"
         android:orientation="vertical">
 
         <TextView
@@ -82,19 +57,19 @@
 
     <LinearLayout
         android:id="@+id/card_option_layout"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginRight="5dp"
-        android:layout_weight="0.75"
+        android:layout_width="30dp"
+        android:layout_height="45dp"
         android:gravity="center"
-        android:clickable="true">
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:background="?selectableItemBackgroundBorderless">
 
         <Button
-            android:id="@+id/card_option_button"
             android:layout_width="20dp"
             android:layout_height="25dp"
-            android:background="@drawable/ic_more_vert_black_24dp"
-            android:foreground="?selectableItemBackgroundBorderless"/>
+            android:layout_gravity="center"
+            android:clickable="false"
+            android:background="@drawable/ic_more_vert_black_24dp"/>
 
     </LinearLayout>
 

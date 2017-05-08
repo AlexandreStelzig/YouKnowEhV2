@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,7 +54,7 @@ public class PracticeFragment extends Fragment {
     private Button showButton;
     private Button nextButton;
     private Button infoButton;
-    private Button reverseButton;
+    private LinearLayout reverseButton;
     private TextView alwaysShowAnswerTV;
 
     private CheckBox practiceCheckbox;
@@ -100,7 +101,7 @@ public class PracticeFragment extends Fragment {
         practiceCheckbox = (CheckBox) view.findViewById(R.id.practice_checkbox);
         praticeNbCards = (TextView) view.findViewById(R.id.practice_nb_cards);
         alwaysShowAnswerTV = (TextView) view.findViewById(R.id.always_show_answer_tv);
-        reverseButton = (Button) view.findViewById(R.id.practice_reverse_button);
+        reverseButton = (LinearLayout) view.findViewById(R.id.practice_reverse_layout);
 
         questionList = new ArrayList<>();
         answerList = new ArrayList<>();
@@ -126,7 +127,7 @@ public class PracticeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 practiceCheckbox.setChecked(!practiceCheckbox.isChecked());
-                if(!isSelectedDeckNothing()){
+                if (!isSelectedDeckNothing()) {
                     setQuestionAnswerText();
                 }
             }
@@ -144,7 +145,7 @@ public class PracticeFragment extends Fragment {
         infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isSelectedDeckNothing()){
+                if (isSelectedDeckNothing()) {
                     Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -160,7 +161,7 @@ public class PracticeFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                if(!isSelectedDeckNothing()){
+                if (!isSelectedDeckNothing()) {
                     setQuestionAnswerText();
                 }
 
@@ -209,22 +210,24 @@ public class PracticeFragment extends Fragment {
         deckList = dbManager.getDecks();
         final List<String> deckListString = new ArrayList<>();
 
-        if(deckList.isEmpty()){
+        if (deckList.isEmpty()) {
             deckListString.add("- No Decks -");
-        }else{
+            spinner.setEnabled(false);
+        } else {
             deckListString.add("- Select Deck -");
+            spinner.setEnabled(true);
         }
         for (int counter = 0; counter < deckList.size(); counter++) {
             deckListString.add(deckList.get(counter).getDeckName());
         }
 
         deckArrayAdapter = new ArrayAdapter<String>(
-                getContext(), R.layout.custom_spinner_item_practice, deckListString){
-
+                getContext(), R.layout.custom_spinner_item_practice, deckListString) {
+            // disable first field
 
             @Override
             public boolean isEnabled(int position) {
-                if(position == SELECT_DECK_INDEX){
+                if (position == SELECT_DECK_INDEX) {
                     return false;
                 }
                 return true;
@@ -237,7 +240,7 @@ public class PracticeFragment extends Fragment {
                 View mView = super.getDropDownView(position, convertView, parent);
                 TextView mTextView = (TextView) mView;
 
-                if(position == SELECT_DECK_INDEX)
+                if (position == SELECT_DECK_INDEX)
                     mTextView.setTextColor(Color.GRAY);
                 else
                     mTextView.setTextColor(Color.BLACK);
@@ -252,7 +255,7 @@ public class PracticeFragment extends Fragment {
                 View mView = super.getDropDownView(position, convertView, parent);
                 TextView mTextView = (TextView) mView;
 
-                if(position == SELECT_DECK_INDEX)
+                if (position == SELECT_DECK_INDEX)
                     mTextView.setTextColor(Color.GRAY);
                 else
                     mTextView.setTextColor(Color.BLACK);
@@ -281,7 +284,7 @@ public class PracticeFragment extends Fragment {
         int selectedDeck = spinner.getSelectedItemPosition();
 
 
-        if(isSelectedDeckNothing()){
+        if (isSelectedDeckNothing()) {
             setSelectDeck();
             return;
         }
@@ -291,7 +294,6 @@ public class PracticeFragment extends Fragment {
             return;
 
 
-
         String deckId = deckList.get(selectedDeck - SPINNER_OFFSET).getDeckId();
 
         mCardList = dbManager.getDeckPracticeCards(deckId);
@@ -299,7 +301,7 @@ public class PracticeFragment extends Fragment {
         int nbCardsPractice = mCardList.size();
         String nbCardsString = nbCardsPractice + " ";
 
-        if(nbCardsPractice == 1)
+        if (nbCardsPractice == 1)
             nbCardsString += "Practice Card";
         else
             nbCardsString += "Practice Cards";
@@ -328,7 +330,7 @@ public class PracticeFragment extends Fragment {
 
     // helpers
     private void nextButtonClicked() {
-        if(isSelectedDeckNothing()){
+        if (isSelectedDeckNothing()) {
             Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -342,8 +344,8 @@ public class PracticeFragment extends Fragment {
             }
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         } else {
-            answerTextView.scrollTo(0,0);
-            questionTextView.scrollTo(0,0);
+            answerTextView.scrollTo(0, 0);
+            questionTextView.scrollTo(0, 0);
 
             if ((currentQuestion + 1) < questionOrder.length) {
                 currentQuestion++;
@@ -352,14 +354,14 @@ public class PracticeFragment extends Fragment {
                 // reset
                 randomizeQuestionOrder();
                 setQuestionAnswerText();
-                Toast.makeText(getContext(), "Practice Reset", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Order reset", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     private void showButtonClicked() {
 
-        if(isSelectedDeckNothing()){
+        if (isSelectedDeckNothing()) {
             Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -372,7 +374,7 @@ public class PracticeFragment extends Fragment {
                 answerHidden = false;
                 showButton.setText("hide");
             } else {
-                if(!practiceCheckbox.isChecked())
+                if (!practiceCheckbox.isChecked())
                     answerTextView.setText(answerHiddenString);
                 else
                     answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
@@ -410,15 +412,15 @@ public class PracticeFragment extends Fragment {
 
     private void setQuestionAnswerText() {
 
-        answerTextView.scrollTo(0,0);
-        questionTextView.scrollTo(0,0);
+        answerTextView.scrollTo(0, 0);
+        questionTextView.scrollTo(0, 0);
 
         if (questionOrder.length == 0) {
             questionTextView.setText("No Cards");
             answerTextView.setText("");
         } else {
             questionTextView.setText(questionList.get(questionOrder[currentQuestion]));
-            if(!practiceCheckbox.isChecked())
+            if (!practiceCheckbox.isChecked())
                 answerTextView.setText(answerHiddenString);
             else
                 answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
@@ -442,12 +444,12 @@ public class PracticeFragment extends Fragment {
         }
     }
 
-    private boolean isSelectedDeckNothing(){
+    private boolean isSelectedDeckNothing() {
         return spinner.getSelectedItemPosition() == SELECT_DECK_INDEX;
     }
 
-    private void reserveButtonClicked(){
-        if(isSelectedDeckNothing()){
+    private void reserveButtonClicked() {
+        if (isSelectedDeckNothing()) {
             Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
             return;
         }

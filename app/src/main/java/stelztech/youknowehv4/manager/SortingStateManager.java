@@ -26,7 +26,8 @@ public class SortingStateManager {
         DATE_CREATED_NEW_OLD,
         DATE_CREATED_OLD_NEW,
         DATE_MODIFIED_NEW_OLD,
-        DATE_MODIFIED_OLD_NEW
+        DATE_MODIFIED_OLD_NEW,
+        PRACTICE
     }
 
     private SortingStates currentState;
@@ -80,6 +81,9 @@ public class SortingStateManager {
                 break;
             case DATE_MODIFIED_OLD_NEW:
                 cardListSorted = sortByDateModified_OLD_NEW(cardList);
+                break;
+            case PRACTICE:
+                cardListSorted = sortByPractice(cardList);
                 break;
         }
         return cardListSorted;
@@ -264,6 +268,11 @@ public class SortingStateManager {
 
     }
 
+    private List<Card> sortByPractice(List<Card> list){
+
+        return list;
+    }
+
     public int getSelectedPosition() {
         switch (currentState) {
             case AZ_QUESTION:
@@ -282,6 +291,8 @@ public class SortingStateManager {
                 return 6;
             case DATE_MODIFIED_OLD_NEW:
                 return 7;
+            case PRACTICE:
+                return 8;
         }
         return 0;
     }

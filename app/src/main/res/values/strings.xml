@@ -8,6 +8,7 @@
     <string name="about_email_string"><u>Alexandre.Stelzig@gmail.com</u></string>
     <string name="facebook_about_string"><u>facebook.com/alexandre.stelzig</u></string>
     <string name="website_about_string"><u>alexandrestelzig.github.io</u></string>
+    <string name="https_github_com_alexandrestelzig"><u>github.com/AlexandreStelzig</u></string>
 
 
     <string-array name="sort_options">
@@ -19,6 +20,7 @@
         <item>Date Created: Old - New</item>
         <item>Date Modified: New - Old</item>
         <item>Date Modified: Old - New</item>
+        <item>Practice</item>
     </string-array>
 
 

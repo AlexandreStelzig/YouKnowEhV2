@@ -15,14 +15,20 @@ public final class DatabaseVariables {
             + TableCard.COLUMN_NAME_ANSWER + " TEXT NOT NULL,"
             + TableCard.COLUMN_NAME_MORE_INFORMATION + " TEXT,"
             + TableCard.COLUMN_NAME_DATE_CREATED + " DATE,"
-            + TableCard.COLUMN_NAME_DATE_MODIFIED + " DATE" + " );";
+            + TableCard.COLUMN_NAME_DATE_MODIFIED + " DATE,"
+            + TableCard.COLUMN_NAME_PROFILE_ID + " INTEGER,"
+            + " FOREIGN KEY " + "(" + TableCard.COLUMN_NAME_PROFILE_ID + ")"
+            + " REFERENCES " + TableProfile.TABLE_NAME + "(" + TableProfile.COLUMN_NAME_PROFILE_ID + ")" + " );";
 
     public static final String SQL_CREATE_TABLE_DECK = "CREATE TABLE "
             + TableDeck.TABLE_NAME + " ("
             + TableDeck.COLUMN_NAME_DECK_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + TableDeck.COLUMN_NAME_DECK_NAME + " TEXT NOT NULL,"
             + TableDeck.COLUMN_NAME_DATE_CREATED + " DATE,"
-            + TableDeck.COLUMN_NAME_DATE_MODIFIED + " DATE" + " );";
+            + TableDeck.COLUMN_NAME_DATE_MODIFIED + " DATE,"
+            + TableDeck.COLUMN_NAME_PROFILE_ID + " INTEGER,"
+            + " FOREIGN KEY " + "(" + TableDeck.COLUMN_NAME_PROFILE_ID + ")"
+            + " REFERENCES " + TableProfile.TABLE_NAME + "(" + TableProfile.COLUMN_NAME_PROFILE_ID + ")" + " );";
 
     public static final String SQL_CREATE_TABLE_CARD_DECK = "CREATE TABLE "
             + TableCardDeck.TABLE_NAME + " ("
@@ -40,9 +46,11 @@ public final class DatabaseVariables {
             + TableProfile.TABLE_NAME + " ("
             + TableProfile.COLUMN_NAME_PROFILE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + TableProfile.COLUMN_NAME_PROFILE_NAME + " TEXT NOT NULL,"
-            + TableProfile.COLUMN_NAME_DATE_CREATED + " DATE" + " );";
-
-
+            + TableProfile.COLUMN_NAME_QUESTION_LABEL + " TEXT NOT NULL,"
+            + TableProfile.COLUMN_NAME_ANSWER_LABEL + " TEXT NOT NULL,"
+            + TableProfile.COLUMN_NAME_DATE_CREATED + " DATE,"
+            + TableProfile.COLUMN_NAME_DATE_MODIFIED + " DATE,"
+            + TableProfile.COLUMN_NAME_ACTIVE + " BOOLEAN" + " );";
 
 
     public static final String SQL_DELETE_TABLE_CARD = "DROP TABLE IF EXISTS " + TableCard.TABLE_NAME;
@@ -57,6 +65,7 @@ public final class DatabaseVariables {
         public static final String COLUMN_NAME_MORE_INFORMATION = "moreinfo";
         public static final String COLUMN_NAME_DATE_CREATED = "datecreated";
         public static final String COLUMN_NAME_DATE_MODIFIED = "datemodified";
+        public static final String COLUMN_NAME_PROFILE_ID = "profileid";
     }
 
     public static abstract class TableDeck implements BaseColumns {
@@ -65,6 +74,7 @@ public final class DatabaseVariables {
         public static final String COLUMN_NAME_DECK_NAME = "packagename";
         public static final String COLUMN_NAME_DATE_CREATED = "datecreated";
         public static final String COLUMN_NAME_DATE_MODIFIED = "datemodified";
+        public static final String COLUMN_NAME_PROFILE_ID = "profileid";
     }
 
 
@@ -81,6 +91,9 @@ public final class DatabaseVariables {
         public static final String COLUMN_NAME_PROFILE_ID = "profileid";
         public static final String COLUMN_NAME_PROFILE_NAME = "profilename";
         public static final String COLUMN_NAME_DATE_CREATED = "datecreated";
+        public static final String COLUMN_NAME_DATE_MODIFIED = "datemodified";
+        public static final String COLUMN_NAME_QUESTION_LABEL = "questionlabel";
+        public static final String COLUMN_NAME_ANSWER_LABEL = "answerlabel";
+        public static final String COLUMN_NAME_ACTIVE = "active";
     }
-
 }

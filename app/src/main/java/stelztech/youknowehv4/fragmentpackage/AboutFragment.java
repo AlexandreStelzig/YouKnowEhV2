@@ -22,7 +22,7 @@ import stelztech.youknowehv4.manager.MainMenuToolbarManager;
 public class AboutFragment extends Fragment {
 
 
-    private TextView facebook;
+    private TextView github;
     private TextView email;
     private TextView website;
 
@@ -38,14 +38,14 @@ public class AboutFragment extends Fragment {
         ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
         setHasOptionsMenu(true);
 
-        facebook = (TextView) view.findViewById(R.id.about_facebook);
+        github = (TextView) view.findViewById(R.id.about_github);
         email = (TextView) view.findViewById(R.id.about_email);
         website = (TextView) view.findViewById(R.id.about_website);
 
-        facebook.setOnClickListener(new View.OnClickListener() {
+        github.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/alexandre.stelzig"));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/AlexandreStelzig"));
                 startActivity(browserIntent);
             }
         });

@@ -60,7 +60,7 @@ public class MainMenuToolbarManager {
                 setMenuItemVisibility(activity, menu, false, false, false, true, false, true, false, false, false);
                 break;
             case SEARCH:
-                setMenuItemVisibility(activity, menu, false, true, false, false, false, false, false, true, false);
+                setMenuItemVisibility(activity, menu, false, true, true, false, false, false, false, true, false);
                 break;
             case DEFAULT:
                 // same

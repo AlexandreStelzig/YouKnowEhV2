@@ -2,6 +2,7 @@ package stelztech.youknowehv4.activitypackage;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import stelztech.youknowehv4.R;
@@ -59,6 +61,9 @@ public class MainActivityManager extends AppCompatActivity
     public final static int CARD_RESULT = 1;
     public final static int EXPORT_RESULT = 2;
 
+    // set fragment after drawer close
+    private int mFragmentToSet = INT_NULL;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,9 +94,9 @@ public class MainActivityManager extends AppCompatActivity
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+
         };
         drawer.addDrawerListener(drawerToggle);
-
 
         drawerToggle.syncState();
 
@@ -160,8 +165,15 @@ public class MainActivityManager extends AppCompatActivity
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        displayFragment(item.getItemId());
+    public boolean onNavigationItemSelected(final MenuItem item) {
+
+        drawer.closeDrawer(GravityCompat.START);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                displayFragment(item.getItemId());
+            }
+        }, 150);
         goBackToDecks = false; // if clicked from the drawer, dont go back to deck from cards
         return true;
     }
@@ -180,7 +192,7 @@ public class MainActivityManager extends AppCompatActivity
         switch (fragmentId) {
             case R.id.practice:
                 fragment = mPracticeFragment;
-                title = "Practice";
+                title = "Review";
                 break;
             case R.id.card_list:
                 fragment = mCardListFragment;
@@ -265,11 +277,10 @@ public class MainActivityManager extends AppCompatActivity
                 drawer.closeDrawer(GravityCompat.START);
             } else {
 
-                if (goBackToDecks){
+                if (goBackToDecks) {
                     displayFragment(R.id.deck_list);
                     goBackToDecks = false;
-                }
-                else {
+                } else {
                     if (!mViewIsAtHome) { //if the current view is not the News fragment
                         displayFragment(R.id.practice);
                         navigationView.setCheckedItem(R.id.practice);
@@ -349,7 +360,7 @@ public class MainActivityManager extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //TODO add if statements
 
-        if(requestCode == CARD_RESULT){
+        if (requestCode == CARD_RESULT) {
             overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
 
             if (data != null && data.getStringExtra("deckIdReturn") != null) {
@@ -357,9 +368,13 @@ public class MainActivityManager extends AppCompatActivity
                 backToPreviousActivity = true;
                 mCardListFragment.setSpinnerSelected();
             }
-            mCardListFragment.populateListView(getCurrentDeckIdSelected());
-        }
-        else if(requestCode == EXPORT_RESULT){
+            if(mCardListFragment.getCurrentState() == CardListFragment.CardListState.SEARCH){
+                mCardListFragment.populateSearchListView(mCardListFragment.getSearchView().getQuery().toString());
+            }else{
+                mCardListFragment.populateListView(getCurrentDeckIdSelected());
+            }
+
+        } else if (requestCode == EXPORT_RESULT) {
 
         }
 

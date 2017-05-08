@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import stelztech.youknowehv4.R;
+import stelztech.youknowehv4.database.DatabaseManager;
 
 /**
  * Created by alex on 2017-04-28.
@@ -24,6 +25,18 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_splash_screen);
 
+        if(DatabaseManager.getInstance(this).getProfiles().isEmpty()){
+            Intent i = new Intent(SplashScreenActivity.this, FirstTimeOpeningActivity.class);
+            startActivity(i);
+            finish();
+        }else{
+            transitionThread().start();
+        }
+
+
+    }
+
+    private Thread transitionThread(){
         final Thread transitionThread = new Thread(){
 
             @Override
@@ -40,6 +53,8 @@ public class SplashScreenActivity extends AppCompatActivity {
                 }
             }
         };
-        transitionThread.start();
+
+        return transitionThread;
     }
+
 }

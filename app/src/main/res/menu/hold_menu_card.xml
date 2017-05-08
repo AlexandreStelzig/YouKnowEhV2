@@ -5,7 +5,10 @@
         android:title="Quick Info"/>
 
     <item android:id="@+id/toggle_practice"
-        android:title="Toggle from practice"/>
+        android:title="Toggle from Review"/>
+
+    <item android:id="@+id/quick_edit"
+        android:title="Quick Edit"/>
 
     <item android:id="@+id/edit_card"
         android:title="Edit Card" />

@@ -31,14 +31,14 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="This application was designed to help study new languages by repetitive memorization."
+                    android:text="This application was designed to help you study new languages by repetitive memorization using the concept of flash cards."
                     android:textColor="@color/textPrimary"
                     android:textSize="16dp" />
 
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Features include: Creating and managing flash cards as well as decks, practicing your memorization by reviewing cards in a random order, importing and exporting cards, managing different profiles for other languages and many more."
+                    android:text="Features include: Creating as well as managing flash cards and decks, practicing your memorization by reviewing cards in a random order, importing and exporting cards, managing different profiles for other languages and many more."
                     android:textColor="@color/textPrimary"
                     android:textSize="16dp" />
 
@@ -115,12 +115,13 @@
                     android:textStyle="bold" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Email: "
                         android:textColor="@color/colorPrimary"
@@ -128,7 +129,8 @@
 
                     <TextView
                         android:id="@+id/about_email"
-                        android:layout_width="fill_parent"
+                        android:layout_weight="3"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
                         android:clickable="true"
@@ -143,24 +145,26 @@
                     android:layout_height="1dp" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Facebook: "
+                        android:text="Github: "
                         android:textColor="@color/colorPrimary"
                         android:textSize="16dp" />
 
                     <TextView
-                        android:id="@+id/about_facebook"
-                        android:layout_width="fill_parent"
+                        android:id="@+id/about_github"
+                        android:layout_weight="3"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
                         android:clickable="true"
-                        android:text="@string/facebook_about_string"
+                        android:text="@string/https_github_com_alexandrestelzig"
                         android:textColor="@color/textPrimary"
                         android:textSize="16dp" />
                 </LinearLayout>
@@ -170,12 +174,13 @@
                     android:layout_height="1dp" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Website: "
                         android:textColor="@color/colorPrimary"
@@ -183,7 +188,8 @@
 
                     <TextView
                         android:id="@+id/about_website"
-                        android:layout_width="fill_parent"
+                        android:layout_weight="3"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
                         android:clickable="true"

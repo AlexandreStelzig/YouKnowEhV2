@@ -111,7 +111,7 @@
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_gravity="center"
-            android:layout_weight="3.25"
+            android:layout_weight="3"
             android:orientation="vertical"
             android:padding="5dp">
 
@@ -148,11 +148,22 @@
                     android:layout_weight="75"
                     android:background="@color/colorDivider" />
 
-                <Button
-                    android:id="@+id/practice_reverse_button"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:background="@drawable/ic_import_export_black_24dp" />
+
+                <LinearLayout
+                    android:id="@+id/practice_reverse_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:clickable="true">
+
+                    <Button
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:clickable="false"
+                        android:background="@drawable/ic_import_export_black_24dp" />
+
+                </LinearLayout>
+
 
             </LinearLayout>
 

@@ -22,6 +22,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -82,8 +83,11 @@ public class DeckListFragment extends Fragment {
         indexSelected = -1;
         listView = (ListView) view.findViewById(R.id.listview);
         textView = (TextView) view.findViewById(R.id.list_text);
-        textView.setText("NO DECKS");
+        textView.setText("No Decks in selected Profile");
         dbManager = DatabaseManager.getInstance(getActivity());
+
+        LinearLayout deckInfoLVLayout = (LinearLayout) view.findViewById(R.id.deck_info_listview_layout);
+        deckInfoLVLayout.setVisibility(View.GONE);
 
         deckList = new ArrayList<Deck>();
 
@@ -231,30 +235,6 @@ public class DeckListFragment extends Fragment {
             // when button OK is press
             public void onClick(DialogInterface dialog, int which) {
 
-                deckNameHolder = input.getText().toString();
-                // check if valid name
-                if (deckNameHolder.trim().isEmpty()) {
-                    Toast.makeText(getContext(), "invalid name", Toast.LENGTH_SHORT).show();
-                    return;
-                } else {
-                    switch (dialogType) {
-                        case NEW:
-                            addToDatabase();
-                            dialog.dismiss();
-                            Toast.makeText(getContext(), "Deck added", Toast.LENGTH_SHORT).show();
-                            populateListView();
-                            break;
-                        case UPDATE:
-                            updateDatabase();
-                            dialog.dismiss();
-                            Toast.makeText(getContext(), "Deck updated", Toast.LENGTH_SHORT).show();
-                            populateListView();
-                            break;
-                        default:
-                            Toast.makeText(getContext(), "Error in deck dialog while adding", Toast.LENGTH_SHORT).show();
-                            break;
-                    }
-                }
             }
         });
         // if cancel button is press, close dialog
@@ -265,11 +245,50 @@ public class DeckListFragment extends Fragment {
             }
         });
         // opens keyboard on creation with selection at the end
-        AlertDialog dialog = builder.create();
+        final AlertDialog alertDialog = builder.create();
 
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button positiveButton = alertDialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+                positiveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        deckNameHolder = input.getText().toString();
+                        // check if valid name
+                        if (deckNameHolder.trim().isEmpty()) {
+                            // todo add unique deck name validator
+                            Toast.makeText(getContext(), "invalid name", Toast.LENGTH_SHORT).show();
+                            return;
+                        } else {
+                            switch (dialogType) {
+                                case NEW:
+                                    addToDatabase();
+                                    alertDialog.dismiss();
+                                    Toast.makeText(getContext(), "Deck added", Toast.LENGTH_SHORT).show();
+                                    populateListView();
+                                    break;
+                                case UPDATE:
+                                    updateDatabase();
+                                    alertDialog.dismiss();
+                                    Toast.makeText(getContext(), "Deck updated", Toast.LENGTH_SHORT).show();
+                                    populateListView();
+                                    break;
+                                default:
+                                    Toast.makeText(getContext(), "Error in deck dialog while adding", Toast.LENGTH_SHORT).show();
+                                    break;
+                            }
+                            alertDialog.dismiss();
+                        }
+                    }
+                });
+            }
+        });
+
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         input.setSelection(input.getText().length());
-        return dialog;
+        return alertDialog;
 
 
     }
