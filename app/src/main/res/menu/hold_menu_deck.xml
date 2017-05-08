@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-
-    <item android:id="@+id/info_deck"
-        android:title="Quick Info"/>
-
-    <item android:id="@+id/edit_deck"
+    <item
+        android:id="@+id/edit_deck"
         android:title="Edit Deck" />
 
-    <item android:id="@+id/export_deck"
+    <item
+        android:id="@+id/info_deck"
+        android:title="Quick Info" />
+
+
+    <item
+        android:id="@+id/export_deck"
         android:title="Export Deck" />
 
 
-    <item android:id="@+id/delete_deck"
+    <item
+        android:id="@+id/delete_deck"
         android:title="Delete Deck" />
 
 </menu>

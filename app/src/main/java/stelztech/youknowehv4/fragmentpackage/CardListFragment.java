@@ -43,6 +43,7 @@ import stelztech.youknowehv4.manager.MainMenuToolbarManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.model.Card;
 import stelztech.youknowehv4.model.Deck;
+import stelztech.youknowehv4.model.Profile;
 
 /**
  * Created by alex on 2017-04-03.
@@ -100,19 +101,25 @@ public class CardListFragment extends Fragment {
     // dialog
     private int indexSelected;
 
+    // current profile
+    private Profile currentProfile;
+
 
     // state
     private CardListState currentState;
 
     // reverse
-    private boolean isReverseOrder;
+    private boolean isReverseOrder = false;
 
     // quick create holder
     private String questionHolder;
     private String answerHolder;
 
-    private final String ORIENTATION_QUESTION_ANSWER = "Question-Answer";
-    private final String ORIENTATION_ANSWER_QUESTION = "Answer-Question";
+    private String orientationQuestionAnswer;
+    private String orientationAnswerQuestion;
+
+    private String questionLabel;
+    private String answerLabel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -137,17 +144,22 @@ public class CardListFragment extends Fragment {
         nbCards = (TextView) view.findViewById(R.id.listview_number_cards);
         nbCardsPractice = (TextView) view.findViewById(R.id.listview_number_cards_practice);
 
-        orientation.setText(ORIENTATION_QUESTION_ANSWER);
+        orientation.setVisibility(View.VISIBLE);
+        nbCards.setVisibility(View.VISIBLE);
+        nbCardsPractice.setVisibility(View.VISIBLE);
 
-        LinearLayout deckInfoLVLayout = (LinearLayout) view.findViewById(R.id.deck_info_listview_layout);
-        deckInfoLVLayout.setVisibility(View.VISIBLE);
+        currentProfile = dbManager.getActiveProfile();
+
+        questionLabel = currentProfile.getQuestionLabel();
+        answerLabel = currentProfile.getAnswerLabel();
+
+        orientationQuestionAnswer = questionLabel + " - " + answerLabel;
+        orientationAnswerQuestion = answerLabel + " - " + questionLabel;
 
         allCardsListSearch = new ArrayList<>();
 
 
         cardList = new ArrayList<Card>();
-
-        isReverseOrder = false;
 
         currentState = CardListState.VIEW;
 
@@ -298,9 +310,9 @@ public class CardListFragment extends Fragment {
 
     private void setOrientationText() {
         if (isReverseOrder) {
-            orientation.setText(ORIENTATION_ANSWER_QUESTION);
+            orientation.setText(orientationAnswerQuestion);
         } else {
-            orientation.setText(ORIENTATION_QUESTION_ANSWER);
+            orientation.setText(orientationQuestionAnswer);
         }
     }
 
@@ -476,8 +488,6 @@ public class CardListFragment extends Fragment {
         }
 
 
-
-
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         switch (dialogType) {
@@ -505,6 +515,9 @@ public class CardListFragment extends Fragment {
         final EditText questionEditTextView = (EditText) dialogView.findViewById(R.id.quick_create_question);
         final EditText answerEditTextView = (EditText) dialogView.findViewById(R.id.quick_create_answer);
         final TextView deckPlaceHolder = (TextView) dialogView.findViewById(R.id.quick_create_deck_placeholder);
+
+        questionEditTextView.setHint(questionLabel);
+        answerEditTextView.setHint(answerLabel);
 
         final String currentSelectedDeckId = getCurrentDeckIdSelected();
 
@@ -601,9 +614,9 @@ public class CardListFragment extends Fragment {
                                 populateListView(getCurrentDeckIdSelected());
                                 aDialog.dismiss();
                             } else {
-                                if(answerTemp.equals(answerHolder) && questionTemp.equals(questionHolder)){
+                                if (answerTemp.equals(answerHolder) && questionTemp.equals(questionHolder)) {
                                     Toast.makeText(getContext(), "Question and Answer are the same", Toast.LENGTH_SHORT).show();
-                                }else{
+                                } else {
                                     dbManager.updateCard(card.getCardId(), questionHolder, answerHolder, card.getMoreInfo());
                                     Toast.makeText(getContext(), "Card updated", Toast.LENGTH_SHORT).show();
                                     populateListView(getCurrentDeckIdSelected());
@@ -715,7 +728,8 @@ public class CardListFragment extends Fragment {
             case R.id.remove_from_deck:
                 if (getCurrentDeckIdSelected() != ALL_DECKS_ITEM) {
                     dbManager.deleteCardDeck(cardList.get(indexSelected).getCardId(), getCurrentDeckIdSelected());
-                    Toast.makeText(getContext(), "Card removed from deck", Toast.LENGTH_SHORT).show();
+                    String cardRemoved = cardList.get(indexSelected).getQuestion() + "/" +cardList.get(indexSelected).getAnswer();
+                    Toast.makeText(getContext(), "\'" + cardRemoved + "\' removed from deck", Toast.LENGTH_SHORT).show();
                     populateListView(getCurrentDeckIdSelected());
                 } else {
                     Toast.makeText(getContext(), "Please select a deck", Toast.LENGTH_SHORT).show();
@@ -734,8 +748,8 @@ public class CardListFragment extends Fragment {
 
     private void showQuickInfoCard() {
         Card card = cardList.get(indexSelected);
-        String cardQuestion = "Card question: " + card.getQuestion();
-        String cardAnswer = "Card answer: " + card.getAnswer();
+        String cardQuestion = questionLabel + ": " + card.getQuestion();
+        String cardAnswer = answerLabel + ": " + card.getAnswer();
 
         List<Deck> decks = dbManager.getDecksFromCard(card.getCardId());
         String numberOfDecks = "Number of Decks: " + decks.size();
@@ -873,7 +887,6 @@ public class CardListFragment extends Fragment {
                     return;
                 }
             }
-            toSelectDeckId = ALL_DECKS_ITEM;
         }
     }
 
@@ -1146,7 +1159,7 @@ public class CardListFragment extends Fragment {
             holder.checkBox = (CheckBox) rowView.findViewById(R.id.custom_card_item_checkbox);
             holder.checkboxLayout = (LinearLayout) rowView.findViewById(R.id.checkbox_layout);
             holder.cardLayout = (LinearLayout) rowView.findViewById(R.id.custom_card_item_layout);
-            holder.cardOptionLayout = (LinearLayout) rowView.findViewById(R.id.card_option_layout);
+            holder.cardOptionLayout = (LinearLayout) rowView.findViewById(R.id.custom_card_option_layout);
 
             if (currentState == CardListState.VIEW) {
                 holder.cardOptionLayout.setVisibility(View.VISIBLE);
@@ -1262,6 +1275,7 @@ public class CardListFragment extends Fragment {
             } else {
                 holder.cardLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
             }
+
 
             rowView.setOnTouchListener(new View.OnTouchListener() {
                 @Override

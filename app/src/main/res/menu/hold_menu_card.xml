@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/info_card"
-        android:title="Quick Info"/>
 
-    <item android:id="@+id/toggle_practice"
-        android:title="Toggle from Review"/>
-
-    <item android:id="@+id/quick_edit"
-        android:title="Quick Edit"/>
-
-    <item android:id="@+id/edit_card"
+    <item
+        android:id="@+id/edit_card"
         android:title="Edit Card" />
 
-    <item android:id="@+id/remove_from_deck"
+    <item
+        android:id="@+id/info_card"
+        android:title="Quick Info" />
+    <item
+        android:id="@+id/quick_edit"
+        android:title="Quick Edit" />
+
+    <item
+        android:id="@+id/toggle_practice"
+        android:title="Toggle from Review" />
+
+    <item
+        android:id="@+id/remove_from_deck"
         android:title="Remove from Deck" />
 
-    <item android:id="@+id/delete_card"
+    <item
+        android:id="@+id/delete_card"
         android:title="Delete Card" />
 
 

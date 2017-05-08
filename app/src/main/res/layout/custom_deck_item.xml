@@ -49,6 +49,24 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/custom_deck_option_layout"
+        android:layout_width="30dp"
+        android:layout_height="fill_parent"
+        android:gravity="center|right"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:background="?selectableItemBackgroundBorderless">
+
+        <Button
+            android:layout_width="20dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:clickable="false"
+            android:background="@drawable/ic_more_vert_black_24dp"/>
+
+    </LinearLayout>
+
 
 </LinearLayout>
 

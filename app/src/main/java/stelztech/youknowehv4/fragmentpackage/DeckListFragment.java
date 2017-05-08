@@ -49,6 +49,8 @@ import stelztech.youknowehv4.model.Deck;
 public class DeckListFragment extends Fragment {
 
 
+    private TextView nbDeck;
+
     public enum DeckDialogOption {
         NEW,
         UPDATE
@@ -86,8 +88,13 @@ public class DeckListFragment extends Fragment {
         textView.setText("No Decks in selected Profile");
         dbManager = DatabaseManager.getInstance(getActivity());
 
-        LinearLayout deckInfoLVLayout = (LinearLayout) view.findViewById(R.id.deck_info_listview_layout);
-        deckInfoLVLayout.setVisibility(View.GONE);
+        LinearLayout orientationLayout = (LinearLayout) view.findViewById(R.id.listview_card_orientation_layout);
+        orientationLayout.setVisibility(View.GONE);
+
+        TextView nbpractice = (TextView) view.findViewById(R.id.listview_number_cards_practice);
+        nbpractice.setVisibility(View.GONE);
+
+        nbDeck = (TextView) view.findViewById(R.id.listview_number_cards);
 
         deckList = new ArrayList<Deck>();
 
@@ -120,7 +127,19 @@ public class DeckListFragment extends Fragment {
             textView.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
         }
+        setNumberDeckText();
+    }
 
+    private void setNumberDeckText() {
+        int numberOfDecks = deckList.size();
+        String message;
+        if(numberOfDecks == 0)
+            message = "No Decks";
+        else if(numberOfDecks == 1)
+            message = "1 Deck";
+        else
+            message = numberOfDecks + " Decks";
+        nbDeck.setText(message);
     }
 
     ////// HOLD MENU //////
@@ -129,7 +148,7 @@ public class DeckListFragment extends Fragment {
         super.onCreateContextMenu(menu, v, menuInfo);
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 
-        indexSelected = info.position;
+//        indexSelected = info.position;
 
         if (v.getId() == R.id.listview) {
             MenuInflater inflater = getActivity().getMenuInflater();
@@ -202,7 +221,7 @@ public class DeckListFragment extends Fragment {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final EditText input = new EditText(getActivity());
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES|InputType.TYPE_CLASS_TEXT);
         input.setSingleLine();
 
         FrameLayout container = new FrameLayout(getActivity());
@@ -381,6 +400,7 @@ public class DeckListFragment extends Fragment {
             TextView numberOfCardsTV;
             TextView numberOfCardsLabel;
             LinearLayout deckLayout;
+            LinearLayout deckOptionLayout;
         }
 
         @Override
@@ -395,6 +415,16 @@ public class DeckListFragment extends Fragment {
             holder.numberOfCardsTV = (TextView) rowView.findViewById(R.id.custom_deck_item_nb_cards);
             holder.numberOfCardsLabel =  (TextView) rowView.findViewById(R.id.custom_deck_item_nb_cards_label);
             holder.deckLayout = (LinearLayout) rowView.findViewById(R.id.custom_deck_item_layout);
+            holder.deckOptionLayout = (LinearLayout) rowView.findViewById(R.id.custom_deck_option_layout);
+
+            holder.deckOptionLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    indexSelected = position;
+                    getActivity().openContextMenu(listView);
+                }
+            });
+
 
             holder.deckName.setText(deckList.get(position).getDeckName());
 

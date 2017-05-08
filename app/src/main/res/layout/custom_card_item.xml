@@ -10,7 +10,7 @@
     <LinearLayout
         android:id="@+id/checkbox_layout"
         android:layout_width="0dp"
-        android:layout_height="45dp"
+        android:layout_height="50dp"
         android:layout_marginRight="5dp"
         android:layout_weight="1"
         android:layout_gravity="center"
@@ -25,7 +25,7 @@
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="45dp"
+        android:layout_height="50dp"
         android:layout_weight="9"
         android:gravity="center|left"
         android:layout_gravity="center"
@@ -56,10 +56,10 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/card_option_layout"
+        android:id="@+id/custom_card_option_layout"
         android:layout_width="30dp"
-        android:layout_height="45dp"
-        android:gravity="center"
+        android:layout_height="50dp"
+        android:gravity="center|right"
         android:layout_gravity="center"
         android:clickable="true"
         android:background="?selectableItemBackgroundBorderless">

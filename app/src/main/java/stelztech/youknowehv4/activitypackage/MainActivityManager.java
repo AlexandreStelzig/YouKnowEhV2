@@ -172,9 +172,11 @@ public class MainActivityManager extends AppCompatActivity
             @Override
             public void run() {
                 displayFragment(item.getItemId());
+                goBackToDecks = false; // if clicked from the drawer, dont go back to deck from cards
+                backToPreviousActivity = false;
             }
         }, 150);
-        goBackToDecks = false; // if clicked from the drawer, dont go back to deck from cards
+
         return true;
     }
 
@@ -196,7 +198,7 @@ public class MainActivityManager extends AppCompatActivity
                 break;
             case R.id.card_list:
                 fragment = mCardListFragment;
-                mCardListFragment.setToSelectDeckId("-1");
+//                mCardListFragment.setToSelectDeckId("-1");
                 title = "";
                 break;
             case R.id.deck_list:

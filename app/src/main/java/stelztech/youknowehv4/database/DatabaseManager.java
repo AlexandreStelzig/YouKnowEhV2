@@ -429,6 +429,30 @@ public class DatabaseManager {
 
     }
 
+    public void updateProfileQuestionLabel(String profileId, String questionLabel){
+        SQLiteDatabase db = database.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        String date = getDateNow();
+
+        values.put(DatabaseVariables.TableProfile.COLUMN_NAME_QUESTION_LABEL, questionLabel);
+        values.put(DatabaseVariables.TableProfile.COLUMN_NAME_DATE_MODIFIED, date);
+        db.update(DatabaseVariables.TableProfile.TABLE_NAME, values,
+                DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_ID + "=" + profileId, null);
+    }
+
+    public void updateProfileAnswerLabel(String profileId, String answerLabel){
+        SQLiteDatabase db = database.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        String date = getDateNow();
+
+        values.put(DatabaseVariables.TableProfile.COLUMN_NAME_ANSWER_LABEL, answerLabel);
+        values.put(DatabaseVariables.TableProfile.COLUMN_NAME_DATE_MODIFIED, date);
+        db.update(DatabaseVariables.TableProfile.TABLE_NAME, values,
+                DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_ID + "=" + profileId, null);
+    }
+
 
     ////////////// OTHER //////////////
 

@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -51,6 +52,8 @@ public class ProfileFragment extends Fragment {
     private Button deleteButton;
     private Button editButton;
     private Button newButton;
+    private LinearLayout questionLabelEditLayout;
+    private LinearLayout answerLabelEditLayout;
 
     private EditText questionLabel;
     private EditText answerLabel;
@@ -83,6 +86,25 @@ public class ProfileFragment extends Fragment {
         questionLabel = (EditText) view.findViewById(R.id.profile_question);
         answerLabel = (EditText) view.findViewById(R.id.profile_answer);
 
+        questionLabelEditLayout = (LinearLayout) view.findViewById(R.id.profile_question_edit);
+        answerLabelEditLayout = (LinearLayout) view.findViewById(R.id.profile_answer_edit);
+
+        questionLabelEditLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Profile profile = profileList.get(getCurrentlySelectedProfilePosition());
+                createDialog(ProfileDialogOptions.UPDATE_QUESTION, profile.getQuestionLabel()).show();
+            }
+        });
+
+        answerLabelEditLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Profile profile = profileList.get(getCurrentlySelectedProfilePosition());
+                createDialog(ProfileDialogOptions.UPDATE_ANSWER, profile.getAnswerLabel()).show();
+            }
+        });
+
         questionLabel.setKeyListener( null );
         answerLabel.setKeyListener( null );
         questionLabel.setFocusable(false);
@@ -107,8 +129,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        populateSpinner();
-        setLabelText();
+        populateInformation();
 
         return view;
     }
@@ -125,7 +146,7 @@ public class ProfileFragment extends Fragment {
     }
 
 
-    private void populateSpinner() {
+    private void populateInformation() {
 
         if (arrayAdapter != null)
             arrayAdapter.clear();
@@ -156,6 +177,7 @@ public class ProfileFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (!profileList.isEmpty()) {
                     changeProfile(profileList.get(position));
+                    setLabelText();
                 }
             }
 
@@ -164,6 +186,9 @@ public class ProfileFragment extends Fragment {
 
             }
         });
+
+
+        setLabelText();
 
 
     }
@@ -208,7 +233,7 @@ public class ProfileFragment extends Fragment {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final EditText input = new EditText(getActivity());
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         input.setSingleLine();
 
         FrameLayout container = new FrameLayout(getActivity());
@@ -280,16 +305,22 @@ public class ProfileFragment extends Fragment {
                             switch (dialogType) {
                                 case CREATE_PROFILE:
                                     dbManager.createProfile(dialogTextHolder);
-                                    populateSpinner();
+                                    populateInformation();
                                     break;
                                 case UPDATE_PROFILE:
                                     dbManager.updateProfile(profileList.get(
                                             getCurrentlySelectedProfilePosition()).getProfileId(), dialogTextHolder);
-                                    populateSpinner();
+                                    populateInformation();
                                     break;
                                 case UPDATE_QUESTION:
+                                    dbManager.updateProfileQuestionLabel(profileList.get(
+                                            getCurrentlySelectedProfilePosition()).getProfileId(), dialogTextHolder);
+                                    populateInformation();
                                     break;
                                 case UPDATE_ANSWER:
+                                    dbManager.updateProfileAnswerLabel(profileList.get(
+                                            getCurrentlySelectedProfilePosition()).getProfileId(), dialogTextHolder);
+                                    populateInformation();
                                     break;
                             }
                             Helper.getInstance().hideKeyboard(getActivity());
@@ -331,7 +362,7 @@ public class ProfileFragment extends Fragment {
                }
                 dbManager.deleteProfile(profileToDelete.getProfileId());
                 dbManager.setActiveProfile(profileList.get(0).getProfileId());
-                populateSpinner();
+                populateInformation();
             }
         });
 

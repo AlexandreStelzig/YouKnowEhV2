@@ -9,4 +9,6 @@
     android:maxLines="1"
     android:padding="5dip"
     android:textColor="@color/textPrimary"
-    android:textSize="20sp" />
+    android:textSize="20sp"
+    android:drawableRight="@drawable/ic_expand_more_black_24dp"
+    android:drawablePadding="5dp"/>

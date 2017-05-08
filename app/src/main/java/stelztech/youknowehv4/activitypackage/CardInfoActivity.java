@@ -36,12 +36,15 @@ import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.CardInfoToolbarManager;
 import stelztech.youknowehv4.model.Card;
 import stelztech.youknowehv4.model.Deck;
+import stelztech.youknowehv4.model.Profile;
 
 /**
  * Created by alex on 2017-04-04.
  */
 
 public class CardInfoActivity extends AppCompatActivity {
+
+
 
 
     public enum CardInfoState {
@@ -89,6 +92,8 @@ public class CardInfoActivity extends AppCompatActivity {
 
     private boolean goBackToViewModeFromEdit;
 
+
+
     // mode
     private CardInfoState currentState;
     private String mCardId;
@@ -121,6 +126,21 @@ public class CardInfoActivity extends AppCompatActivity {
         dateInfoLayout = (LinearLayout) findViewById(R.id.card_info_date_layout);
         dateCreatedTV = (TextView) findViewById(R.id.card_date_created);
         dateModifiedTV = (TextView) findViewById(R.id.card_date_modified);
+
+
+        // question answer labels
+
+        Profile currentProfile = dbManager.getActiveProfile();
+
+        String questionLabel = currentProfile.getQuestionLabel();
+        String answerLabel = currentProfile.getAnswerLabel();
+        TextView questionLabelTextView = (TextView) findViewById(R.id.card_info_question_label);
+        TextView answerLabelTextView  = (TextView) findViewById(R.id.card_info_answer_label);
+
+        questionLabelTextView.setText(questionLabel);
+        answerLabelTextView.setText(answerLabel);
+
+
 
 
         ((TextView) findViewById(R.id.create_another_card_string)).setOnClickListener(new View.OnClickListener() {
@@ -183,7 +203,7 @@ public class CardInfoActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // handle arrow click here
         if (item.getItemId() == android.R.id.home) {
-            if (currentState == CardInfoState.EDIT && cardHaveChanges()) {
+            if (currentState != CardInfoState.VIEW && cardHaveChanges()) {
                 setKeyboardVisibility(false);
                 confirmationDialog("Are you sure you want to cancel?\nAll modifications will be lost", ConfirmationEventId.HOME);
             } else {
@@ -259,11 +279,14 @@ public class CardInfoActivity extends AppCompatActivity {
     // navigation options
 
     private void setStateNew() {
+        goBackToViewModeFromEdit = false;
         getSupportActionBar().setTitle("New Card");
         currentState = CardInfoState.NEW;
         initActivityInformationNew();
         supportInvalidateOptionsMenu(); // call toolbar menu again
+        setEditTextEditable(true);
         setKeyboardVisibility(true);
+        setupTempVariables();
         createAnotherCardLayout.setVisibility(View.VISIBLE);
         dateInfoLayout.setVisibility(View.GONE);
         deckInfoButton.setText("EDIT");

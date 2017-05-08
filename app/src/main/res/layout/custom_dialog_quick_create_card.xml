@@ -37,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="question"
-        android:inputType="text"
+        android:inputType="textCapSentences|textAutoCorrect"
         android:maxLines="1" />
 
     <EditText
@@ -45,6 +45,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="answer"
-        android:inputType="text"
+        android:inputType="textCapSentences|textAutoCorrect"
         android:maxLines="1" />
 </LinearLayout>

@@ -113,10 +113,11 @@ public class PracticeFragment extends Fragment {
         showButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (deckList.size() > 0) {
+                if (!deckList.isEmpty()) {
                     showButtonClicked();
+                }else{
+                    Toast.makeText(getContext(), "No Decks", Toast.LENGTH_SHORT).show();
                 }
-                // TODO add warning toast
             }
         });
 
@@ -136,8 +137,10 @@ public class PracticeFragment extends Fragment {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (deckList.size() > 0) {
+                if (!deckList.isEmpty()) {
                     nextButtonClicked();
+                }else{
+                    Toast.makeText(getContext(), "No Decks", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -146,7 +149,11 @@ public class PracticeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (isSelectedDeckNothing()) {
-                    Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
+                    if(deckList.isEmpty()){
+                        Toast.makeText(getContext(), "No Decks", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
+                    }
                     return;
                 }
                 if (deckList.size() > 0) {
@@ -263,6 +270,7 @@ public class PracticeFragment extends Fragment {
                 return mTextView;
             }
         };
+        deckArrayAdapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
 
         spinner.setAdapter(deckArrayAdapter);
 
@@ -322,7 +330,13 @@ public class PracticeFragment extends Fragment {
     }
 
     private void setSelectDeck() {
-        questionTextView.setText("Select a Deck");
+
+        if(deckList.isEmpty()){
+            questionTextView.setText("No Decks");
+        }else{
+            questionTextView.setText("Select a Deck");
+        }
+
         answerTextView.setText("");
         praticeNbCards.setText("0 Practice Cards");
     }
