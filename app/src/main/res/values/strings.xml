@@ -29,4 +29,8 @@
         <item>Import all decks</item>
     </string-array>
 
+    <string-array name="settings_deleted_cards_options">
+        <item>View deleted cards</item>
+    </string-array>
+
 </resources>

@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import stelztech.youknowehv4.R;
@@ -58,7 +59,7 @@ public class DeckListFragment extends Fragment {
     // views
     private View view;
     private ListView listView;
-    private TextView textView;
+    private TextView placerholderTextView;
 
     // database
     private DatabaseManager dbManager;
@@ -74,6 +75,8 @@ public class DeckListFragment extends Fragment {
     // loading indicator
     private ProgressBar progressBar;
 
+    private boolean deckOrdering;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -86,13 +89,17 @@ public class DeckListFragment extends Fragment {
         deckNameHolder = "";
         indexSelected = -1;
         listView = (ListView) view.findViewById(R.id.listview);
-        textView = (TextView) view.findViewById(R.id.list_text);
-        textView.setText("No Decks in selected Profile");
+        placerholderTextView = (TextView) view.findViewById(R.id.list_text);
+        placerholderTextView.setText("Empty");
         dbManager = DatabaseManager.getInstance(getActivity());
         progressBar = (ProgressBar) view.findViewById(R.id.list_loading_indicator);
 
+
+        deckOrdering = false;
+
         LinearLayout orientationLayout = (LinearLayout) view.findViewById(R.id.listview_card_orientation_layout);
         orientationLayout.setVisibility(View.GONE);
+
 
         TextView nbpractice = (TextView) view.findViewById(R.id.listview_number_cards_practice);
         nbpractice.setVisibility(View.GONE);
@@ -104,6 +111,28 @@ public class DeckListFragment extends Fragment {
         populateListView();
 
         return view;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_deck_order:
+                deckOrdering = true;
+                ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
+                getActivity().invalidateOptionsMenu();
+                customListAdapter.notifyDataSetChanged();
+                return true;
+            case R.id.action_done:
+                deckOrdering = false;
+                ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.DECK, getActivity());
+                getActivity().invalidateOptionsMenu();
+                customListAdapter.notifyDataSetChanged();
+                return true;
+
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -122,8 +151,7 @@ public class DeckListFragment extends Fragment {
 
         if (!deckList.isEmpty()) {
 
-            textView.setVisibility(View.GONE);
-
+            placerholderTextView.setVisibility(View.GONE);
 
             listView.setAdapter(customListAdapter);
             listView.smoothScrollToPosition(0);
@@ -140,8 +168,9 @@ public class DeckListFragment extends Fragment {
             }, (long) (Math.random() * 250) + 400);
 
         } else {
-            textView.setVisibility(View.VISIBLE);
+            placerholderTextView.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
         }
         setNumberDeckText();
     }
@@ -177,14 +206,12 @@ public class DeckListFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.edit_deck:
                 updateDeck();
-                populateListView();
                 return true;
             case R.id.delete_deck:
                 displayDeleteConfirmationDialog();
                 return true;
             case R.id.info_deck:
                 showQuickInfoDeck();
-                populateListView();
                 return true;
             case R.id.export_deck:
                 Deck selectedDeck = deckList.get(indexSelected);
@@ -226,7 +253,13 @@ public class DeckListFragment extends Fragment {
 
     private void deleteDeckFromDatabase() {
         dbManager.deleteDeck((String) deckList.get(indexSelected).getDeckId());
-        populateListView();
+        deckList.remove(indexSelected);
+        if (deckList.isEmpty()) {
+            placerholderTextView.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        }
+        customListAdapter.notifyDataSetChanged();
+        setNumberDeckText();
         Toast.makeText(getContext(), "deck deleted", Toast.LENGTH_SHORT).show();
     }
 
@@ -301,14 +334,22 @@ public class DeckListFragment extends Fragment {
                                 case NEW:
                                     addToDatabase();
                                     alertDialog.dismiss();
-                                    Toast.makeText(getContext(), "Deck added", Toast.LENGTH_SHORT).show();
-                                    populateListView();
+                                    deckList = dbManager.getDecks();
+                                    if (deckList.size() == 1) {
+                                        populateListView();
+                                    } else {
+                                        customListAdapter.notifyDataSetChanged();
+                                        setNumberDeckText();
+                                    }
+                                    listView.smoothScrollToPosition(customListAdapter.getCount() - 1);
                                     break;
                                 case UPDATE:
                                     updateDatabase();
                                     alertDialog.dismiss();
-                                    Toast.makeText(getContext(), "Deck updated", Toast.LENGTH_SHORT).show();
-                                    populateListView();
+
+                                    deckList = dbManager.getDecks();
+                                    customListAdapter.notifyDataSetChanged();
+                                    setNumberDeckText();
                                     break;
                                 default:
                                     Toast.makeText(getContext(), "Error in deck dialog while adding", Toast.LENGTH_SHORT).show();
@@ -359,6 +400,7 @@ public class DeckListFragment extends Fragment {
 
     private void addToDatabase() {
         dbManager.createDeck(deckNameHolder);
+        Toast.makeText(getContext(), "Deck added", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -366,7 +408,7 @@ public class DeckListFragment extends Fragment {
 
         if (!deckNameHolder.equals((String) deckList.get(indexSelected).getDeckName())) {
             dbManager.updateDeck((String) deckList.get(indexSelected).getDeckId(), deckNameHolder);
-            Toast.makeText(getContext(), "deck name changed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Deck updated", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getContext(), "invalid: same name", Toast.LENGTH_SHORT).show();
 
@@ -375,7 +417,10 @@ public class DeckListFragment extends Fragment {
 
 
     public void onPrepareOptionsMenu(Menu menu) {
-        MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.DECK, menu, getActivity());
+        if (deckOrdering)
+            MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.DECK_ORDER, menu, getActivity());
+        else
+            MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.DECK, menu, getActivity());
     }
 
     ////// CUSTOM ADAPTER //////
@@ -417,6 +462,9 @@ public class DeckListFragment extends Fragment {
             TextView numberOfCardsLabel;
             LinearLayout deckLayout;
             LinearLayout deckOptionLayout;
+            LinearLayout upLayout;
+            LinearLayout downLayout;
+            LinearLayout deckOrderLayout;
         }
 
         @Override
@@ -432,6 +480,18 @@ public class DeckListFragment extends Fragment {
             holder.numberOfCardsLabel = (TextView) rowView.findViewById(R.id.custom_deck_item_nb_cards_label);
             holder.deckLayout = (LinearLayout) rowView.findViewById(R.id.custom_deck_item_layout);
             holder.deckOptionLayout = (LinearLayout) rowView.findViewById(R.id.custom_deck_option_layout);
+            holder.upLayout = (LinearLayout) rowView.findViewById(R.id.custom_deck_up_layout);
+            holder.downLayout = (LinearLayout) rowView.findViewById(R.id.custom_deck_down_layout);
+            holder.deckOrderLayout = (LinearLayout) rowView.findViewById(R.id.deck_order_layout);
+
+
+            if (deckOrdering) {
+                holder.deckOrderLayout.setVisibility(View.VISIBLE);
+                holder.deckOptionLayout.setVisibility(View.GONE);
+            } else {
+                holder.deckOrderLayout.setVisibility(View.GONE);
+                holder.deckOptionLayout.setVisibility(View.VISIBLE);
+            }
 
             holder.deckOptionLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -442,7 +502,28 @@ public class DeckListFragment extends Fragment {
             });
 
 
+            holder.upLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (position > 0) {
+                        dbManager.swapDeckPosition(deckList.get(position), deckList.get(position - 1));
+                        Collections.swap(deckList, position, position - 1);
+                        customListAdapter.notifyDataSetChanged();
 
+                    }
+                }
+            });
+
+            holder.downLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (position < deckList.size() - 1) {
+                        dbManager.swapDeckPosition(deckList.get(position), deckList.get(position + 1));
+                        Collections.swap(deckList, position, position + 1);
+                        customListAdapter.notifyDataSetChanged();
+                    }
+                }
+            });
 
             holder.deckName.setText(deckList.get(position).getDeckName());
 
@@ -454,23 +535,27 @@ public class DeckListFragment extends Fragment {
             else
                 holder.numberOfCardsLabel.setText("Cards");
 
+            if (!deckOrdering) {
+                rowView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
 
-            rowView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    indexSelected = position;
+                        indexSelected = position;
 
-                    return false;
-                }
-            });
+                        return false;
+                    }
+                });
+            } else {
+                rowView.setOnLongClickListener(null);
+            }
 
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    indexSelected = position;
-                    ((MainActivityManager) getActivity()).displayDeckInfo(deckList.get(indexSelected).getDeckId());
-
-
+                    if (!deckOrdering) {
+                        indexSelected = position;
+                        ((MainActivityManager) getActivity()).displayDeckInfo(deckList.get(indexSelected).getDeckId());
+                    }
                 }
             });
 

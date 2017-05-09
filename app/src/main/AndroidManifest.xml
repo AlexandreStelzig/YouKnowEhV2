@@ -24,6 +24,7 @@
         </activity>
 
         <activity android:name=".activitypackage.CardInfoActivity"></activity>
+        <activity android:name=".activitypackage.ArchivedActivity"></activity>
 
         <activity android:name=".activitypackage.FirstTimeOpeningActivity"></activity>
 

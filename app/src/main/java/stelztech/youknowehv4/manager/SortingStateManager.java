@@ -40,8 +40,6 @@ public class SortingStateManager {
 
     }
 
-    ;
-
     public static SortingStateManager getInstance() {
         if (instance == null)
             instance = new SortingStateManager();
@@ -171,38 +169,7 @@ public class SortingStateManager {
     }
 
 
-    public List<Deck> sortAlphabetically_Deck_Question(List<Deck> list) {
 
-        Collections.sort(list, new Comparator<Deck>() {
-            @Override
-            public int compare(Deck o1, Deck o2) {
-
-                String lowerCase1 = o1.getDeckName().toLowerCase();
-                String lowerCase2 = o2.getDeckName().toLowerCase();
-
-                String o1String = Normalizer.normalize(lowerCase1, Normalizer.Form.NFD);
-                String o2String = Normalizer.normalize(lowerCase2, Normalizer.Form.NFD);
-
-
-                String o1StringPart = o1String.replaceAll("\\d", "");
-                String o2StringPart = o2String.replaceAll("\\d", "");
-
-
-                if (o1StringPart.equalsIgnoreCase(o2StringPart)) {
-                    return extractInt(o1String) - extractInt(o2String);
-                }
-                return o1String.compareTo(o2String);
-            }
-
-            int extractInt(String s) {
-                String num = s.replaceAll("\\D", "");
-                // return 0 if no digits found
-                return num.isEmpty() ? 0 : Integer.parseInt(num);
-            }
-        });
-        return list;
-
-    }
 
     private List<Card> sortByDateCreated_NEW_OLD(List<Card> list) {
         Collections.sort(list, new Comparator<Card>() {
@@ -273,6 +240,23 @@ public class SortingStateManager {
         return list;
     }
 
+    public List<Deck> sortDeck(List<Deck> list) {
+
+        Collections.sort(list, new Comparator<Deck>() {
+            @Override
+            public int compare(Deck o1, Deck o2) {
+
+                int position1 = o1.getPosition();
+                int position2 = o2.getPosition();
+
+
+                return position1 - position2;
+            }
+        });
+        return list;
+
+    }
+
     public int getSelectedPosition() {
         switch (currentState) {
             case AZ_QUESTION:
@@ -297,5 +281,41 @@ public class SortingStateManager {
         return 0;
     }
 
+    public void changeStateByPosition(int position){
+        switch (position) {
+            // Question: A-Z
+            case 0:
+                changeSate(SortingStateManager.SortingStates.AZ_QUESTION);
+                break;
+            // Question: Z-A
+            case 1:
+                changeSate(SortingStateManager.SortingStates.ZA_QUESTION);
+                break;
+            // Answer: A-Z
+            case 2:
+                changeSate(SortingStateManager.SortingStates.AZ_ANSWER);
+                break;
+            // Answer: Z-A
+            case 3:
+                changeSate(SortingStateManager.SortingStates.ZA_ANSWER);
+                break;
+            // Date Created NEW-OLD
+            case 4:
+                changeSate(SortingStateManager.SortingStates.DATE_CREATED_NEW_OLD);
+                break;
+            // Date Created OLD-NEW
+            case 5:
+                changeSate(SortingStateManager.SortingStates.DATE_CREATED_OLD_NEW);
+                break;
+            // Date Modified NEW-OLD
+            case 6:
+                changeSate(SortingStateManager.SortingStates.DATE_MODIFIED_NEW_OLD);
+                break;
+            // Date Modified OLD-NEW
+            case 7:
+                changeSate(SortingStateManager.SortingStates.DATE_MODIFIED_OLD_NEW);
+                break;
+        }
+    }
 
 }

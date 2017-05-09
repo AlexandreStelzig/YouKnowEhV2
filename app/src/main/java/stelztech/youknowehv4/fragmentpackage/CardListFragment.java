@@ -105,7 +105,6 @@ public class CardListFragment extends Fragment {
 
     private SearchView searchView;
 
-    // dialog
     private int indexSelected;
 
     // current profile
@@ -122,14 +121,16 @@ public class CardListFragment extends Fragment {
     private String questionHolder;
     private String answerHolder;
 
+    // orientation labels
     private String orientationQuestionAnswer;
     private String orientationAnswerQuestion;
-
     private String questionLabel;
     private String answerLabel;
 
     // loading indicator
     private ProgressBar progressBar;
+
+    private boolean rebuild;
 
 
     @Override
@@ -150,7 +151,7 @@ public class CardListFragment extends Fragment {
         placeholderTextView = (TextView) view.findViewById(R.id.list_text);
         progressBar = (ProgressBar) view.findViewById(R.id.list_loading_indicator);
 
-        placeholderTextView.setText("No cards in current Deck");
+        placeholderTextView.setText("Empty");
 
         orientation = (TextView) view.findViewById(R.id.listview_card_orientation);
         nbCards = (TextView) view.findViewById(R.id.listview_number_cards);
@@ -159,6 +160,8 @@ public class CardListFragment extends Fragment {
         orientation.setVisibility(View.VISIBLE);
         nbCards.setVisibility(View.VISIBLE);
         nbCardsPractice.setVisibility(View.VISIBLE);
+
+        rebuild = true;
 
         currentProfile = dbManager.getActiveProfile();
 
@@ -178,8 +181,12 @@ public class CardListFragment extends Fragment {
         setOrientationText();
 
         populateSpinner();
+
+        hideListView();
+
         populateListView(getCurrentDeckIdSelected());
 
+        delayListViewShow();
 
         return view;
     }
@@ -227,6 +234,14 @@ public class CardListFragment extends Fragment {
             }
         });
 
+//        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+//            @Override
+//            public boolean onClose() {
+//                MenuItemCompat.collapseActionView(myActionMenuItem);
+//                return false;
+//            }
+//        });
+
 
         MenuItemCompat.setOnActionExpandListener(myActionMenuItem, new MenuItemCompat.OnActionExpandListener() {
             @Override
@@ -264,21 +279,23 @@ public class CardListFragment extends Fragment {
 
         switch (id) {
             case R.id.action_reverse:
-                if (deckList.size() != 0) {
-                    isReverseOrder = !isReverseOrder;
 
-                    setOrientationText();
-                    Toast.makeText(getContext(), "Orientation " + orientation.getText().toString(), Toast.LENGTH_SHORT).show();
-                    populateListView(getCurrentDeckIdSelected());
-                }
+                isReverseOrder = !isReverseOrder;
+                setOrientationText();
+                Toast.makeText(getContext(), "Orientation " + orientation.getText().toString(), Toast.LENGTH_SHORT).show();
+                populateListView(getCurrentDeckIdSelected());
+                listViewShow();
+
                 return true;
             case R.id.action_edit_deck_cards:
-                if (deckList.size() == 0) {
+                if (deckList.isEmpty()) {
                     Toast.makeText(getContext(), "No cards in deck", Toast.LENGTH_SHORT).show();
                     return true;
                 }
                 if (getCurrentDeckIdSelected() != ALL_DECKS_ITEM) {
+                    hideListView();
                     changeState(CardListState.EDIT_DECK);
+                    delayListViewShow();
                 } else {
                     Toast.makeText(getContext(), "Please select a deck", Toast.LENGTH_SHORT).show();
                 }
@@ -289,7 +306,11 @@ public class CardListFragment extends Fragment {
                     return true;
                 }
                 if (getCurrentDeckIdSelected() != ALL_DECKS_ITEM) {
-                    changeState(CardListState.PRACTICE_TOGGLE);
+                    if (cardList.isEmpty()) {
+                        Toast.makeText(getContext(), "No cards in deck", Toast.LENGTH_SHORT).show();
+                    } else {
+                        changeState(CardListState.PRACTICE_TOGGLE);
+                    }
                 } else {
                     Toast.makeText(getContext(), "Please select a deck", Toast.LENGTH_SHORT).show();
                 }
@@ -360,9 +381,6 @@ public class CardListFragment extends Fragment {
             case PRACTICE_TOGGLE:
                 nbCardsPractice.setText(nbCards + " review");
                 break;
-            case SEARCH:
-
-                break;
 
         }
 
@@ -376,6 +394,7 @@ public class CardListFragment extends Fragment {
                 currentState = CardListState.VIEW;
                 mainActivityManager.getSupportActionBar().setTitle("");
                 populateListView(getCurrentDeckIdSelected());
+                listViewShow();
                 getActivity().invalidateOptionsMenu();
                 break;
             case EDIT_DECK:
@@ -388,15 +407,12 @@ public class CardListFragment extends Fragment {
                 currentState = CardListState.PRACTICE_TOGGLE;
                 mainActivityManager.getSupportActionBar().setTitle("Toggle Review");
                 populateListView(getCurrentDeckIdSelected());
+                listViewShow();
                 getActivity().invalidateOptionsMenu();
                 break;
             case SEARCH:
                 currentState = CardListState.SEARCH;
                 ((MainActivityManager) getActivity()).enableDrawerSwipe(false);
-                if (getCurrentDeckIdSelected() == ALL_DECKS_ITEM)
-                    allCardsListSearch = dbManager.getCards();
-                else
-                    allCardsListSearch = dbManager.getCardsFromDeck(getCurrentDeckIdSelected());
                 isPracticeList = null;
 
                 populateSearchListView("");
@@ -431,7 +447,6 @@ public class CardListFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-
             }
         });
 
@@ -446,42 +461,15 @@ public class CardListFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
 
                         SortingStateManager sortingStateManager = SortingStateManager.getInstance();
-                        switch (which) {
-                            // Question: A-Z
-                            case 0:
-                                sortingStateManager.changeSate(SortingStateManager.SortingStates.AZ_QUESTION);
-                                break;
-                            // Question: Z-A
-                            case 1:
-                                sortingStateManager.changeSate(SortingStateManager.SortingStates.ZA_QUESTION);
-                                break;
-                            // Answer: A-Z
-                            case 2:
-                                sortingStateManager.changeSate(SortingStateManager.SortingStates.AZ_ANSWER);
-                                break;
-                            // Answer: Z-A
-                            case 3:
-                                sortingStateManager.changeSate(SortingStateManager.SortingStates.ZA_ANSWER);
-                                break;
-                            // Date Created NEW-OLD
-                            case 4:
-                                sortingStateManager.changeSate(SortingStateManager.SortingStates.DATE_CREATED_NEW_OLD);
-                                break;
-                            // Date Created OLD-NEW
-                            case 5:
-                                sortingStateManager.changeSate(SortingStateManager.SortingStates.DATE_CREATED_OLD_NEW);
-                                break;
-                            // Date Modified NEW-OLD
-                            case 6:
-                                sortingStateManager.changeSate(SortingStateManager.SortingStates.DATE_MODIFIED_NEW_OLD);
-                                break;
-                            // Date Modified OLD-NEW
-                            case 7:
-                                sortingStateManager.changeSate(SortingStateManager.SortingStates.DATE_MODIFIED_OLD_NEW);
-                                break;
-                        }
-                        populateListView(getCurrentDeckIdSelected());
+                        sortingStateManager.changeStateByPosition(which);
+
+                        if (currentState == CardListState.SEARCH)
+                            populateSearchListView(searchView.getQuery().toString());
+                        else
+                            populateListView(getCurrentDeckIdSelected());
+                        listViewShow();
                         dialog.dismiss();
+                        listView.smoothScrollToPosition(0);
                     }
                 });
 
@@ -509,7 +497,7 @@ public class CardListFragment extends Fragment {
                 builder.setTitle("Quick Create Card");
                 break;
             case QUICK_UPDATE:
-                builder.setTitle("Quick Create Card");
+                builder.setTitle("Quick Update Card");
                 break;
             default:
                 Toast.makeText(getContext(), "Error in deck dialog - wrong type", Toast.LENGTH_SHORT).show();
@@ -588,7 +576,7 @@ public class CardListFragment extends Fragment {
         aDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                populateListView(getCurrentDeckIdSelected());
+                // do nothing
             }
         });
 
@@ -630,7 +618,8 @@ public class CardListFragment extends Fragment {
                                 if (currentSelectedDeckId != ALL_DECKS_ITEM) {
                                     dbManager.createCardDeck(newCardId, currentSelectedDeckId);
                                 }
-
+                                populateListView(getCurrentDeckIdSelected());
+                                listViewShow();
                                 Toast.makeText(getContext(), "Card created", Toast.LENGTH_SHORT).show();
                                 aDialog.dismiss();
                             } else {
@@ -638,6 +627,8 @@ public class CardListFragment extends Fragment {
                                     Toast.makeText(getContext(), "Question and Answer are the same", Toast.LENGTH_SHORT).show();
                                 } else {
                                     dbManager.updateCard(card.getCardId(), questionHolder, answerHolder, card.getMoreInfo());
+                                    populateListView(getCurrentDeckIdSelected());
+                                    listViewShow();
                                     Toast.makeText(getContext(), "Card updated", Toast.LENGTH_SHORT).show();
                                     aDialog.dismiss();
                                 }
@@ -679,7 +670,7 @@ public class CardListFragment extends Fragment {
 
                                     Toast.makeText(getContext(), "Card created", Toast.LENGTH_SHORT).show();
                                     populateListView(getCurrentDeckIdSelected());
-
+                                    listViewShow();
                                     answerEditTextView.setText("");
                                     questionEditTextView.setText("");
                                     questionEditTextView.requestFocus();
@@ -734,12 +725,12 @@ public class CardListFragment extends Fragment {
                 return true;
             case R.id.info_card:
                 showQuickInfoCard();
-                populateListView(getCurrentDeckIdSelected());
                 return true;
             case R.id.toggle_practice:
                 if (getCurrentDeckIdSelected() != ALL_DECKS_ITEM) {
                     toggleCardFromPractice();
                     populateListView(getCurrentDeckIdSelected());
+                    listViewShow();
                     Toast.makeText(getContext(), "Card toggle from practice", Toast.LENGTH_SHORT).show();
                 } else
                     Toast.makeText(getContext(), "Please select a deck", Toast.LENGTH_SHORT).show();
@@ -750,6 +741,7 @@ public class CardListFragment extends Fragment {
                     String cardRemoved = cardList.get(indexSelected).getQuestion() + "/" + cardList.get(indexSelected).getAnswer();
                     Toast.makeText(getContext(), "\'" + cardRemoved + "\' removed from deck", Toast.LENGTH_SHORT).show();
                     populateListView(getCurrentDeckIdSelected());
+                    listViewShow();
                 } else {
                     Toast.makeText(getContext(), "Please select a deck", Toast.LENGTH_SHORT).show();
                 }
@@ -782,7 +774,7 @@ public class CardListFragment extends Fragment {
     }
 
     private void deleteCardFromDatabase() {
-        dbManager.deleteCard((String) cardList.get(indexSelected).getCardId());
+        dbManager.toggleArchiveCard((String) cardList.get(indexSelected).getCardId());
         Toast.makeText(getContext(), "Card deleted", Toast.LENGTH_SHORT).show();
         populateListView(getCurrentDeckIdSelected());
     }
@@ -842,6 +834,34 @@ public class CardListFragment extends Fragment {
         }
     }
 
+    public void listViewShow() {
+        if (!cardList.isEmpty()) {
+            progressBar.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void delayListViewShow() {
+        if (!cardList.isEmpty()) {
+            // forced loading indicator for better transition
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setVisibility(View.GONE);
+                    listView.setVisibility(View.VISIBLE);
+                    listView.setSelection(0);
+                }
+            }, (long) (Math.random() * 250) + 400);
+        }
+    }
+
+    private void hideListView() {
+        progressBar.setRotation((float) (Math.random() * 360));
+        progressBar.setVisibility(View.VISIBLE);
+        listView.setVisibility(View.GONE);
+    }
+
 
     private void populateSpinner() {
 
@@ -853,15 +873,19 @@ public class CardListFragment extends Fragment {
             deckList.clear();
 
 
+        cardList = dbManager.getCards();
         deckList = dbManager.getDecks();
         final List<String> deckListString = new ArrayList<>();
 
-
-        if (deckList.isEmpty()) {
+        if (cardList.isEmpty()) {
             deckListString.add(new String("No Cards"));
-            spinner.setEnabled(false);
         } else {
             deckListString.add(new String("All Cards"));
+        }
+
+        if (cardList.isEmpty() || deckList.isEmpty()) {
+            spinner.setEnabled(false);
+        } else {
             spinner.setEnabled(true);
         }
 
@@ -886,9 +910,9 @@ public class CardListFragment extends Fragment {
                 Display display = getActivity().getWindowManager().getDefaultDisplay();
                 Point size = new Point();
                 display.getSize(size);
-                int _width = size.x / 2;
+                int _width = size.x;
 
-                mTextView.setMinimumWidth(_width);
+                mTextView.setMinimumWidth(_width / 2);
 
                 if (position == spinner.getSelectedItemPosition())
                     mView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorNotPractice));
@@ -907,14 +931,22 @@ public class CardListFragment extends Fragment {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
                 String deckId;
                 if (position == 0) {
                     deckId = ALL_DECKS_ITEM;
                 } else {
                     deckId = deckList.get(position - SPINNER_OFFSET).getDeckId();
                 }
+
+                hideListView();
+
                 populateListView(deckId);
+
                 toSelectDeckId = getCurrentDeckIdSelected();
+
+                delayListViewShow();
+
                 return;
             }
 
@@ -942,10 +974,6 @@ public class CardListFragment extends Fragment {
 
     public void populateListView(String idDeck) {
 
-        progressBar.setRotation((float) (Math.random() * 360));
-        progressBar.setVisibility(View.VISIBLE);
-        listView.setVisibility(View.GONE);
-
 
         if (getCurrentDeckIdSelected().equals(ALL_DECKS_ITEM)) {
             nbCardsPractice.setVisibility(View.GONE);
@@ -956,9 +984,6 @@ public class CardListFragment extends Fragment {
         if (cardList != null) {
             cardList.clear();
         }
-
-
-        customListAdapter = new CustomListAdapter(getContext());
 
 
         if (idDeck.equals(ALL_DECKS_ITEM)) {
@@ -1016,7 +1041,14 @@ public class CardListFragment extends Fragment {
         if (!cardList.isEmpty()) {
             placeholderTextView.setVisibility(View.GONE);
 
-            listView.setAdapter(customListAdapter);
+            if (rebuild) {
+                customListAdapter = new CustomListAdapter(getContext());
+                listView.setAdapter(customListAdapter);
+                rebuild = false;
+            } else {
+                customListAdapter.notifyDataSetChanged();
+            }
+
 
             if (currentState == CardListState.VIEW) {
                 registerForContextMenu(listView);
@@ -1033,17 +1065,6 @@ public class CardListFragment extends Fragment {
                 }
             });
 
-            // forced loading indicator for better transition
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    progressBar.setVisibility(View.GONE);
-                    listView.setVisibility(View.VISIBLE);
-                }
-            }, (long) (Math.random() * 250) + 400);
-
-
         } else {
             progressBar.setVisibility(View.GONE);
             placeholderTextView.setVisibility(View.VISIBLE);
@@ -1053,7 +1074,6 @@ public class CardListFragment extends Fragment {
         setNumberOfCards();
 
 
-
     }
 
     public void populateSearchListView(String containsString) {
@@ -1061,6 +1081,10 @@ public class CardListFragment extends Fragment {
 
         nbCardsPractice.setVisibility(View.GONE);
 
+        if (getCurrentDeckIdSelected() == ALL_DECKS_ITEM)
+            allCardsListSearch = dbManager.getCards();
+        else
+            allCardsListSearch = dbManager.getCardsFromDeck(getCurrentDeckIdSelected());
 
         cardList.clear();
 
@@ -1252,7 +1276,6 @@ public class CardListFragment extends Fragment {
 
                 }
             });
-
 
             if (!isReverseOrder) {
                 holder.questionHolder.setText(cardList.get(position).getQuestion());

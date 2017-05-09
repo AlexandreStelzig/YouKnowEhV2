@@ -60,6 +60,7 @@ public class MainActivityManager extends AppCompatActivity
     // Activity results
     public final static int CARD_RESULT = 1;
     public final static int EXPORT_RESULT = 2;
+    public final static int ARCHIVED_RESULT = 3;
 
     // set fragment after drawer close
     private int mFragmentToSet = INT_NULL;
@@ -374,10 +375,13 @@ public class MainActivityManager extends AppCompatActivity
                 mCardListFragment.populateSearchListView(mCardListFragment.getSearchView().getQuery().toString());
             }else{
                 mCardListFragment.populateListView(getCurrentDeckIdSelected());
+                mCardListFragment.listViewShow();
             }
 
         } else if (requestCode == EXPORT_RESULT) {
 
+        }else if (requestCode == ARCHIVED_RESULT){
+            overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
         }
 
     }

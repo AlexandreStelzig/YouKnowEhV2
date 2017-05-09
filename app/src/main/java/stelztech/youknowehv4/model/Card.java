@@ -13,16 +13,27 @@ public class Card {
     private String dateCreated;
     private String dateModified;
 
-    public Card(String cardId, String question, String answer, String moreInfo, String dateCreated,
-                String dateModified) {
+
+    public Card(String cardId, String question, String answer, String moreInfo, String dateCreated, String dateModified, boolean archived) {
         this.cardId = cardId;
         this.question = question;
         this.answer = answer;
         this.moreInfo = moreInfo;
         this.dateCreated = dateCreated;
         this.dateModified = dateModified;
-
+        this.archived = archived;
     }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
+    }
+
+    private boolean archived;
+
 
     public String getCardId() {
         return cardId;

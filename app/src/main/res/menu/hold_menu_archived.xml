@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/quick_info_archived"
+        android:title="Quick Info" />
+
+    <item
+        android:id="@+id/unarchived_card"
+        android:title="Restore Card" />
+
+    <item
+        android:id="@+id/permanently_delete_card"
+        android:title="Permanently Delete Card" />
+
+</menu>

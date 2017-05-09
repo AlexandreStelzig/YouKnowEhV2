@@ -47,6 +47,7 @@ public class DatabaseManager {
         String activeProfileId = getActiveProfile().getProfileId();
 
         Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableCard.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TableCard.COLUMN_NAME_ARCHIVED + "=" + 0 + " AND "
                 + DatabaseVariables.TableCard.COLUMN_NAME_PROFILE_ID + "=" + activeProfileId, null);
         List<Card> cardList = new ArrayList<Card>();
 
@@ -79,7 +80,7 @@ public class DatabaseManager {
             }
         }
 
-        deckList = SortingStateManager.getInstance().sortAlphabetically_Deck_Question(deckList);
+        deckList = SortingStateManager.getInstance().sortDeck(deckList);
 
 
         cursor.close();
@@ -179,7 +180,7 @@ public class DatabaseManager {
             decks.add(getDeckFromId(cardDecks.get(i).getDeckId()));
         }
 
-        decks = SortingStateManager.getInstance().sortAlphabetically_Deck_Question(decks);
+        decks = SortingStateManager.getInstance().sortDeck(decks);
 
         cursor.close();
         return decks;
@@ -245,7 +246,6 @@ public class DatabaseManager {
         return profile;
     }
 
-
     ////////////// DELETE //////////////
 
     public boolean deleteDeck(String deckId) {
@@ -257,6 +257,20 @@ public class DatabaseManager {
             deleteCardDeck(cards.get(counter).getCardId(), deckId);
         }
 
+        // resets the positions when deleting a deck
+        List<Deck> deckList = getDecks();
+        int deckToDeletePosition = getDeckFromId(deckId).getPosition();
+        ContentValues values = new ContentValues();
+
+        for (int i = 0; i < deckList.size(); i++) {
+            if (deckList.get(i).getPosition() > deckToDeletePosition) {
+                values.put(DatabaseVariables.TableDeck.COLUMN_NAME_POSITION, deckList.get(i).getPosition() - 1);
+                db.update(DatabaseVariables.TableDeck.TABLE_NAME, values,
+                        DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deckList.get(i).getDeckId(), null);
+            }
+        }
+
+
         return db.delete(DatabaseVariables.TableDeck.TABLE_NAME,
                 DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deckId, null) > 0;
     }
@@ -264,12 +278,6 @@ public class DatabaseManager {
 
     public boolean deleteCard(String cardId) {
         SQLiteDatabase db = database.getReadableDatabase();
-
-        List<Deck> decks = getDecksFromCard(cardId);
-        // delete card-deck
-        for (int counter = 0; counter < decks.size(); counter++) {
-            deleteCardDeck(cardId, decks.get(counter).getDeckId());
-        }
 
         return db.delete(DatabaseVariables.TableCard.TABLE_NAME, DatabaseVariables.TableCard.COLUMN_NAME_CARD_ID
                 + "=" + cardId, null) > 0;
@@ -290,6 +298,53 @@ public class DatabaseManager {
                 + "=" + profileId, null) > 0;
     }
 
+    ////////////// ARCHIVED //////////////
+
+    public void toggleArchiveCard(String cardId){
+        SQLiteDatabase db = database.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        boolean currentArchive = getCardFromId(cardId).isArchived();
+
+        if(!currentArchive){
+            List<Deck> decks = getDecksFromCard(cardId);
+            // delete card-deck
+            for (int counter = 0; counter < decks.size(); counter++) {
+                deleteCardDeck(cardId, decks.get(counter).getDeckId());
+            }
+        }
+
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_ARCHIVED, !currentArchive);
+        db.update(DatabaseVariables.TableCard.TABLE_NAME, values,
+                DatabaseVariables.TableCard.COLUMN_NAME_CARD_ID + "=" + cardId, null);
+    }
+
+
+    public List<Card> getArchivedCards()
+    {
+        SQLiteDatabase db = database.getReadableDatabase();
+
+        String activeProfileId = getActiveProfile().getProfileId();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableCard.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TableCard.COLUMN_NAME_ARCHIVED + "=" + 1 + " AND "
+                + DatabaseVariables.TableCard.COLUMN_NAME_PROFILE_ID + "=" + activeProfileId, null);
+        List<Card> cardList = new ArrayList<Card>();
+
+        if (cursor.moveToFirst()) {
+            while (cursor.isAfterLast() == false) {
+                cardList.add(fetchCardFromCursor(cursor));
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+
+        cardList = SortingStateManager.getInstance().sortCardList(cardList);
+
+        return cardList;
+    }
+
+
     ////////////// CREATE //////////////
 
     public String createDeck(String name) {
@@ -299,11 +354,13 @@ public class DatabaseManager {
         String date = getDateNow();
 
         String activeProfileId = getActiveProfile().getProfileId();
+        int position = getDecks().size() + 1;
 
         values.put(DatabaseVariables.TableDeck.COLUMN_NAME_DECK_NAME, name);
         values.put(DatabaseVariables.TableDeck.COLUMN_NAME_DATE_CREATED, date);
         values.put(DatabaseVariables.TableDeck.COLUMN_NAME_DATE_MODIFIED, date);
         values.put(DatabaseVariables.TableDeck.COLUMN_NAME_PROFILE_ID, activeProfileId);
+        values.put(DatabaseVariables.TableDeck.COLUMN_NAME_POSITION, position);
 
 
         long newRowId = -1;
@@ -330,6 +387,7 @@ public class DatabaseManager {
         values.put(DatabaseVariables.TableCard.COLUMN_NAME_DATE_CREATED, date);
         values.put(DatabaseVariables.TableCard.COLUMN_NAME_DATE_MODIFIED, date);
         values.put(DatabaseVariables.TableCard.COLUMN_NAME_PROFILE_ID, activeProfileId);
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_ARCHIVED, false);
 
         long newRowId = -1;
         newRowId = db.insert(
@@ -429,7 +487,7 @@ public class DatabaseManager {
 
     }
 
-    public void updateProfileQuestionLabel(String profileId, String questionLabel){
+    public void updateProfileQuestionLabel(String profileId, String questionLabel) {
         SQLiteDatabase db = database.getReadableDatabase();
         ContentValues values = new ContentValues();
 
@@ -441,7 +499,7 @@ public class DatabaseManager {
                 DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_ID + "=" + profileId, null);
     }
 
-    public void updateProfileAnswerLabel(String profileId, String answerLabel){
+    public void updateProfileAnswerLabel(String profileId, String answerLabel) {
         SQLiteDatabase db = database.getReadableDatabase();
         ContentValues values = new ContentValues();
 
@@ -494,6 +552,21 @@ public class DatabaseManager {
 
     }
 
+    public void swapDeckPosition(Deck deck1, Deck deck2) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+
+        values.put(DatabaseVariables.TableDeck.COLUMN_NAME_POSITION, deck2.getPosition());
+        db.update(DatabaseVariables.TableDeck.TABLE_NAME, values,
+                DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deck1.getDeckId(), null);
+
+        values.put(DatabaseVariables.TableDeck.COLUMN_NAME_POSITION, deck1.getPosition());
+        db.update(DatabaseVariables.TableDeck.TABLE_NAME, values,
+                DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deck2.getDeckId(), null);
+
+    }
+
 
     ////////////// HELPERS //////////////
 
@@ -511,7 +584,10 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TableCard.COLUMN_NAME_DATE_CREATED));
         String dateModified = cursor.getString(cursor
                 .getColumnIndex(DatabaseVariables.TableCard.COLUMN_NAME_DATE_MODIFIED));
-        return new Card(id, question, answer, moreInfo, dateCreated, dateModified);
+        boolean archived = cursor.getInt(cursor
+                .getColumnIndex(DatabaseVariables.TableCard.COLUMN_NAME_ARCHIVED)) > 0;
+
+        return new Card(id, question, answer, moreInfo, dateCreated, dateModified, archived);
     }
 
     private Deck fetchDeckFromCursor(Cursor cursor) {
@@ -523,8 +599,10 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TableDeck.COLUMN_NAME_DATE_CREATED));
         String dateModified = cursor.getString(cursor
                 .getColumnIndex(DatabaseVariables.TableDeck.COLUMN_NAME_DATE_MODIFIED));
+        int position = cursor.getInt(cursor
+                .getColumnIndex(DatabaseVariables.TableDeck.COLUMN_NAME_POSITION));
 
-        return new Deck(id, name, dateCreated, dateModified);
+        return new Deck(id, name, dateCreated, dateModified, position);
     }
 
 

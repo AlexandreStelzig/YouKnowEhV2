@@ -16,6 +16,7 @@ public final class DatabaseVariables {
             + TableCard.COLUMN_NAME_MORE_INFORMATION + " TEXT,"
             + TableCard.COLUMN_NAME_DATE_CREATED + " DATE,"
             + TableCard.COLUMN_NAME_DATE_MODIFIED + " DATE,"
+            + TableCard.COLUMN_NAME_ARCHIVED + " BOOLEAN,"
             + TableCard.COLUMN_NAME_PROFILE_ID + " INTEGER,"
             + " FOREIGN KEY " + "(" + TableCard.COLUMN_NAME_PROFILE_ID + ")"
             + " REFERENCES " + TableProfile.TABLE_NAME + "(" + TableProfile.COLUMN_NAME_PROFILE_ID + ")" + " );";
@@ -27,6 +28,7 @@ public final class DatabaseVariables {
             + TableDeck.COLUMN_NAME_DATE_CREATED + " DATE,"
             + TableDeck.COLUMN_NAME_DATE_MODIFIED + " DATE,"
             + TableDeck.COLUMN_NAME_PROFILE_ID + " INTEGER,"
+            + TableDeck.COLUMN_NAME_POSITION + " INTEGER,"
             + " FOREIGN KEY " + "(" + TableDeck.COLUMN_NAME_PROFILE_ID + ")"
             + " REFERENCES " + TableProfile.TABLE_NAME + "(" + TableProfile.COLUMN_NAME_PROFILE_ID + ")" + " );";
 
@@ -66,6 +68,7 @@ public final class DatabaseVariables {
         public static final String COLUMN_NAME_DATE_CREATED = "datecreated";
         public static final String COLUMN_NAME_DATE_MODIFIED = "datemodified";
         public static final String COLUMN_NAME_PROFILE_ID = "profileid";
+        public static final String COLUMN_NAME_ARCHIVED = "archived";
     }
 
     public static abstract class TableDeck implements BaseColumns {
@@ -75,6 +78,7 @@ public final class DatabaseVariables {
         public static final String COLUMN_NAME_DATE_CREATED = "datecreated";
         public static final String COLUMN_NAME_DATE_MODIFIED = "datemodified";
         public static final String COLUMN_NAME_PROFILE_ID = "profileid";
+        public static final String COLUMN_NAME_POSITION = "position";
     }
 
 
@@ -84,6 +88,7 @@ public final class DatabaseVariables {
         public static final String COLUMN_NAME_CARD_ID = "cardid";
         public static final String COLUMN_NAME_DATE_ADDED = "dateadded";
         public static final String COLUMN_NAME_IS_PRACTICE = "ispractice";
+
     }
 
     public static abstract class TableProfile implements BaseColumns{

@@ -10,16 +10,20 @@ public class Deck {
     private String dateCreated;
     private String dateModified;
 
+
+
+    private int position;
+
     Deck() {
     }
 
-    public Deck(String deckId, String deckName, String dateCreated, String dateModified) {
+    public Deck(String deckId, String deckName, String dateCreated, String dateModified, int position) {
         this.deckId = deckId;
         this.deckName = deckName;
-        this.dateModified = dateModified;
         this.dateCreated = dateCreated;
+        this.dateModified = dateModified;
+        this.position = position;
     }
-
 
     public String getDeckId() {
         return deckId;
@@ -51,5 +55,13 @@ public class Deck {
 
     public void setDateModified(String dateModified) {
         this.dateModified = dateModified;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

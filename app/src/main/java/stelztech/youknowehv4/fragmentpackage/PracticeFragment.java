@@ -1,6 +1,7 @@
 package stelztech.youknowehv4.fragmentpackage;
 
 
+import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -55,8 +56,9 @@ public class PracticeFragment extends Fragment {
     private Button showButton;
     private Button nextButton;
     private Button infoButton;
-    private LinearLayout reverseButton;
+    private LinearLayout reverseLayout;
     private TextView alwaysShowAnswerTV;
+    private Button reverseButton;
 
     private CheckBox practiceCheckbox;
     private TextView praticeNbCards;
@@ -102,7 +104,8 @@ public class PracticeFragment extends Fragment {
         practiceCheckbox = (CheckBox) view.findViewById(R.id.practice_checkbox);
         praticeNbCards = (TextView) view.findViewById(R.id.practice_nb_cards);
         alwaysShowAnswerTV = (TextView) view.findViewById(R.id.always_show_answer_tv);
-        reverseButton = (LinearLayout) view.findViewById(R.id.practice_reverse_layout);
+        reverseLayout = (LinearLayout) view.findViewById(R.id.practice_reverse_layout);
+        reverseButton = (Button) view.findViewById(R.id.practice_reverse_button);
 
         questionList = new ArrayList<>();
         answerList = new ArrayList<>();
@@ -176,14 +179,14 @@ public class PracticeFragment extends Fragment {
             }
         });
 
-        reverseButton.setOnClickListener(new View.OnClickListener() {
+        reverseLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 reserveButtonClicked();
             }
         });
 
-//        reverseButton.setVisibility(View.GONE);
+//        reverseLayout.setVisibility(View.GONE);
 
         initSpinner();
         switchPracticeCards();
@@ -488,6 +491,10 @@ public class PracticeFragment extends Fragment {
 
 
         if (questionOrder.length > 0) {
+
+
+            ObjectAnimator.ofFloat(reverseButton, "rotation", 0, 180).start();
+
             boolean temp = answerHidden;
             isReverseOrder = !isReverseOrder;
             setQuestionAnswerOrder();
