@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -115,7 +116,7 @@ public class PracticeFragment extends Fragment {
             public void onClick(View v) {
                 if (!deckList.isEmpty()) {
                     showButtonClicked();
-                }else{
+                } else {
                     Toast.makeText(getContext(), "No Decks", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -139,7 +140,7 @@ public class PracticeFragment extends Fragment {
             public void onClick(View v) {
                 if (!deckList.isEmpty()) {
                     nextButtonClicked();
-                }else{
+                } else {
                     Toast.makeText(getContext(), "No Decks", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -149,9 +150,9 @@ public class PracticeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (isSelectedDeckNothing()) {
-                    if(deckList.isEmpty()){
+                    if (deckList.isEmpty()) {
                         Toast.makeText(getContext(), "No Decks", Toast.LENGTH_SHORT).show();
-                    }else{
+                    } else {
                         Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
                     }
                     return;
@@ -229,7 +230,7 @@ public class PracticeFragment extends Fragment {
         }
 
         deckArrayAdapter = new ArrayAdapter<String>(
-                getContext(), R.layout.custom_spinner_item_practice, deckListString) {
+                getContext(), R.layout.custom_spinner_item, deckListString) {
             // disable first field
 
             @Override
@@ -247,10 +248,20 @@ public class PracticeFragment extends Fragment {
                 View mView = super.getDropDownView(position, convertView, parent);
                 TextView mTextView = (TextView) mView;
 
-                if (position == SELECT_DECK_INDEX)
+                mTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
+
+                if (position == SELECT_DECK_INDEX) {
                     mTextView.setTextColor(Color.GRAY);
-                else
+                    mView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                } else {
                     mTextView.setTextColor(Color.BLACK);
+                    if (position == spinner.getSelectedItemPosition())
+                        mView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorNotPractice));
+                    else
+                        mView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                }
+
 
                 return mTextView;
             }
@@ -262,15 +273,22 @@ public class PracticeFragment extends Fragment {
                 View mView = super.getDropDownView(position, convertView, parent);
                 TextView mTextView = (TextView) mView;
 
-                if (position == SELECT_DECK_INDEX)
-                    mTextView.setTextColor(Color.GRAY);
+                if (deckList.isEmpty())
+                    mTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_expand_more_grey_24dp, 0);
                 else
+                    mTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_expand_more_black_24dp, 0);
+
+                if (position == SELECT_DECK_INDEX) {
+                    mTextView.setTextColor(Color.GRAY);
+                } else {
                     mTextView.setTextColor(Color.BLACK);
+                }
+
 
                 return mTextView;
             }
         };
-        deckArrayAdapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
+
 
         spinner.setAdapter(deckArrayAdapter);
 
@@ -331,14 +349,14 @@ public class PracticeFragment extends Fragment {
 
     private void setSelectDeck() {
 
-        if(deckList.isEmpty()){
+        if (deckList.isEmpty()) {
             questionTextView.setText("No Decks");
-        }else{
+        } else {
             questionTextView.setText("Select a Deck");
         }
 
         answerTextView.setText("");
-        praticeNbCards.setText("0 Practice Cards");
+        praticeNbCards.setText("0 Review Cards");
     }
 
 

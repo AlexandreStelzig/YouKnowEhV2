@@ -150,6 +150,7 @@ public class CardInfoActivity extends AppCompatActivity {
                 createAnotherCardCheckBox.setChecked(createAnotherCard);
             }
         });
+
         createAnotherCardCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

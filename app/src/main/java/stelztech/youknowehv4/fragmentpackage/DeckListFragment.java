@@ -4,6 +4,7 @@ package stelztech.youknowehv4.fragmentpackage;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -17,16 +18,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,6 +71,9 @@ public class DeckListFragment extends Fragment {
     private String deckNameHolder;
     private int indexSelected;
 
+    // loading indicator
+    private ProgressBar progressBar;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -87,6 +89,7 @@ public class DeckListFragment extends Fragment {
         textView = (TextView) view.findViewById(R.id.list_text);
         textView.setText("No Decks in selected Profile");
         dbManager = DatabaseManager.getInstance(getActivity());
+        progressBar = (ProgressBar) view.findViewById(R.id.list_loading_indicator);
 
         LinearLayout orientationLayout = (LinearLayout) view.findViewById(R.id.listview_card_orientation_layout);
         orientationLayout.setVisibility(View.GONE);
@@ -106,6 +109,10 @@ public class DeckListFragment extends Fragment {
 
     private void populateListView() {
 
+        progressBar.setRotation((float) (Math.random() * 360));
+        progressBar.setVisibility(View.VISIBLE);
+        listView.setVisibility(View.GONE);
+
         if (deckList != null)
             deckList.clear();
 
@@ -116,12 +123,21 @@ public class DeckListFragment extends Fragment {
         if (!deckList.isEmpty()) {
 
             textView.setVisibility(View.GONE);
-            listView.setVisibility(View.VISIBLE);
+
 
             listView.setAdapter(customListAdapter);
             listView.smoothScrollToPosition(0);
 
             registerForContextMenu(listView);
+
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setVisibility(View.GONE);
+                    listView.setVisibility(View.VISIBLE);
+                }
+            }, (long) (Math.random() * 250) + 400);
 
         } else {
             textView.setVisibility(View.VISIBLE);
@@ -133,9 +149,9 @@ public class DeckListFragment extends Fragment {
     private void setNumberDeckText() {
         int numberOfDecks = deckList.size();
         String message;
-        if(numberOfDecks == 0)
+        if (numberOfDecks == 0)
             message = "No Decks";
-        else if(numberOfDecks == 1)
+        else if (numberOfDecks == 1)
             message = "1 Deck";
         else
             message = numberOfDecks + " Decks";
@@ -173,7 +189,7 @@ public class DeckListFragment extends Fragment {
             case R.id.export_deck:
                 Deck selectedDeck = deckList.get(indexSelected);
                 List<Card> cardList = dbManager.getCardsFromDeck(selectedDeck.getDeckId());
-                ExportImportManager.exportFileToEmail(getContext(),selectedDeck , cardList);
+                ExportImportManager.exportFileToEmail(getContext(), selectedDeck, cardList);
 
                 return true;
             default:
@@ -221,7 +237,7 @@ public class DeckListFragment extends Fragment {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final EditText input = new EditText(getActivity());
-        input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES|InputType.TYPE_CLASS_TEXT);
+        input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_CLASS_TEXT);
         input.setSingleLine();
 
         FrameLayout container = new FrameLayout(getActivity());
@@ -413,7 +429,7 @@ public class DeckListFragment extends Fragment {
 
             holder.deckName = (TextView) rowView.findViewById(R.id.custom_deck_item_name);
             holder.numberOfCardsTV = (TextView) rowView.findViewById(R.id.custom_deck_item_nb_cards);
-            holder.numberOfCardsLabel =  (TextView) rowView.findViewById(R.id.custom_deck_item_nb_cards_label);
+            holder.numberOfCardsLabel = (TextView) rowView.findViewById(R.id.custom_deck_item_nb_cards_label);
             holder.deckLayout = (LinearLayout) rowView.findViewById(R.id.custom_deck_item_layout);
             holder.deckOptionLayout = (LinearLayout) rowView.findViewById(R.id.custom_deck_option_layout);
 
@@ -426,16 +442,17 @@ public class DeckListFragment extends Fragment {
             });
 
 
+
+
             holder.deckName.setText(deckList.get(position).getDeckName());
 
             int nbCards = dbManager.getCardsFromDeck(deckList.get(position).getDeckId()).size();
             holder.numberOfCardsTV.setText(nbCards + " ");
 
-            if(nbCards == 1)
+            if (nbCards == 1)
                 holder.numberOfCardsLabel.setText("Card");
             else
                 holder.numberOfCardsLabel.setText("Cards");
-
 
 
             rowView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -454,16 +471,17 @@ public class DeckListFragment extends Fragment {
                     ((MainActivityManager) getActivity()).displayDeckInfo(deckList.get(indexSelected).getDeckId());
 
 
-
                 }
             });
 
-            holder.deckLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
+            holder.deckLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
 
             rowView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-//                    rowView.setBackgroundResource(R.drawable.custom_listview_background);
+                    if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                        holder.deckLayout.getBackground().setHotspot(event.getX(), event.getY());
+                    }
                     return false;
                 }
             });

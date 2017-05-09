@@ -4,12 +4,18 @@ package stelztech.youknowehv4.fragmentpackage;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.view.ContextMenu;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,6 +33,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -121,6 +128,10 @@ public class CardListFragment extends Fragment {
     private String questionLabel;
     private String answerLabel;
 
+    // loading indicator
+    private ProgressBar progressBar;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -137,6 +148,7 @@ public class CardListFragment extends Fragment {
         dbManager = DatabaseManager.getInstance(getActivity());
         listView = (ListView) view.findViewById(R.id.listview);
         placeholderTextView = (TextView) view.findViewById(R.id.list_text);
+        progressBar = (ProgressBar) view.findViewById(R.id.list_loading_indicator);
 
         placeholderTextView.setText("No cards in current Deck");
 
@@ -167,6 +179,7 @@ public class CardListFragment extends Fragment {
 
         populateSpinner();
         populateListView(getCurrentDeckIdSelected());
+
 
         return view;
     }
@@ -255,7 +268,7 @@ public class CardListFragment extends Fragment {
                     isReverseOrder = !isReverseOrder;
 
                     setOrientationText();
-
+                    Toast.makeText(getContext(), "Orientation " + orientation.getText().toString(), Toast.LENGTH_SHORT).show();
                     populateListView(getCurrentDeckIdSelected());
                 }
                 return true;
@@ -314,6 +327,7 @@ public class CardListFragment extends Fragment {
         } else {
             orientation.setText(orientationQuestionAnswer);
         }
+
     }
 
     private void setNumberOfCards() {
@@ -366,7 +380,7 @@ public class CardListFragment extends Fragment {
                 break;
             case EDIT_DECK:
                 currentState = CardListState.EDIT_DECK;
-                mainActivityManager.getSupportActionBar().setTitle("Edit Deck's Cards");
+                mainActivityManager.getSupportActionBar().setTitle(dbManager.getDeckFromId(getCurrentDeckIdSelected()).getDeckName() + " Cards");
                 populateListView(getCurrentDeckIdSelected());
                 getActivity().invalidateOptionsMenu();
                 break;
@@ -571,6 +585,13 @@ public class CardListFragment extends Fragment {
 
         final AlertDialog aDialog = builder.create();
 
+        aDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                populateListView(getCurrentDeckIdSelected());
+            }
+        });
+
         aDialog.setOnShowListener(new DialogInterface.OnShowListener() {
 
             @Override
@@ -611,7 +632,6 @@ public class CardListFragment extends Fragment {
                                 }
 
                                 Toast.makeText(getContext(), "Card created", Toast.LENGTH_SHORT).show();
-                                populateListView(getCurrentDeckIdSelected());
                                 aDialog.dismiss();
                             } else {
                                 if (answerTemp.equals(answerHolder) && questionTemp.equals(questionHolder)) {
@@ -619,7 +639,6 @@ public class CardListFragment extends Fragment {
                                 } else {
                                     dbManager.updateCard(card.getCardId(), questionHolder, answerHolder, card.getMoreInfo());
                                     Toast.makeText(getContext(), "Card updated", Toast.LENGTH_SHORT).show();
-                                    populateListView(getCurrentDeckIdSelected());
                                     aDialog.dismiss();
                                 }
                             }
@@ -728,7 +747,7 @@ public class CardListFragment extends Fragment {
             case R.id.remove_from_deck:
                 if (getCurrentDeckIdSelected() != ALL_DECKS_ITEM) {
                     dbManager.deleteCardDeck(cardList.get(indexSelected).getCardId(), getCurrentDeckIdSelected());
-                    String cardRemoved = cardList.get(indexSelected).getQuestion() + "/" +cardList.get(indexSelected).getAnswer();
+                    String cardRemoved = cardList.get(indexSelected).getQuestion() + "/" + cardList.get(indexSelected).getAnswer();
                     Toast.makeText(getContext(), "\'" + cardRemoved + "\' removed from deck", Toast.LENGTH_SHORT).show();
                     populateListView(getCurrentDeckIdSelected());
                 } else {
@@ -851,8 +870,38 @@ public class CardListFragment extends Fragment {
         }
 
         deckArrayAdapter = new ArrayAdapter<String>(
-                getContext(), R.layout.custom_spinner_item_card, deckListString);
-        deckArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                getContext(), R.layout.custom_spinner_item_card, deckListString) {
+
+            @NonNull
+            @Override
+            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+
+                // set specific spinner dropdown visuals
+                View mView = super.getDropDownView(position, convertView, parent);
+                TextView mTextView = (TextView) mView;
+
+                mTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.textPrimary));
+                mTextView.setEllipsize(TextUtils.TruncateAt.END);
+
+                Display display = getActivity().getWindowManager().getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+                int _width = size.x / 2;
+
+                mTextView.setMinimumWidth(_width);
+
+                if (position == spinner.getSelectedItemPosition())
+                    mView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorNotPractice));
+                else
+                    mView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+
+
+                return mTextView;
+            }
+        };
+
+        deckArrayAdapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
+
         spinner.setAdapter(deckArrayAdapter);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -865,6 +914,7 @@ public class CardListFragment extends Fragment {
                     deckId = deckList.get(position - SPINNER_OFFSET).getDeckId();
                 }
                 populateListView(deckId);
+                toSelectDeckId = getCurrentDeckIdSelected();
                 return;
             }
 
@@ -891,6 +941,10 @@ public class CardListFragment extends Fragment {
     }
 
     public void populateListView(String idDeck) {
+
+        progressBar.setRotation((float) (Math.random() * 360));
+        progressBar.setVisibility(View.VISIBLE);
+        listView.setVisibility(View.GONE);
 
 
         if (getCurrentDeckIdSelected().equals(ALL_DECKS_ITEM)) {
@@ -961,7 +1015,6 @@ public class CardListFragment extends Fragment {
 
         if (!cardList.isEmpty()) {
             placeholderTextView.setVisibility(View.GONE);
-            listView.setVisibility(View.VISIBLE);
 
             listView.setAdapter(customListAdapter);
 
@@ -980,12 +1033,26 @@ public class CardListFragment extends Fragment {
                 }
             });
 
+            // forced loading indicator for better transition
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setVisibility(View.GONE);
+                    listView.setVisibility(View.VISIBLE);
+                }
+            }, (long) (Math.random() * 250) + 400);
+
+
         } else {
+            progressBar.setVisibility(View.GONE);
             placeholderTextView.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
         }
 
         setNumberOfCards();
+
+
 
     }
 
@@ -1161,6 +1228,7 @@ public class CardListFragment extends Fragment {
             holder.cardLayout = (LinearLayout) rowView.findViewById(R.id.custom_card_item_layout);
             holder.cardOptionLayout = (LinearLayout) rowView.findViewById(R.id.custom_card_option_layout);
 
+
             if (currentState == CardListState.VIEW) {
                 holder.cardOptionLayout.setVisibility(View.VISIBLE);
                 holder.cardOptionLayout.setOnClickListener(new View.OnClickListener() {
@@ -1218,9 +1286,9 @@ public class CardListFragment extends Fragment {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         isPracticeList[position] = isChecked;
                         if (!isPracticeList[position])
-                            holder.cardLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.colorNotPractice));
+                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_not_selected));
                         else
-                            holder.cardLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
+                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
 
                     }
                 });
@@ -1246,6 +1314,7 @@ public class CardListFragment extends Fragment {
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     // TODO Auto-generated method stub
                     if (currentState == CardListState.VIEW || currentState == CardListState.SEARCH) {
                         String cardId = cardList.get(position).getCardId();
@@ -1253,14 +1322,22 @@ public class CardListFragment extends Fragment {
                     } else if (currentState == CardListState.EDIT_DECK) {
                         isPartOfList[position] = !isPartOfList[position];
                         holder.checkBox.setChecked(isPartOfList[position]);
+
+                        if (isPartOfList[position]) {
+                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
+                        } else {
+                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_not_selected));
+                        }
+
                         setNumberCardsOther(numberCardsIncludedInDeck());
                     } else if (currentState == CardListState.PRACTICE_TOGGLE) {
                         isPracticeList[position] = !isPracticeList[position];
+
                         if (isPracticeList[position]) {
                             holder.checkBox.setChecked(true);
-                            holder.cardLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
+                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
                         } else {
-                            holder.cardLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.colorNotPractice));
+                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_not_selected));
                             holder.checkBox.setChecked(false);
                         }
                         setNumberCardsOther(numberCardsIncludedInPractice());
@@ -1270,17 +1347,26 @@ public class CardListFragment extends Fragment {
             });
 
 
-            if (isPracticeList != null && isPracticeList.length >= position && !isPracticeList[position] && currentState != CardListState.EDIT_DECK) {
-                holder.cardLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.colorNotPractice));
+            if (currentState == CardListState.EDIT_DECK) {
+                if (isPartOfList[position])
+                    holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
+                else
+                    holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_not_selected));
+            } else if (isPracticeList != null && isPracticeList.length >= position && !isPracticeList[position]) {
+                holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_not_selected));
             } else {
-                holder.cardLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
+
+                holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
             }
 
 
             rowView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-//                    android:foreground="?android:attr/selectableItemBackground"
+
+                    holder.cardLayout.getBackground().setHotspot(event.getX(), event.getY());
+
+
                     return false;
                 }
             });

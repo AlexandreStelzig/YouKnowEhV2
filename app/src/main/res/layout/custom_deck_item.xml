@@ -6,6 +6,9 @@
     android:orientation="horizontal"
     android:padding="5dp">
 
+
+    
+
     <TextView
         android:id="@+id/custom_deck_item_name"
         android:layout_width="0dp"

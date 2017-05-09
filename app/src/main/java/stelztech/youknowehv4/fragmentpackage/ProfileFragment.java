@@ -3,7 +3,10 @@ package stelztech.youknowehv4.fragmentpackage;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -18,6 +21,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -105,8 +109,8 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        questionLabel.setKeyListener( null );
-        answerLabel.setKeyListener( null );
+        questionLabel.setKeyListener(null);
+        answerLabel.setKeyListener(null);
         questionLabel.setFocusable(false);
         answerLabel.setFocusable(false);
 
@@ -166,7 +170,29 @@ public class ProfileFragment extends Fragment {
             profileNameArray.add("- No Profiles -");
         }
 
-        arrayAdapter = new ArrayAdapter(getContext(), R.layout.custom_spinner_item_practice, profileNameArray);
+        arrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.custom_spinner_item, profileNameArray) {
+
+            @NonNull
+            @Override
+            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+
+                View mView = super.getDropDownView(position, convertView, parent);
+                TextView mTextView = (TextView) mView;
+
+                mTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
+                if (position == profileSpinner.getSelectedItemPosition())
+                    mView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorNotPractice));
+                else
+                    mView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+
+
+                return mTextView;
+            }
+        };
+
+//        arrayAdapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
+
 
         profileSpinner.setAdapter(arrayAdapter);
 
@@ -233,7 +259,7 @@ public class ProfileFragment extends Fragment {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final EditText input = new EditText(getActivity());
-        input.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         input.setSingleLine();
 
         FrameLayout container = new FrameLayout(getActivity());
@@ -354,12 +380,12 @@ public class ProfileFragment extends Fragment {
 
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-               for(int i = 0; i < profileList.size(); i++){
-                   if(profileList.get(i).getProfileId().equals(profileToDelete.getProfileId())){
-                       profileList.remove(i);
-                       break;
-                   }
-               }
+                for (int i = 0; i < profileList.size(); i++) {
+                    if (profileList.get(i).getProfileId().equals(profileToDelete.getProfileId())) {
+                        profileList.remove(i);
+                        break;
+                    }
+                }
                 dbManager.deleteProfile(profileToDelete.getProfileId());
                 dbManager.setActiveProfile(profileList.get(0).getProfileId());
                 populateInformation();
