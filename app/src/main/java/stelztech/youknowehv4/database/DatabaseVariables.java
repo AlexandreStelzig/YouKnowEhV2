@@ -54,10 +54,20 @@ public final class DatabaseVariables {
             + TableProfile.COLUMN_NAME_DATE_MODIFIED + " DATE,"
             + TableProfile.COLUMN_NAME_ACTIVE + " BOOLEAN" + " );";
 
+    public static final String SQL_CREATE_TABLE_USER = "CREATE TABLE "
+            + TableUser.TABLE_NAME + " ("
+            + TableUser.COLUMN_NAME_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + TableUser.COLUMN_NAME_DEFAULT_SORTING + " INTEGER NOT NULL,"
+            + TableUser.COLUMN_NAME_ACTIVE_PROFILE_ID + " TEXT NOT NULL,"
+            + " FOREIGN KEY " + "(" + TableUser.COLUMN_NAME_ACTIVE_PROFILE_ID + ")"
+            + " REFERENCES " + TableProfile.TABLE_NAME + "(" + TableProfile.COLUMN_NAME_PROFILE_ID + ") " + ");";
+
 
     public static final String SQL_DELETE_TABLE_CARD = "DROP TABLE IF EXISTS " + TableCard.TABLE_NAME;
     public static final String SQL_DELETE_TABLE_DECK = "DROP TABLE IF EXISTS " + TableDeck.TABLE_NAME;
     public static final String SQL_DELETE_TABLE_CARD_DECK = "DROP TABLE IF EXISTS " + TableCardDeck.TABLE_NAME;
+    public static final String SQL_DELETE_TABLE_USER = "DROP TABLE IF EXISTS " + TableUser.TABLE_NAME;
+    public static final String SQL_DELETE_TABLE_PROFILE = "DROP TABLE IF EXISTS " + TableProfile.TABLE_NAME;
 
     public static abstract class TableCard implements BaseColumns {
         public static final String TABLE_NAME = "card";
@@ -100,5 +110,12 @@ public final class DatabaseVariables {
         public static final String COLUMN_NAME_QUESTION_LABEL = "questionlabel";
         public static final String COLUMN_NAME_ANSWER_LABEL = "answerlabel";
         public static final String COLUMN_NAME_ACTIVE = "active";
+    }
+
+    public static abstract class TableUser implements BaseColumns{
+        public static final String TABLE_NAME = "user";
+        public static final String COLUMN_NAME_USER_ID = "userid";
+        public static final String COLUMN_NAME_DEFAULT_SORTING = "defaultsorting";
+        public static final String COLUMN_NAME_ACTIVE_PROFILE_ID = "activeprofile";
     }
 }

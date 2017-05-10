@@ -46,7 +46,7 @@ import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.ActionButtonManager;
-import stelztech.youknowehv4.manager.MainMenuToolbarManager;
+import stelztech.youknowehv4.manager.CardToolbarManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.model.Card;
 import stelztech.youknowehv4.model.Deck;
@@ -192,17 +192,29 @@ public class CardListFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().getMenuInflater().inflate(R.menu.toolbar_card_list, menu);
+
+    }
+
+    @Override
     public void onPrepareOptionsMenu(final Menu menu) {
 
 
         if (currentState == CardListState.VIEW) {
-            MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.CARD, menu, getActivity());
+            if (getCurrentDeckIdSelected() == ALL_DECKS_ITEM)
+                CardToolbarManager.getInstance().setState(CardToolbarManager.CardToolbarState.ALL_CARDS, menu, getActivity());
+            else
+                CardToolbarManager.getInstance().setState(CardToolbarManager.CardToolbarState.CARD, menu, getActivity());
             ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.ADD_CARD, getActivity());
         } else if (currentState == CardListState.SEARCH) {
-            MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.SEARCH, menu, getActivity());
+            if (getCurrentDeckIdSelected() == ALL_DECKS_ITEM)
+                CardToolbarManager.getInstance().setState(CardToolbarManager.CardToolbarState.SEARCH_ALL, menu, getActivity());
+            else
+                CardToolbarManager.getInstance().setState(CardToolbarManager.CardToolbarState.SEARCH, menu, getActivity());
             ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
         } else {
-            MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.CARD_LIST_EDIT, menu, getActivity());
+            CardToolbarManager.getInstance().setState(CardToolbarManager.CardToolbarState.CARD_LIST_EDIT, menu, getActivity());
             ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
 
         }
@@ -256,8 +268,10 @@ public class CardListFragment extends Fragment {
 
                 changeState(CardListState.SEARCH);
 
-                MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.SEARCH, menu, getActivity());
-
+                if (getCurrentDeckIdSelected() == ALL_DECKS_ITEM)
+                    CardToolbarManager.getInstance().setState(CardToolbarManager.CardToolbarState.SEARCH_ALL, menu, getActivity());
+                else
+                    CardToolbarManager.getInstance().setState(CardToolbarManager.CardToolbarState.SEARCH, menu, getActivity());
 
                 return true;
             }
@@ -282,7 +296,7 @@ public class CardListFragment extends Fragment {
 
                 isReverseOrder = !isReverseOrder;
                 setOrientationText();
-                Toast.makeText(getContext(), "Orientation " + orientation.getText().toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Orientation: " + orientation.getText().toString(), Toast.LENGTH_SHORT).show();
                 populateListView(getCurrentDeckIdSelected());
                 listViewShow();
 
@@ -334,7 +348,7 @@ public class CardListFragment extends Fragment {
             case R.id.action_sort:
                 sortDialog().show();
                 return true;
-            case R.id.quick_create:
+            case R.id.action_quick_create:
                 quickCreateUpdateDialog(CardQuickDialogOption.QUICK_NEW, null).show();
                 return true;
         }
@@ -455,6 +469,7 @@ public class CardListFragment extends Fragment {
 
         final String[] sortingChoices = getContext().getResources().getStringArray(R.array.sort_options);
 
+
         deckListAlertDialog.setSingleChoiceItems(sortingChoices,
                 SortingStateManager.getInstance().getSelectedPosition(), new DialogInterface.OnClickListener() {
                     @Override
@@ -470,6 +485,9 @@ public class CardListFragment extends Fragment {
                         listViewShow();
                         dialog.dismiss();
                         listView.smoothScrollToPosition(0);
+
+                        int sortingPosition = sortingStateManager.getSelectedPosition();
+                        Toast.makeText(getContext(), "Sort: " + sortingChoices[sortingPosition], Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -698,6 +716,8 @@ public class CardListFragment extends Fragment {
         super.onCreateContextMenu(menu, v, menuInfo);
 
         if (v.getId() == R.id.listview) {
+            menu.setHeaderTitle(cardList.get(indexSelected).getQuestion() + " / " +
+                    cardList.get(indexSelected).getAnswer());
             MenuInflater inflater = getActivity().getMenuInflater();
             inflater.inflate(R.menu.hold_menu_card, menu);
 
@@ -738,7 +758,7 @@ public class CardListFragment extends Fragment {
             case R.id.remove_from_deck:
                 if (getCurrentDeckIdSelected() != ALL_DECKS_ITEM) {
                     dbManager.deleteCardDeck(cardList.get(indexSelected).getCardId(), getCurrentDeckIdSelected());
-                    String cardRemoved = cardList.get(indexSelected).getQuestion() + "/" + cardList.get(indexSelected).getAnswer();
+                    String cardRemoved = cardList.get(indexSelected).getQuestion() + " / " + cardList.get(indexSelected).getAnswer();
                     Toast.makeText(getContext(), "\'" + cardRemoved + "\' removed from deck", Toast.LENGTH_SHORT).show();
                     populateListView(getCurrentDeckIdSelected());
                     listViewShow();
@@ -915,9 +935,9 @@ public class CardListFragment extends Fragment {
                 mTextView.setMinimumWidth(_width / 2);
 
                 if (position == spinner.getSelectedItemPosition())
-                    mView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorNotPractice));
+                    mView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_grey));
                 else
-                    mView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                    mView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_normal));
 
 
                 return mTextView;
@@ -946,6 +966,7 @@ public class CardListFragment extends Fragment {
                 toSelectDeckId = getCurrentDeckIdSelected();
 
                 delayListViewShow();
+                getActivity().invalidateOptionsMenu();
 
                 return;
             }
@@ -1235,6 +1256,8 @@ public class CardListFragment extends Fragment {
             LinearLayout checkboxLayout;
             LinearLayout cardLayout;
             LinearLayout cardOptionLayout;
+            LinearLayout nbDecksLayout;
+            TextView nbDecksLabel;
         }
 
         @Override
@@ -1251,6 +1274,23 @@ public class CardListFragment extends Fragment {
             holder.checkboxLayout = (LinearLayout) rowView.findViewById(R.id.checkbox_layout);
             holder.cardLayout = (LinearLayout) rowView.findViewById(R.id.custom_card_item_layout);
             holder.cardOptionLayout = (LinearLayout) rowView.findViewById(R.id.custom_card_option_layout);
+            holder.nbDecksLayout = (LinearLayout) rowView.findViewById(R.id.custom_card_item_nb_decks_layout);
+            holder.nbDecksLabel = (TextView) rowView.findViewById(R.id.custom_card_item_nb_decks_label);
+
+
+            if (getCurrentDeckIdSelected() == ALL_DECKS_ITEM) {
+                holder.nbDecksLayout.setVisibility(View.VISIBLE);
+                int nbDecks = dbManager.getDecksFromCard(cardList.get(position).getCardId()).size();
+                String nbDeckString;
+                if (nbDecks == 1)
+                    nbDeckString = "1 Deck";
+                else
+                    nbDeckString = nbDecks + " Decks";
+                holder.nbDecksLabel.setText(nbDeckString);
+
+            } else {
+                holder.nbDecksLayout.setVisibility(View.GONE);
+            }
 
 
             if (currentState == CardListState.VIEW) {
@@ -1309,7 +1349,7 @@ public class CardListFragment extends Fragment {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         isPracticeList[position] = isChecked;
                         if (!isPracticeList[position])
-                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_not_selected));
+                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_grey));
                         else
                             holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
 
@@ -1349,7 +1389,7 @@ public class CardListFragment extends Fragment {
                         if (isPartOfList[position]) {
                             holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
                         } else {
-                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_not_selected));
+                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_grey));
                         }
 
                         setNumberCardsOther(numberCardsIncludedInDeck());
@@ -1360,7 +1400,7 @@ public class CardListFragment extends Fragment {
                             holder.checkBox.setChecked(true);
                             holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
                         } else {
-                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_not_selected));
+                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_grey));
                             holder.checkBox.setChecked(false);
                         }
                         setNumberCardsOther(numberCardsIncludedInPractice());
@@ -1374,9 +1414,9 @@ public class CardListFragment extends Fragment {
                 if (isPartOfList[position])
                     holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
                 else
-                    holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_not_selected));
+                    holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_grey));
             } else if (isPracticeList != null && isPracticeList.length >= position && !isPracticeList[position]) {
-                holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_not_selected));
+                holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_grey));
             } else {
 
                 holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));

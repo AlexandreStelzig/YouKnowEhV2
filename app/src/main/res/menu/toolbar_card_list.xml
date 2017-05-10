@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_white_24dp"
+        android:iconifiedByDefault="true"
+        android:title="Search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="collapseActionView|always" />
+
+
+    <item
+        android:id="@+id/action_cancel"
+        android:icon="@drawable/ic_cancel_white_24dp"
+        android:title="Cancel"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_done"
+        android:icon="@drawable/ic_done_white_24dp"
+        android:title="Done"
+        app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/action_more"
+        android:icon="@drawable/ic_more_vert_white_24dp"
+        android:orderInCategory="100"
+        android:title="More"
+        app:showAsAction="always">
+
+
+        <menu>
+
+            <item
+                android:id="@+id/action_edit_deck_cards"
+                android:icon="@drawable/ic_playlist_add_black_24dp"
+                android:title="Add/Remove cards"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/action_sort"
+                android:icon="@drawable/ic_sort_black_24dp"
+                android:title="Sort by"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/action_filter_practice"
+                android:icon="@drawable/ic_filter_list_black_24dp"
+                android:title="Filter Review"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/action_reverse"
+                android:icon="@drawable/ic_import_export_black_24dp"
+                android:title="Reverse Orientation"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/action_practice_toggle"
+                android:icon="@drawable/ic_check_box_black_24dp"
+                android:title="Review toggle"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/action_quick_create"
+                android:icon="@drawable/ic_add_black_24dp"
+                android:title="Quick create"
+                app:showAsAction="never" />
+        </menu>
+
+    </item>
+
+
+</menu>

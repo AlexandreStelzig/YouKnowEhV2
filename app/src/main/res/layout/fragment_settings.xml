@@ -25,6 +25,7 @@
                     android:text="Export/Import"
                     android:textColor="@color/colorPrimary"
                     android:textSize="16dp"
+                    android:gravity="center"
                     android:textStyle="bold" />
 
                 <ListView
@@ -38,7 +39,7 @@
 
 
             </LinearLayout>
-            
+
             <View
                 android:layout_width="0dp"
                 android:layout_height="5dp"/>
@@ -54,10 +55,41 @@
                     android:text="Deleted Cards"
                     android:textColor="@color/colorPrimary"
                     android:textSize="16dp"
+                    android:gravity="center"
                     android:textStyle="bold" />
 
                 <ListView
-                    android:id="@+id/settings_deleted_cards"
+                    android:id="@+id/settings_deleted_cards_lv"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="?android:attr/listPreferredItemHeight" >
+
+
+                </ListView>
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="5dp"/>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sorting"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="16dp"
+                    android:gravity="center"
+                    android:textStyle="bold" />
+
+                <ListView
+                    android:id="@+id/settings_sorting_lv"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="?android:attr/listPreferredItemHeight" >

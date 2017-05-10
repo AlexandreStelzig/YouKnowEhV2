@@ -47,12 +47,9 @@ public final class ExportImportManager {
 
         // check if available and not read only
         if (!isExternalStorageAvailable() || isExternalStorageReadOnly()) {
-            Log.e(TAG, "Storage not available or read only");
             Toast.makeText(context, "Storage not available or read only", Toast.LENGTH_SHORT).show();
             return null;
-        }
-
-        boolean success = false;
+        };
 
         //New Workbook
         Workbook wb = new HSSFWorkbook();
@@ -105,7 +102,7 @@ public final class ExportImportManager {
         if (!dir.exists()) {
             dir.mkdirs();
             if (!dir.exists()) {
-                Toast.makeText(context, "Error - give the app permission to access storage", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Give app permission to access storage to export", Toast.LENGTH_SHORT).show();
                 return null;
             }
         }
@@ -117,9 +114,8 @@ public final class ExportImportManager {
         try {
             os = new FileOutputStream(file);
             wb.write(os);
-            success = true;
         } catch (IOException e) {
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Give app permission to access storage to export", Toast.LENGTH_SHORT).show();
             return null;
         } catch (Exception e) {
             Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();

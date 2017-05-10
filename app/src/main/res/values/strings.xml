@@ -33,4 +33,15 @@
         <item>View deleted cards</item>
     </string-array>
 
+    <string-array name="settings_sorting_options">
+        <item>Default sorting</item>
+    </string-array>
+
+    <string-array name="about_contact_options">
+        <item>alexandre.stelzig@gmail.com</item>
+        <item>github.com/AlexandreStelzig</item>
+        <item>alexandrestelzig.github.io/</item>
+    </string-array>
+
+
 </resources>

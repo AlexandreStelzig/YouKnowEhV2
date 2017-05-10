@@ -3,6 +3,7 @@ package stelztech.youknowehv4.viewpager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ public class ViewPagerProfile extends Fragment{
 
         startButton = (Button) view.findViewById(R.id.intro_start_button);
         introProfileEditText = (EditText) view.findViewById(R.id.intro_profile_edittext);
+
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override

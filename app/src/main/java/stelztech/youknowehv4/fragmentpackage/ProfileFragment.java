@@ -7,10 +7,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -28,10 +30,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import stelztech.youknowehv4.R;
+import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.ActionButtonManager;
-import stelztech.youknowehv4.manager.MainMenuToolbarManager;
+import stelztech.youknowehv4.manager.CardToolbarManager;
 import stelztech.youknowehv4.model.Profile;
 
 /**
@@ -182,9 +185,9 @@ public class ProfileFragment extends Fragment {
                 mTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 
                 if (position == profileSpinner.getSelectedItemPosition())
-                    mView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorNotPractice));
+                    mView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_grey));
                 else
-                    mView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                    mView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_normal));
 
 
                 return mTextView;
@@ -412,7 +415,11 @@ public class ProfileFragment extends Fragment {
             return profileSpinner.getSelectedItemPosition();
     }
 
-    public void onPrepareOptionsMenu(Menu menu) {
-        MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.DEFAULT, menu, getActivity());
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().getMenuInflater().inflate(R.menu.toolbar_other, menu);
+        ActionBar actionBar = ((MainActivityManager) getActivity()).getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(true);
+        getActivity().findViewById(R.id.spinner_nav_layout).setVisibility(View.GONE);
     }
 }

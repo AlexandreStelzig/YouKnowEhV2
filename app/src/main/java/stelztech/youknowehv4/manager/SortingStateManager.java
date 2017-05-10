@@ -27,7 +27,8 @@ public class SortingStateManager {
         DATE_CREATED_OLD_NEW,
         DATE_MODIFIED_NEW_OLD,
         DATE_MODIFIED_OLD_NEW,
-        PRACTICE
+        PRACTICE,
+        NB_DECK
     }
 
     private SortingStates currentState;
@@ -83,9 +84,14 @@ public class SortingStateManager {
             case PRACTICE:
                 cardListSorted = sortByPractice(cardList);
                 break;
+            case NB_DECK:
+                cardListSorted = sortByDeck(cardList);
+                break;
         }
         return cardListSorted;
     }
+
+
 
     private List<Card> sortAlphabetically_Card_Question(List<Card> list) {
 
@@ -240,6 +246,10 @@ public class SortingStateManager {
         return list;
     }
 
+    private List<Card> sortByDeck(List<Card> cardList) {
+        return cardList;
+    }
+
     public List<Deck> sortDeck(List<Deck> list) {
 
         Collections.sort(list, new Comparator<Deck>() {
@@ -277,6 +287,8 @@ public class SortingStateManager {
                 return 7;
             case PRACTICE:
                 return 8;
+            case NB_DECK:
+                return 9;
         }
         return 0;
     }

@@ -37,8 +37,8 @@ import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.manager.ActionButtonManager;
+import stelztech.youknowehv4.manager.DeckToolbarManager;
 import stelztech.youknowehv4.manager.ExportImportManager;
-import stelztech.youknowehv4.manager.MainMenuToolbarManager;
 import stelztech.youknowehv4.model.Card;
 import stelztech.youknowehv4.model.Deck;
 
@@ -196,6 +196,7 @@ public class DeckListFragment extends Fragment {
 //        indexSelected = info.position;
 
         if (v.getId() == R.id.listview) {
+            menu.setHeaderTitle(deckList.get(indexSelected).getDeckName());
             MenuInflater inflater = getActivity().getMenuInflater();
             inflater.inflate(R.menu.hold_menu_deck, menu);
         }
@@ -418,9 +419,15 @@ public class DeckListFragment extends Fragment {
 
     public void onPrepareOptionsMenu(Menu menu) {
         if (deckOrdering)
-            MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.DECK_ORDER, menu, getActivity());
+            DeckToolbarManager.getInstance().setState(DeckToolbarManager.DeckToolbarState.DECK_ORDER, menu, getActivity());
         else
-            MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.DECK, menu, getActivity());
+            DeckToolbarManager.getInstance().setState(DeckToolbarManager.DeckToolbarState.DECK, menu, getActivity());
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().getMenuInflater().inflate(R.menu.toolbar_deck_list, menu);
+
     }
 
     ////// CUSTOM ADAPTER //////
@@ -458,7 +465,6 @@ public class DeckListFragment extends Fragment {
 
         public class Holder {
             TextView deckName;
-            TextView numberOfCardsTV;
             TextView numberOfCardsLabel;
             LinearLayout deckLayout;
             LinearLayout deckOptionLayout;
@@ -476,7 +482,6 @@ public class DeckListFragment extends Fragment {
 
 
             holder.deckName = (TextView) rowView.findViewById(R.id.custom_deck_item_name);
-            holder.numberOfCardsTV = (TextView) rowView.findViewById(R.id.custom_deck_item_nb_cards);
             holder.numberOfCardsLabel = (TextView) rowView.findViewById(R.id.custom_deck_item_nb_cards_label);
             holder.deckLayout = (LinearLayout) rowView.findViewById(R.id.custom_deck_item_layout);
             holder.deckOptionLayout = (LinearLayout) rowView.findViewById(R.id.custom_deck_option_layout);
@@ -528,12 +533,11 @@ public class DeckListFragment extends Fragment {
             holder.deckName.setText(deckList.get(position).getDeckName());
 
             int nbCards = dbManager.getCardsFromDeck(deckList.get(position).getDeckId()).size();
-            holder.numberOfCardsTV.setText(nbCards + " ");
 
             if (nbCards == 1)
-                holder.numberOfCardsLabel.setText("Card");
+                holder.numberOfCardsLabel.setText("1 Card");
             else
-                holder.numberOfCardsLabel.setText("Cards");
+                holder.numberOfCardsLabel.setText(nbCards + " Cards");
 
             if (!deckOrdering) {
                 rowView.setOnLongClickListener(new View.OnLongClickListener() {

@@ -8,16 +8,17 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -30,9 +31,9 @@ import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.manager.ActionButtonManager;
-import stelztech.youknowehv4.manager.MainMenuToolbarManager;
 import stelztech.youknowehv4.model.Card;
 import stelztech.youknowehv4.model.Deck;
+import stelztech.youknowehv4.model.Profile;
 
 /**
  * Created by alex on 2017-04-03.
@@ -57,10 +58,8 @@ public class PracticeFragment extends Fragment {
     private Button nextButton;
     private Button infoButton;
     private LinearLayout reverseLayout;
-    private TextView alwaysShowAnswerTV;
     private Button reverseButton;
-
-    private CheckBox practiceCheckbox;
+    private TextView orientationTextView;
     private TextView praticeNbCards;
 
     // question answers
@@ -76,11 +75,18 @@ public class PracticeFragment extends Fragment {
     // reverse order
     private boolean isReverseOrder;
 
-    private int selectedDeck;
     private List<Card> mCardList;
 
     private final int SELECT_DECK_INDEX = 0;
     private final int SPINNER_OFFSET = 1;
+
+    private boolean alwaysShowAnswer = false;
+
+    // orientation labels
+    private String orientationQuestionAnswer;
+    private String orientationAnswerQuestion;
+    private String questionLabel;
+    private String answerLabel;
 
 
     @Override
@@ -101,11 +107,10 @@ public class PracticeFragment extends Fragment {
         showButton = (Button) view.findViewById(R.id.practice_show_button);
         nextButton = (Button) view.findViewById(R.id.practice_next_button);
         infoButton = (Button) view.findViewById(R.id.practice_info);
-        practiceCheckbox = (CheckBox) view.findViewById(R.id.practice_checkbox);
         praticeNbCards = (TextView) view.findViewById(R.id.practice_nb_cards);
-        alwaysShowAnswerTV = (TextView) view.findViewById(R.id.always_show_answer_tv);
         reverseLayout = (LinearLayout) view.findViewById(R.id.practice_reverse_layout);
         reverseButton = (Button) view.findViewById(R.id.practice_reverse_button);
+        orientationTextView = (TextView) view.findViewById(R.id.practice_orientation);
 
         questionList = new ArrayList<>();
         answerList = new ArrayList<>();
@@ -113,6 +118,14 @@ public class PracticeFragment extends Fragment {
         currentQuestion = 0;
         answerHidden = true;
         isReverseOrder = false;
+
+        // init orientation text holders
+        Profile currentProfile = dbManager.getActiveProfile();
+        questionLabel = currentProfile.getQuestionLabel();
+        answerLabel = currentProfile.getAnswerLabel();
+
+        orientationQuestionAnswer = questionLabel + " - " + answerLabel;
+        orientationAnswerQuestion = answerLabel + " - " + questionLabel;
 
         showButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,15 +141,6 @@ public class PracticeFragment extends Fragment {
         questionTextView.setMovementMethod(new ScrollingMovementMethod());
         answerTextView.setMovementMethod(new ScrollingMovementMethod());
 
-        alwaysShowAnswerTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                practiceCheckbox.setChecked(!practiceCheckbox.isChecked());
-                if (!isSelectedDeckNothing()) {
-                    setQuestionAnswerText();
-                }
-            }
-        });
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,16 +172,6 @@ public class PracticeFragment extends Fragment {
             }
         });
 
-        practiceCheckbox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (!isSelectedDeckNothing()) {
-                    setQuestionAnswerText();
-                }
-
-            }
-        });
 
         reverseLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,14 +182,20 @@ public class PracticeFragment extends Fragment {
 
 //        reverseLayout.setVisibility(View.GONE);
 
+        setOrientationText();
         initSpinner();
         switchPracticeCards();
 
         return view;
     }
 
-    public void onPrepareOptionsMenu(Menu menu) {
-        MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.PRACTICE, menu, getActivity());
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().getMenuInflater().inflate(R.menu.toolbar_practice, menu);
+
+        ActionBar actionBar = ((MainActivityManager) getActivity()).getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(true);
+        getActivity().findViewById(R.id.spinner_nav_layout).setVisibility(View.GONE);
 
     }
 
@@ -205,7 +205,16 @@ public class PracticeFragment extends Fragment {
         switch (id) {
             case R.id.action_reverse:
                 reserveButtonClicked();
-
+                return true;
+            case R.id.action_always_show_answer:
+                alwaysShowAnswer = !alwaysShowAnswer;
+                if (alwaysShowAnswer)
+                    item.setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_check_box_black_24dp));
+                else
+                    item.setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_check_box_outline_blank_black_24dp));
+                if (!isSelectedDeckNothing()) {
+                    setQuestionAnswerText();
+                }
                 return true;
         }
 
@@ -244,6 +253,7 @@ public class PracticeFragment extends Fragment {
                 return true;
             }
 
+
             @NonNull
             @Override
             public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -260,9 +270,9 @@ public class PracticeFragment extends Fragment {
                 } else {
                     mTextView.setTextColor(Color.BLACK);
                     if (position == spinner.getSelectedItemPosition())
-                        mView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorNotPractice));
+                        mView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_grey));
                     else
-                        mView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                        mView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_normal));
                 }
 
 
@@ -409,7 +419,7 @@ public class PracticeFragment extends Fragment {
                 answerHidden = false;
                 showButton.setText("hide");
             } else {
-                if (!practiceCheckbox.isChecked())
+                if (!alwaysShowAnswer)
                     answerTextView.setText(answerHiddenString);
                 else
                     answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
@@ -451,16 +461,26 @@ public class PracticeFragment extends Fragment {
         questionTextView.scrollTo(0, 0);
 
         if (questionOrder.length == 0) {
-            questionTextView.setText("No Cards");
+            questionTextView.setText("No Practice Cards");
             answerTextView.setText("");
         } else {
             questionTextView.setText(questionList.get(questionOrder[currentQuestion]));
-            if (!practiceCheckbox.isChecked())
+            if (!alwaysShowAnswer)
                 answerTextView.setText(answerHiddenString);
             else
                 answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
             answerHidden = true;
         }
+    }
+
+
+    private void setOrientationText() {
+        if (isReverseOrder) {
+            orientationTextView.setText(orientationAnswerQuestion);
+        } else {
+            orientationTextView.setText(orientationQuestionAnswer);
+        }
+
     }
 
     private void setQuestionAnswerOrder() {
@@ -484,19 +504,13 @@ public class PracticeFragment extends Fragment {
     }
 
     private void reserveButtonClicked() {
-        if (isSelectedDeckNothing()) {
-            Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
 
-        if (questionOrder.length > 0) {
+        ObjectAnimator.ofFloat(reverseButton, "rotation", 0, 180).start();
+        isReverseOrder = !isReverseOrder;
 
-
-            ObjectAnimator.ofFloat(reverseButton, "rotation", 0, 180).start();
-
+        if (!questionList.isEmpty()) {
             boolean temp = answerHidden;
-            isReverseOrder = !isReverseOrder;
             setQuestionAnswerOrder();
             setQuestionAnswerText();
 
@@ -504,9 +518,10 @@ public class PracticeFragment extends Fragment {
                 answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
                 answerHidden = false;
             }
-
-            Toast.makeText(getContext(), "Order Reversed", Toast.LENGTH_SHORT).show();
-
         }
+
+
+        setOrientationText();
+        Toast.makeText(getContext(), "Orientation: " + orientationTextView.getText().toString(), Toast.LENGTH_SHORT).show();
     }
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_done"
+        android:icon="@drawable/ic_done_white_24dp"
+        android:title="Done"
+        app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/action_more"
+        android:icon="@drawable/ic_more_vert_white_24dp"
+        android:orderInCategory="100"
+        android:title="More"
+        app:showAsAction="always">
+
+
+        <menu>
+
+            <item
+                android:id="@+id/action_deck_order"
+                android:icon="@drawable/ic_low_priority_black_24dp"
+                android:title="Modify decks order"
+                app:showAsAction="never" />
+
+        </menu>
+
+    </item>
+
+
+</menu>

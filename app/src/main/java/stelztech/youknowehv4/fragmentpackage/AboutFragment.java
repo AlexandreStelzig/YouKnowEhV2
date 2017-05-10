@@ -5,15 +5,21 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import stelztech.youknowehv4.R;
+import stelztech.youknowehv4.activitypackage.MainActivityManager;
+import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.ActionButtonManager;
-import stelztech.youknowehv4.manager.MainMenuToolbarManager;
 
 /**
  * Created by alex on 2017-04-03.
@@ -22,9 +28,7 @@ import stelztech.youknowehv4.manager.MainMenuToolbarManager;
 public class AboutFragment extends Fragment {
 
 
-    private TextView github;
-    private TextView email;
-    private TextView website;
+    private ListView contactListView;
 
 
     View view;
@@ -38,48 +42,64 @@ public class AboutFragment extends Fragment {
         ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
         setHasOptionsMenu(true);
 
-        github = (TextView) view.findViewById(R.id.about_github);
-        email = (TextView) view.findViewById(R.id.about_email);
-        website = (TextView) view.findViewById(R.id.about_website);
-
-        github.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/AlexandreStelzig"));
-                startActivity(browserIntent);
-            }
-        });
-
-        website.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://alexandrestelzig.github.io/"));
-                startActivity(browserIntent);
-            }
-        });
-
-        email.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String[] emailTo = {"alexandre.stelzig@gmail.com"};
-                Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                emailIntent.setData(Uri.parse("mailto:"));
-                emailIntent.setType("text/plain");
+        contactListView = (ListView) view.findViewById(R.id.about_contact_listview);
 
 
-                emailIntent.putExtra(Intent.EXTRA_EMAIL, emailTo);
-//                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "You Know Eh?");
-//                emailIntent.putExtra(Intent.EXTRA_TEXT, "Email message goes here");
-
-                startActivity(emailIntent);
-            }
-        });
-
+        setupContactLV();
 
         return view;
     }
 
-    public void onPrepareOptionsMenu(Menu menu) {
-        MainMenuToolbarManager.getInstance().setState(MainMenuToolbarManager.MainMenuToolbarState.DEFAULT, menu, getActivity());
+
+    private void setupContactLV() {
+
+        // export import listview
+        final String[] exportImportChoices = getContext().getResources().getStringArray(R.array.about_contact_options);
+        ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, exportImportChoices);
+        contactListView.setAdapter(adapter);
+        contactListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                switch (position) {
+                    // email
+                    case 0:
+                        String[] emailTo = {"alexandre.stelzig@gmail.com"};
+                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                        emailIntent.setData(Uri.parse("mailto:"));
+                        emailIntent.setType("text/plain");
+
+                        emailIntent.putExtra(Intent.EXTRA_EMAIL, emailTo);
+                        startActivity(emailIntent);
+
+                        break;
+                    // github
+                    case 1:
+                        Intent githubintent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/AlexandreStelzig"));
+                        startActivity(githubintent);
+                        break;
+                    // website
+                    case 2:
+                        Intent websiteintent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://alexandrestelzig.github.io/"));
+                        startActivity(websiteintent);
+                        break;
+                }
+
+            }
+        });
+
+        Helper.getInstance().
+
+                setListViewHeightBasedOnChildren(contactListView);
+
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().getMenuInflater().inflate(R.menu.toolbar_other, menu);
+        ActionBar actionBar = ((MainActivityManager) getActivity()).getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(true);
+        getActivity().findViewById(R.id.spinner_nav_layout).setVisibility(View.GONE);
+
     }
 }

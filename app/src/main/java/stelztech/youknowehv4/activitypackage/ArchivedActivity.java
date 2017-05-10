@@ -159,6 +159,8 @@ public class ArchivedActivity extends AppCompatActivity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 
         if (v.getId() == R.id.listview) {
+            menu.setHeaderTitle(cardList.get(indexSelected).getQuestion() + " / " +
+                    cardList.get(indexSelected).getAnswer());
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.hold_menu_archived, menu);
         }
@@ -182,9 +184,9 @@ public class ArchivedActivity extends AppCompatActivity {
                 Toast.makeText(this, "Card unarchived", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.permanently_delete_card:
-                if(!cardList.isEmpty()){
+                if (!cardList.isEmpty()) {
                     displayPermDeleteConfirmation(cardList.get(indexSelected).getCardId());
-                }else{
+                } else {
                     Toast.makeText(this, "No cards", Toast.LENGTH_SHORT).show();
                 }
                 return true;
@@ -209,6 +211,7 @@ public class ArchivedActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.toolbar_archived, menu);
         return true;
     }
@@ -235,7 +238,7 @@ public class ArchivedActivity extends AppCompatActivity {
 
                 isReverseOrder = !isReverseOrder;
                 setOrientationText();
-                Toast.makeText(this, "Orientation " + orientation.getText().toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Orientation: " + orientation.getText().toString(), Toast.LENGTH_SHORT).show();
                 customListAdapter.notifyDataSetChanged();
                 return true;
 
@@ -353,6 +356,9 @@ public class ArchivedActivity extends AppCompatActivity {
                         customListAdapter.notifyDataSetChanged();
                         dialog.dismiss();
                         listView.smoothScrollToPosition(0);
+
+                        int sortingPosition = sortingStateManager.getSelectedPosition();
+                        Toast.makeText(ArchivedActivity.this, "Sort: " + sortingChoices[sortingPosition], Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -434,6 +440,8 @@ public class ArchivedActivity extends AppCompatActivity {
             holder.cardOptionLayout = (LinearLayout) rowView.findViewById(R.id.custom_card_option_layout);
 
             holder.checkboxLayout.setVisibility(View.GONE);
+
+            ((LinearLayout) rowView.findViewById(R.id.custom_card_item_nb_decks_layout)).setVisibility(View.GONE);
 
             if (!isReverseOrder) {
                 holder.questionHolder.setText(cardList.get(position).getQuestion());

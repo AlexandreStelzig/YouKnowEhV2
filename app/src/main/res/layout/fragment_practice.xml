@@ -42,16 +42,10 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/always_show_answer_tv"
+                    android:id="@+id/practice_orientation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Always show answer" />
-
-
-                <CheckBox
-                    android:id="@+id/practice_checkbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:text="orientationPlaceHolder" />
 
             </LinearLayout>
 
@@ -82,8 +76,9 @@
                     android:layout_height="45dp"
                     android:layout_gravity="center"
                     android:layout_weight="3"
+                    android:dropDownSelector="@drawable/ripple_normal"
                     android:background="@drawable/custom_spinner_background"
-                    android:gravity="center"></Spinner>
+                    android:gravity="center"/>
 
 
                 <View
@@ -96,7 +91,7 @@
                     android:layout_height="45dp"
                     android:layout_gravity="center"
                     android:layout_weight="1.5"
-                    android:background="@drawable/custom_button_selector"
+                    android:background="@drawable/ripple_button"
                     android:drawableLeft="@drawable/ic_info_outline_white_24dp"
                     android:padding="5dp"
                     android:text="VIEW"
@@ -216,7 +211,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:background="@drawable/custom_button_selector"
+                android:background="@drawable/ripple_button"
                 android:text="Show"
                 android:textColor="@color/colorTextIcon" />
 
@@ -230,7 +225,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:background="@drawable/custom_button_selector"
+                android:background="@drawable/ripple_button"
                 android:drawablePadding="0dp"
                 android:text="Next"
                 android:textColor="@color/colorTextIcon" />

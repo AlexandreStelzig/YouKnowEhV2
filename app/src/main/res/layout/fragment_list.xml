@@ -68,10 +68,6 @@
                 android:orientation="horizontal"
                 android:padding="2dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Orientation: " />
 
                 <TextView
                     android:id="@+id/listview_card_orientation"

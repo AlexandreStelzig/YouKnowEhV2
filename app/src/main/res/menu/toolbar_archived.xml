@@ -2,20 +2,35 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/action_sort_archived"
-        android:title="Sort by"
-        app:showAsAction="never"/>
 
     <item
-        android:id="@+id/action_reverse_archived"
-        android:title="Reverse orientation"
-        app:showAsAction="never"/>
+        android:id="@+id/action_more"
+        android:icon="@drawable/ic_more_vert_white_24dp"
+        android:orderInCategory="100"
+        android:title="More"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:icon="@drawable/ic_sort_black_24dp"
+                android:id="@+id/action_sort_archived"
+                android:title="Sort by"
+                app:showAsAction="never" />
 
-    <item
-        android:id="@+id/action_clear_archived"
-        android:title="Permanently delete all"
-        app:showAsAction="never"/>
+            <item
+                android:id="@+id/action_reverse_archived"
+                android:title="Reverse orientation"
+                android:icon="@drawable/ic_import_export_black_24dp"
+                app:showAsAction="never" />
+
+            <item
+                android:icon="@drawable/ic_delete_forever_black_24dp"
+                android:id="@+id/action_clear_archived"
+                android:title="Permanently delete all"
+                app:showAsAction="never" />
+
+        </menu>
+
+    </item>
 
 
 </menu>

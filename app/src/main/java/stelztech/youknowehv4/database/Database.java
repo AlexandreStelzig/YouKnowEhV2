@@ -25,6 +25,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_DECK);
         db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_CARD_DECK);
         db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_PROFILE);
+        db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_USER);
     }
 
     @Override
@@ -32,7 +33,8 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_DECK);
         db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_CARD);
         db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_CARD_DECK);
-        db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_PROFILE);
+        db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_PROFILE);
+        db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_USER);
         onCreate(db);
     }
 

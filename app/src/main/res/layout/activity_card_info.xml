@@ -77,7 +77,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginLeft="5dp"
-                        android:background="@drawable/custom_button_selector"
+                        android:background="@drawable/ripple_button"
                         android:minHeight="0dp"
                         android:minWidth="0dp"
                         android:onClick="deckInfoButtonClicked"
@@ -154,6 +154,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="textCapSentences|textAutoCorrect"
                         android:maxLines="1"
+                        android:imeOptions="actionDone"
                         android:textColor="@color/textPrimary"
                         android:textSize="@dimen/text_info" />
                 </LinearLayout>

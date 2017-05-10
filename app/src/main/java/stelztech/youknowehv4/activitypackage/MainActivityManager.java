@@ -11,11 +11,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
 
 import stelztech.youknowehv4.R;
@@ -28,7 +25,7 @@ import stelztech.youknowehv4.fragmentpackage.SettingsFragment;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.ActionButtonManager;
 import stelztech.youknowehv4.manager.CardInfoToolbarManager;
-import stelztech.youknowehv4.manager.MainMenuToolbarManager;
+import stelztech.youknowehv4.manager.CardToolbarManager;
 
 public class MainActivityManager extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -66,6 +63,7 @@ public class MainActivityManager extends AppCompatActivity
     private int mFragmentToSet = INT_NULL;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +83,7 @@ public class MainActivityManager extends AppCompatActivity
         actionButtonManager.setContext(this);
         actionButtonManager.setState(ActionButtonManager.ActionButtonState.GONE, this);
 
-        MainMenuToolbarManager.getInstance().setContext(this);
+        CardToolbarManager.getInstance().setContext(this);
         CardInfoToolbarManager.getInstance().setContext(this);
 
         Helper helper = Helper.getInstance();
@@ -116,39 +114,11 @@ public class MainActivityManager extends AppCompatActivity
 
         // default page
         displayFragment(R.id.practice);
+
+
+
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar_main_menu, menu);
-
-        // search menu option
-        final MenuItem myActionMenuItem = menu.findItem(R.id.action_search);
-        final SearchView searchView = (SearchView) myActionMenuItem.getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                // Toast like print
-
-                if (!searchView.isIconified()) {
-                    searchView.setIconified(true);
-                }
-                myActionMenuItem.collapseActionView();
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                // UserFeedback.show( "SearchOnQueryTextChanged: " + s);
-
-
-                return false;
-            }
-        });
-
-
-        return true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -371,16 +341,16 @@ public class MainActivityManager extends AppCompatActivity
                 backToPreviousActivity = true;
                 mCardListFragment.setSpinnerSelected();
             }
-            if(mCardListFragment.getCurrentState() == CardListFragment.CardListState.SEARCH){
+            if (mCardListFragment.getCurrentState() == CardListFragment.CardListState.SEARCH) {
                 mCardListFragment.populateSearchListView(mCardListFragment.getSearchView().getQuery().toString());
-            }else{
+            } else {
                 mCardListFragment.populateListView(getCurrentDeckIdSelected());
                 mCardListFragment.listViewShow();
             }
 
         } else if (requestCode == EXPORT_RESULT) {
 
-        }else if (requestCode == ARCHIVED_RESULT){
+        } else if (requestCode == ARCHIVED_RESULT) {
             overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
         }
 
@@ -402,5 +372,7 @@ public class MainActivityManager extends AppCompatActivity
     public void setGoBackToDecks(boolean goBackToDecks) {
         this.goBackToDecks = goBackToDecks;
     }
+
+
 
 }
