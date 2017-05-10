@@ -1,17 +1,20 @@
 package stelztech.youknowehv4.activitypackage;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.method.KeyListener;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
@@ -19,6 +22,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,8 +42,6 @@ import stelztech.youknowehv4.model.Profile;
  */
 
 public class CardInfoActivity extends AppCompatActivity {
-
-
 
 
     public enum CardInfoState {
@@ -78,6 +80,14 @@ public class CardInfoActivity extends AppCompatActivity {
     private LinearLayout dateInfoLayout;
     private TextView dateCreatedTV;
     private TextView dateModifiedTV;
+    private TextView questionTextView;
+    private TextView answerTextView;
+    private TextView noteTextView;
+    private View separator1;
+    private View separator2;
+    private ScrollView scrollView;
+    private LinearLayout reverseLayout;
+    private Button reverseButton;
 
     // temp variables
     private String questionTemp = "";
@@ -86,7 +96,6 @@ public class CardInfoActivity extends AppCompatActivity {
     private boolean[] mInitPartOfDeckTemp;
 
     private boolean goBackToViewModeFromEdit;
-
 
 
     // mode
@@ -111,9 +120,9 @@ public class CardInfoActivity extends AppCompatActivity {
         dbManager = DatabaseManager.getInstance(this);
         numberOfDecksTextView = (TextView) findViewById(R.id.number_of_decks_text_view);
         numberOfDecksString = (TextView) findViewById(R.id.number_of_decks_text_view_text);
-        questionEditTextView = (EditText) findViewById(R.id.question_edit_text);
-        answerEditTextView = (EditText) findViewById(R.id.answer_edit_text);
-        noteEditTextView = (EditText) findViewById(R.id.note_edit_text);
+        questionEditTextView = (EditText) findViewById(R.id.card_info_question_edit_text);
+        answerEditTextView = (EditText) findViewById(R.id.card_info_answer_edit_text);
+        noteEditTextView = (EditText) findViewById(R.id.card_info_note_edit_text);
         createAnotherCardLayout = (LinearLayout) findViewById(R.id.another_card_layout);
         deckInfoButton = (Button) findViewById(R.id.deck_info_button);
         createAnotherCardCheckBox = (CheckBox) findViewById(R.id.another_card_checkbox);
@@ -121,7 +130,18 @@ public class CardInfoActivity extends AppCompatActivity {
         dateInfoLayout = (LinearLayout) findViewById(R.id.card_info_date_layout);
         dateCreatedTV = (TextView) findViewById(R.id.card_date_created);
         dateModifiedTV = (TextView) findViewById(R.id.card_date_modified);
+        separator1 = (View) findViewById(R.id.card_info_separator_1);
+        separator2 = (View) findViewById(R.id.card_info_separator_2);
+        reverseLayout = (LinearLayout) findViewById(R.id.card_info_reverse_layout);
+        reverseButton = (Button) findViewById(R.id.card_info_reverse_button);
 
+        questionTextView = (TextView) findViewById(R.id.card_info_question_text_view);
+        answerTextView = (TextView) findViewById(R.id.card_info_answer_text_view);
+        noteTextView = (TextView) findViewById(R.id.card_info_note_text_view);
+
+        questionTextView.setMovementMethod(new ScrollingMovementMethod());
+        answerTextView.setMovementMethod(new ScrollingMovementMethod());
+        noteTextView.setMovementMethod(new ScrollingMovementMethod());
 
         // question answer labels
 
@@ -130,12 +150,35 @@ public class CardInfoActivity extends AppCompatActivity {
         String questionLabel = currentProfile.getQuestionLabel();
         String answerLabel = currentProfile.getAnswerLabel();
         TextView questionLabelTextView = (TextView) findViewById(R.id.card_info_question_label);
-        TextView answerLabelTextView  = (TextView) findViewById(R.id.card_info_answer_label);
+        TextView answerLabelTextView = (TextView) findViewById(R.id.card_info_answer_label);
 
         questionLabelTextView.setText(questionLabel);
         answerLabelTextView.setText(answerLabel);
 
+        scrollView = (ScrollView) findViewById(R.id.card_info_scroll);
 
+        scrollView.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                noteEditTextView.getParent().requestDisallowInterceptTouchEvent(false);
+                questionEditTextView.getParent().requestDisallowInterceptTouchEvent(false);
+                answerEditTextView.getParent().requestDisallowInterceptTouchEvent(false);
+                noteTextView.getParent().requestDisallowInterceptTouchEvent(false);
+                questionTextView.getParent().requestDisallowInterceptTouchEvent(false);
+                answerTextView.getParent().requestDisallowInterceptTouchEvent(false);
+
+                return false;
+            }
+        });
+
+        setStopScrollingOnView(noteEditTextView);
+        setStopScrollingOnView(questionEditTextView);
+        setStopScrollingOnView(answerEditTextView);
+        setStopScrollingOnView(noteTextView);
+        setStopScrollingOnView(questionTextView);
+        setStopScrollingOnView(answerTextView);
 
 
         ((TextView) findViewById(R.id.create_another_card_string)).setOnClickListener(new View.OnClickListener() {
@@ -150,6 +193,13 @@ public class CardInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 createAnotherCard = !createAnotherCard;
+            }
+        });
+
+        reverseLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reserveButtonClicked();
             }
         });
 
@@ -203,9 +253,10 @@ public class CardInfoActivity extends AppCompatActivity {
                 setKeyboardVisibility(false);
                 confirmationDialog("Are you sure you want to cancel?\nAll modifications will be lost", ConfirmationEventId.HOME);
             } else {
-                if(goBackToViewModeFromEdit){
+                if (goBackToViewModeFromEdit) {
                     setStateView();
-                }else{
+                } else {
+                    setKeyboardVisibility(false);
                     finish();
                 }
 
@@ -226,6 +277,7 @@ public class CardInfoActivity extends AppCompatActivity {
                 if (isAddingCardSuccessful) {
                     Intent returnIntent = new Intent();
                     setResult(Activity.RESULT_CANCELED, returnIntent);
+                    setKeyboardVisibility(false);
                     finish();
                 }
             }
@@ -286,6 +338,8 @@ public class CardInfoActivity extends AppCompatActivity {
         createAnotherCardLayout.setVisibility(View.VISIBLE);
         dateInfoLayout.setVisibility(View.GONE);
         deckInfoButton.setText("EDIT");
+        reverseLayout.setVisibility(View.VISIBLE);
+
     }
 
     private void setStateEdit() {
@@ -298,23 +352,30 @@ public class CardInfoActivity extends AppCompatActivity {
         supportInvalidateOptionsMenu(); // call toolbar menu again
         createAnotherCardLayout.setVisibility(View.GONE);
         dateInfoLayout.setVisibility(View.VISIBLE);
+        reverseLayout.setVisibility(View.VISIBLE);
         deckInfoButton.setText("EDIT");
         setKeyboardVisibility(true);
+        scrollView.smoothScrollTo(0, 0);
+
     }
 
 
     private void setStateView() {
+
         goBackToViewModeFromEdit = false;
         getSupportActionBar().setTitle("View Card");
         currentState = CardInfoState.VIEW;
         initActivityInformationView();
+        setKeyboardVisibility(false);
         setEditTextEditable(false);
         setFieldsInfo();
         supportInvalidateOptionsMenu(); // call toolbar menu again
-        setKeyboardVisibility(false);
         createAnotherCardLayout.setVisibility(View.GONE);
         dateInfoLayout.setVisibility(View.VISIBLE);
+        reverseLayout.setVisibility(View.GONE);
         deckInfoButton.setText("VIEW");
+        scrollView.smoothScrollTo(0, 0);
+
     }
 
     private void initActivityInformationNew() {
@@ -466,6 +527,7 @@ public class CardInfoActivity extends AppCompatActivity {
                     String deckIdReturn = mCardSpecificDeck.get(indexSelected).getDeckId();
                     getIntent().putExtra("deckIdReturn", deckIdReturn);
                     setResult(1, getIntent());
+                    setKeyboardVisibility(false);
                     finish();
                 }
             });
@@ -507,6 +569,7 @@ public class CardInfoActivity extends AppCompatActivity {
                 // update word
                 break;
             case HOME:
+                setKeyboardVisibility(false);
                 finish();
                 break;
         }
@@ -625,10 +688,26 @@ public class CardInfoActivity extends AppCompatActivity {
 
     private void setFieldsInfo() {
         Card card = dbManager.getCardFromId(mCardId);
-        answerEditTextView.setText(card.getAnswer());
-        questionEditTextView.setText(card.getQuestion());
-        noteEditTextView.setText(card.getMoreInfo());
 
+
+        if (currentState == CardInfoState.VIEW) {
+            answerTextView.setText(card.getAnswer());
+            questionTextView.setText(card.getQuestion());
+            noteTextView.setText(card.getMoreInfo());
+
+            answerTextView.scrollTo(0, 0);
+            questionTextView.scrollTo(0, 0);
+            noteTextView.scrollTo(0, 0);
+
+        } else {
+            answerEditTextView.setText(card.getAnswer());
+            questionEditTextView.setText(card.getQuestion());
+            noteEditTextView.setText(card.getMoreInfo());
+
+            answerEditTextView.scrollTo(0, 0);
+            questionEditTextView.scrollTo(0, 0);
+            noteEditTextView.scrollTo(0, 0);
+        }
 
 
         dateCreatedTV.setText(Helper.getInstance().getDateFormatted(card.getDateCreated()));
@@ -636,9 +715,38 @@ public class CardInfoActivity extends AppCompatActivity {
     }
 
     private void setEditTextEditable(boolean isEditable) {
-        setViewEnable(answerEditTextView, isEditable);
-        setViewEnable(questionEditTextView, isEditable);
-        setViewEnable(noteEditTextView, isEditable);
+        if (!isEditable) {
+            noteEditTextView.setVisibility(View.GONE);
+            answerEditTextView.setVisibility(View.GONE);
+            questionEditTextView.setVisibility(View.GONE);
+            noteTextView.setVisibility(View.VISIBLE);
+            answerTextView.setVisibility(View.VISIBLE);
+            questionTextView.setVisibility(View.VISIBLE);
+
+            noteTextView.setTextIsSelectable(true);
+            answerTextView.setTextIsSelectable(true);
+            questionTextView.setTextIsSelectable(true);
+
+            separator1.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+            separator2.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+
+        } else {
+            noteEditTextView.setVisibility(View.VISIBLE);
+            answerEditTextView.setVisibility(View.VISIBLE);
+            questionEditTextView.setVisibility(View.VISIBLE);
+            noteTextView.setVisibility(View.GONE);
+            answerTextView.setVisibility(View.GONE);
+            questionTextView.setVisibility(View.GONE);
+
+            noteEditTextView.setSelection(noteEditTextView.getText().length());
+            questionEditTextView.setSelection(questionEditTextView.getText().length());
+            answerEditTextView.setSelection(answerEditTextView.getText().length());
+
+            separator1.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent));
+            separator2.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent));
+        }
+
+
     }
 
     private void setupTempVariables() {
@@ -670,20 +778,10 @@ public class CardInfoActivity extends AppCompatActivity {
         return fieldChanged || deckChanged;
     }
 
-    private void setViewEnable(EditText view, boolean isEnable) {
-
-        if (!isEnable) {
-            view.setKeyListener( null );
-        } else {
-            view.setKeyListener((KeyListener) view.getTag());
-        }
-        view.setSelection(view.getText().length());
-    }
-
     private void setKeyboardVisibility(boolean isVisible) {
         if (isVisible) {
 
-            if(questionEditTextView.requestFocus()) {
+            if (questionEditTextView.requestFocus()) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(questionEditTextView, InputMethodManager.SHOW_IMPLICIT);
             }
@@ -715,6 +813,31 @@ public class CardInfoActivity extends AppCompatActivity {
 
 
         mTempPartOfDeckList = mIsPartOfDeckList.clone();
+
+    }
+
+    private void setStopScrollingOnView(final View view) {
+        view.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                int lineCount = ((TextView) view).getLineCount();
+                if (lineCount > 3)
+                    view.getParent().requestDisallowInterceptTouchEvent(true);
+
+                return false;
+            }
+        });
+    }
+
+    private void reserveButtonClicked() {
+
+        String questionString = questionEditTextView.getText().toString();
+        questionEditTextView.setText(answerEditTextView.getText().toString());
+        answerEditTextView.setText(questionString);
+
+        ObjectAnimator.ofFloat(reverseButton, "rotation", 0, 180).start();
 
     }
 

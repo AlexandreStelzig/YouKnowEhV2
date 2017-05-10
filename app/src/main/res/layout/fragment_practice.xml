@@ -76,9 +76,9 @@
                     android:layout_height="45dp"
                     android:layout_gravity="center"
                     android:layout_weight="3"
-                    android:dropDownSelector="@drawable/ripple_normal"
                     android:background="@drawable/custom_spinner_background"
-                    android:gravity="center"/>
+                    android:dropDownSelector="@drawable/ripple_normal"
+                    android:gravity="center" />
 
 
                 <View
@@ -118,13 +118,14 @@
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:ellipsize="end"
+                android:fadeScrollbars="false"
                 android:gravity="center"
                 android:maxLines="4"
                 android:scrollbars="vertical"
                 android:text="Question"
                 android:textColor="@color/textPrimary"
                 android:textSize="32dp" />
+
 
 
             <LinearLayout
@@ -134,18 +135,18 @@
 
 
                 <!--<LinearLayout-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:background="?selectableItemBackgroundBorderless"-->
-                    <!--android:clickable="true">-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="?selectableItemBackgroundBorderless"-->
+                <!--android:clickable="true">-->
 
 
-                    <!--<Button-->
-                        <!--android:id="@+id/practice_back"-->
-                        <!--android:layout_width="25dp"-->
-                        <!--android:layout_height="25dp"-->
-                        <!--android:background="@drawable/ic_navigate_before_black_24dp"-->
-                        <!--android:clickable="false" />-->
+                <!--<Button-->
+                <!--android:id="@+id/practice_back"-->
+                <!--android:layout_width="25dp"-->
+                <!--android:layout_height="25dp"-->
+                <!--android:background="@drawable/ic_navigate_before_black_24dp"-->
+                <!--android:clickable="false" />-->
                 <!--</LinearLayout>-->
 
                 <View
@@ -171,8 +172,8 @@
                         android:id="@+id/practice_reverse_button"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:clickable="false"
-                        android:background="@drawable/ic_import_export_black_24dp" />
+                        android:background="@drawable/ic_import_export_black_24dp"
+                        android:clickable="false" />
 
                 </LinearLayout>
 
@@ -185,7 +186,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:ellipsize="end"
+                android:fadeScrollbars="false"
                 android:gravity="center|top"
                 android:maxLines="4"
                 android:scrollbars="vertical"
