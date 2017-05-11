@@ -102,6 +102,7 @@ public class CardInfoActivity extends AppCompatActivity {
     private CardInfoState currentState;
     private String mCardId;
     private boolean createAnotherCard;
+    private CardInfoState initalStateFromIntent;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -210,7 +211,7 @@ public class CardInfoActivity extends AppCompatActivity {
 
 
         // get activity inital state
-        CardInfoState initalStateFromIntent = (CardInfoState) getIntent().getSerializableExtra("initialState");
+        initalStateFromIntent = (CardInfoState) getIntent().getSerializableExtra("initialState");
         initState(initalStateFromIntent);
     }
 
@@ -286,14 +287,21 @@ public class CardInfoActivity extends AppCompatActivity {
             boolean isAddingCardSuccessful = updateCard();
             if (isAddingCardSuccessful) {
                 resetNumberOfDecksCounter();
-                setStateView();
 
-                mCardSpecificDeck.clear();
-                for (int i = 0; i < mIsPartOfDeckList.length; i++) {
-                    if (mIsPartOfDeckList[i]) {
-                        mCardSpecificDeck.add(mDeckList.get(i));
+                if (goBackToViewModeFromEdit) {
+                    setStateView();
+
+                    mCardSpecificDeck.clear();
+                    for (int i = 0; i < mIsPartOfDeckList.length; i++) {
+                        if (mIsPartOfDeckList[i]) {
+                            mCardSpecificDeck.add(mDeckList.get(i));
+                        }
                     }
+                } else {
+                    setKeyboardVisibility(false);
+                    finish();
                 }
+
             }
 
 
@@ -301,20 +309,24 @@ public class CardInfoActivity extends AppCompatActivity {
             goBackToViewModeFromEdit = true;
             setStateEdit();
         } else if (item.getItemId() == (R.id.action_cancel_card_info)) {
-            if (cardHaveChanges()) {
-                setKeyboardVisibility(false);
-                confirmationDialog("Are you sure you want to cancel?\nAll modifications will be lost", ConfirmationEventId.CANCEL);
-            } else {
-                setStateView();
-            }
-
-        } else if (item.getItemId() == (R.id.action_switch_card_info) && currentState == CardInfoState.EDIT) {
-            String temp = questionEditTextView.getText().toString();
-            questionEditTextView.setText(answerEditTextView.getText());
-            answerEditTextView.setText(temp);
+            actionCancel();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void actionCancel(){
+        if (cardHaveChanges()) {
+            setKeyboardVisibility(false);
+            confirmationDialog("Are you sure you want to cancel?\nAll modifications will be lost", ConfirmationEventId.CANCEL);
+        } else {
+            if (goBackToViewModeFromEdit) {
+                setStateView();
+            } else {
+                setKeyboardVisibility(false);
+                finish();
+            }
+        }
     }
 
     @Override
@@ -323,6 +335,15 @@ public class CardInfoActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+
+        if(currentState == CardInfoState.EDIT){
+            actionCancel();
+        }else{
+            super.onBackPressed();
+        }
+    }
 
     // navigation options
 
@@ -459,10 +480,11 @@ public class CardInfoActivity extends AppCompatActivity {
 
         deckListAlertDialog = new AlertDialog.Builder(this);
 
+
         if (currentState == CardInfoState.NEW) {
-            setupDialogNewEdit("Add Deck(s) to Card:");
+            setupDialogNewEdit("Add/Remove Decks:");
         } else if (currentState == CardInfoState.EDIT) {
-            setupDialogNewEdit("Edit Card\'s Decks:");
+            setupDialogNewEdit("Add/Remove Decks:");
         } else {
             setupDialogView();
         }
@@ -586,12 +608,15 @@ public class CardInfoActivity extends AppCompatActivity {
         // fields validation
         if (question.trim().isEmpty() || answer.trim().isEmpty()) {
             String toastMessageError = "";
+            Profile profile = dbManager.getActiveProfile();
+            String questionLabel = profile.getQuestionLabel();
+            String answerLabel = profile.getAnswerLabel();
             if (question.trim().isEmpty() && answer.trim().isEmpty())
-                toastMessageError = "Question and Answer cannot be empty";
+                toastMessageError = questionLabel + " and " + answerLabel + " cannot be empty";
             else if (question.trim().isEmpty() && !answer.trim().isEmpty())
-                toastMessageError = "Question cannot be empty";
+                toastMessageError = questionLabel + " cannot be empty";
             else if (!question.trim().isEmpty() && answer.trim().isEmpty())
-                toastMessageError = "Answer cannot be empty";
+                toastMessageError = answerLabel + " cannot be empty";
 
             Toast.makeText(this, (String) toastMessageError,
                     Toast.LENGTH_SHORT).show();
@@ -617,7 +642,7 @@ public class CardInfoActivity extends AppCompatActivity {
                 dbManager.createCardDeck(newCardId, checkedDecks.get(counter).getDeckId());
             }
 
-            Toast.makeText(this, "Card successfully added",
+            Toast.makeText(this, "Card created",
                     Toast.LENGTH_SHORT).show();
             return true;
         }
@@ -635,15 +660,18 @@ public class CardInfoActivity extends AppCompatActivity {
 
                 if (question.trim().isEmpty() || answer.trim().isEmpty()) {
                     String toastMessageError = "";
+                    Profile profile = dbManager.getActiveProfile();
+                    String questionLabel = profile.getQuestionLabel();
+                    String answerLabel = profile.getAnswerLabel();
                     if (question.trim().isEmpty() && answer.trim().isEmpty())
-                        toastMessageError = "Question and Answer cannot be empty";
+                        toastMessageError = questionLabel + " and " + answerLabel + " cannot be empty";
                     else if (question.trim().isEmpty() && !answer.trim().isEmpty())
-                        toastMessageError = "Question cannot be empty";
+                        toastMessageError = questionLabel + " cannot be empty";
                     else if (!question.trim().isEmpty() && answer.trim().isEmpty())
-                        toastMessageError = "Answer cannot be empty";
+                        toastMessageError = answerLabel + " cannot be empty";
 
                     Toast.makeText(this, (String) toastMessageError,
-                            Toast.LENGTH_LONG).show();
+                            Toast.LENGTH_SHORT).show();
                     return false;
 
                 } else {
@@ -666,7 +694,7 @@ public class CardInfoActivity extends AppCompatActivity {
             if (areFieldChanged() && isDecksChanged())
                 Toast.makeText(this, "Card modified", Toast.LENGTH_LONG).show();
             else if (areFieldChanged())
-                Toast.makeText(this, "Card data modified", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Card information modified", Toast.LENGTH_LONG).show();
             else if (isDecksChanged())
                 Toast.makeText(this, "Card's Decks modified", Toast.LENGTH_LONG).show();
 

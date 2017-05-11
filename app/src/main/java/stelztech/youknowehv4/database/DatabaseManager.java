@@ -17,6 +17,7 @@ import stelztech.youknowehv4.model.Card;
 import stelztech.youknowehv4.model.CardDeck;
 import stelztech.youknowehv4.model.Deck;
 import stelztech.youknowehv4.model.Profile;
+import stelztech.youknowehv4.model.User;
 
 /**
  * Created by Alexandre on 4/25/2016.
@@ -85,6 +86,22 @@ public class DatabaseManager {
 
         cursor.close();
         return deckList;
+    }
+
+    public User getUser() {
+        SQLiteDatabase db = database.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableUser.TABLE_NAME, null);
+        User user = null;
+
+        if (cursor.moveToFirst()) {
+            user = (fetchUserFromCursor(cursor));
+            cursor.moveToNext();
+
+        }
+
+        cursor.close();
+        return user;
     }
 
 
@@ -294,19 +311,29 @@ public class DatabaseManager {
     public boolean deleteProfile(String profileId) {
         SQLiteDatabase db = database.getReadableDatabase();
 
+        List<Card> cardList = getCards();
+        List<Deck> deckList = getDecks();
+
+        for(int c = 0; c < cardList.size(); c++)
+            deleteCard(cardList.get(c).getCardId());
+
+        for(int d = 0; d < cardList.size(); d++)
+            deleteDeck(deckList.get(d).getDeckId());
+
+
         return db.delete(DatabaseVariables.TableProfile.TABLE_NAME, DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_ID
                 + "=" + profileId, null) > 0;
     }
 
     ////////////// ARCHIVED //////////////
 
-    public void toggleArchiveCard(String cardId){
+    public void toggleArchiveCard(String cardId) {
         SQLiteDatabase db = database.getReadableDatabase();
         ContentValues values = new ContentValues();
 
         boolean currentArchive = getCardFromId(cardId).isArchived();
 
-        if(!currentArchive){
+        if (!currentArchive) {
             List<Deck> decks = getDecksFromCard(cardId);
             // delete card-deck
             for (int counter = 0; counter < decks.size(); counter++) {
@@ -320,8 +347,7 @@ public class DatabaseManager {
     }
 
 
-    public List<Card> getArchivedCards()
-    {
+    public List<Card> getArchivedCards() {
         SQLiteDatabase db = database.getReadableDatabase();
 
         String activeProfileId = getActiveProfile().getProfileId();
@@ -427,10 +453,8 @@ public class DatabaseManager {
         values.put(DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_NAME, name);
         values.put(DatabaseVariables.TableProfile.COLUMN_NAME_DATE_CREATED, date);
         values.put(DatabaseVariables.TableProfile.COLUMN_NAME_DATE_MODIFIED, date);
-        values.put(DatabaseVariables.TableProfile.COLUMN_NAME_ACTIVE, false);
         values.put(DatabaseVariables.TableProfile.COLUMN_NAME_QUESTION_LABEL, "Question");
         values.put(DatabaseVariables.TableProfile.COLUMN_NAME_ANSWER_LABEL, "Answer");
-
 
         long newRowId = -1;
         newRowId = db.insert(
@@ -442,6 +466,35 @@ public class DatabaseManager {
         setActiveProfile(Long.toString(newRowId));
 
         return Long.toString(newRowId);
+    }
+
+    public String createUser() {
+
+        if (getUser() == null) {
+            SQLiteDatabase db = database.getWritableDatabase();
+            ContentValues values = new ContentValues();
+
+            String date = getDateNow();
+
+            values.put(DatabaseVariables.TableUser.COLUMN_NAME_DATE_CREATED, date);
+            values.put(DatabaseVariables.TableUser.COLUMN_NAME_ACTIVE_PROFILE_ID, "-1");
+            values.put(DatabaseVariables.TableUser.COLUMN_NAME_DEFAULT_SORTING, "0");
+
+
+            long newRowId = -1;
+            newRowId = db.insert(
+                    DatabaseVariables.TableUser.TABLE_NAME,
+                    null,
+                    values);
+
+            // set newly created profile to active
+            setActiveProfile(Long.toString(newRowId));
+
+            return Long.toString(newRowId);
+        } else {
+            return "-1";
+        }
+
     }
 
     ////////////// UPDATE //////////////
@@ -511,6 +564,18 @@ public class DatabaseManager {
                 DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_ID + "=" + profileId, null);
     }
 
+    public void updateDefaultSortPosition(int position){
+        SQLiteDatabase db = database.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        User user = getUser();
+
+        values.put(DatabaseVariables.TableUser.COLUMN_NAME_DEFAULT_SORTING, position);
+        db.update(DatabaseVariables.TableUser.TABLE_NAME, values,
+                DatabaseVariables.TableUser.COLUMN_NAME_USER_ID + "=" + user.getUserId(), null);
+    }
+
+
 
     ////////////// OTHER //////////////
 
@@ -534,21 +599,11 @@ public class DatabaseManager {
         SQLiteDatabase db = database.getReadableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(DatabaseVariables.TableProfile.COLUMN_NAME_ACTIVE, true);
-        db.update(DatabaseVariables.TableProfile.TABLE_NAME, values,
-                DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_ID + "=" + profileId, null);
+        User user = getUser();
 
-        List<Profile> profileList = getProfiles();
-
-        for (int i = 0; i < profileList.size(); i++) {
-            Profile tempProfile = profileList.get(i);
-            // setting other profiles to not selected
-            if (!tempProfile.getProfileId().equals(profileId) && tempProfile.isActive()) {
-                values.put(DatabaseVariables.TableProfile.COLUMN_NAME_ACTIVE, false);
-                db.update(DatabaseVariables.TableProfile.TABLE_NAME, values,
-                        DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_ID + "=" + tempProfile.getProfileId(), null);
-            }
-        }
+        values.put(DatabaseVariables.TableUser.COLUMN_NAME_ACTIVE_PROFILE_ID, profileId);
+        db.update(DatabaseVariables.TableUser.TABLE_NAME, values,
+                DatabaseVariables.TableUser.COLUMN_NAME_USER_ID + "=" + user.getUserId(), null);
 
     }
 
@@ -625,8 +680,6 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_ID));
         String profileName = cursor.getString(cursor
                 .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_NAME));
-        boolean profileSelected = cursor.getInt(cursor
-                .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_ACTIVE)) > 0;
         String dateAdded = cursor.getString(cursor
                 .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_DATE_CREATED));
         String questionLabel = cursor.getString(cursor
@@ -635,7 +688,23 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_ANSWER_LABEL));
 
 
-        return new Profile(profileId, profileName, dateAdded, profileSelected, questionLabel, answerLabel);
+        return new Profile(profileId, profileName, dateAdded, questionLabel, answerLabel);
+    }
+
+
+    private User fetchUserFromCursor(Cursor cursor) {
+
+        String userId = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_USER_ID));
+        String activeProfileId = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_ACTIVE_PROFILE_ID));
+        String dateCreated = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_DATE_CREATED));
+        int defaultSorting = cursor.getInt(cursor
+                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_DEFAULT_SORTING));
+
+
+        return new User(userId, dateCreated, activeProfileId, defaultSorting);
     }
 
     private String getDateNow() {
@@ -646,17 +715,10 @@ public class DatabaseManager {
 
     public Profile getActiveProfile() {
 
-        List<Profile> profileList = getProfiles();
+        User user = getUser();
+        Profile profile = getProfileFromId(user.getActiveProfileId());
 
-        for (int i = 0; i < profileList.size(); i++) {
-            Profile tempProfile = profileList.get(i);
-            if (tempProfile.isActive()) {
-                return tempProfile;
-            }
-        }
-
-        return null;
+        return profile;
     }
-
 
 }

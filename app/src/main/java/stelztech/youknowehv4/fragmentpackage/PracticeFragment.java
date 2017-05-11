@@ -88,6 +88,11 @@ public class PracticeFragment extends Fragment {
     private String questionLabel;
     private String answerLabel;
 
+    // show previous
+    private boolean showPreviousIsOkay;
+    private boolean showingPrevious;
+    private Card previousCard;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -118,6 +123,8 @@ public class PracticeFragment extends Fragment {
         currentQuestion = 0;
         answerHidden = true;
         isReverseOrder = false;
+        showPreviousIsOkay = false;
+        showingPrevious = false;
 
         // init orientation text holders
         Profile currentProfile = dbManager.getActiveProfile();
@@ -197,15 +204,19 @@ public class PracticeFragment extends Fragment {
         actionBar.setDisplayShowTitleEnabled(true);
         getActivity().findViewById(R.id.spinner_nav_layout).setVisibility(View.GONE);
 
+
+        final MenuItem alwaysShowAnswerItem = menu.findItem(R.id.action_always_show_answer);
+        if (alwaysShowAnswer)
+            alwaysShowAnswerItem.setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_check_box_black_24dp));
+        else
+            alwaysShowAnswerItem.setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_check_box_outline_blank_black_24dp));
+
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.action_reverse:
-                reserveButtonClicked();
-                return true;
             case R.id.action_always_show_answer:
                 alwaysShowAnswer = !alwaysShowAnswer;
                 if (alwaysShowAnswer)
@@ -215,6 +226,17 @@ public class PracticeFragment extends Fragment {
                 if (!isSelectedDeckNothing()) {
                     setQuestionAnswerText();
                 }
+                return true;
+            case R.id.action_previous:
+                if (showPreviousIsOkay) {
+                    showPreviousIsOkay = false;
+                    showingPrevious = true;
+                    setQuestionAnswerText();
+                } else {
+                    Toast.makeText(getContext(), "Cannot show previous card", Toast.LENGTH_SHORT).show();
+                }
+
+
                 return true;
         }
 
@@ -320,8 +342,10 @@ public class PracticeFragment extends Fragment {
     }
 
     private void switchPracticeCards() {
+        showPreviousIsOkay = false;
+        previousCard = null;
+        showingPrevious = false;
         int selectedDeck = spinner.getSelectedItemPosition();
-
 
         if (isSelectedDeckNothing()) {
             setSelectDeck();
@@ -389,18 +413,30 @@ public class PracticeFragment extends Fragment {
             }
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         } else {
-            answerTextView.scrollTo(0, 0);
-            questionTextView.scrollTo(0, 0);
 
-            if ((currentQuestion + 1) < questionOrder.length) {
-                currentQuestion++;
+            if (showingPrevious) {
+                showPreviousIsOkay = true;
+                showingPrevious = false;
                 setQuestionAnswerText();
             } else {
-                // reset
-                randomizeQuestionOrder();
-                setQuestionAnswerText();
-                Toast.makeText(getContext(), "Order reset", Toast.LENGTH_SHORT).show();
+                showPreviousIsOkay = true;
+                showingPrevious = false;
+                previousCard = mCardList.get(questionOrder[currentQuestion]);
+
+                answerTextView.scrollTo(0, 0);
+                questionTextView.scrollTo(0, 0);
+
+                if ((currentQuestion + 1) < questionOrder.length) {
+                    currentQuestion++;
+                    setQuestionAnswerText();
+                } else {
+                    // reset
+                    randomizeQuestionOrder();
+                    setQuestionAnswerText();
+                    Toast.makeText(getContext(), "Order reset", Toast.LENGTH_SHORT).show();
+                }
             }
+
         }
     }
 
@@ -412,17 +448,29 @@ public class PracticeFragment extends Fragment {
         }
 
         if (questionOrder.length == 0) {
-            Toast.makeText(getContext(), "No Cards", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "No Practice Cards", Toast.LENGTH_SHORT).show();
         } else {
+
             if (answerHidden) {
-                answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
+                if (showingPrevious) {
+                    answerTextView.setText(previousCard.getAnswer());
+                } else {
+                    answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
+                }
+
                 answerHidden = false;
                 showButton.setText("hide");
             } else {
                 if (!alwaysShowAnswer)
                     answerTextView.setText(answerHiddenString);
-                else
-                    answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
+                else {
+                    if (showingPrevious) {
+                        answerTextView.setText(previousCard.getAnswer());
+                    } else {
+                        answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
+                    }
+                }
+
                 answerHidden = true;
                 showButton.setText("show");
             }
@@ -464,11 +512,19 @@ public class PracticeFragment extends Fragment {
             questionTextView.setText("No Practice Cards");
             answerTextView.setText("");
         } else {
-            questionTextView.setText(questionList.get(questionOrder[currentQuestion]));
-            if (!alwaysShowAnswer)
-                answerTextView.setText(answerHiddenString);
-            else
-                answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
+            if (showingPrevious) {
+                questionTextView.setText(previousCard.getQuestion());
+                if (!alwaysShowAnswer)
+                    answerTextView.setText(answerHiddenString);
+                else
+                    answerTextView.setText(previousCard.getAnswer());
+            } else {
+                questionTextView.setText(questionList.get(questionOrder[currentQuestion]));
+                if (!alwaysShowAnswer)
+                    answerTextView.setText(answerHiddenString);
+                else
+                    answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
+            }
             answerHidden = true;
         }
     }

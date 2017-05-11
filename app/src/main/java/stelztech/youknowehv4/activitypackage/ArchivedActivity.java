@@ -181,7 +181,7 @@ public class ArchivedActivity extends AppCompatActivity {
                 }
                 customListAdapter.notifyDataSetChanged();
                 setNumberCardText();
-                Toast.makeText(this, "Card unarchived", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Card restored", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.permanently_delete_card:
                 if (!cardList.isEmpty()) {
@@ -243,7 +243,12 @@ public class ArchivedActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_clear_archived:
-                displayClearAllConfirmation();
+                if (cardList.isEmpty()) {
+                    Toast.makeText(this, "No deleted cards", Toast.LENGTH_SHORT).show();
+                } else{
+                    displayClearAllConfirmation();
+                }
+
                 return true;
 
         }
@@ -278,7 +283,7 @@ public class ArchivedActivity extends AppCompatActivity {
                     dbManager.deleteCard(cardList.get(counter).getCardId());
                 }
                 populateListView();
-                Toast.makeText(ArchivedActivity.this, "All archived cards permanently deleted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ArchivedActivity.this, "All deleted cards permanently deleted", Toast.LENGTH_SHORT).show();
             }
         });
         // Setting cancel Button
@@ -301,6 +306,8 @@ public class ArchivedActivity extends AppCompatActivity {
 
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
+                String question = cardList.get(indexSelected).getQuestion();
+                String answer = cardList.get(indexSelected).getAnswer();
                 dbManager.deleteCard(cardId);
                 cardList.remove(indexSelected);
                 if (cardList.isEmpty()) {
@@ -310,7 +317,7 @@ public class ArchivedActivity extends AppCompatActivity {
                 customListAdapter.notifyDataSetChanged();
                 setNumberCardText();
 
-                Toast.makeText(ArchivedActivity.this, "Card permanently deleted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ArchivedActivity.this, "\"" + question + " / " + answer + "\" permanently deleted", Toast.LENGTH_SHORT).show();
             }
         });
         // Setting cancel Button
@@ -326,27 +333,13 @@ public class ArchivedActivity extends AppCompatActivity {
     // sort dialog
     private AlertDialog sortDialog() {
 
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.custom_scrollable_dialog_list, null, false);
-
-        AlertDialog.Builder deckListAlertDialog = new AlertDialog.Builder(this);
-
-        deckListAlertDialog.setView(dialogView);
-        deckListAlertDialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-
-            }
-        });
-
-        deckListAlertDialog.setTitle("Sort");
-
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         final String[] sortingChoices = getResources().getStringArray(R.array.sort_options);
+        builder.setTitle("Sort by");
 
-        deckListAlertDialog.setSingleChoiceItems(sortingChoices,
-                SortingStateManager.getInstance().getSelectedPosition(), new DialogInterface.OnClickListener() {
+        builder.setSingleChoiceItems(sortingChoices, SortingStateManager.getInstance().getSelectedPosition(),
+                new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -358,12 +351,21 @@ public class ArchivedActivity extends AppCompatActivity {
                         listView.smoothScrollToPosition(0);
 
                         int sortingPosition = sortingStateManager.getSelectedPosition();
-                        Toast.makeText(ArchivedActivity.this, "Sort: " + sortingChoices[sortingPosition], Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ArchivedActivity.this, "Sort by: " + sortingChoices[sortingPosition], Toast.LENGTH_SHORT).show();
                     }
                 });
 
-        AlertDialog alert = deckListAlertDialog.create();
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        AlertDialog alert = builder.create();
         Helper.getInstance().hideKeyboard(this);
+
+
         return alert;
     }
 

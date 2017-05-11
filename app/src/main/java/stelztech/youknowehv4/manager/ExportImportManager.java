@@ -4,9 +4,10 @@ package stelztech.youknowehv4.manager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
+import android.provider.OpenableColumns;
 import android.widget.Toast;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -18,15 +19,21 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
+import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.model.Card;
 import stelztech.youknowehv4.model.Deck;
 
@@ -49,7 +56,8 @@ public final class ExportImportManager {
         if (!isExternalStorageAvailable() || isExternalStorageReadOnly()) {
             Toast.makeText(context, "Storage not available or read only", Toast.LENGTH_SHORT).show();
             return null;
-        };
+        }
+        ;
 
         //New Workbook
         Workbook wb = new HSSFWorkbook();
@@ -133,44 +141,110 @@ public final class ExportImportManager {
         return file;
     }
 
-    private static void readExcelFile(Context context, String filename) {
+    public static boolean readExcelFile(Context context, Uri uri) {
 
         if (!isExternalStorageAvailable() || isExternalStorageReadOnly()) {
             Toast.makeText(context, "Storage not available or read only", Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
 
+
+        List<CardHolder> cardHolderList = new ArrayList<CardHolder>();
+        String fileName = getFileName(context, uri);
         try {
             // Creating Input Stream
-            File file = new File(context.getExternalFilesDir(null), filename);
-            FileInputStream myInput = new FileInputStream(file);
+
+
+            if (fileName.contains(".")) {
+                int index = fileName.indexOf(".");
+                fileName = fileName.substring(0, index);
+            }
+
+            Toast.makeText(context, fileName, Toast.LENGTH_SHORT);
+
+            File file = new File(uri.getPath());
+
+
+            InputStream myInput = context.getContentResolver().openInputStream(uri);
+
 
             // Create a POIFSFileSystem object
-            POIFSFileSystem myFileSystem = new POIFSFileSystem(myInput);
+//            POIFSFileSystem myFileSystem = new POIFSFileSystem(myInput);
 
             // Create a workbook using the File System
-            HSSFWorkbook myWorkBook = new HSSFWorkbook(myFileSystem);
+//            HSSFWorkbook myWorkBook = new HSSFWorkbook(myFileSystem);
+//            Workbook workbook = WorkbookFactory.create(myInput);
+
+
+            XSSFWorkbook wb = new XSSFWorkbook(myInput);
 
             // Get the first sheet from workbook
-            HSSFSheet mySheet = myWorkBook.getSheetAt(0);
+            XSSFSheet mySheet = wb.getSheetAt(0);
 
             /** We now need something to iterate through the cells.**/
             Iterator rowIter = mySheet.rowIterator();
 
+
             while (rowIter.hasNext()) {
-                HSSFRow myRow = (HSSFRow) rowIter.next();
+                Row myRow = mySheet.getRow(0);
+
+
                 Iterator cellIter = myRow.cellIterator();
+                int rowCounter = 0;
+
+                String question = "";
+                String answer = "";
+                String note = "";
+
                 while (cellIter.hasNext()) {
-                    HSSFCell myCell = (HSSFCell) cellIter.next();
-                    Log.d(TAG, "Cell Value: " + myCell.toString());
-                    Toast.makeText(context, "cell Value: " + myCell.toString(), Toast.LENGTH_SHORT).show();
+                    Cell myCell = (Cell) cellIter.next();
+
+                    if (rowCounter == 0) {
+                        question = myCell.toString();
+                    } else if (rowCounter == 1) {
+                        answer = myCell.toString();
+                    } else if (rowCounter == 2) {
+                        note = myCell.toString();
+                    } else {
+                        Toast.makeText(context, "Invalid file format", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+
+                    rowCounter++;
                 }
+
+                if (question.isEmpty() || answer.isEmpty()) {
+                    Toast.makeText(context, "Invalid file format - two first column cannot be empty", Toast.LENGTH_SHORT).show();
+                    return false;
+                } else {
+                    cardHolderList.add(new CardHolder(question, answer, note));
+                }
+
+
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+            return false;
         }
 
-        return;
+        if(cardHolderList.isEmpty()){
+            Toast.makeText(context, "File is empty", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        DatabaseManager dbManager = DatabaseManager.getInstance(context);
+        String deckId = dbManager.createDeck(fileName);
+
+        for (int i = 0; i < cardHolderList.size(); i++){
+            String question = cardHolderList.get(i).getQuestion();
+            String answer = cardHolderList.get(i).getAnswer();
+            String note = cardHolderList.get(i).getNote();
+            String cardId = dbManager.createCard(question, answer, note);
+            dbManager.createCardDeck(cardId, deckId);
+        }
+
+        Toast.makeText(context, "Deck \"" + fileName + "\" imported", Toast.LENGTH_SHORT).show();
+        return true;
     }
 
     public static boolean isExternalStorageReadOnly() {
@@ -219,4 +293,64 @@ public final class ExportImportManager {
 
     }
 
+    private static String getFileName(Context context, Uri uri) {
+        String fileName = "";
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        if (fileName == null) {
+            fileName = uri.getPath();
+            int cut = fileName.lastIndexOf('/');
+            if (cut != -1) {
+                fileName = fileName.substring(cut + 1);
+            }
+        }
+
+        return fileName;
+
+    }
+
+
+    private static class CardHolder {
+        private String question;
+        private String answer;
+        private String note;
+
+        public CardHolder(String question, String answer, String note) {
+            this.question = question;
+            this.answer = answer;
+            this.note = note;
+        }
+
+        public String getQuestion() {
+            return question;
+        }
+
+        public void setQuestion(String question) {
+            this.question = question;
+        }
+
+        public String getAnswer() {
+            return answer;
+        }
+
+        public void setAnswer(String answer) {
+            this.answer = answer;
+        }
+
+        public String getNote() {
+            return note;
+        }
+
+        public void setNote(String note) {
+            this.note = note;
+        }
+    }
 }

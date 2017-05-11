@@ -4,14 +4,6 @@
 
     <item
         android:actionMenuTextColor="@color/colorTextIcon"
-        android:id="@+id/action_switch_card_info"
-        android:orderInCategory="0"
-        android:title="Reverse"
-        android:icon="@drawable/ic_import_export_white_24dp"
-        app:showAsAction="always"/>
-
-    <item
-        android:actionMenuTextColor="@color/colorTextIcon"
         android:id="@+id/action_cancel_card_info"
         android:orderInCategory="1"
         android:title="Cancel"

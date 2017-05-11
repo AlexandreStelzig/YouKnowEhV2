@@ -2,12 +2,17 @@ package stelztech.youknowehv4.helper;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.content.Context;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -106,5 +111,18 @@ public class Helper {
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
+    }
+
+    public TextView customTitle(Context context, String title){
+        TextView titleTV = new TextView(context);
+        titleTV.setTypeface(Typeface.DEFAULT_BOLD);
+        titleTV.setTextColor(ContextCompat.getColor(context, android.R.color.black));
+        titleTV.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        titleTV.setLayoutParams(lp);
+        titleTV.setText(title);
+        titleTV.setPadding(35,35,0,0);
+        return titleTV;
     }
 }

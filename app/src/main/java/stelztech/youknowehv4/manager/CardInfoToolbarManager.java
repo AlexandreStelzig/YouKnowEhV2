@@ -41,13 +41,13 @@ public class CardInfoToolbarManager {
 
         switch (state) {
             case NEW:
-                setMenuItemVisibility(menu, false, true, false, false);
+                setMenuItemVisibility(menu, false, true, false);
                 break;
             case EDIT:
-                setMenuItemVisibility(menu, true, true, false, true);
+                setMenuItemVisibility(menu, true, true, false);
                 break;
             case VIEW:
-                setMenuItemVisibility(menu, false, false, true, false);
+                setMenuItemVisibility(menu, false, false, true);
                 break;
             default:
                 Log.e("CardInfoToolbarManager", "Changing state error");
@@ -55,12 +55,11 @@ public class CardInfoToolbarManager {
         }
     }
 
-    private void setMenuItemVisibility( Menu menu, boolean isCancelVisible, boolean isDoneVisible, boolean isEditVisible, boolean isSwitchVisible) {
+    private void setMenuItemVisibility( Menu menu, boolean isCancelVisible, boolean isDoneVisible, boolean isEditVisible) {
 
         menu.findItem(R.id.action_cancel_card_info).setVisible(isCancelVisible);
         menu.findItem(R.id.action_done_card_info).setVisible(isDoneVisible);
         menu.findItem(R.id.action_edit_card_info).setVisible(isEditVisible);
-        menu.findItem(R.id.action_switch_card_info).setVisible(isSwitchVisible);
 
     }
 

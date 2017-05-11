@@ -1,15 +1,8 @@
 package stelztech.youknowehv4.activitypackage;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.database.DatabaseManager;
@@ -30,19 +23,25 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_splash_screen);
 
-        if(DatabaseManager.getInstance(this).getProfiles().isEmpty()){
+
+        DatabaseManager dbManager = DatabaseManager.getInstance(this);
+
+        if (dbManager.getUser() == null) {
+            dbManager.createUser();
+        }
+        if (dbManager.getProfiles().isEmpty()) {
             Intent i = new Intent(SplashScreenActivity.this, FirstTimeOpeningActivity.class);
             startActivity(i);
             finish();
-        }else{
+        } else {
             transitionThread().start();
         }
 
 
     }
 
-    private Thread transitionThread(){
-        final Thread transitionThread = new Thread(){
+    private Thread transitionThread() {
+        final Thread transitionThread = new Thread() {
 
             @Override
             public void run() {
@@ -51,7 +50,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                     sleep(LOADING_TIME);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }finally {
+                } finally {
                     Intent i = new Intent(SplashScreenActivity.this, MainActivityManager.class);
                     startActivity(i);
                     finish();

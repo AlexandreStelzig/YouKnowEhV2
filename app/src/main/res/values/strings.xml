@@ -9,6 +9,8 @@
     <string name="facebook_about_string"><u>facebook.com/alexandre.stelzig</u></string>
     <string name="website_about_string"><u>alexandrestelzig.github.io</u></string>
     <string name="https_github_com_alexandrestelzig"><u>github.com/AlexandreStelzig</u></string>
+    <string name="profileFragment_noProfiles">No profiles</string>
+    <string name="profileFragment_deleteError">You need to have at least another profile to delete this profile</string>
 
 
     <string-array name="sort_options">
@@ -20,6 +22,7 @@
         <item>Date Created: Old - New</item>
         <item>Date Modified: New - Old</item>
         <item>Date Modified: Old - New</item>
+        <item>Number of Decks</item>
     </string-array>
 
 

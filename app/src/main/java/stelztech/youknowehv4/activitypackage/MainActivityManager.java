@@ -1,6 +1,7 @@
 package stelztech.youknowehv4.activitypackage;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -26,6 +27,8 @@ import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.ActionButtonManager;
 import stelztech.youknowehv4.manager.CardInfoToolbarManager;
 import stelztech.youknowehv4.manager.CardToolbarManager;
+import stelztech.youknowehv4.manager.ExportImportManager;
+import stelztech.youknowehv4.manager.SortingStateManager;
 
 public class MainActivityManager extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -40,7 +43,7 @@ public class MainActivityManager extends AppCompatActivity
     private boolean mViewIsAtHome;
 
     private Fragment previousFragment;
-
+    private Fragment currentFragment;
 
     private boolean goBackToDecks;
 
@@ -61,7 +64,6 @@ public class MainActivityManager extends AppCompatActivity
 
     // set fragment after drawer close
     private int mFragmentToSet = INT_NULL;
-
 
 
     @Override
@@ -89,6 +91,9 @@ public class MainActivityManager extends AppCompatActivity
         Helper helper = Helper.getInstance();
         helper.setContext(this);
 
+        SortingStateManager sortingStateManager = SortingStateManager.getInstance();
+        sortingStateManager.setContext(this);
+
         // drawer
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
@@ -114,7 +119,6 @@ public class MainActivityManager extends AppCompatActivity
 
         // default page
         displayFragment(R.id.practice);
-
 
 
     }
@@ -159,42 +163,42 @@ public class MainActivityManager extends AppCompatActivity
     public void displayFragment(int fragmentId) {
 
 
-        Fragment fragment = null;
+        currentFragment = null;
         String title = getString(R.string.app_name);
 
         switch (fragmentId) {
             case R.id.practice:
-                fragment = mPracticeFragment;
+                currentFragment = mPracticeFragment;
                 title = "Review";
                 break;
             case R.id.card_list:
-                fragment = mCardListFragment;
+                currentFragment = mCardListFragment;
 //                mCardListFragment.setToSelectDeckId("-1");
                 title = "";
                 break;
             case R.id.deck_list:
-                fragment = mDeckListFragment;
+                currentFragment = mDeckListFragment;
                 title = "Deck List";
                 break;
             case R.id.settings:
-                fragment = mSettingsFragment;
+                currentFragment = mSettingsFragment;
                 title = "Settings";
                 break;
             case R.id.about:
-                fragment = mAboutFragment;
+                currentFragment = mAboutFragment;
                 title = "About";
                 break;
             case R.id.profile:
-                fragment = mProfileFragment;
+                currentFragment = mProfileFragment;
                 title = "Profile";
                 break;
         }
 
         // animate the fragment switch
-        if (fragment != null) {
-            if (!fragment.isVisible()) {
+        if (currentFragment != null) {
+            if (!currentFragment.isVisible()) {
 
-                replaceFragmentWithAnimation(fragment, "" + fragment);
+                replaceFragmentWithAnimation(currentFragment, "" + currentFragment);
 
             }
         }
@@ -213,11 +217,11 @@ public class MainActivityManager extends AppCompatActivity
 
         // if previous fragment was deck and the next one is card, set back button functionality
         if (previousFragment != null &&
-                previousFragment.equals(mDeckListFragment) && fragment.equals(mCardListFragment)) {
+                previousFragment.equals(mDeckListFragment) && currentFragment.equals(mCardListFragment)) {
             goBackToDecks = true;
         }
 
-        previousFragment = fragment;
+        previousFragment = currentFragment;
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -250,17 +254,27 @@ public class MainActivityManager extends AppCompatActivity
                 drawer.closeDrawer(GravityCompat.START);
             } else {
 
-                if (goBackToDecks) {
-                    displayFragment(R.id.deck_list);
-                    goBackToDecks = false;
+                if (currentFragment.equals(mDeckListFragment) && mDeckListFragment.isDeckOrdering()) {
+                    mDeckListFragment.actionDone();
+                } else if (currentFragment.equals(mCardListFragment) &&
+                        (mCardListFragment.getCurrentState().equals(CardListFragment.CardListState.PRACTICE_TOGGLE)
+                                || (mCardListFragment.getCurrentState().equals(CardListFragment.CardListState.EDIT_DECK)))) {
+                    mCardListFragment.cancelState();
                 } else {
-                    if (!mViewIsAtHome) { //if the current view is not the News fragment
-                        displayFragment(R.id.practice);
-                        navigationView.setCheckedItem(R.id.practice);
+
+                    if (goBackToDecks) {
+                        displayFragment(R.id.deck_list);
+                        goBackToDecks = false;
                     } else {
-                        moveTaskToBack(true);  // if view is a practice, exit app
+                        if (!mViewIsAtHome) { //if the current view is not the News fragment
+                            displayFragment(R.id.practice);
+                            navigationView.setCheckedItem(R.id.practice);
+                        } else {
+                            moveTaskToBack(true);  // if view is a practice, exit app
+                        }
                     }
                 }
+
             }
 
         }
@@ -349,7 +363,12 @@ public class MainActivityManager extends AppCompatActivity
             }
 
         } else if (requestCode == EXPORT_RESULT) {
+            if (resultCode == RESULT_OK) {
+                Uri selectedDocument = data.getData();
+                boolean success = ExportImportManager.readExcelFile(this, selectedDocument);
 
+
+            }
         } else if (requestCode == ARCHIVED_RESULT) {
             overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
         }
@@ -372,7 +391,6 @@ public class MainActivityManager extends AppCompatActivity
     public void setGoBackToDecks(boolean goBackToDecks) {
         this.goBackToDecks = goBackToDecks;
     }
-
 
 
 }

@@ -51,13 +51,13 @@ public final class DatabaseVariables {
             + TableProfile.COLUMN_NAME_QUESTION_LABEL + " TEXT NOT NULL,"
             + TableProfile.COLUMN_NAME_ANSWER_LABEL + " TEXT NOT NULL,"
             + TableProfile.COLUMN_NAME_DATE_CREATED + " DATE,"
-            + TableProfile.COLUMN_NAME_DATE_MODIFIED + " DATE,"
-            + TableProfile.COLUMN_NAME_ACTIVE + " BOOLEAN" + " );";
+            + TableProfile.COLUMN_NAME_DATE_MODIFIED + " DATE" + " );";
 
     public static final String SQL_CREATE_TABLE_USER = "CREATE TABLE "
             + TableUser.TABLE_NAME + " ("
             + TableUser.COLUMN_NAME_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + TableUser.COLUMN_NAME_DEFAULT_SORTING + " INTEGER NOT NULL,"
+            + TableUser.COLUMN_NAME_DATE_CREATED + " DATE,"
             + TableUser.COLUMN_NAME_ACTIVE_PROFILE_ID + " TEXT NOT NULL,"
             + " FOREIGN KEY " + "(" + TableUser.COLUMN_NAME_ACTIVE_PROFILE_ID + ")"
             + " REFERENCES " + TableProfile.TABLE_NAME + "(" + TableProfile.COLUMN_NAME_PROFILE_ID + ") " + ");";
@@ -109,12 +109,12 @@ public final class DatabaseVariables {
         public static final String COLUMN_NAME_DATE_MODIFIED = "datemodified";
         public static final String COLUMN_NAME_QUESTION_LABEL = "questionlabel";
         public static final String COLUMN_NAME_ANSWER_LABEL = "answerlabel";
-        public static final String COLUMN_NAME_ACTIVE = "active";
     }
 
     public static abstract class TableUser implements BaseColumns{
         public static final String TABLE_NAME = "user";
         public static final String COLUMN_NAME_USER_ID = "userid";
+        public static final String COLUMN_NAME_DATE_CREATED = "datecreated";
         public static final String COLUMN_NAME_DEFAULT_SORTING = "defaultsorting";
         public static final String COLUMN_NAME_ACTIVE_PROFILE_ID = "activeprofile";
     }

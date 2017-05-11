@@ -1,16 +1,22 @@
 package stelztech.youknowehv4.manager;
 
+import android.content.Context;
+
 import java.text.Collator;
 import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.model.Card;
+import stelztech.youknowehv4.model.CardDeck;
 import stelztech.youknowehv4.model.Deck;
+import stelztech.youknowehv4.model.User;
 
 /**
  * Created by alex on 2017-05-06.
@@ -27,18 +33,23 @@ public class SortingStateManager {
         DATE_CREATED_OLD_NEW,
         DATE_MODIFIED_NEW_OLD,
         DATE_MODIFIED_OLD_NEW,
-        PRACTICE,
         NB_DECK
     }
 
     private SortingStates currentState;
 
+    private Context context;
+
     private static SortingStateManager instance;
 
     private SortingStateManager() {
 
-        currentState = SortingStates.AZ_QUESTION;
+        changeStateByPosition(getDefaultSort());
 
+    }
+
+    public void setContext(Context context){
+        this.context = context;
     }
 
     public static SortingStateManager getInstance() {
@@ -81,16 +92,12 @@ public class SortingStateManager {
             case DATE_MODIFIED_OLD_NEW:
                 cardListSorted = sortByDateModified_OLD_NEW(cardList);
                 break;
-            case PRACTICE:
-                cardListSorted = sortByPractice(cardList);
-                break;
             case NB_DECK:
                 cardListSorted = sortByDeck(cardList);
                 break;
         }
         return cardListSorted;
     }
-
 
 
     private List<Card> sortAlphabetically_Card_Question(List<Card> list) {
@@ -175,8 +182,6 @@ public class SortingStateManager {
     }
 
 
-
-
     private List<Card> sortByDateCreated_NEW_OLD(List<Card> list) {
         Collections.sort(list, new Comparator<Card>() {
             @Override
@@ -241,12 +246,46 @@ public class SortingStateManager {
 
     }
 
-    private List<Card> sortByPractice(List<Card> list){
+    public List<Card> sortByPractice(Context context, List<Card> cardList, String deckId) {
 
-        return list;
+        DatabaseManager dbManager = DatabaseManager.getInstance(context);
+
+
+        List<Card> nonPracticeCards = new ArrayList<>();
+        List<Card> practiceCards = new ArrayList<>();
+        for (int counter = 0; counter < cardList.size(); counter++) {
+            Card card = cardList.get(counter);
+            CardDeck cardDeck = dbManager.getCardDeck(card.getCardId(), deckId);
+
+            if (cardDeck.isPractice())
+                practiceCards.add(card);
+            else
+                nonPracticeCards.add(card);
+        }
+
+        cardList.clear();
+        cardList.addAll(practiceCards);
+        cardList.addAll(nonPracticeCards);
+
+
+        return cardList;
     }
 
     private List<Card> sortByDeck(List<Card> cardList) {
+
+        Collections.sort(cardList, new Comparator<Card>() {
+            @Override
+            public int compare(Card o1, Card o2) {
+
+                int position1 = DatabaseManager.getInstance(context).getDecksFromCard(o1.getCardId()).size();
+                int position2 = DatabaseManager.getInstance(context).getDecksFromCard(o2.getCardId()).size();
+
+
+                return position1 - position2;
+            }
+        });
+
+
         return cardList;
     }
 
@@ -285,15 +324,18 @@ public class SortingStateManager {
                 return 6;
             case DATE_MODIFIED_OLD_NEW:
                 return 7;
-            case PRACTICE:
-                return 8;
             case NB_DECK:
-                return 9;
+                return 8;
         }
         return 0;
     }
 
-    public void changeStateByPosition(int position){
+    public int getDefaultSort(){
+        User user = DatabaseManager.getInstance(context).getUser();
+        return user.getDefaultSortingPosition();
+    }
+
+    public void changeStateByPosition(int position) {
         switch (position) {
             // Question: A-Z
             case 0:
@@ -326,6 +368,9 @@ public class SortingStateManager {
             // Date Modified OLD-NEW
             case 7:
                 changeSate(SortingStateManager.SortingStates.DATE_MODIFIED_OLD_NEW);
+                break;
+            case 8:
+                changeSate(SortingStateManager.SortingStates.NB_DECK);
                 break;
         }
     }

@@ -10,16 +10,14 @@ public class Profile {
     private String profileId;
     private String profileName;
     private String dateCreated;
-    private boolean active;
     private String questionLabel;
     private String answerLabel;
 
 
-    public Profile(String profileId, String profileName, String dateCreated, boolean active, String questionLabel, String answerLabel) {
+    public Profile(String profileId, String profileName, String dateCreated, String questionLabel, String answerLabel) {
         this.profileId = profileId;
         this.profileName = profileName;
         this.dateCreated = dateCreated;
-        this.active = active;
         this.questionLabel = questionLabel;
         this.answerLabel = answerLabel;
     }
@@ -46,14 +44,6 @@ public class Profile {
 
     public void setDateCreated(String dateCreated) {
         this.dateCreated = dateCreated;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public String getQuestionLabel() {

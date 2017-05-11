@@ -165,7 +165,8 @@ public class ProfileFragment extends Fragment {
 
         for (int i = 0; i < profileList.size(); i++) {
             profileNameArray.add(profileList.get(i).getProfileName());
-            if (profileList.get(i).isActive())
+            String activeProfileId = dbManager.getUser().getActiveProfileId();
+            if (profileList.get(i).getProfileId().equals(activeProfileId))
                 activeProfilePosition = i;
         }
 
@@ -235,7 +236,7 @@ public class ProfileFragment extends Fragment {
 
     private void editProfile() {
         if (getCurrentlySelectedProfilePosition() == NO_PROFILES) {
-            Toast.makeText(getContext(), "No profiles", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.profileFragment_noProfiles, Toast.LENGTH_SHORT).show();
             return;
         }
         AlertDialog alertDialog = createDialog(ProfileDialogOptions.UPDATE_PROFILE, profileList.get(
@@ -245,7 +246,7 @@ public class ProfileFragment extends Fragment {
 
     private void deleteProfile() {
         if (profileList.size() <= 1) {
-            Toast.makeText(getContext(), "You need to have at least another profile to delete this profile",
+            Toast.makeText(getContext(), R.string.profileFragment_deleteError,
                     Toast.LENGTH_LONG).show();
             return;
         } else {
@@ -274,25 +275,28 @@ public class ProfileFragment extends Fragment {
         input.setText(dialogTextHolder);
         container.addView(input);
 
+        String message = "";
         switch (dialogType) {
 
             case CREATE_PROFILE:
                 input.setHint("Profile name");
-                builder.setTitle("New Profile");
+                message = ("New Profile");
                 break;
             case UPDATE_PROFILE:
                 input.setHint("Profile Name");
-                builder.setTitle("Update Profile Name");
+                message = ("Update Profile Name");
                 break;
             case UPDATE_QUESTION:
                 input.setHint("Question label");
-                builder.setTitle("Update Question Label");
+                message = ("Update Question Label");
                 break;
             case UPDATE_ANSWER:
                 input.setHint("Answer label");
-                builder.setTitle("Update Answer Label");
+                message = ("Update Answer Label");
                 break;
         }
+        builder.setCustomTitle(Helper.getInstance().customTitle(getContext(), message));
+
 
         builder.setView(container);
 
@@ -325,10 +329,10 @@ public class ProfileFragment extends Fragment {
                         dialogTextHolder = input.getText().toString();
                         // check if valid name
                         if (dialogTextHolder.trim().isEmpty()) {
-                            Toast.makeText(getContext(), "invalid name", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Invalid name: cannot be empty", Toast.LENGTH_SHORT).show();
                             return;
                         } else if (temp.equals(dialogTextHolder)) {
-                            Toast.makeText(getContext(), "same name", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Profile not updated: same name", Toast.LENGTH_SHORT).show();
                             return;
                         } else {
                             switch (dialogType) {
@@ -377,8 +381,8 @@ public class ProfileFragment extends Fragment {
 
     private AlertDialog.Builder deleteConfirmationDialog(final Profile profileToDelete) {
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
-        alertDialog.setMessage("Are you sure you want to delete:\n \'" +
-                profileToDelete.getProfileName() + "\'?");
+        alertDialog.setMessage("Are you sure you want to delete:\n \"" +
+                profileToDelete.getProfileName() + "\"?\nALL PROFILE INFORMATION WILL BE LOST FOREVER");
         alertDialog.setTitle("Delete Profile");
 
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {

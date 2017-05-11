@@ -35,21 +35,21 @@
         <menu>
 
             <item
-                android:id="@+id/action_edit_deck_cards"
-                android:icon="@drawable/ic_playlist_add_black_24dp"
-                android:title="Add/Remove cards"
-                app:showAsAction="never" />
-
-            <item
                 android:id="@+id/action_sort"
                 android:icon="@drawable/ic_sort_black_24dp"
                 android:title="Sort by"
                 app:showAsAction="never" />
 
             <item
-                android:id="@+id/action_filter_practice"
-                android:icon="@drawable/ic_filter_list_black_24dp"
-                android:title="Filter Review"
+                android:id="@+id/action_edit_deck_cards"
+                android:icon="@drawable/ic_playlist_add_black_24dp"
+                android:title="Add/Remove cards"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/action_practice_toggle"
+                android:icon="@drawable/ic_review_toggle"
+                android:title="Review toggle"
                 app:showAsAction="never" />
 
             <item
@@ -59,9 +59,9 @@
                 app:showAsAction="never" />
 
             <item
-                android:id="@+id/action_practice_toggle"
-                android:icon="@drawable/ic_check_box_black_24dp"
-                android:title="Review toggle"
+                android:id="@+id/action_filter_practice"
+                android:icon="@drawable/ic_check_box_outline_blank_black_24dp"
+                android:title="Filter Review"
                 app:showAsAction="never" />
 
             <item

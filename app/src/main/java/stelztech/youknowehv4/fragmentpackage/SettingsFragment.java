@@ -1,6 +1,8 @@
 package stelztech.youknowehv4.fragmentpackage;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,13 +15,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.ArchivedActivity;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
+import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.ActionButtonManager;
 import stelztech.youknowehv4.manager.ExportImportManager;
+import stelztech.youknowehv4.manager.SortingStateManager;
 
 /**
  * Created by alex on 2017-04-03.
@@ -95,11 +100,14 @@ public class SettingsFragment extends Fragment {
                 switch (position) {
                     // Export all decks
                     case 0:
-
+                        ExportImportManager.importDeck(getContext(), getActivity());
                         break;
                     // Import decks
                     case 1:
-                        ExportImportManager.importDeck(getContext(), getActivity());
+
+                        break;
+                    case 2:
+
                         break;
                 }
 
@@ -123,7 +131,7 @@ public class SettingsFragment extends Fragment {
                 switch (position) {
                     // Default sorting
                     case 0:
-
+                        defaultSortDialog().show();
                         break;
                 }
 
@@ -141,5 +149,40 @@ public class SettingsFragment extends Fragment {
         actionBar.setDisplayShowTitleEnabled(true);
         getActivity().findViewById(R.id.spinner_nav_layout).setVisibility(View.GONE);
 
+    }
+
+
+    private AlertDialog defaultSortDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+        final String[] sortingChoices = getResources().getStringArray(R.array.sort_options);
+        builder.setTitle("Sort by");
+
+        builder.setSingleChoiceItems(sortingChoices, SortingStateManager.getInstance().getDefaultSort(),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        SortingStateManager sortingStateManager = SortingStateManager.getInstance();
+
+                        DatabaseManager.getInstance(getContext()).updateDefaultSortPosition(which);
+                        dialog.dismiss();
+                        Toast.makeText(getContext(), "Default sort by: " + sortingChoices[which], Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        Helper.getInstance().hideKeyboard(getActivity());
+
+
+        return alert;
     }
 }

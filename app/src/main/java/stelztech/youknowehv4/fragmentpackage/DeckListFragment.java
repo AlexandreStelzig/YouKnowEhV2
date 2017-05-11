@@ -36,6 +36,7 @@ import java.util.List;
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.ActionButtonManager;
 import stelztech.youknowehv4.manager.DeckToolbarManager;
 import stelztech.youknowehv4.manager.ExportImportManager;
@@ -124,10 +125,7 @@ public class DeckListFragment extends Fragment {
                 customListAdapter.notifyDataSetChanged();
                 return true;
             case R.id.action_done:
-                deckOrdering = false;
-                ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.DECK, getActivity());
-                getActivity().invalidateOptionsMenu();
-                customListAdapter.notifyDataSetChanged();
+                actionDone();
                 return true;
 
         }
@@ -135,6 +133,18 @@ public class DeckListFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+
+    public void actionDone(){
+        deckOrdering = false;
+        ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.DECK, getActivity());
+        getActivity().invalidateOptionsMenu();
+        customListAdapter.notifyDataSetChanged();
+    }
+
+
+    public boolean isDeckOrdering(){
+        return deckOrdering;
+    }
 
     private void populateListView() {
 
@@ -254,6 +264,7 @@ public class DeckListFragment extends Fragment {
 
     private void deleteDeckFromDatabase() {
         dbManager.deleteDeck((String) deckList.get(indexSelected).getDeckId());
+        String deckDeletedName = deckList.get(indexSelected).getDeckName();
         deckList.remove(indexSelected);
         if (deckList.isEmpty()) {
             placerholderTextView.setVisibility(View.VISIBLE);
@@ -261,7 +272,7 @@ public class DeckListFragment extends Fragment {
         }
         customListAdapter.notifyDataSetChanged();
         setNumberDeckText();
-        Toast.makeText(getContext(), "deck deleted", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "\"" + deckDeletedName + "\" deck deleted", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -285,11 +296,12 @@ public class DeckListFragment extends Fragment {
         switch (dialogType) {
             case NEW:
                 input.setHint("Deck name");
-                builder.setTitle("New Deck");
+                builder.setCustomTitle(Helper.getInstance().customTitle(getContext(), "New Deck"));
                 break;
             case UPDATE:
                 input.setText((String) deckList.get(indexSelected).getDeckName());
-                builder.setTitle("Updating \'" + deckList.get(indexSelected).getDeckName() + "\'");
+
+                builder.setCustomTitle(Helper.getInstance().customTitle(getContext(), "Edit \"" + deckList.get(indexSelected).getDeckName() + "\""));
                 break;
             default:
                 Toast.makeText(getContext(), "Error in deck dialog - wrong type", Toast.LENGTH_SHORT).show();
@@ -327,14 +339,13 @@ public class DeckListFragment extends Fragment {
                         deckNameHolder = input.getText().toString();
                         // check if valid name
                         if (deckNameHolder.trim().isEmpty()) {
-                            // todo add unique deck name validator
-                            Toast.makeText(getContext(), "invalid name", Toast.LENGTH_SHORT).show();
+
+                            Toast.makeText(getContext(), "Invalid name: cannot be empty", Toast.LENGTH_SHORT).show();
                             return;
                         } else {
                             switch (dialogType) {
                                 case NEW:
-                                    addToDatabase();
-                                    alertDialog.dismiss();
+                                    addToDatabase(deckNameHolder);
                                     deckList = dbManager.getDecks();
                                     if (deckList.size() == 1) {
                                         populateListView();
@@ -342,21 +353,27 @@ public class DeckListFragment extends Fragment {
                                         customListAdapter.notifyDataSetChanged();
                                         setNumberDeckText();
                                     }
+                                    alertDialog.dismiss();
                                     listView.smoothScrollToPosition(customListAdapter.getCount() - 1);
+
                                     break;
                                 case UPDATE:
-                                    updateDatabase();
-                                    alertDialog.dismiss();
+                                    if (!deckNameHolder.equals((String) deckList.get(indexSelected).getDeckName())) {
+                                        updateDatabase();
+                                        deckList = dbManager.getDecks();
+                                        customListAdapter.notifyDataSetChanged();
+                                        setNumberDeckText();
+                                        alertDialog.dismiss();
+                                    } else {
+                                        Toast.makeText(getContext(), "Deck not updated: same name", Toast.LENGTH_SHORT).show();
+                                    }
 
-                                    deckList = dbManager.getDecks();
-                                    customListAdapter.notifyDataSetChanged();
-                                    setNumberDeckText();
                                     break;
                                 default:
-                                    Toast.makeText(getContext(), "Error in deck dialog while adding", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "Error in deck dialog while creating dialog", Toast.LENGTH_SHORT).show();
+                                    alertDialog.dismiss();
                                     break;
                             }
-                            alertDialog.dismiss();
                         }
                     }
                 });
@@ -372,8 +389,8 @@ public class DeckListFragment extends Fragment {
 
     private void displayDeleteConfirmationDialog() {
         final android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(getContext());
-        alertDialog.setMessage("Are you sure you want to delete:\n \'" +
-                deckList.get(indexSelected).getDeckName() + "\'?");
+        alertDialog.setMessage("Are you sure you want to delete:\n \"" +
+                deckList.get(indexSelected).getDeckName() + "\"?");
         alertDialog.setTitle("Delete Deck");
 
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -399,21 +416,17 @@ public class DeckListFragment extends Fragment {
 
     // DATABASE HANDLING
 
-    private void addToDatabase() {
-        dbManager.createDeck(deckNameHolder);
-        Toast.makeText(getContext(), "Deck added", Toast.LENGTH_SHORT).show();
+    private void addToDatabase(String name) {
+        dbManager.createDeck(name);
+        Toast.makeText(getContext(), "Deck created", Toast.LENGTH_SHORT).show();
     }
 
 
     private void updateDatabase() {
 
-        if (!deckNameHolder.equals((String) deckList.get(indexSelected).getDeckName())) {
-            dbManager.updateDeck((String) deckList.get(indexSelected).getDeckId(), deckNameHolder);
-            Toast.makeText(getContext(), "Deck updated", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getContext(), "invalid: same name", Toast.LENGTH_SHORT).show();
+        dbManager.updateDeck((String) deckList.get(indexSelected).getDeckId(), deckNameHolder);
+        Toast.makeText(getContext(), "Deck updated", Toast.LENGTH_SHORT).show();
 
-        }
     }
 
 

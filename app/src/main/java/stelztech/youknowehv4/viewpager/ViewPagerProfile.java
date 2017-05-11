@@ -54,13 +54,13 @@ public class ViewPagerProfile extends Fragment{
         String profileText = introProfileEditText.getText().toString();
 
         if(profileText.trim().isEmpty()){
-            Toast.makeText(getContext(), "invalid profile name", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Invalid name: cannot be empty", Toast.LENGTH_SHORT).show();
             return;
         }
 
         String profileId = DatabaseManager.getInstance(getContext()).createProfile(profileText);
 
-        Toast.makeText(getContext(), "profile successfully created", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Profile successfully created", Toast.LENGTH_SHORT).show();
 
         Intent i = new Intent(getContext(), MainActivityManager.class);
         getActivity().startActivity(i);
