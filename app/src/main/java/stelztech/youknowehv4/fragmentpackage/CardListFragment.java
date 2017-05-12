@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -529,10 +530,10 @@ public class CardListFragment extends Fragment {
         switch (dialogType) {
             case QUICK_NEW:
 
-                builder.setCustomTitle(Helper.getInstance().customTitle(getContext(), "Quick Create"));
+                builder.setCustomTitle(Helper.getInstance().customTitle("Quick Create"));
                 break;
             case QUICK_UPDATE:
-                builder.setCustomTitle(Helper.getInstance().customTitle(getContext(), "Quick Update Card"));
+                builder.setCustomTitle(Helper.getInstance().customTitle("Quick Update Card"));
                 break;
             default:
                 Toast.makeText(getContext(), "Error in deck dialog - wrong type", Toast.LENGTH_SHORT).show();
@@ -705,7 +706,7 @@ public class CardListFragment extends Fragment {
                                 String questionLabel = profile.getQuestionLabel();
                                 String answerLabel = profile.getAnswerLabel();
                                 if (answerEmpty && questionEmpty)
-                                    toastMessageError = questionLabel + " and " + answerLabel +" cannot be empty";
+                                    toastMessageError = questionLabel + " and " + answerLabel + " cannot be empty";
                                 else if (!answerEmpty && questionEmpty)
                                     toastMessageError = questionLabel + " cannot be empty";
                                 else if (!questionEmpty && answerEmpty)
@@ -966,6 +967,7 @@ public class CardListFragment extends Fragment {
                 TextView mTextView = (TextView) mView;
 
                 mTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.textPrimary));
+
                 mTextView.setEllipsize(TextUtils.TruncateAt.END);
 
                 Display display = getActivity().getWindowManager().getDefaultDisplay();
@@ -980,9 +982,16 @@ public class CardListFragment extends Fragment {
                 else
                     mView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_normal));
 
+                if (position == 0) {
+                    mTextView.setTypeface(null, Typeface.BOLD);
+                }else{
+                    mTextView.setTypeface(null, Typeface.NORMAL);
+                }
+
 
                 return mTextView;
             }
+
         };
 
         deckArrayAdapter.setDropDownViewResource(android.R.layout.simple_list_item_1);

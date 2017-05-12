@@ -1,14 +1,16 @@
 package stelztech.youknowehv4.helper;
 
 import android.app.Activity;
-import android.app.ListActivity;
+import android.content.Context;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.content.Context;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -18,8 +20,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -34,46 +34,43 @@ public class Helper {
     private static Helper instance;
     private Context context;
 
-    private Helper(){
+    private Helper() {
 
     }
 
-    public static Helper getInstance(){
-        if(instance == null)
+    public static Helper getInstance() {
+        if (instance == null)
             instance = new Helper();
         return instance;
     }
 
-    public void setContext(Context context){
+    public void setContext(Context context) {
         this.context = context;
     }
 
-    public void hideKeyboard(Activity activity){
+    public void hideKeyboard(Activity activity) {
         View view = activity.getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager)activity.getSystemService(context.INPUT_METHOD_SERVICE);
-            if(imm.isAcceptingText()) { // verify if the soft keyboard is open
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(context.INPUT_METHOD_SERVICE);
+            if (imm.isAcceptingText()) { // verify if the soft keyboard is open
                 imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
             }
         }
     }
 
-    public ArrayList CompareArrayList(List<Deck> a, List<Deck> b)
-    {
+    public ArrayList CompareArrayList(List<Deck> a, List<Deck> b) {
         ArrayList output = new ArrayList();
-        for (int i = 0; i < a.size(); i++)
-        {
+        for (int i = 0; i < a.size(); i++) {
             String str = (String) a.get(i).getDeckId();
-            if (!b.contains(str))
-            {
-                if(!output.contains(str)) // check for dupes
+            if (!b.contains(str)) {
+                if (!output.contains(str)) // check for dupes
                     output.add(str);
             }
         }
         return output;
     }
 
-    public String getDateFormatted(String dateString){
+    public String getDateFormatted(String dateString) {
         DateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
         Date date = null;
@@ -86,7 +83,7 @@ public class Helper {
 
         String formattedDate = "";
 
-        if(date != null)
+        if (date != null)
             formattedDate = date.toString();
 
 
@@ -113,7 +110,7 @@ public class Helper {
         listView.setLayoutParams(params);
     }
 
-    public TextView customTitle(Context context, String title){
+    public TextView customTitle(String title) {
         TextView titleTV = new TextView(context);
         titleTV.setTypeface(Typeface.DEFAULT_BOLD);
         titleTV.setTextColor(ContextCompat.getColor(context, android.R.color.black));
@@ -122,7 +119,8 @@ public class Helper {
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         titleTV.setLayoutParams(lp);
         titleTV.setText(title);
-        titleTV.setPadding(35,35,0,0);
+        titleTV.setPadding(35, 35, 0, 0);
         return titleTV;
     }
+
 }

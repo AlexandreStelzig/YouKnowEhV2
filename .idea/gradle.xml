@@ -9,8 +9,6 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/poi-3.16" />
-            <option value="$PROJECT_DIR$/poi-ooxml-3.16" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

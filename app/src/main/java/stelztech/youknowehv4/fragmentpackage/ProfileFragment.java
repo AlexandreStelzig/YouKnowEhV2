@@ -295,7 +295,7 @@ public class ProfileFragment extends Fragment {
                 message = ("Update Answer Label");
                 break;
         }
-        builder.setCustomTitle(Helper.getInstance().customTitle(getContext(), message));
+        builder.setCustomTitle(Helper.getInstance().customTitle(message));
 
 
         builder.setView(container);

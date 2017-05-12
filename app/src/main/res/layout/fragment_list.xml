@@ -98,7 +98,10 @@
         android:dividerHeight="2dp"
         android:drawSelectorOnTop="true"
         android:paddingLeft="3dp"
-        android:paddingRight="3dp"></ListView>
+        android:paddingRight="3dp"
+        android:paddingBottom="75dp"
+        android:clipToPadding="false"
+        android:scrollbarStyle="outsideOverlay"/>
 
 
     <TextView

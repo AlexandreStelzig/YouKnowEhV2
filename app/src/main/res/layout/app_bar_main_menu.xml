@@ -25,6 +25,7 @@
                 android:orientation="horizontal">
 
                 <Spinner
+                    android:popupBackground="@color/white"
                     android:id="@+id/spinner_nav"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

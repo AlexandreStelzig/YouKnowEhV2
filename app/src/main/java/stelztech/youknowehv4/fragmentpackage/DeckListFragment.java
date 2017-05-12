@@ -4,7 +4,6 @@ package stelztech.youknowehv4.fragmentpackage;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -78,6 +77,8 @@ public class DeckListFragment extends Fragment {
 
     private boolean deckOrdering;
 
+    private boolean scrollToTop = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -111,6 +112,20 @@ public class DeckListFragment extends Fragment {
 
         populateListView();
 
+        if (scrollToTop) {
+
+            // set selection to the first element after oncreate is finish
+            listView.post(new Runnable() {
+                public void run() {
+                    listView.setSelection(0);
+
+                }
+            });
+            scrollToTop = false;
+
+        }
+
+
         return view;
     }
 
@@ -134,7 +149,7 @@ public class DeckListFragment extends Fragment {
     }
 
 
-    public void actionDone(){
+    public void actionDone() {
         deckOrdering = false;
         ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.DECK, getActivity());
         getActivity().invalidateOptionsMenu();
@@ -142,7 +157,7 @@ public class DeckListFragment extends Fragment {
     }
 
 
-    public boolean isDeckOrdering(){
+    public boolean isDeckOrdering() {
         return deckOrdering;
     }
 
@@ -164,18 +179,18 @@ public class DeckListFragment extends Fragment {
             placerholderTextView.setVisibility(View.GONE);
 
             listView.setAdapter(customListAdapter);
-            listView.smoothScrollToPosition(0);
+
 
             registerForContextMenu(listView);
 
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    progressBar.setVisibility(View.GONE);
-                    listView.setVisibility(View.VISIBLE);
-                }
-            }, (long) (Math.random() * 250) + 400);
+//            final Handler handler = new Handler();
+//            handler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+            progressBar.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+//                }
+//            }, (long) (Math.random() * 250) + 400);
 
         } else {
             placerholderTextView.setVisibility(View.VISIBLE);
@@ -296,12 +311,12 @@ public class DeckListFragment extends Fragment {
         switch (dialogType) {
             case NEW:
                 input.setHint("Deck name");
-                builder.setCustomTitle(Helper.getInstance().customTitle(getContext(), "New Deck"));
+                builder.setCustomTitle(Helper.getInstance().customTitle("New Deck"));
                 break;
             case UPDATE:
                 input.setText((String) deckList.get(indexSelected).getDeckName());
 
-                builder.setCustomTitle(Helper.getInstance().customTitle(getContext(), "Edit \"" + deckList.get(indexSelected).getDeckName() + "\""));
+                builder.setCustomTitle(Helper.getInstance().customTitle("Edit \"" + deckList.get(indexSelected).getDeckName() + "\""));
                 break;
             default:
                 Toast.makeText(getContext(), "Error in deck dialog - wrong type", Toast.LENGTH_SHORT).show();
@@ -441,6 +456,10 @@ public class DeckListFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         getActivity().getMenuInflater().inflate(R.menu.toolbar_deck_list, menu);
 
+    }
+
+    public void setScrollToTop(boolean scrollToTop) {
+        this.scrollToTop = scrollToTop;
     }
 
     ////// CUSTOM ADAPTER //////

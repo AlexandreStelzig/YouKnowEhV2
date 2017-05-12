@@ -16,6 +16,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.fragmentpackage.AboutFragment;
 import stelztech.youknowehv4.fragmentpackage.CardListFragment;
@@ -34,6 +37,7 @@ public class MainActivityManager extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     // fragments
+//    private List<Fragment> fragmentList;
     private DeckListFragment mDeckListFragment;
     private CardListFragment mCardListFragment;
     private PracticeFragment mPracticeFragment;
@@ -117,6 +121,15 @@ public class MainActivityManager extends AppCompatActivity
         mAboutFragment = new AboutFragment();
         mProfileFragment = new ProfileFragment();
 
+//        fragmentList = new ArrayList<>();
+//        fragmentList.add(mPracticeFragment);
+//        fragmentList.add(mCardListFragment);
+//        fragmentList.add(mDeckListFragment);
+//        fragmentList.add(mProfileFragment);
+//        fragmentList.add(mSettingsFragment);
+//        fragmentList.add(mAboutFragment);
+
+
         // default page
         displayFragment(R.id.practice);
 
@@ -149,6 +162,10 @@ public class MainActivityManager extends AppCompatActivity
                 displayFragment(item.getItemId());
                 goBackToDecks = false; // if clicked from the drawer, dont go back to deck from cards
                 backToPreviousActivity = false;
+
+                if(item.getItemId() == R.id.deck_list)
+                    mDeckListFragment.setScrollToTop(true);
+
             }
         }, 150);
 
@@ -306,6 +323,20 @@ public class MainActivityManager extends AppCompatActivity
             transaction.setCustomAnimations(android.R.anim.fade_in,
                     android.R.anim.fade_out);
         }
+
+//        int positionPrevious = 0;
+//        int positionCurrent = 0;
+//        for(int i = 0; i < fragmentList.size(); i++){
+//            if(fragmentList.get(i).equals(fragment))
+//                positionCurrent = i;
+//            else if(fragmentList.get(i).equals(previousFragment))
+//                positionPrevious = i;
+//        }
+//
+//        if(positionCurrent < positionPrevious)
+//            transaction.setCustomAnimations(R.anim.slide_in_down, R.anim.slide_out_down);
+//        else
+//            transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up);
 
 
         transaction.replace(R.id.content_frame, fragment, tag);

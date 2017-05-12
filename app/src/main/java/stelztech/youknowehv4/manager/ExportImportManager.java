@@ -10,26 +10,16 @@ import android.os.Environment;
 import android.provider.OpenableColumns;
 import android.widget.Toast;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
@@ -50,6 +40,98 @@ public final class ExportImportManager {
     public final static String storingFolder = "/YouKnowEh/Export";
 
 
+//    public static File saveExcelFile(Context context, Deck deckToExport, List<Card> cardList) {
+//
+//        // check if available and not read only
+//        if (!isExternalStorageAvailable() || isExternalStorageReadOnly()) {
+//            Toast.makeText(context, "Storage not available or read only", Toast.LENGTH_SHORT).show();
+//            return null;
+//        }
+//        ;
+//
+//        //New Workbook
+//        Workbook wb = new HSSFWorkbook();
+//
+//        Cell c = null;
+//
+//        String deckName = deckToExport.getDeckName();
+//        int numberOfCards = cardList.size();
+//
+//        if (numberOfCards < 1) {
+//            Toast.makeText(context, "Cannot export deck with no cards", Toast.LENGTH_SHORT).show();
+//            return null;
+//        }
+//
+//        //New Sheet
+//        Sheet sheet1 = null;
+//        sheet1 = wb.createSheet(deckName);
+//
+//        for (int counter = 0; counter < numberOfCards; counter++) {
+//            Row row = sheet1.createRow(counter);
+//
+//            Card cardTemp = cardList.get(counter);
+//            String question = cardTemp.getQuestion();
+//            String answer = cardTemp.getAnswer();
+//            String moreinfo = cardTemp.getMoreInfo();
+//            String id = cardTemp.getCardId();
+//
+//            c = row.createCell(0);
+//            c.setCellValue(question);
+//            c = row.createCell(1);
+//            c.setCellValue(answer);
+//            c = row.createCell(2);
+//            c.setCellValue(moreinfo);
+////            c = row.createCell(3);
+////            c.setCellValue(id);
+//
+//        }
+//
+//
+//        sheet1.setColumnWidth(0, (15 * 500));
+//        sheet1.setColumnWidth(1, (15 * 500));
+//        sheet1.setColumnWidth(2, (15 * 500));
+//        sheet1.setColumnWidth(3, (15 * 500));
+//
+//
+////        File file = new File(context.getExternalFilesDir(null), deckToExport.getDeckName());
+//
+//        File sdCard = Environment.getExternalStorageDirectory();
+//        File dir = new File(sdCard.getAbsolutePath() + storingFolder);
+//        if (!dir.exists()) {
+//            dir.mkdirs();
+//            if (!dir.exists()) {
+//                Toast.makeText(context, "Give app permission to access storage to export", Toast.LENGTH_SHORT).show();
+//                return null;
+//            }
+//        }
+//
+//
+//        File file = new File(dir, deckName + ".xlsx");
+//        FileOutputStream os = null;
+//
+//        try {
+//            os = new FileOutputStream(file);
+//            wb.write(os);
+//        } catch (IOException e) {
+//            Toast.makeText(context, "Give app permission to access storage to export", Toast.LENGTH_SHORT).show();
+//            return null;
+//        } catch (Exception e) {
+//            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+//            return null;
+//        } finally {
+//            try {
+//                if (null != os)
+//                    os.close();
+//
+//            } catch (Exception ex) {
+//            }
+//        }
+//
+//
+//        return file;
+//    }
+
+
     public static File saveExcelFile(Context context, Deck deckToExport, List<Card> cardList) {
 
         // check if available and not read only
@@ -57,12 +139,6 @@ public final class ExportImportManager {
             Toast.makeText(context, "Storage not available or read only", Toast.LENGTH_SHORT).show();
             return null;
         }
-        ;
-
-        //New Workbook
-        Workbook wb = new HSSFWorkbook();
-
-        Cell c = null;
 
         String deckName = deckToExport.getDeckName();
         int numberOfCards = cardList.size();
@@ -72,38 +148,6 @@ public final class ExportImportManager {
             return null;
         }
 
-        //New Sheet
-        Sheet sheet1 = null;
-        sheet1 = wb.createSheet(deckName);
-
-        for (int counter = 0; counter < numberOfCards; counter++) {
-            Row row = sheet1.createRow(counter);
-
-            Card cardTemp = cardList.get(counter);
-            String question = cardTemp.getQuestion();
-            String answer = cardTemp.getAnswer();
-            String moreinfo = cardTemp.getMoreInfo();
-            String id = cardTemp.getCardId();
-
-            c = row.createCell(0);
-            c.setCellValue(question);
-            c = row.createCell(1);
-            c.setCellValue(answer);
-            c = row.createCell(2);
-            c.setCellValue(moreinfo);
-//            c = row.createCell(3);
-//            c.setCellValue(id);
-
-        }
-
-
-        sheet1.setColumnWidth(0, (15 * 500));
-        sheet1.setColumnWidth(1, (15 * 500));
-        sheet1.setColumnWidth(2, (15 * 500));
-        sheet1.setColumnWidth(3, (15 * 500));
-
-
-//        File file = new File(context.getExternalFilesDir(null), deckToExport.getDeckName());
 
         File sdCard = Environment.getExternalStorageDirectory();
         File dir = new File(sdCard.getAbsolutePath() + storingFolder);
@@ -116,12 +160,26 @@ public final class ExportImportManager {
         }
 
 
-        File file = new File(dir, deckName + ".xlsx");
+        File file = new File(dir, deckName + ".csv");
         FileOutputStream os = null;
 
         try {
-            os = new FileOutputStream(file);
-            wb.write(os);
+            CSVWriter writer = new CSVWriter(new FileWriter(file));
+
+            String[] data = new String[3];
+            for (int counter = 0; counter < numberOfCards; counter++) {
+
+                Card cardTemp = cardList.get(counter);
+                data[0] = cardTemp.getQuestion();
+                data[1] = cardTemp.getAnswer();
+                data[2] = cardTemp.getMoreInfo();
+
+                writer.writeNext(data);
+
+            }
+            writer.close();
+
+
         } catch (IOException e) {
             Toast.makeText(context, "Give app permission to access storage to export", Toast.LENGTH_SHORT).show();
             return null;
@@ -138,8 +196,10 @@ public final class ExportImportManager {
         }
 
 
+
         return file;
     }
+
 
     public static boolean readExcelFile(Context context, Uri uri) {
 
@@ -168,66 +228,49 @@ public final class ExportImportManager {
             InputStream myInput = context.getContentResolver().openInputStream(uri);
 
 
-            // Create a POIFSFileSystem object
-//            POIFSFileSystem myFileSystem = new POIFSFileSystem(myInput);
+            CSVReader reader = new CSVReader(new InputStreamReader(myInput));
+            String[] nextLine;
+            while ((nextLine = reader.readNext()) != null) {
+                // nextLine[] is an array of values from the line
+                System.out.println(nextLine[0] + nextLine[1] + "etc...");
 
-            // Create a workbook using the File System
-//            HSSFWorkbook myWorkBook = new HSSFWorkbook(myFileSystem);
-//            Workbook workbook = WorkbookFactory.create(myInput);
-
-
-            XSSFWorkbook wb = new XSSFWorkbook(myInput);
-
-            // Get the first sheet from workbook
-            XSSFSheet mySheet = wb.getSheetAt(0);
-
-            /** We now need something to iterate through the cells.**/
-            Iterator rowIter = mySheet.rowIterator();
-
-
-            while (rowIter.hasNext()) {
-                Row myRow = mySheet.getRow(0);
-
-
-                Iterator cellIter = myRow.cellIterator();
-                int rowCounter = 0;
-
-                String question = "";
-                String answer = "";
-                String note = "";
-
-                while (cellIter.hasNext()) {
-                    Cell myCell = (Cell) cellIter.next();
-
-                    if (rowCounter == 0) {
-                        question = myCell.toString();
-                    } else if (rowCounter == 1) {
-                        answer = myCell.toString();
-                    } else if (rowCounter == 2) {
-                        note = myCell.toString();
-                    } else {
-                        Toast.makeText(context, "Invalid file format", Toast.LENGTH_SHORT).show();
-                        return false;
-                    }
-
-                    rowCounter++;
-                }
-
-                if (question.isEmpty() || answer.isEmpty()) {
-                    Toast.makeText(context, "Invalid file format - two first column cannot be empty", Toast.LENGTH_SHORT).show();
+                if (nextLine.length > 3) {
+                    Toast.makeText(context, "Invalid file format", Toast.LENGTH_SHORT).show();
                     return false;
                 } else {
-                    cardHolderList.add(new CardHolder(question, answer, note));
+                    String question = "";
+                    String answer = "";
+                    String note = "";
+                    int rowCounter = 0;
+                    for (int i = 0; i < nextLine.length; i++) {
+                        if (rowCounter == 0) {
+                            question = nextLine[0];
+                        } else if (rowCounter == 1) {
+                            answer = nextLine[1];
+                        } else if (rowCounter == 2) {
+                            note = nextLine[2];
+                        }
+                        rowCounter++;
+                    }
+
+                    if (question.isEmpty() || answer.isEmpty()) {
+                        Toast.makeText(context, "Invalid file format - two first column cannot be empty", Toast.LENGTH_SHORT).show();
+                        return false;
+                    } else {
+                        cardHolderList.add(new CardHolder(question, answer, note));
+                    }
+
                 }
 
 
             }
+
         } catch (Exception e) {
             Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        if(cardHolderList.isEmpty()){
+        if (cardHolderList.isEmpty()) {
             Toast.makeText(context, "File is empty", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -235,7 +278,7 @@ public final class ExportImportManager {
         DatabaseManager dbManager = DatabaseManager.getInstance(context);
         String deckId = dbManager.createDeck(fileName);
 
-        for (int i = 0; i < cardHolderList.size(); i++){
+        for (int i = 0; i < cardHolderList.size(); i++) {
             String question = cardHolderList.get(i).getQuestion();
             String answer = cardHolderList.get(i).getAnswer();
             String note = cardHolderList.get(i).getNote();
@@ -280,7 +323,8 @@ public final class ExportImportManager {
 
     public static void importDeck(Context context, Activity activity) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");   //xlxs only
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/csv");   //xlxs only
 //        intent.addCategory(Intent.CATEGORY_OPENABLE);
 
         try {
