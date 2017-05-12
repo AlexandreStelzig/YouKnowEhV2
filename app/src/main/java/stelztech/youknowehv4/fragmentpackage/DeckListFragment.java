@@ -142,7 +142,6 @@ public class DeckListFragment extends Fragment {
             case R.id.action_done:
                 actionDone();
                 return true;
-
         }
 
         return super.onOptionsItemSelected(item);
