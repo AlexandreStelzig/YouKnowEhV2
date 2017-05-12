@@ -76,6 +76,7 @@ public class DeckListFragment extends Fragment {
     private ProgressBar progressBar;
 
     private boolean deckOrdering;
+    private int deckOrderingLastElement;
 
     private boolean scrollToTop = false;
 
@@ -98,6 +99,7 @@ public class DeckListFragment extends Fragment {
 
 
         deckOrdering = false;
+        deckOrderingLastElement = -1;
 
         LinearLayout orientationLayout = (LinearLayout) view.findViewById(R.id.listview_card_orientation_layout);
         orientationLayout.setVisibility(View.GONE);
@@ -150,9 +152,11 @@ public class DeckListFragment extends Fragment {
 
     public void actionDone() {
         deckOrdering = false;
+        deckOrderingLastElement = -1;
         ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.DECK, getActivity());
         getActivity().invalidateOptionsMenu();
         customListAdapter.notifyDataSetChanged();
+        Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -538,14 +542,23 @@ public class DeckListFragment extends Fragment {
             });
 
 
+            if (deckOrdering && deckOrderingLastElement == position) {
+
+                holder.deckLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_grey));
+
+            } else {
+                holder.deckLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
+            }
+
+
             holder.upLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (position > 0) {
+                        deckOrderingLastElement = position - 1;
                         dbManager.swapDeckPosition(deckList.get(position), deckList.get(position - 1));
                         Collections.swap(deckList, position, position - 1);
                         customListAdapter.notifyDataSetChanged();
-
                     }
                 }
             });
@@ -554,6 +567,7 @@ public class DeckListFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     if (position < deckList.size() - 1) {
+                        deckOrderingLastElement = position + 1;
                         dbManager.swapDeckPosition(deckList.get(position), deckList.get(position + 1));
                         Collections.swap(deckList, position, position + 1);
                         customListAdapter.notifyDataSetChanged();
@@ -594,7 +608,6 @@ public class DeckListFragment extends Fragment {
                 }
             });
 
-            holder.deckLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
 
             rowView.setOnTouchListener(new View.OnTouchListener() {
                 @Override

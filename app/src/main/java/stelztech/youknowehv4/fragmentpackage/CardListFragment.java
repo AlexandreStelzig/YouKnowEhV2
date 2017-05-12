@@ -354,6 +354,7 @@ public class CardListFragment extends Fragment {
                         toggleCardsFromPractice();
                 }
                 changeState(CardListState.VIEW);
+                Toast.makeText(getContext(),"Done", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_cancel:
                 cancelState();
@@ -554,8 +555,8 @@ public class CardListFragment extends Fragment {
         final EditText answerEditTextView = (EditText) dialogView.findViewById(R.id.quick_create_answer);
         final TextView deckPlaceHolder = (TextView) dialogView.findViewById(R.id.quick_create_deck_placeholder);
 
-        questionEditTextView.setHint(questionLabel);
-        answerEditTextView.setHint(answerLabel);
+        questionEditTextView.setHint(questionLabel + " (mandatory)");
+        answerEditTextView.setHint(answerLabel + " (mandatory)");
 
         final String currentSelectedDeckId = getCurrentDeckIdSelected();
 
@@ -894,6 +895,7 @@ public class CardListFragment extends Fragment {
             deleteCardFromDatabase();
         } else {
             changeState(CardListState.VIEW);
+            Toast.makeText(getContext(),"Done", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -926,7 +928,7 @@ public class CardListFragment extends Fragment {
     }
 
 
-    private void populateSpinner() {
+    public void populateSpinner() {
 
         if (deckArrayAdapter != null) {
             deckArrayAdapter.clear();
@@ -1222,6 +1224,11 @@ public class CardListFragment extends Fragment {
         return false;
     }
 
+    public void deckChanged(){
+        deckList = dbManager.getDecks();
+        deckArrayAdapter.notifyDataSetChanged();
+    }
+
     private void modifyDeckCards() {
         for (int counter = 0; counter < isPartOfList.length; counter++) {
             if (isPartOfList[counter] != isPartOfListTemp[counter]) {
@@ -1498,4 +1505,7 @@ public class CardListFragment extends Fragment {
         }
 
     }
+
+
+
 }

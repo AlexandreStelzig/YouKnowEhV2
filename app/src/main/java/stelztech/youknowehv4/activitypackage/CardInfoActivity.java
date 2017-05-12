@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,11 +17,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -209,6 +213,12 @@ public class CardInfoActivity extends AppCompatActivity {
         answerEditTextView.setTag(answerEditTextView.getKeyListener());
         noteEditTextView.setTag(noteEditTextView.getKeyListener());
 
+        deckInfoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deckInfoButtonClicked();
+            }
+        });
 
         // get activity inital state
         initalStateFromIntent = (CardInfoState) getIntent().getSerializableExtra("initialState");
@@ -315,7 +325,7 @@ public class CardInfoActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void actionCancel(){
+    public void actionCancel() {
         if (cardHaveChanges()) {
             setKeyboardVisibility(false);
             confirmationDialog("Are you sure you want to cancel?\nAll modifications will be lost", ConfirmationEventId.CANCEL);
@@ -338,9 +348,9 @@ public class CardInfoActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if(currentState == CardInfoState.EDIT){
+        if (currentState == CardInfoState.EDIT) {
             actionCancel();
-        }else{
+        } else {
             super.onBackPressed();
         }
     }
@@ -473,10 +483,13 @@ public class CardInfoActivity extends AppCompatActivity {
 
     /////// DIALOG ///////
 
-    public void deckInfoButtonClicked(final View view) {
+    public void deckInfoButtonClicked() {
 
         LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.custom_scrollable_dialog_list, null, false);
+        final View dialogView = inflater.inflate(R.layout.custom_scrollable_dialog_list, null, false);
+
+        TextView createDeckTV = (TextView) dialogView.findViewById(R.id.card_info_dialog_add_deck);
+
 
         deckListAlertDialog = new AlertDialog.Builder(this);
 
@@ -488,6 +501,7 @@ public class CardInfoActivity extends AppCompatActivity {
         } else {
             setupDialogView();
         }
+
 
         deckListAlertDialog.setView(dialogView);
         deckListAlertDialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -504,8 +518,24 @@ public class CardInfoActivity extends AppCompatActivity {
             }
         });
 
-        AlertDialog alert = deckListAlertDialog.create();
+        final AlertDialog alert = deckListAlertDialog.create();
         Helper.getInstance().hideKeyboard(this);
+
+        if (currentState == CardInfoState.NEW || currentState == CardInfoState.EDIT) {
+            createDeckTV.setVisibility(View.VISIBLE);
+            createDeckTV.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alert.dismiss();
+                    createUpdateDeckDialog().show();
+
+
+                }
+            });
+        } else {
+            createDeckTV.setVisibility(View.GONE);
+        }
+
         alert.show();
 
     }
@@ -514,6 +544,13 @@ public class CardInfoActivity extends AppCompatActivity {
 
         deckListAlertDialog.setTitle(message);
         // display a checkbox list
+
+        if (mDeckListDisplayName.length == 0) {
+            final TextView input = new TextView(this);
+            deckListAlertDialog.setMessage("No decks");
+            deckListAlertDialog.setView(input);
+        }
+
         deckListAlertDialog.setMultiChoiceItems(mDeckListDisplayName, mIsPartOfDeckList, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int indexSelected, boolean isChecked) {
@@ -580,6 +617,87 @@ public class CardInfoActivity extends AppCompatActivity {
         builder.setMessage(message).setPositiveButton("Yes", dialogClickListener)
                 .setNegativeButton("No", dialogClickListener).show();
     }
+
+    private AlertDialog createUpdateDeckDialog() {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_CLASS_TEXT);
+        input.setSingleLine();
+
+        FrameLayout container = new FrameLayout(this);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.leftMargin = getResources().getDimensionPixelSize(R.dimen.default_padding);
+        params.rightMargin = getResources().getDimensionPixelSize(R.dimen.default_padding);
+
+        input.setLayoutParams(params);
+        container.addView(input);
+
+        input.setHint("Deck name");
+        builder.setCustomTitle(Helper.getInstance().customTitle("New Deck"));
+
+        builder.setView(container);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            // when button OK is press
+            public void onClick(DialogInterface dialog, int which) {
+                // init later
+            }
+        });
+        // if cancel button is press, close dialog
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                deckInfoButtonClicked();
+            }
+        });
+        // opens keyboard on creation with selection at the end
+        final AlertDialog alertDialog = builder.create();
+
+
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button positiveButton = alertDialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+                positiveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String deckNameHolder = input.getText().toString();
+                        // check if valid name
+                        if (deckNameHolder.trim().isEmpty()) {
+
+                            Toast.makeText(CardInfoActivity.this, "Invalid name: cannot be empty", Toast.LENGTH_SHORT).show();
+                            return;
+                        } else {
+
+                            dbManager.createDeck(deckNameHolder);
+                            Toast.makeText(CardInfoActivity.this, "Deck created", Toast.LENGTH_SHORT).show();
+
+                            if(currentState == CardInfoState.EDIT)
+                                setStateEdit();
+                            else
+                                setStateNew();
+
+
+                            alertDialog.dismiss();
+                            deckInfoButtonClicked();
+
+                        }
+                    }
+                });
+            }
+        });
+
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        input.setSelection(input.getText().length());
+        return alertDialog;
+
+
+    }
+
 
     private void confirmationYes(ConfirmationEventId id) {
         switch (id) {

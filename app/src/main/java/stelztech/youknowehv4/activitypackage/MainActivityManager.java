@@ -384,11 +384,14 @@ public class MainActivityManager extends AppCompatActivity
             if (data != null && data.getStringExtra("deckIdReturn") != null) {
                 mCardListFragment.setToSelectDeckId(data.getStringExtra("deckIdReturn"));
                 backToPreviousActivity = true;
+                mCardListFragment.populateSpinner();
                 mCardListFragment.setSpinnerSelected();
             }
             if (mCardListFragment.getCurrentState() == CardListFragment.CardListState.SEARCH) {
+                mCardListFragment.populateSpinner();
                 mCardListFragment.populateSearchListView(mCardListFragment.getSearchView().getQuery().toString());
             } else {
+                mCardListFragment.populateSpinner();
                 mCardListFragment.populateListView(getCurrentDeckIdSelected());
                 mCardListFragment.listViewShow();
             }

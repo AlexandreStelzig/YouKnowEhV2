@@ -86,7 +86,6 @@
                         android:background="@drawable/ripple_button"
                         android:minHeight="0dp"
                         android:minWidth="0dp"
-                        android:onClick="deckInfoButtonClicked"
                         android:paddingBottom="10dp"
                         android:paddingLeft="15dp"
                         android:paddingRight="15dp"

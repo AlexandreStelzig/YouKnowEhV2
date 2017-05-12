@@ -1,15 +1,33 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <ListView
             android:id="@+id/dialog_list"
+            android:fadeScrollbars="false"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"/>
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/card_info_dialog_add_deck"
+            android:padding="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/ripple_normal"
+            android:clickable="true"
+            android:drawableLeft="@drawable/ic_add_black_24dp"
+            android:text="Create Deck"
+            android:textColor="@color/textPrimary"
+            android:textSize="16sp" />
 
     </LinearLayout>
 </ScrollView>
