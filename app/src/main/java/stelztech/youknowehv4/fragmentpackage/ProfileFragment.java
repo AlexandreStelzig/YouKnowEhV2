@@ -129,12 +129,20 @@ public class ProfileFragment extends Fragment {
                 editProfile();
             }
         });
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteProfile();
-            }
-        });
+
+        if(dbManager.getUser().isAllowProfileDeletion()){
+            deleteButton.setVisibility(View.VISIBLE);
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deleteProfile();
+                }
+            });
+        }else{
+            deleteButton.setVisibility(View.GONE);
+        }
+
+
 
         populateInformation();
 

@@ -20,6 +20,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -40,6 +41,7 @@ import stelztech.youknowehv4.manager.ActionButtonManager;
 import stelztech.youknowehv4.manager.DeckToolbarManager;
 import stelztech.youknowehv4.manager.ExportImportManager;
 import stelztech.youknowehv4.model.Card;
+import stelztech.youknowehv4.model.CardDeck;
 import stelztech.youknowehv4.model.Deck;
 
 /**
@@ -383,7 +385,7 @@ public class DeckListFragment extends Fragment {
                                         setNumberDeckText();
                                         alertDialog.dismiss();
                                     } else {
-                                        Toast.makeText(getContext(), "Deck not updated: same name", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "Invalid: same name", Toast.LENGTH_SHORT).show();
                                     }
 
                                     break;
@@ -406,14 +408,43 @@ public class DeckListFragment extends Fragment {
     }
 
     private void displayDeleteConfirmationDialog() {
+
+        View checkBoxView = View.inflate(getContext(), R.layout.custom_dialog_checkbox, null);
+        final CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.custom_dialog_checkbox_checkbox);
+        checkBox.setText("Delete deck's cards as well");
+
         final android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(getContext());
         alertDialog.setMessage("Are you sure you want to delete:\n \"" +
                 deckList.get(indexSelected).getDeckName() + "\"?");
         alertDialog.setTitle("Delete Deck");
 
+        alertDialog.setView(checkBoxView);
+
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                onOkClick();
+
+
+                if(checkBox.isChecked()){
+                    List<Card> cardList = dbManager.getCardsFromDeck(deckList.get(indexSelected).getDeckId());
+
+                    if(cardList.isEmpty()){
+
+                    }else{
+                        for(int counter = 0; counter < cardList.size(); counter++){
+                            Card temp = cardList.get(counter);
+                            List<Deck> tempDeckList = dbManager.getDecksFromCard(temp.getCardId());
+                            // only have this deck
+                            if(tempDeckList.size() == 1){
+                                dbManager.toggleArchiveCard(temp.getCardId());
+
+                            }
+                        }
+                    }
+
+
+                }
+
+                deleteDeckFromDatabase();
             }
         });
 
@@ -425,10 +456,6 @@ public class DeckListFragment extends Fragment {
         });
         // Showing Alert Message
         alertDialog.show();
-    }
-
-    private void onOkClick() {
-        deleteDeckFromDatabase();
     }
 
 

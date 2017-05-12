@@ -14,6 +14,8 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,6 +23,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
@@ -40,99 +44,7 @@ public final class ExportImportManager {
     public final static String storingFolder = "/YouKnowEh/Export";
 
 
-//    public static File saveExcelFile(Context context, Deck deckToExport, List<Card> cardList) {
-//
-//        // check if available and not read only
-//        if (!isExternalStorageAvailable() || isExternalStorageReadOnly()) {
-//            Toast.makeText(context, "Storage not available or read only", Toast.LENGTH_SHORT).show();
-//            return null;
-//        }
-//        ;
-//
-//        //New Workbook
-//        Workbook wb = new HSSFWorkbook();
-//
-//        Cell c = null;
-//
-//        String deckName = deckToExport.getDeckName();
-//        int numberOfCards = cardList.size();
-//
-//        if (numberOfCards < 1) {
-//            Toast.makeText(context, "Cannot export deck with no cards", Toast.LENGTH_SHORT).show();
-//            return null;
-//        }
-//
-//        //New Sheet
-//        Sheet sheet1 = null;
-//        sheet1 = wb.createSheet(deckName);
-//
-//        for (int counter = 0; counter < numberOfCards; counter++) {
-//            Row row = sheet1.createRow(counter);
-//
-//            Card cardTemp = cardList.get(counter);
-//            String question = cardTemp.getQuestion();
-//            String answer = cardTemp.getAnswer();
-//            String moreinfo = cardTemp.getMoreInfo();
-//            String id = cardTemp.getCardId();
-//
-//            c = row.createCell(0);
-//            c.setCellValue(question);
-//            c = row.createCell(1);
-//            c.setCellValue(answer);
-//            c = row.createCell(2);
-//            c.setCellValue(moreinfo);
-////            c = row.createCell(3);
-////            c.setCellValue(id);
-//
-//        }
-//
-//
-//        sheet1.setColumnWidth(0, (15 * 500));
-//        sheet1.setColumnWidth(1, (15 * 500));
-//        sheet1.setColumnWidth(2, (15 * 500));
-//        sheet1.setColumnWidth(3, (15 * 500));
-//
-//
-////        File file = new File(context.getExternalFilesDir(null), deckToExport.getDeckName());
-//
-//        File sdCard = Environment.getExternalStorageDirectory();
-//        File dir = new File(sdCard.getAbsolutePath() + storingFolder);
-//        if (!dir.exists()) {
-//            dir.mkdirs();
-//            if (!dir.exists()) {
-//                Toast.makeText(context, "Give app permission to access storage to export", Toast.LENGTH_SHORT).show();
-//                return null;
-//            }
-//        }
-//
-//
-//        File file = new File(dir, deckName + ".xlsx");
-//        FileOutputStream os = null;
-//
-//        try {
-//            os = new FileOutputStream(file);
-//            wb.write(os);
-//        } catch (IOException e) {
-//            Toast.makeText(context, "Give app permission to access storage to export", Toast.LENGTH_SHORT).show();
-//            return null;
-//        } catch (Exception e) {
-//            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-//            return null;
-//        } finally {
-//            try {
-//                if (null != os)
-//                    os.close();
-//
-//            } catch (Exception ex) {
-//            }
-//        }
-//
-//
-//        return file;
-//    }
-
-
-    public static File saveExcelFile(Context context, Deck deckToExport, List<Card> cardList) {
+    public static File saveCSVFile(Context context, String location, Deck deckToExport, List<Card> cardList) {
 
         // check if available and not read only
         if (!isExternalStorageAvailable() || isExternalStorageReadOnly()) {
@@ -144,7 +56,7 @@ public final class ExportImportManager {
         int numberOfCards = cardList.size();
 
         if (numberOfCards < 1) {
-            Toast.makeText(context, "Cannot export deck with no cards", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, deckName + ": Cannot export deck with no cards", Toast.LENGTH_LONG).show();
             return null;
         }
 
@@ -194,7 +106,6 @@ public final class ExportImportManager {
             } catch (Exception ex) {
             }
         }
-
 
 
         return file;
@@ -306,9 +217,72 @@ public final class ExportImportManager {
         return false;
     }
 
+
+    public static boolean exportAllFiles(Context context) {
+        DatabaseManager database = DatabaseManager.getInstance(context);
+        List<Deck> deckList = database.getDecks();
+        List<File> fileList = new ArrayList<>();
+        for (int counter = 0; counter < deckList.size(); counter++) {
+            Deck deck = deckList.get(counter);
+            List<Card> cardList = database.getCardsFromDeck(deck.getDeckId());
+            File tempFile = saveCSVFile(context, "ToExport", deck, cardList);
+
+            if (tempFile != null)
+                fileList.add(tempFile);
+        }
+
+        File sdCard = Environment.getExternalStorageDirectory();
+        File dir = new File(sdCard.getAbsolutePath() + storingFolder);
+        if (!dir.exists()) {
+            dir.mkdirs();
+            if (!dir.exists()) {
+                Toast.makeText(context, "Give app permission to access storage to export", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+
+        try {
+
+            String zipFile = sdCard.getAbsolutePath() + storingFolder + "/exportedDecks.zip";
+
+            // create byte buffer
+            byte[] buffer = new byte[1024];
+            FileOutputStream fos = new FileOutputStream(zipFile);
+            ZipOutputStream zos = new ZipOutputStream(fos);
+
+            for (int i = 0; i < fileList.size(); i++) {
+                File srcFile = (fileList.get(i));
+                FileInputStream fis = new FileInputStream(srcFile);
+
+                // begin writing a new ZIP entry, positions the stream to the start of the entry data
+                zos.putNextEntry(new ZipEntry(srcFile.getName()));
+
+                int length;
+                while ((length = fis.read(buffer)) > 0) {
+                    zos.write(buffer, 0, length);
+                }
+                zos.closeEntry();
+
+                // close the InputStream
+                fis.close();
+            }
+
+            // close the ZipOutputStream
+            zos.close();
+        } catch (FileNotFoundException e) {
+            Toast.makeText(context, e.toString(), Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Toast.makeText(context, e.toString(), Toast.LENGTH_LONG).show();
+        }
+
+
+        return true;
+    }
+
+
     public static void exportFileToEmail(Context context, Deck deckToExport, List<Card> cardList) {
 
-        File file = saveExcelFile(context, deckToExport, cardList);
+        File file = saveCSVFile(context, "", deckToExport, cardList);
 
         if (file != null) {
             Uri U = Uri.fromFile(file);
@@ -319,6 +293,24 @@ public final class ExportImportManager {
 
             context.startActivity(emailIntent);
         }
+    }
+
+    public static void exportAllToEmail(Context context) {
+
+        exportAllFiles(context);
+
+        File sdCard = Environment.getExternalStorageDirectory();
+        String zipFile = sdCard.getAbsolutePath() + storingFolder + "/exportedDecks.zip";
+        File dir = new File(zipFile);
+
+        Uri U = Uri.fromFile(dir);
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setType("text/plain");
+        emailIntent.putExtra(Intent.EXTRA_STREAM, U);
+
+
+        context.startActivity(emailIntent);
+
     }
 
     public static void importDeck(Context context, Activity activity) {
@@ -359,6 +351,23 @@ public final class ExportImportManager {
 
         return fileName;
 
+    }
+
+
+    public static void addToZipFile(File file, String fileName, ZipOutputStream zos) throws FileNotFoundException, IOException {
+
+        FileInputStream fis = new FileInputStream(file);
+        ZipEntry zipEntry = new ZipEntry(fileName);
+        zos.putNextEntry(zipEntry);
+
+        byte[] bytes = new byte[1024];
+        int length;
+        while ((length = fis.read(bytes)) >= 0) {
+            zos.write(bytes, 0, length);
+        }
+
+        zos.closeEntry();
+        fis.close();
     }
 
 

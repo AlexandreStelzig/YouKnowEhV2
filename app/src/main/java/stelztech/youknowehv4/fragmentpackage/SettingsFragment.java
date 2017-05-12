@@ -14,7 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import stelztech.youknowehv4.R;
@@ -25,6 +27,7 @@ import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.ActionButtonManager;
 import stelztech.youknowehv4.manager.ExportImportManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
+import stelztech.youknowehv4.model.User;
 
 /**
  * Created by alex on 2017-04-03.
@@ -38,6 +41,16 @@ public class SettingsFragment extends Fragment {
     private ListView deletedCardsLV;
     private ListView sortingLV;
 
+    private CheckBox allowProfileDeletionCheckbox;
+    private CheckBox showOnAllCheckbox;
+    private CheckBox showOnSpecificCheckbox;
+
+    private TextView allowProfileDeletionTextView;
+    private TextView showOnAllTextView;
+    private TextView showOnSpecificTextView;
+
+    private DatabaseManager dbManager;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,16 +60,90 @@ public class SettingsFragment extends Fragment {
         ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
         setHasOptionsMenu(true);
 
+        dbManager = DatabaseManager.getInstance(getContext());
+        User user = dbManager.getUser();
 
         exportImportLV = (ListView) view.findViewById(R.id.settings_export_import_lv);
         deletedCardsLV = (ListView) view.findViewById(R.id.settings_deleted_cards_lv);
         sortingLV = (ListView) view.findViewById(R.id.settings_sorting_lv);
+
+        allowProfileDeletionCheckbox = (CheckBox) view.findViewById(R.id.settings_profile_checkbox);
+        showOnAllCheckbox = (CheckBox) view.findViewById(R.id.settings_show_on_all_checkbox);
+        showOnSpecificCheckbox = (CheckBox) view.findViewById(R.id.settings_show_on_specific_checkbox);
+
+        allowProfileDeletionTextView = (TextView) view.findViewById(R.id.settings_profile_textview);
+        showOnAllTextView = (TextView) view.findViewById(R.id.settings_show_on_all_textview);
+        showOnSpecificTextView = (TextView) view.findViewById(R.id.settings_show_on_specific_textview);
+
+
+        allowProfileDeletionCheckbox.setChecked(user.isAllowProfileDeletion());
+        showOnAllCheckbox.setChecked(user.isDisplayNbDecksAllCards());
+        showOnSpecificCheckbox.setChecked(user.isDisplayNbDecksSpecificCards());
+
+        allowProfileDeletionCheckbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                allowProfileDeletionClicked();
+            }
+        });
+        allowProfileDeletionTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                allowProfileDeletionClicked();
+            }
+        });
+
+        showOnAllCheckbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showOnAllCardsClicked();
+            }
+        });
+        showOnAllTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showOnAllCardsClicked();
+            }
+        });
+
+        showOnSpecificCheckbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showOnSpecificDeckClicked();
+            }
+        });
+        showOnSpecificTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showOnSpecificDeckClicked();
+            }
+        });
+
 
         setupExportImportLV();
         setupDeletedCardsLV();
         setupSortingLV();
 
         return view;
+    }
+
+
+    private void allowProfileDeletionClicked() {
+        dbManager.toggleAllowProfileDeletion();
+        User user = dbManager.getUser();
+        allowProfileDeletionCheckbox.setChecked(user.isAllowProfileDeletion());
+    }
+
+    private void showOnAllCardsClicked() {
+        dbManager.toggleDisplayNumberDecksAll();
+        User user = dbManager.getUser();
+        showOnAllCheckbox.setChecked(user.isDisplayNbDecksAllCards());
+    }
+
+    private void showOnSpecificDeckClicked() {
+        dbManager.toggleDisplayNumberDecksSpecific();
+        User user = dbManager.getUser();
+        showOnSpecificCheckbox.setChecked(user.isDisplayNbDecksSpecificCards());
     }
 
     private void setupDeletedCardsLV() {
@@ -98,13 +185,13 @@ public class SettingsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 switch (position) {
-                    // Export all decks
+                    // Import decks
                     case 0:
                         ExportImportManager.importDeck(getContext(), getActivity());
                         break;
-                    // Import decks
+                    // Export all decks
                     case 1:
-
+                        ExportImportManager.exportAllToEmail(getContext());
                         break;
                     case 2:
 

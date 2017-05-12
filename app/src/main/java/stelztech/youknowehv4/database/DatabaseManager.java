@@ -296,6 +296,13 @@ public class DatabaseManager {
     public boolean deleteCard(String cardId) {
         SQLiteDatabase db = database.getReadableDatabase();
 
+
+        List<Deck> decks = getDecksFromCard(cardId);
+        // delete card-deck
+        for (int counter = 0; counter < decks.size(); counter++) {
+            deleteCardDeck(cardId, decks.get(counter).getDeckId());
+        }
+
         return db.delete(DatabaseVariables.TableCard.TABLE_NAME, DatabaseVariables.TableCard.COLUMN_NAME_CARD_ID
                 + "=" + cardId, null) > 0;
     }
@@ -314,10 +321,10 @@ public class DatabaseManager {
         List<Card> cardList = getCards();
         List<Deck> deckList = getDecks();
 
-        for(int c = 0; c < cardList.size(); c++)
+        for (int c = 0; c < cardList.size(); c++)
             deleteCard(cardList.get(c).getCardId());
 
-        for(int d = 0; d < cardList.size(); d++)
+        for (int d = 0; d < cardList.size(); d++)
             deleteDeck(deckList.get(d).getDeckId());
 
 
@@ -479,6 +486,9 @@ public class DatabaseManager {
             values.put(DatabaseVariables.TableUser.COLUMN_NAME_DATE_CREATED, date);
             values.put(DatabaseVariables.TableUser.COLUMN_NAME_ACTIVE_PROFILE_ID, "-1");
             values.put(DatabaseVariables.TableUser.COLUMN_NAME_DEFAULT_SORTING, "0");
+            values.put(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_PROFILE_DELETION, 0);
+            values.put(DatabaseVariables.TableUser.COLUMN_NAME_DISPLAY_ALL_CARDS, 1);
+            values.put(DatabaseVariables.TableUser.COLUMN_NAME_DISPLAY_SPECIFIC_DECK, 0);
 
 
             long newRowId = -1;
@@ -564,7 +574,7 @@ public class DatabaseManager {
                 DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_ID + "=" + profileId, null);
     }
 
-    public void updateDefaultSortPosition(int position){
+    public void updateDefaultSortPosition(int position) {
         SQLiteDatabase db = database.getReadableDatabase();
         ContentValues values = new ContentValues();
 
@@ -574,7 +584,6 @@ public class DatabaseManager {
         db.update(DatabaseVariables.TableUser.TABLE_NAME, values,
                 DatabaseVariables.TableUser.COLUMN_NAME_USER_ID + "=" + user.getUserId(), null);
     }
-
 
 
     ////////////// OTHER //////////////
@@ -619,6 +628,55 @@ public class DatabaseManager {
         values.put(DatabaseVariables.TableDeck.COLUMN_NAME_POSITION, deck1.getPosition());
         db.update(DatabaseVariables.TableDeck.TABLE_NAME, values,
                 DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deck2.getDeckId(), null);
+
+    }
+
+
+    public void toggleAllowProfileDeletion() {
+
+        User user = getUser();
+
+        boolean currentIsProfileDeletion = user.isAllowProfileDeletion();
+        boolean newIsProfileDeletion = !currentIsProfileDeletion;
+
+        SQLiteDatabase db = database.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_PROFILE_DELETION, newIsProfileDeletion);
+        db.update(DatabaseVariables.TableUser.TABLE_NAME, values,
+                DatabaseVariables.TableUser.COLUMN_NAME_USER_ID + "=" + user.getUserId(), null);
+
+    }
+
+    public void toggleDisplayNumberDecksAll() {
+
+        User user = getUser();
+
+        boolean currentDisplay = user.isDisplayNbDecksAllCards();
+        boolean newDisplay = !currentDisplay;
+
+        SQLiteDatabase db = database.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TableUser.COLUMN_NAME_DISPLAY_ALL_CARDS, newDisplay);
+        db.update(DatabaseVariables.TableUser.TABLE_NAME, values,
+                DatabaseVariables.TableUser.COLUMN_NAME_USER_ID + "=" + user.getUserId(), null);
+
+    }
+
+    public void toggleDisplayNumberDecksSpecific() {
+
+        User user = getUser();
+
+        boolean currentDisplay = user.isDisplayNbDecksSpecificCards();
+        boolean newDisplay = !currentDisplay;
+
+        SQLiteDatabase db = database.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TableUser.COLUMN_NAME_DISPLAY_SPECIFIC_DECK, newDisplay);
+        db.update(DatabaseVariables.TableUser.TABLE_NAME, values,
+                DatabaseVariables.TableUser.COLUMN_NAME_USER_ID + "=" + user.getUserId(), null);
 
     }
 
@@ -702,9 +760,15 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_DATE_CREATED));
         int defaultSorting = cursor.getInt(cursor
                 .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_DEFAULT_SORTING));
+        boolean allowProfileDeletion = cursor.getInt(cursor
+                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_PROFILE_DELETION)) > 0;
+        boolean displayAllCards = cursor.getInt(cursor
+                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_DISPLAY_ALL_CARDS)) > 0;
+        boolean displaySpecificDeck = cursor.getInt(cursor
+                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_DISPLAY_SPECIFIC_DECK)) > 0;
 
 
-        return new User(userId, dateCreated, activeProfileId, defaultSorting);
+        return new User(userId, dateCreated, activeProfileId, defaultSorting, allowProfileDeletion, displayAllCards, displaySpecificDeck);
     }
 
     private String getDateNow() {

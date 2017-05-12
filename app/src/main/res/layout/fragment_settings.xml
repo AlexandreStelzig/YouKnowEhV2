@@ -23,7 +23,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Export/Import"
+                    android:text="Export/Import (CSV)"
                     android:textColor="@color/colorPrimary"
                     android:textSize="16dp"
                     android:textStyle="bold" />
@@ -125,14 +125,19 @@
                     android:orientation="horizontal">
 
                     <CheckBox
+                        android:id="@+id/settings_profile_checkbox"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
                     <TextView
+                        android:id="@+id/settings_profile_textview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
                         android:text="Allow Profile deletion"
-                        android:textColor="@color/textPrimary" />
+                        android:textColor="@color/textPrimary"
+                        android:textSize="14sp" />
 
                 </LinearLayout>
 
@@ -142,14 +147,19 @@
                     android:orientation="horizontal">
 
                     <CheckBox
+                        android:id="@+id/settings_show_on_all_checkbox"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
                     <TextView
+                        android:id="@+id/settings_show_on_all_textview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
                         android:text="Display number of Decks on Cards (All Cards)"
-                        android:textColor="@color/textPrimary" />
+                        android:textColor="@color/textPrimary"
+                        android:textSize="14sp" />
 
                 </LinearLayout>
 
@@ -159,14 +169,19 @@
                     android:orientation="horizontal">
 
                     <CheckBox
+                        android:id="@+id/settings_show_on_specific_checkbox"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
                     <TextView
+                        android:id="@+id/settings_show_on_specific_textview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
                         android:text="Display number of Decks on Cards (specific Deck)"
-                        android:textColor="@color/textPrimary" />
+                        android:textColor="@color/textPrimary"
+                        android:textSize="14sp" />
 
                 </LinearLayout>
 

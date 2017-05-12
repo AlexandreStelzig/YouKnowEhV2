@@ -57,6 +57,9 @@ public final class DatabaseVariables {
             + TableUser.TABLE_NAME + " ("
             + TableUser.COLUMN_NAME_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + TableUser.COLUMN_NAME_DEFAULT_SORTING + " INTEGER NOT NULL,"
+            + TableUser.COLUMN_NAME_ALLOW_PROFILE_DELETION + " BOOLEAN,"
+            + TableUser.COLUMN_NAME_DISPLAY_ALL_CARDS + " BOOLEAN,"
+            + TableUser.COLUMN_NAME_DISPLAY_SPECIFIC_DECK + " BOOLEAN,"
             + TableUser.COLUMN_NAME_DATE_CREATED + " DATE,"
             + TableUser.COLUMN_NAME_ACTIVE_PROFILE_ID + " TEXT NOT NULL,"
             + " FOREIGN KEY " + "(" + TableUser.COLUMN_NAME_ACTIVE_PROFILE_ID + ")"
@@ -117,5 +120,8 @@ public final class DatabaseVariables {
         public static final String COLUMN_NAME_DATE_CREATED = "datecreated";
         public static final String COLUMN_NAME_DEFAULT_SORTING = "defaultsorting";
         public static final String COLUMN_NAME_ACTIVE_PROFILE_ID = "activeprofile";
+        public static final String COLUMN_NAME_ALLOW_PROFILE_DELETION = "allowprofiledeletion";
+        public static final String COLUMN_NAME_DISPLAY_ALL_CARDS = "displayallcards";
+        public static final String COLUMN_NAME_DISPLAY_SPECIFIC_DECK = "displayspecificdeck";
     }
 }

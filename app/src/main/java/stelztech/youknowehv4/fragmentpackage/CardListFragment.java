@@ -52,6 +52,7 @@ import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.model.Card;
 import stelztech.youknowehv4.model.Deck;
 import stelztech.youknowehv4.model.Profile;
+import stelztech.youknowehv4.model.User;
 
 /**
  * Created by alex on 2017-04-03.
@@ -354,7 +355,7 @@ public class CardListFragment extends Fragment {
                         toggleCardsFromPractice();
                 }
                 changeState(CardListState.VIEW);
-                Toast.makeText(getContext(),"Done", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_cancel:
                 cancelState();
@@ -506,6 +507,7 @@ public class CardListFragment extends Fragment {
 
             }
         });
+
 
         AlertDialog alert = builder.create();
         Helper.getInstance().hideKeyboard(getActivity());
@@ -895,7 +897,7 @@ public class CardListFragment extends Fragment {
             deleteCardFromDatabase();
         } else {
             changeState(CardListState.VIEW);
-            Toast.makeText(getContext(),"Done", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -941,11 +943,16 @@ public class CardListFragment extends Fragment {
         deckList = dbManager.getDecks();
         final List<String> deckListString = new ArrayList<>();
 
-        if (dbManager.getCards().isEmpty()) {
-            deckListString.add(new String("No Cards"));
+
+        if (deckList.isEmpty()) {
+            spinner.setEnabled(false);
+            deckListString.add(new String("All Cards\nNo Decks"));
+
         } else {
+            spinner.setEnabled(true);
             deckListString.add(new String("All Cards"));
         }
+
 
         if (deckList.isEmpty()) {
             spinner.setEnabled(false);
@@ -986,7 +993,7 @@ public class CardListFragment extends Fragment {
 
                 if (position == 0) {
                     mTextView.setTypeface(null, Typeface.BOLD);
-                }else{
+                } else {
                     mTextView.setTypeface(null, Typeface.NORMAL);
                 }
 
@@ -1224,7 +1231,7 @@ public class CardListFragment extends Fragment {
         return false;
     }
 
-    public void deckChanged(){
+    public void deckChanged() {
         deckList = dbManager.getDecks();
         deckArrayAdapter.notifyDataSetChanged();
     }
@@ -1343,7 +1350,10 @@ public class CardListFragment extends Fragment {
             holder.nbDecksLabel = (TextView) rowView.findViewById(R.id.custom_card_item_nb_decks_label);
 
 
-            if (getCurrentDeckIdSelected().equals(ALL_DECKS_ITEM)) {
+            User user = dbManager.getUser();
+
+            if ((getCurrentDeckIdSelected().equals(ALL_DECKS_ITEM) && user.isDisplayNbDecksAllCards())
+                    || (!getCurrentDeckIdSelected().equals(ALL_DECKS_ITEM) && user.isDisplayNbDecksSpecificCards())) {
                 holder.nbDecksLayout.setVisibility(View.VISIBLE);
                 int nbDecks = dbManager.getDecksFromCard(cardList.get(position).getCardId()).size();
                 String nbDeckString;
@@ -1401,6 +1411,12 @@ public class CardListFragment extends Fragment {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         isPartOfList[position] = isChecked;
+
+                        if (isPartOfList[position]) {
+                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_no_mask_normal));
+                        } else {
+                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_no_mask_grey));
+                        }
                     }
                 });
 
@@ -1414,9 +1430,9 @@ public class CardListFragment extends Fragment {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         isPracticeList[position] = isChecked;
                         if (!isPracticeList[position])
-                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_grey));
+                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_no_mask_grey));
                         else
-                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
+                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_no_mask_normal));
 
                     }
                 });
@@ -1452,9 +1468,9 @@ public class CardListFragment extends Fragment {
                         holder.checkBox.setChecked(isPartOfList[position]);
 
                         if (isPartOfList[position]) {
-                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
+                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_no_mask_normal));
                         } else {
-                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_grey));
+                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_no_mask_grey));
                         }
 
                         setNumberCardsOther(numberCardsIncludedInDeck());
@@ -1463,9 +1479,9 @@ public class CardListFragment extends Fragment {
 
                         if (isPracticeList[position]) {
                             holder.checkBox.setChecked(true);
-                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
+                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_no_mask_normal));
                         } else {
-                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_grey));
+                            holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_no_mask_grey));
                             holder.checkBox.setChecked(false);
                         }
                         setNumberCardsOther(numberCardsIncludedInPractice());
@@ -1476,15 +1492,24 @@ public class CardListFragment extends Fragment {
 
 
             if (currentState == CardListState.EDIT_DECK) {
-                if (isPartOfList[position])
-                    holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
-                else
-                    holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_grey));
-            } else if (isPracticeList != null && isPracticeList.length >= position && !isPracticeList[position]) {
-                holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_grey));
-            } else {
+                if (isPartOfList[position]) {
+                    holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_no_mask_normal));
+                } else {
+                    holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_no_mask_grey));
+                }
 
-                holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
+            } else if (isPracticeList != null && isPracticeList.length >= position && !isPracticeList[position]) {
+                if (currentState == CardListState.PRACTICE_TOGGLE) {
+                    holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_no_mask_grey));
+                } else {
+                    holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_grey));
+                }
+            } else {
+                if (currentState == CardListState.PRACTICE_TOGGLE)
+                    holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_no_mask_normal));
+                else
+
+                    holder.cardLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
             }
 
 
@@ -1493,7 +1518,6 @@ public class CardListFragment extends Fragment {
                 public boolean onTouch(View v, MotionEvent event) {
 
                     holder.cardLayout.getBackground().setHotspot(event.getX(), event.getY());
-
 
                     return false;
                 }
@@ -1505,7 +1529,6 @@ public class CardListFragment extends Fragment {
         }
 
     }
-
 
 
 }

@@ -4,7 +4,7 @@
 
     <!--?android:colorControlHighlight-->
     <!-- the normal bg color will be white -->
-    <item android:id="@+id/ripple_default_color">
+    <item>
         <color android:color="@color/white" />
     </item>
 

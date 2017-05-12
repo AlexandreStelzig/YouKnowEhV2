@@ -10,13 +10,43 @@ public class User {
     private String dateCreated;
     private String activeProfileId;
     private int defaultSortingPosition;
+    private boolean allowProfileDeletion;
+    private boolean displayNbDecksAllCards;
+    private boolean displayNbDecksSpecificCards;
 
 
-    public User(String userId, String dateCreated, String activeProfileId, int defaultSortingPosition) {
+    public User(String userId, String dateCreated, String activeProfileId, int defaultSortingPosition, boolean allowProfileDeletion, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards) {
         this.userId = userId;
         this.dateCreated = dateCreated;
         this.activeProfileId = activeProfileId;
         this.defaultSortingPosition = defaultSortingPosition;
+        this.allowProfileDeletion = allowProfileDeletion;
+        this.displayNbDecksAllCards = displayNbDecksAllCards;
+        this.displayNbDecksSpecificCards = displayNbDecksSpecificCards;
+    }
+
+    public boolean isAllowProfileDeletion() {
+        return allowProfileDeletion;
+    }
+
+    public void setAllowProfileDeletion(boolean allowProfileDeletion) {
+        this.allowProfileDeletion = allowProfileDeletion;
+    }
+
+    public boolean isDisplayNbDecksAllCards() {
+        return displayNbDecksAllCards;
+    }
+
+    public void setDisplayNbDecksAllCards(boolean displayNbDecksAllCards) {
+        this.displayNbDecksAllCards = displayNbDecksAllCards;
+    }
+
+    public boolean isDisplayNbDecksSpecificCards() {
+        return displayNbDecksSpecificCards;
+    }
+
+    public void setDisplayNbDecksSpecificCards(boolean displayNbDecksSpecificCards) {
+        this.displayNbDecksSpecificCards = displayNbDecksSpecificCards;
     }
 
     public String getUserId() {

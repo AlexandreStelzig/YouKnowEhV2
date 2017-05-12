@@ -262,7 +262,7 @@ public class CardInfoActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             if (currentState != CardInfoState.VIEW && cardHaveChanges()) {
                 setKeyboardVisibility(false);
-                confirmationDialog("Are you sure you want to cancel?\nAll modifications will be lost", ConfirmationEventId.HOME);
+                confirmationDialog("Are you sure you want to cancel?\nAll modifications will be lost.", ConfirmationEventId.HOME);
             } else {
                 if (goBackToViewModeFromEdit) {
                     setStateView();
@@ -332,8 +332,10 @@ public class CardInfoActivity extends AppCompatActivity {
         } else {
             if (goBackToViewModeFromEdit) {
                 setStateView();
+                Toast.makeText(CardInfoActivity.this, "Canceled", Toast.LENGTH_SHORT).show();
             } else {
                 setKeyboardVisibility(false);
+                Toast.makeText(CardInfoActivity.this, "Canceled", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
@@ -385,7 +387,15 @@ public class CardInfoActivity extends AppCompatActivity {
         dateInfoLayout.setVisibility(View.VISIBLE);
         reverseLayout.setVisibility(View.VISIBLE);
         deckInfoButton.setText("EDIT");
-        setKeyboardVisibility(true);
+
+        // hide keyboard
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        );
+
+        Toast.makeText(CardInfoActivity.this, "Edit Card", Toast.LENGTH_SHORT).show();
+
+
         scrollView.smoothScrollTo(0, 0);
 
     }
@@ -508,6 +518,8 @@ public class CardInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 cancelDialogAction();
+                if (currentState != CardInfoState.VIEW)
+                    Toast.makeText(CardInfoActivity.this, "Canceled", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -515,6 +527,8 @@ public class CardInfoActivity extends AppCompatActivity {
             @Override
             public void onCancel(DialogInterface dialog) {
                 cancelDialogAction();
+                if (currentState != CardInfoState.VIEW)
+                    Toast.makeText(CardInfoActivity.this, "Canceled", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -561,6 +575,14 @@ public class CardInfoActivity extends AppCompatActivity {
         deckListAlertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+                if(deckListIsDifferent()){
+                    Toast.makeText(CardInfoActivity.this, "Decks modified", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(CardInfoActivity.this, "Nothing to change", Toast.LENGTH_SHORT).show();
+                }
+
+
                 resetNumberOfDecksCounter();
 
             }
@@ -604,6 +626,7 @@ public class CardInfoActivity extends AppCompatActivity {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         confirmationYes(id);
+                        Toast.makeText(CardInfoActivity.this, "Canceled", Toast.LENGTH_SHORT).show();
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
@@ -676,7 +699,7 @@ public class CardInfoActivity extends AppCompatActivity {
                             dbManager.createDeck(deckNameHolder);
                             Toast.makeText(CardInfoActivity.this, "Deck created", Toast.LENGTH_SHORT).show();
 
-                            if(currentState == CardInfoState.EDIT)
+                            if (currentState == CardInfoState.EDIT)
                                 setStateEdit();
                             else
                                 setStateNew();
@@ -704,9 +727,7 @@ public class CardInfoActivity extends AppCompatActivity {
             case CANCEL:
                 // reset normal
                 setStateView();
-                break;
-            case MODIFY:
-                // update word
+
                 break;
             case HOME:
                 setKeyboardVisibility(false);
@@ -823,6 +844,15 @@ public class CardInfoActivity extends AppCompatActivity {
         }
     }
 
+    private boolean deckListIsDifferent(){
+
+        for(int i = 0; i < mTempPartOfDeckList.length; i++){
+            if(mTempPartOfDeckList[i] != mIsPartOfDeckList[i])
+                return true;
+        }
+
+        return false;
+    }
 
     /////// COMPONENTS HELPER ///////
 
