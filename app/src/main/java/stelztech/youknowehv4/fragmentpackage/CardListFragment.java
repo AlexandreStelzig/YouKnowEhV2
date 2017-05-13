@@ -794,7 +794,7 @@ public class CardListFragment extends Fragment {
                     toggleCardFromPractice();
                     populateListView(getCurrentDeckIdSelected());
                     listViewShow();
-                    Toast.makeText(getContext(), "Card toggled from practice", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Card toggled from review", Toast.LENGTH_SHORT).show();
                 } else
                     Toast.makeText(getContext(), "Please select a deck", Toast.LENGTH_SHORT).show();
                 return true;

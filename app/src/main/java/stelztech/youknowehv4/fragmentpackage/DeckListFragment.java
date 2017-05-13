@@ -138,10 +138,14 @@ public class DeckListFragment extends Fragment {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_deck_order:
-                deckOrdering = true;
-                ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
-                getActivity().invalidateOptionsMenu();
-                customListAdapter.notifyDataSetChanged();
+                if(deckList.size() < 2){
+                    Toast.makeText(getContext(), "Need more decks to reorder", Toast.LENGTH_SHORT).show();
+                }else{
+                    deckOrdering = true;
+                    ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
+                    getActivity().invalidateOptionsMenu();
+                    customListAdapter.notifyDataSetChanged();
+                }
                 return true;
             case R.id.action_done:
                 actionDone();
@@ -585,6 +589,7 @@ public class DeckListFragment extends Fragment {
                         deckOrderingLastElement = position - 1;
                         dbManager.swapDeckPosition(deckList.get(position), deckList.get(position - 1));
                         Collections.swap(deckList, position, position - 1);
+                        deckList = dbManager.getDecks();
                         customListAdapter.notifyDataSetChanged();
                     }
                 }
@@ -597,6 +602,7 @@ public class DeckListFragment extends Fragment {
                         deckOrderingLastElement = position + 1;
                         dbManager.swapDeckPosition(deckList.get(position), deckList.get(position + 1));
                         Collections.swap(deckList, position, position + 1);
+                        deckList = dbManager.getDecks();
                         customListAdapter.notifyDataSetChanged();
                     }
                 }

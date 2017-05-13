@@ -55,12 +55,6 @@ public final class ExportImportManager {
         String deckName = deckToExport.getDeckName();
         int numberOfCards = cardList.size();
 
-        if (numberOfCards < 1) {
-            Toast.makeText(context, deckName + ": Cannot export deck with no cards", Toast.LENGTH_LONG).show();
-            return null;
-        }
-
-
         File sdCard = Environment.getExternalStorageDirectory();
         File dir = new File(sdCard.getAbsolutePath() + storingFolder);
         if (!dir.exists()) {
@@ -132,9 +126,6 @@ public final class ExportImportManager {
             }
 
             Toast.makeText(context, fileName, Toast.LENGTH_SHORT);
-
-            File file = new File(uri.getPath());
-
 
             InputStream myInput = context.getContentResolver().openInputStream(uri);
 

@@ -620,12 +620,14 @@ public class DatabaseManager {
         SQLiteDatabase db = database.getReadableDatabase();
         ContentValues values = new ContentValues();
 
+        int deck1Position = deck1.getPosition();
+        int deck2Position = deck2.getPosition();
 
-        values.put(DatabaseVariables.TableDeck.COLUMN_NAME_POSITION, deck2.getPosition());
+        values.put(DatabaseVariables.TableDeck.COLUMN_NAME_POSITION, deck2Position);
         db.update(DatabaseVariables.TableDeck.TABLE_NAME, values,
                 DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deck1.getDeckId(), null);
 
-        values.put(DatabaseVariables.TableDeck.COLUMN_NAME_POSITION, deck1.getPosition());
+        values.put(DatabaseVariables.TableDeck.COLUMN_NAME_POSITION, deck1Position);
         db.update(DatabaseVariables.TableDeck.TABLE_NAME, values,
                 DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deck2.getDeckId(), null);
 

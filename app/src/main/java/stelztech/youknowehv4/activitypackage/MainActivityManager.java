@@ -16,10 +16,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import stelztech.youknowehv4.R;
+import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.fragmentpackage.AboutFragment;
 import stelztech.youknowehv4.fragmentpackage.CardListFragment;
 import stelztech.youknowehv4.fragmentpackage.DeckListFragment;
@@ -163,7 +161,7 @@ public class MainActivityManager extends AppCompatActivity
                 goBackToDecks = false; // if clicked from the drawer, dont go back to deck from cards
                 backToPreviousActivity = false;
 
-                if(item.getItemId() == R.id.deck_list)
+                if (item.getItemId() == R.id.deck_list)
                     mDeckListFragment.setScrollToTop(true);
 
             }
@@ -182,11 +180,14 @@ public class MainActivityManager extends AppCompatActivity
 
         currentFragment = null;
         String title = getString(R.string.app_name);
+        String subtitle = "";
 
         switch (fragmentId) {
             case R.id.practice:
                 currentFragment = mPracticeFragment;
+                DatabaseManager dbManager = DatabaseManager.getInstance(MainActivityManager.this);
                 title = "Review";
+                subtitle = dbManager.getActiveProfile().getProfileName();
                 break;
             case R.id.card_list:
                 currentFragment = mCardListFragment;
@@ -211,6 +212,12 @@ public class MainActivityManager extends AppCompatActivity
                 break;
         }
 
+        // set the toolbar title
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
+            getSupportActionBar().setSubtitle(subtitle);
+        }
+
         // animate the fragment switch
         if (currentFragment != null) {
             if (!currentFragment.isVisible()) {
@@ -220,10 +227,7 @@ public class MainActivityManager extends AppCompatActivity
             }
         }
 
-        // set the toolbar title
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(title);
-        }
+
 
         // set hardware back button boolean
         if (fragmentId == R.id.practice) {

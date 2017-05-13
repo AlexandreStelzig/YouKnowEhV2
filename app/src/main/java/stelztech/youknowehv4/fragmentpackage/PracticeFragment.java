@@ -3,6 +3,7 @@ package stelztech.youknowehv4.fragmentpackage;
 
 import android.animation.ObjectAnimator;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -77,7 +78,7 @@ public class PracticeFragment extends Fragment {
 
     private List<Card> mCardList;
 
-    private final int SELECT_DECK_INDEX = 0;
+    private final int SELECT_ALL_CARDS = 0;
     private final int SPINNER_OFFSET = 1;
 
     private boolean alwaysShowAnswer = false;
@@ -137,11 +138,9 @@ public class PracticeFragment extends Fragment {
         showButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!deckList.isEmpty()) {
-                    showButtonClicked();
-                } else {
-                    Toast.makeText(getContext(), "No Decks", Toast.LENGTH_SHORT).show();
-                }
+
+                showButtonClicked();
+
             }
         });
 
@@ -152,23 +151,17 @@ public class PracticeFragment extends Fragment {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!deckList.isEmpty()) {
-                    nextButtonClicked();
-                } else {
-                    Toast.makeText(getContext(), "No Decks", Toast.LENGTH_SHORT).show();
-                }
+
+                nextButtonClicked();
+
             }
         });
 
         infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isSelectedDeckNothing()) {
-                    if (deckList.isEmpty()) {
-                        Toast.makeText(getContext(), "No Decks", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
-                    }
+                if (isSelectedDeckAll()) {
+                    Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (deckList.size() > 0) {
@@ -223,9 +216,9 @@ public class PracticeFragment extends Fragment {
                     item.setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_check_box_black_24dp));
                 else
                     item.setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_check_box_outline_blank_black_24dp));
-                if (!isSelectedDeckNothing()) {
-                    setQuestionAnswerText();
-                }
+
+                setQuestionAnswerText();
+
                 return true;
             case R.id.action_previous:
                 if (showPreviousIsOkay) {
@@ -252,28 +245,16 @@ public class PracticeFragment extends Fragment {
         deckList = dbManager.getDecks();
         final List<String> deckListString = new ArrayList<>();
 
-        if (deckList.isEmpty()) {
-            deckListString.add("- No Decks -");
-            spinner.setEnabled(false);
-        } else {
-            deckListString.add("- Select Deck -");
-            spinner.setEnabled(true);
-        }
+        deckListString.add("All Cards");
+        spinner.setEnabled(true);
+
+
         for (int counter = 0; counter < deckList.size(); counter++) {
             deckListString.add(deckList.get(counter).getDeckName());
         }
 
         deckArrayAdapter = new ArrayAdapter<String>(
                 getContext(), R.layout.custom_spinner_item, deckListString) {
-            // disable first field
-
-            @Override
-            public boolean isEnabled(int position) {
-                if (position == SELECT_DECK_INDEX) {
-                    return false;
-                }
-                return true;
-            }
 
 
             @NonNull
@@ -286,38 +267,18 @@ public class PracticeFragment extends Fragment {
                 mTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 
 
-                if (position == SELECT_DECK_INDEX) {
-                    mTextView.setTextColor(Color.GRAY);
-                    mView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                if (position == SELECT_ALL_CARDS) {
+                    mTextView.setTypeface(null, Typeface.BOLD);
+
                 } else {
-                    mTextView.setTextColor(Color.BLACK);
-                    if (position == spinner.getSelectedItemPosition())
-                        mView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_grey));
-                    else
-                        mView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_normal));
+                    mTextView.setTypeface(null, Typeface.NORMAL);
                 }
 
-
-                return mTextView;
-            }
-
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
-                View mView = super.getDropDownView(position, convertView, parent);
-                TextView mTextView = (TextView) mView;
-
-                if (deckList.isEmpty())
-                    mTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_expand_more_grey_24dp, 0);
+                mTextView.setTextColor(Color.BLACK);
+                if (position == spinner.getSelectedItemPosition())
+                    mView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_grey));
                 else
-                    mTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_expand_more_black_24dp, 0);
-
-                if (position == SELECT_DECK_INDEX) {
-                    mTextView.setTextColor(Color.GRAY);
-                } else {
-                    mTextView.setTextColor(Color.BLACK);
-                }
+                    mView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_normal));
 
 
                 return mTextView;
@@ -347,27 +308,22 @@ public class PracticeFragment extends Fragment {
         showingPrevious = false;
         int selectedDeck = spinner.getSelectedItemPosition();
 
-        if (isSelectedDeckNothing()) {
-            setSelectDeck();
-            return;
+
+        if (isSelectedDeckAll()) {
+            mCardList = dbManager.getCards();
+        } else {
+            String deckId = deckList.get(selectedDeck - SPINNER_OFFSET).getDeckId();
+            mCardList = dbManager.getDeckPracticeCards(deckId);
         }
 
-
-        if (deckList.size() == 0)
-            return;
-
-
-        String deckId = deckList.get(selectedDeck - SPINNER_OFFSET).getDeckId();
-
-        mCardList = dbManager.getDeckPracticeCards(deckId);
 
         int nbCardsPractice = mCardList.size();
         String nbCardsString = nbCardsPractice + " ";
 
         if (nbCardsPractice == 1)
-            nbCardsString += "Practice Card";
+            nbCardsString += "Review Card";
         else
-            nbCardsString += "Practice Cards";
+            nbCardsString += "Review Cards";
 
         praticeNbCards.setText(nbCardsString);
 
@@ -384,32 +340,15 @@ public class PracticeFragment extends Fragment {
 
     }
 
-    private void setSelectDeck() {
-
-        if (deckList.isEmpty()) {
-            questionTextView.setText("No Decks");
-        } else {
-            questionTextView.setText("Select a Deck");
-        }
-
-        answerTextView.setText("");
-        praticeNbCards.setText("0 Review Cards");
-    }
-
-
     // helpers
     private void nextButtonClicked() {
-        if (isSelectedDeckNothing()) {
-            Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         if (questionOrder.length < 2) {
             String message = "";
             if (questionOrder.length == 0) {
-                message = "No Practice Cards";
+                message = "No Review Cards";
             } else if (questionOrder.length == 1) {
-                message = "Only one practice card in deck";
+                message = "Only one Review card in deck";
             }
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         } else {
@@ -442,13 +381,8 @@ public class PracticeFragment extends Fragment {
 
     private void showButtonClicked() {
 
-        if (isSelectedDeckNothing()) {
-            Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         if (questionOrder.length == 0) {
-            Toast.makeText(getContext(), "No Practice Cards", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "No Review Cards", Toast.LENGTH_SHORT).show();
         } else {
 
             if (answerHidden) {
@@ -509,7 +443,7 @@ public class PracticeFragment extends Fragment {
         questionTextView.scrollTo(0, 0);
 
         if (questionOrder.length == 0) {
-            questionTextView.setText("No Practice Cards");
+            questionTextView.setText("No Review Cards");
             answerTextView.setText("");
         } else {
             if (showingPrevious) {
@@ -555,8 +489,8 @@ public class PracticeFragment extends Fragment {
         }
     }
 
-    private boolean isSelectedDeckNothing() {
-        return spinner.getSelectedItemPosition() == SELECT_DECK_INDEX;
+    private boolean isSelectedDeckAll() {
+        return spinner.getSelectedItemPosition() == SELECT_ALL_CARDS;
     }
 
     private void reserveButtonClicked() {
