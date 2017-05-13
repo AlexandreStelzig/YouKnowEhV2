@@ -29,6 +29,7 @@
     <string-array name="settings_export_import_options">
         <item>Import deck</item>
         <item>Export all decks</item>
+        <item>Import all decks</item>
     </string-array>
 
     <string-array name="settings_deleted_cards_options">

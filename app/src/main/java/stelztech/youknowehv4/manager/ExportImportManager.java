@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,6 +25,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
@@ -106,7 +108,7 @@ public final class ExportImportManager {
     }
 
 
-    public static boolean readExcelFile(Context context, Uri uri) {
+    public static boolean readCSV(Context context, Uri uri) {
 
         if (!isExternalStorageAvailable() || isExternalStorageReadOnly()) {
             Toast.makeText(context, "Storage not available or read only", Toast.LENGTH_SHORT).show();
@@ -128,9 +130,8 @@ public final class ExportImportManager {
             Toast.makeText(context, fileName, Toast.LENGTH_SHORT);
 
             InputStream myInput = context.getContentResolver().openInputStream(uri);
-
-
             CSVReader reader = new CSVReader(new InputStreamReader(myInput));
+
             String[] nextLine;
             while ((nextLine = reader.readNext()) != null) {
                 // nextLine[] is an array of values from the line
@@ -172,11 +173,6 @@ public final class ExportImportManager {
             return false;
         }
 
-        if (cardHolderList.isEmpty()) {
-            Toast.makeText(context, "File is empty", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
         DatabaseManager dbManager = DatabaseManager.getInstance(context);
         String deckId = dbManager.createDeck(fileName);
 
@@ -190,22 +186,6 @@ public final class ExportImportManager {
 
         Toast.makeText(context, "Deck \"" + fileName + "\" imported", Toast.LENGTH_SHORT).show();
         return true;
-    }
-
-    public static boolean isExternalStorageReadOnly() {
-        String extStorageState = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(extStorageState)) {
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean isExternalStorageAvailable() {
-        String extStorageState = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(extStorageState)) {
-            return true;
-        }
-        return false;
     }
 
 
@@ -234,7 +214,7 @@ public final class ExportImportManager {
 
         try {
 
-            String zipFile = sdCard.getAbsolutePath() + storingFolder + "/exportedDecks.zip";
+            String zipFile = sdCard.getAbsolutePath() + storingFolder + "/YouKnowEhExportedDecks.zip";
 
             // create byte buffer
             byte[] buffer = new byte[1024];
@@ -270,6 +250,77 @@ public final class ExportImportManager {
         return true;
     }
 
+    public static void readAllCSV(Context context, Uri uri){
+
+        try {
+
+            InputStream myInput = context.getContentResolver().openInputStream(uri);
+
+            // this is where you start, with an InputStream containing the bytes from the zip file
+            ZipInputStream zipinputstream = new ZipInputStream(new BufferedInputStream(myInput));
+            ZipEntry zipentry;
+
+            byte[] buf = new byte[1024];
+            zipentry = zipinputstream.getNextEntry();
+            List<File> files = new ArrayList<>();
+
+            while (zipentry != null)
+            {
+                //for each entry to be extracted
+                String entryName = zipentry.getName();
+                System.out.println("entryname "+entryName);
+
+                String extension = "";
+
+                int i = entryName.lastIndexOf('.');
+                if (i > 0) {
+                    extension = entryName.substring(i+1);
+                }
+
+                if(!extension.equals("csv")){
+                    break;
+                }
+
+                int n;
+                FileOutputStream fileoutputstream;
+                File newFile = new File(entryName);
+                String directory = newFile.getParent();
+
+                if(directory == null)
+                {
+                    if(newFile.isDirectory())
+                        break;
+                }
+
+                File sdCard = Environment.getExternalStorageDirectory();
+                String destinationname = sdCard.getAbsolutePath() + "/YouKnowEh/Export/";
+                fileoutputstream = new FileOutputStream(
+                        destinationname+entryName);
+
+                while ((n = zipinputstream.read(buf, 0, 1024)) > -1)
+                    fileoutputstream.write(buf, 0, n);
+
+                files.add(new File(destinationname+entryName));
+
+
+                fileoutputstream.close();
+                zipinputstream.closeEntry();
+                zipentry = zipinputstream.getNextEntry();
+
+            }//while
+
+            zipinputstream.close();
+
+
+            for(int i = 0; i < files.size(); i++){
+                readCSV(context, Uri.fromFile(files.get(i)));
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static void exportFileToEmail(Context context, Deck deckToExport, List<Card> cardList) {
 
@@ -291,7 +342,7 @@ public final class ExportImportManager {
         exportAllFiles(context);
 
         File sdCard = Environment.getExternalStorageDirectory();
-        String zipFile = sdCard.getAbsolutePath() + storingFolder + "/exportedDecks.zip";
+        String zipFile = sdCard.getAbsolutePath() + storingFolder + "/YouKnowEhExportedDecks.zip";
         File dir = new File(zipFile);
 
         Uri U = Uri.fromFile(dir);
@@ -320,7 +371,22 @@ public final class ExportImportManager {
 
     }
 
-    private static String getFileName(Context context, Uri uri) {
+    public static void importAllDecks(Context context, Activity activity) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/zip");   //xlxs only
+//        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        try {
+            activity.startActivityForResult(Intent.createChooser(intent, "Select a File to Upload"),
+                    MainActivityManager.EXPORT_RESULT_ALL);
+            Toast.makeText(context, "Select a zip file with Decks to import", Toast.LENGTH_SHORT).show();
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(context, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public static String getFileName(Context context, Uri uri) {
         String fileName = "";
         if (uri.getScheme().equals("content")) {
             Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
@@ -331,6 +397,8 @@ public final class ExportImportManager {
             } finally {
                 cursor.close();
             }
+        }else if (uri.getScheme().equals("file")) {
+            fileName = uri.getLastPathSegment();
         }
         if (fileName == null) {
             fileName = uri.getPath();
@@ -345,20 +413,22 @@ public final class ExportImportManager {
     }
 
 
-    public static void addToZipFile(File file, String fileName, ZipOutputStream zos) throws FileNotFoundException, IOException {
 
-        FileInputStream fis = new FileInputStream(file);
-        ZipEntry zipEntry = new ZipEntry(fileName);
-        zos.putNextEntry(zipEntry);
 
-        byte[] bytes = new byte[1024];
-        int length;
-        while ((length = fis.read(bytes)) >= 0) {
-            zos.write(bytes, 0, length);
+    public static boolean isExternalStorageReadOnly() {
+        String extStorageState = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(extStorageState)) {
+            return true;
         }
+        return false;
+    }
 
-        zos.closeEntry();
-        fis.close();
+    public static boolean isExternalStorageAvailable() {
+        String extStorageState = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(extStorageState)) {
+            return true;
+        }
+        return false;
     }
 
 

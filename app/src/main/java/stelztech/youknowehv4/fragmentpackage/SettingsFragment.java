@@ -194,7 +194,7 @@ public class SettingsFragment extends Fragment {
                         ExportImportManager.exportAllToEmail(getContext());
                         break;
                     case 2:
-
+                        ExportImportManager.importAllDecks(getContext(), getActivity());
                         break;
                 }
 

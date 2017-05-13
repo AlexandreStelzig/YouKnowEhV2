@@ -3,6 +3,7 @@ package stelztech.youknowehv4.activitypackage;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -15,6 +16,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.database.DatabaseManager;
@@ -63,6 +76,7 @@ public class MainActivityManager extends AppCompatActivity
     public final static int CARD_RESULT = 1;
     public final static int EXPORT_RESULT = 2;
     public final static int ARCHIVED_RESULT = 3;
+    public final static int EXPORT_RESULT_ALL = 4;
 
     // set fragment after drawer close
     private int mFragmentToSet = INT_NULL;
@@ -226,7 +240,6 @@ public class MainActivityManager extends AppCompatActivity
 
             }
         }
-
 
 
         // set hardware back button boolean
@@ -403,12 +416,19 @@ public class MainActivityManager extends AppCompatActivity
         } else if (requestCode == EXPORT_RESULT) {
             if (resultCode == RESULT_OK) {
                 Uri selectedDocument = data.getData();
-                boolean success = ExportImportManager.readExcelFile(this, selectedDocument);
+                ExportImportManager.readCSV(this, selectedDocument);
 
 
             }
         } else if (requestCode == ARCHIVED_RESULT) {
             overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
+        } else if (requestCode == EXPORT_RESULT_ALL) {
+            if (resultCode == RESULT_OK) {
+                Uri uri = data.getData();
+                ExportImportManager.readAllCSV(MainActivityManager.this, uri);
+
+
+            }
         }
 
     }

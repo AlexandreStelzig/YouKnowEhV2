@@ -1054,7 +1054,6 @@ public class CardListFragment extends Fragment {
 
     public void populateListView(String idDeck) {
 
-
         if (getCurrentDeckIdSelected().equals(ALL_DECKS_ITEM)) {
             nbCardsPractice.setVisibility(View.GONE);
         } else {

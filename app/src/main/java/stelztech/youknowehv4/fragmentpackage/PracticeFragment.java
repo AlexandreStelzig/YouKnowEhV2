@@ -306,6 +306,7 @@ public class PracticeFragment extends Fragment {
         showPreviousIsOkay = false;
         previousCard = null;
         showingPrevious = false;
+        currentQuestion = 0;
         int selectedDeck = spinner.getSelectedItemPosition();
 
 
