@@ -44,10 +44,14 @@ public class SettingsFragment extends Fragment {
     private CheckBox allowProfileDeletionCheckbox;
     private CheckBox showOnAllCheckbox;
     private CheckBox showOnSpecificCheckbox;
+    private CheckBox allowPracticeAllCheckbox;
+    private CheckBox allowOnQueryChangedCheckbox;
 
     private TextView allowProfileDeletionTextView;
     private TextView showOnAllTextView;
     private TextView showOnSpecificTextView;
+    private TextView allowPracticeAllTextView;
+    private TextView allowOnQueryChangedTextView;
 
     private DatabaseManager dbManager;
 
@@ -70,15 +74,22 @@ public class SettingsFragment extends Fragment {
         allowProfileDeletionCheckbox = (CheckBox) view.findViewById(R.id.settings_profile_checkbox);
         showOnAllCheckbox = (CheckBox) view.findViewById(R.id.settings_show_on_all_checkbox);
         showOnSpecificCheckbox = (CheckBox) view.findViewById(R.id.settings_show_on_specific_checkbox);
+        allowPracticeAllCheckbox = (CheckBox) view.findViewById(R.id.settings_practice_all_checkbox);
+        allowOnQueryChangedCheckbox = (CheckBox) view.findViewById(R.id.settings_allow_on_query_changed_checkbox);
 
         allowProfileDeletionTextView = (TextView) view.findViewById(R.id.settings_profile_textview);
         showOnAllTextView = (TextView) view.findViewById(R.id.settings_show_on_all_textview);
         showOnSpecificTextView = (TextView) view.findViewById(R.id.settings_show_on_specific_textview);
+        allowPracticeAllTextView = (TextView) view.findViewById(R.id.settings_practice_all_textview);
+        allowOnQueryChangedTextView = (TextView) view.findViewById(R.id.settings_allow_on_query_changed_textview);
 
 
         allowProfileDeletionCheckbox.setChecked(user.isAllowProfileDeletion());
         showOnAllCheckbox.setChecked(user.isDisplayNbDecksAllCards());
         showOnSpecificCheckbox.setChecked(user.isDisplayNbDecksSpecificCards());
+        allowPracticeAllCheckbox.setChecked(user.isAllowPracticeAll());
+        allowOnQueryChangedCheckbox.setChecked(user.isAllowOnQueryChanged());
+
 
         allowProfileDeletionCheckbox.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,11 +131,46 @@ public class SettingsFragment extends Fragment {
         });
 
 
+        allowPracticeAllTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                allowPracticeAllClicked();
+            }
+        });
+
+        allowPracticeAllCheckbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                allowPracticeAllClicked();
+            }
+        });
+
+        allowOnQueryChangedTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                allowOnQueryChangedClicked();
+            }
+        });
+
+        allowOnQueryChangedCheckbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                allowOnQueryChangedClicked();
+            }
+        });
+
+
         setupExportImportLV();
         setupDeletedCardsLV();
         setupSortingLV();
 
         return view;
+    }
+
+    private void allowOnQueryChangedClicked() {
+        dbManager.toggleAllowSearchOnQueryChanged();
+        User user = dbManager.getUser();
+        allowOnQueryChangedCheckbox.setChecked(user.isAllowOnQueryChanged());
     }
 
 
@@ -144,6 +190,12 @@ public class SettingsFragment extends Fragment {
         dbManager.toggleDisplayNumberDecksSpecific();
         User user = dbManager.getUser();
         showOnSpecificCheckbox.setChecked(user.isDisplayNbDecksSpecificCards());
+    }
+
+    private void allowPracticeAllClicked() {
+        dbManager.toggleAllowPracticeAll();
+        User user = dbManager.getUser();
+        allowPracticeAllCheckbox.setChecked(user.isAllowPracticeAll());
     }
 
     private void setupDeletedCardsLV() {
@@ -272,4 +324,6 @@ public class SettingsFragment extends Fragment {
 
         return alert;
     }
+
+
 }

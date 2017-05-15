@@ -3,6 +3,7 @@ package stelztech.youknowehv4.fragmentpackage;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -41,7 +42,6 @@ import stelztech.youknowehv4.manager.ActionButtonManager;
 import stelztech.youknowehv4.manager.DeckToolbarManager;
 import stelztech.youknowehv4.manager.ExportImportManager;
 import stelztech.youknowehv4.model.Card;
-import stelztech.youknowehv4.model.CardDeck;
 import stelztech.youknowehv4.model.Deck;
 
 /**
@@ -82,6 +82,10 @@ public class DeckListFragment extends Fragment {
 
     private boolean scrollToTop = false;
 
+
+
+    private boolean loading;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -101,7 +105,10 @@ public class DeckListFragment extends Fragment {
 
 
         deckOrdering = false;
+        loading = false;
         deckOrderingLastElement = -1;
+
+
 
         LinearLayout orientationLayout = (LinearLayout) view.findViewById(R.id.listview_card_orientation_layout);
         orientationLayout.setVisibility(View.GONE);
@@ -113,6 +120,9 @@ public class DeckListFragment extends Fragment {
         nbDeck = (TextView) view.findViewById(R.id.listview_number_cards);
 
         deckList = new ArrayList<Deck>();
+
+        customListAdapter = new CustomListAdapter(getContext());
+        listView.setAdapter(customListAdapter);
 
         populateListView();
 
@@ -129,29 +139,29 @@ public class DeckListFragment extends Fragment {
 
         }
 
-
         return view;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id) {
-            case R.id.action_deck_order:
-                if(deckList.size() < 2){
-                    Toast.makeText(getContext(), "Need more decks to reorder", Toast.LENGTH_SHORT).show();
-                }else{
-                    deckOrdering = true;
-                    ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
-                    getActivity().invalidateOptionsMenu();
-                    customListAdapter.notifyDataSetChanged();
-                }
-                return true;
-            case R.id.action_done:
-                actionDone();
-                return true;
+        if (!loading) {
+            switch (id) {
+                case R.id.action_deck_order:
+                    if (deckList.size() < 2) {
+                        Toast.makeText(getContext(), "Need more decks to reorder", Toast.LENGTH_SHORT).show();
+                    } else {
+                        deckOrdering = true;
+                        ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
+                        getActivity().invalidateOptionsMenu();
+                        customListAdapter.notifyDataSetChanged();
+                    }
+                    return true;
+                case R.id.action_done:
+                    actionDone();
+                    return true;
+            }
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -176,37 +186,8 @@ public class DeckListFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         listView.setVisibility(View.GONE);
 
-        if (deckList != null)
-            deckList.clear();
-
-        deckList = dbManager.getDecks();
-
-        customListAdapter = new CustomListAdapter(getContext());
-
-        if (!deckList.isEmpty()) {
-
-            placerholderTextView.setVisibility(View.GONE);
-
-            listView.setAdapter(customListAdapter);
-
-
-            registerForContextMenu(listView);
-
-//            final Handler handler = new Handler();
-//            handler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-            progressBar.setVisibility(View.GONE);
-            listView.setVisibility(View.VISIBLE);
-//                }
-//            }, (long) (Math.random() * 250) + 400);
-
-        } else {
-            placerholderTextView.setVisibility(View.VISIBLE);
-            listView.setVisibility(View.GONE);
-            progressBar.setVisibility(View.GONE);
-        }
-        setNumberDeckText();
+        ((MainActivityManager) getActivity()).enableDrawerSwipe(false);
+        new LoadData().execute("");
     }
 
     private void setNumberDeckText() {
@@ -428,17 +409,17 @@ public class DeckListFragment extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
 
 
-                if(checkBox.isChecked()){
+                if (checkBox.isChecked()) {
                     List<Card> cardList = dbManager.getCardsFromDeck(deckList.get(indexSelected).getDeckId());
 
-                    if(cardList.isEmpty()){
+                    if (cardList.isEmpty()) {
 
-                    }else{
-                        for(int counter = 0; counter < cardList.size(); counter++){
+                    } else {
+                        for (int counter = 0; counter < cardList.size(); counter++) {
                             Card temp = cardList.get(counter);
                             List<Deck> tempDeckList = dbManager.getDecksFromCard(temp.getCardId());
                             // only have this deck
-                            if(tempDeckList.size() == 1){
+                            if (tempDeckList.size() == 1) {
                                 dbManager.toggleArchiveCard(temp.getCardId());
 
                             }
@@ -542,27 +523,28 @@ public class DeckListFragment extends Fragment {
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
 
-            final Holder holder = new Holder();
-            final View rowView;
-            rowView = inflater.inflate(R.layout.custom_deck_item, null);
+            Holder holder = null;
+            if (convertView == null) {
 
+                convertView = inflater.inflate(R.layout.custom_deck_item, null);
+                holder = new Holder();
 
-            holder.deckName = (TextView) rowView.findViewById(R.id.custom_deck_item_name);
-            holder.numberOfCardsLabel = (TextView) rowView.findViewById(R.id.custom_deck_item_nb_cards_label);
-            holder.deckLayout = (LinearLayout) rowView.findViewById(R.id.custom_deck_item_layout);
-            holder.deckOptionLayout = (LinearLayout) rowView.findViewById(R.id.custom_deck_option_layout);
-            holder.upLayout = (LinearLayout) rowView.findViewById(R.id.custom_deck_up_layout);
-            holder.downLayout = (LinearLayout) rowView.findViewById(R.id.custom_deck_down_layout);
-            holder.deckOrderLayout = (LinearLayout) rowView.findViewById(R.id.deck_order_layout);
+                holder.deckName = (TextView) convertView.findViewById(R.id.custom_deck_item_name);
+                holder.numberOfCardsLabel = (TextView) convertView.findViewById(R.id.custom_deck_item_nb_cards_label);
+                holder.deckLayout = (LinearLayout) convertView.findViewById(R.id.custom_deck_item_layout);
+                holder.deckOptionLayout = (LinearLayout) convertView.findViewById(R.id.custom_deck_option_layout);
+                holder.upLayout = (LinearLayout) convertView.findViewById(R.id.custom_deck_up_layout);
+                holder.downLayout = (LinearLayout) convertView.findViewById(R.id.custom_deck_down_layout);
+                holder.deckOrderLayout = (LinearLayout) convertView.findViewById(R.id.deck_order_layout);
 
-
-            if (deckOrdering) {
-                holder.deckOrderLayout.setVisibility(View.VISIBLE);
-                holder.deckOptionLayout.setVisibility(View.GONE);
+                convertView.setTag(holder);
             } else {
-                holder.deckOrderLayout.setVisibility(View.GONE);
-                holder.deckOptionLayout.setVisibility(View.VISIBLE);
+                holder = (Holder) convertView.getTag();
             }
+
+
+            // all
+
 
             holder.deckOptionLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -573,14 +555,66 @@ public class DeckListFragment extends Fragment {
             });
 
 
-            if (deckOrdering && deckOrderingLastElement == position) {
+            holder.deckName.setText(deckList.get(position).getDeckName());
 
+            int nbCards = dbManager.getCardsFromDeck(deckList.get(position).getDeckId()).size();
+
+            if (nbCards == 1)
+                holder.numberOfCardsLabel.setText("1 Card");
+            else
+                holder.numberOfCardsLabel.setText(nbCards + " Cards");
+
+
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!deckOrdering) {
+                        indexSelected = position;
+                        ((MainActivityManager) getActivity()).displayDeckInfo(deckList.get(indexSelected).getDeckId());
+                    }
+                }
+            });
+
+
+            convertView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+//                            holder.deckLayout.getBackground().setHotspot(event.getX(), event.getY());
+                    }
+                    return false;
+                }
+            });
+
+            if (deckOrdering) {
+                holder.deckOrderLayout.setVisibility(View.VISIBLE);
+                holder.deckOptionLayout.setVisibility(View.GONE);
+            } else {
+                holder.deckOrderLayout.setVisibility(View.GONE);
+                holder.deckOptionLayout.setVisibility(View.VISIBLE);
+            }
+
+
+            if (!deckOrdering) {
+                convertView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+
+                        indexSelected = position;
+
+                        return false;
+                    }
+                });
+            } else {
+                convertView.setOnLongClickListener(null);
+            }
+
+            if (deckOrdering && deckOrderingLastElement == position) {
                 holder.deckLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_grey));
 
             } else {
                 holder.deckLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
             }
-
 
             holder.upLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -608,60 +642,56 @@ public class DeckListFragment extends Fragment {
                 }
             });
 
-            holder.deckName.setText(deckList.get(position).getDeckName());
-
-            int nbCards = dbManager.getCardsFromDeck(deckList.get(position).getDeckId()).size();
-
-            if (nbCards == 1)
-                holder.numberOfCardsLabel.setText("1 Card");
-            else
-                holder.numberOfCardsLabel.setText(nbCards + " Cards");
-
-            if (!deckOrdering) {
-                rowView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-
-                        indexSelected = position;
-
-                        return false;
-                    }
-                });
-            } else {
-                rowView.setOnLongClickListener(null);
-            }
-
-            rowView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!deckOrdering) {
-                        indexSelected = position;
-                        ((MainActivityManager) getActivity()).displayDeckInfo(deckList.get(indexSelected).getDeckId());
-                    }
-                }
-            });
-
-
-            rowView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
-                        holder.deckLayout.getBackground().setHotspot(event.getX(), event.getY());
-                    }
-                    return false;
-                }
-            });
-
-
-//            Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_top_to_bottom);
-//            rowView.startAnimation(animation);
-
-
-            return rowView;
+            return convertView;
 
         }
 
     }
 
+
+    private class LoadData extends AsyncTask<String, Void, String> {
+
+
+        @Override
+        protected String doInBackground(String... params) {
+            loading = true;
+            deckList = dbManager.getDecks();
+
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            if (!deckList.isEmpty()) {
+
+                placerholderTextView.setVisibility(View.GONE);
+
+
+                customListAdapter.notifyDataSetChanged();
+
+                registerForContextMenu(listView);
+
+                progressBar.setVisibility(View.GONE);
+                listView.setVisibility(View.VISIBLE);
+
+            } else {
+                placerholderTextView.setVisibility(View.VISIBLE);
+                listView.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+            }
+
+            loading = false;
+            ((MainActivityManager) getActivity()).enableDrawerSwipe(true);
+            setNumberDeckText();
+
+        }
+    }
+
+    public boolean isLoading() {
+        return loading;
+    }
 
 }

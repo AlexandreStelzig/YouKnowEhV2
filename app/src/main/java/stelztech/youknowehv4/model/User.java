@@ -13,9 +13,10 @@ public class User {
     private boolean allowProfileDeletion;
     private boolean displayNbDecksAllCards;
     private boolean displayNbDecksSpecificCards;
+    private boolean allowPracticeAll;
+    private boolean allowOnQueryChanged;
 
-
-    public User(String userId, String dateCreated, String activeProfileId, int defaultSortingPosition, boolean allowProfileDeletion, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards) {
+    public User(String userId, String dateCreated, String activeProfileId, int defaultSortingPosition, boolean allowProfileDeletion, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards, boolean allowPracticeAll, boolean allowOnQueryChanged) {
         this.userId = userId;
         this.dateCreated = dateCreated;
         this.activeProfileId = activeProfileId;
@@ -23,6 +24,24 @@ public class User {
         this.allowProfileDeletion = allowProfileDeletion;
         this.displayNbDecksAllCards = displayNbDecksAllCards;
         this.displayNbDecksSpecificCards = displayNbDecksSpecificCards;
+        this.allowPracticeAll = allowPracticeAll;
+        this.allowOnQueryChanged = allowOnQueryChanged;
+    }
+
+    public boolean isAllowOnQueryChanged() {
+        return allowOnQueryChanged;
+    }
+
+    public void setAllowOnQueryChanged(boolean allowOnQueryChanged) {
+        this.allowOnQueryChanged = allowOnQueryChanged;
+    }
+
+    public boolean isAllowPracticeAll() {
+        return allowPracticeAll;
+    }
+
+    public void setAllowPracticeAll(boolean allowPracticeAll) {
+        this.allowPracticeAll = allowPracticeAll;
     }
 
     public boolean isAllowProfileDeletion() {

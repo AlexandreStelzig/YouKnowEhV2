@@ -147,6 +147,50 @@
                     android:orientation="horizontal">
 
                     <CheckBox
+                        android:id="@+id/settings_practice_all_checkbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/settings_practice_all_textview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:text="Allow Review all Cards"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/settings_allow_on_query_changed_checkbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/settings_allow_on_query_changed_textview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:text="Allow Search on query changed"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <CheckBox
                         android:id="@+id/settings_show_on_all_checkbox"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
@@ -184,6 +228,10 @@
                         android:textSize="14sp" />
 
                 </LinearLayout>
+
+
+
+
 
 
             </LinearLayout>

@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/YouKnowEhV4.iml" filepath="$PROJECT_DIR$/YouKnowEhV4.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/poi-3.16/poi-3.16.iml" filepath="$PROJECT_DIR$/poi-3.16/poi-3.16.iml" />
     </modules>
   </component>
 </project>

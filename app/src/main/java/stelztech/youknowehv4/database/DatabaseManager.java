@@ -489,6 +489,8 @@ public class DatabaseManager {
             values.put(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_PROFILE_DELETION, 0);
             values.put(DatabaseVariables.TableUser.COLUMN_NAME_DISPLAY_ALL_CARDS, 1);
             values.put(DatabaseVariables.TableUser.COLUMN_NAME_DISPLAY_SPECIFIC_DECK, 0);
+            values.put(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_PRACTICE_ALL, 0);
+            values.put(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_SEARCH_ON_QUERY_CHANGED, 1);
 
 
             long newRowId = -1;
@@ -650,6 +652,38 @@ public class DatabaseManager {
 
     }
 
+    public void toggleAllowSearchOnQueryChanged() {
+
+        User user = getUser();
+
+        boolean current = user.isAllowOnQueryChanged();
+        boolean next = !current;
+
+        SQLiteDatabase db = database.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_SEARCH_ON_QUERY_CHANGED, next);
+        db.update(DatabaseVariables.TableUser.TABLE_NAME, values,
+                DatabaseVariables.TableUser.COLUMN_NAME_USER_ID + "=" + user.getUserId(), null);
+
+    }
+
+    public void toggleAllowPracticeAll() {
+
+        User user = getUser();
+
+        boolean current = user.isAllowPracticeAll();
+        boolean next = !current;
+
+        SQLiteDatabase db = database.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_PRACTICE_ALL, next);
+        db.update(DatabaseVariables.TableUser.TABLE_NAME, values,
+                DatabaseVariables.TableUser.COLUMN_NAME_USER_ID + "=" + user.getUserId(), null);
+
+    }
+
     public void toggleDisplayNumberDecksAll() {
 
         User user = getUser();
@@ -768,9 +802,13 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_DISPLAY_ALL_CARDS)) > 0;
         boolean displaySpecificDeck = cursor.getInt(cursor
                 .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_DISPLAY_SPECIFIC_DECK)) > 0;
+        boolean allowPracticeAll = cursor.getInt(cursor
+                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_PRACTICE_ALL)) > 0;
+        boolean allowOnQueryChanged = cursor.getInt(cursor
+                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_SEARCH_ON_QUERY_CHANGED)) > 0;
 
 
-        return new User(userId, dateCreated, activeProfileId, defaultSorting, allowProfileDeletion, displayAllCards, displaySpecificDeck);
+        return new User(userId, dateCreated, activeProfileId, defaultSorting, allowProfileDeletion, displayAllCards, displaySpecificDeck, allowPracticeAll, allowOnQueryChanged);
     }
 
     private String getDateNow() {

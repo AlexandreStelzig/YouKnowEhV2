@@ -3,7 +3,6 @@ package stelztech.youknowehv4.activitypackage;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -16,18 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-import android.widget.Toast;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.database.DatabaseManager;
@@ -288,27 +275,30 @@ public class MainActivityManager extends AppCompatActivity
                 drawer.closeDrawer(GravityCompat.START);
             } else {
 
-                if (currentFragment.equals(mDeckListFragment) && mDeckListFragment.isDeckOrdering()) {
-                    mDeckListFragment.actionDone();
-                } else if (currentFragment.equals(mCardListFragment) &&
-                        (mCardListFragment.getCurrentState().equals(CardListFragment.CardListState.PRACTICE_TOGGLE)
-                                || (mCardListFragment.getCurrentState().equals(CardListFragment.CardListState.EDIT_DECK)))) {
-                    mCardListFragment.cancelState();
-                } else {
+                if (!mCardListFragment.isLoading() && !mDeckListFragment.isLoading() && !mPracticeFragment.isLoading()) {
 
-                    if (goBackToDecks) {
-                        displayFragment(R.id.deck_list);
-                        goBackToDecks = false;
+                    if (currentFragment.equals(mDeckListFragment) && mDeckListFragment.isDeckOrdering()) {
+                        mDeckListFragment.actionDone();
+                    } else if (currentFragment.equals(mCardListFragment) &&
+                            (mCardListFragment.getCurrentState().equals(CardListFragment.CardListState.PRACTICE_TOGGLE)
+                                    || (mCardListFragment.getCurrentState().equals(CardListFragment.CardListState.EDIT_DECK)))) {
+                        mCardListFragment.cancelState();
                     } else {
-                        if (!mViewIsAtHome) { //if the current view is not the News fragment
-                            displayFragment(R.id.practice);
-                            navigationView.setCheckedItem(R.id.practice);
+
+                        if (goBackToDecks) {
+                            displayFragment(R.id.deck_list);
+                            goBackToDecks = false;
                         } else {
-                            moveTaskToBack(true);  // if view is a practice, exit app
+                            if (!mViewIsAtHome) { //if the current view is not the News fragment
+                                displayFragment(R.id.practice);
+                                navigationView.setCheckedItem(R.id.practice);
+                            } else {
+                                moveTaskToBack(true);  // if view is a practice, exit app
+                            }
                         }
+
                     }
                 }
-
             }
 
         }
@@ -367,10 +357,12 @@ public class MainActivityManager extends AppCompatActivity
 
     // activity to create a new card
     public void startActivityNewCard() {
-        Intent i = new Intent(this, CardInfoActivity.class);
-        i.putExtra("initialDeckId", getCurrentDeckIdSelected());
-        i.putExtra("initialState", CardInfoActivity.CardInfoState.NEW);
-        this.startActivityForResult(i, MainActivityManager.CARD_RESULT);
+        if (!mCardListFragment.isLoading()) {
+            Intent i = new Intent(this, CardInfoActivity.class);
+            i.putExtra("initialDeckId", getCurrentDeckIdSelected());
+            i.putExtra("initialState", CardInfoActivity.CardInfoState.NEW);
+            this.startActivityForResult(i, MainActivityManager.CARD_RESULT);
+        }
     }
 
     // activity to view a new card
@@ -401,24 +393,25 @@ public class MainActivityManager extends AppCompatActivity
             if (data != null && data.getStringExtra("deckIdReturn") != null) {
                 mCardListFragment.setToSelectDeckId(data.getStringExtra("deckIdReturn"));
                 backToPreviousActivity = true;
-                mCardListFragment.populateSpinner();
+                mCardListFragment.setScrollToTop(false);
                 mCardListFragment.setSpinnerSelected();
+
+//                mCardListFragment.populateListView(getCurrentDeckIdSelected());
             }
             if (mCardListFragment.getCurrentState() == CardListFragment.CardListState.SEARCH) {
                 mCardListFragment.populateSpinner();
                 mCardListFragment.populateSearchListView(mCardListFragment.getSearchView().getQuery().toString());
             } else {
+                mCardListFragment.setScrollToTop(false);
                 mCardListFragment.populateSpinner();
-                mCardListFragment.populateListView(getCurrentDeckIdSelected());
-                mCardListFragment.listViewShow();
+
+//                mCardListFragment.populateListView(getCurrentDeckIdSelected());
             }
 
         } else if (requestCode == EXPORT_RESULT) {
             if (resultCode == RESULT_OK) {
                 Uri selectedDocument = data.getData();
                 ExportImportManager.readCSV(this, selectedDocument);
-
-
             }
         } else if (requestCode == ARCHIVED_RESULT) {
             overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);

@@ -47,7 +47,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_weight="0.60"
                 android:padding="2dp"
-                android:text="### cards" />
+                android:text="#### cards" />
 
             <TextView
                 android:id="@+id/listview_number_cards_practice"
@@ -55,14 +55,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.75"
                 android:padding="2dp"
-                android:text="### practice" />
+                android:text="#### practice" />
 
             <LinearLayout
                 android:id="@+id/listview_card_orientation_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="2dp"
-                android:layout_weight="1.65"
+                android:layout_weight="1.30"
                 android:background="@color/white"
                 android:gravity="right"
                 android:orientation="horizontal"
