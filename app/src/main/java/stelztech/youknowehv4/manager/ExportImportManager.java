@@ -31,6 +31,7 @@ import java.util.zip.ZipOutputStream;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.model.Card;
+import stelztech.youknowehv4.model.CardDeck;
 import stelztech.youknowehv4.model.Deck;
 
 /**
@@ -62,7 +63,7 @@ public final class ExportImportManager {
         if (!dir.exists()) {
             dir.mkdirs();
             if (!dir.exists()) {
-                Toast.makeText(context, "Give app permission to access storage to export", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Give app permission to access storage to export: " + deckName, Toast.LENGTH_SHORT).show();
                 return null;
             }
         }
@@ -74,13 +75,15 @@ public final class ExportImportManager {
         try {
             CSVWriter writer = new CSVWriter(new FileWriter(file));
 
-            String[] data = new String[3];
+            String[] data = new String[4];
             for (int counter = 0; counter < numberOfCards; counter++) {
 
                 Card cardTemp = cardList.get(counter);
+                CardDeck cardDeck = DatabaseManager.getInstance(context).getCardDeck(cardTemp.getCardId(), deckToExport.getDeckId());
                 data[0] = cardTemp.getQuestion();
                 data[1] = cardTemp.getAnswer();
                 data[2] = cardTemp.getMoreInfo();
+                data[3] = "" + cardDeck.isPractice();
 
                 writer.writeNext(data);
 
@@ -89,7 +92,7 @@ public final class ExportImportManager {
 
 
         } catch (IOException e) {
-            Toast.makeText(context, "Give app permission to access storage to export", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Failed to export: " + deckName, Toast.LENGTH_SHORT).show();
             return null;
         } catch (Exception e) {
             Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -137,13 +140,14 @@ public final class ExportImportManager {
                 // nextLine[] is an array of values from the line
                 System.out.println(nextLine[0] + nextLine[1] + "etc...");
 
-                if (nextLine.length > 3) {
+                if (nextLine.length > 4) {
                     Toast.makeText(context, "Invalid file format", Toast.LENGTH_SHORT).show();
                     return false;
                 } else {
                     String question = "";
                     String answer = "";
                     String note = "";
+                    String isPractice = "";
                     int rowCounter = 0;
                     for (int i = 0; i < nextLine.length; i++) {
                         if (rowCounter == 0) {
@@ -152,6 +156,8 @@ public final class ExportImportManager {
                             answer = nextLine[1];
                         } else if (rowCounter == 2) {
                             note = nextLine[2];
+                        }else if(rowCounter == 3){
+                            isPractice = nextLine[3];
                         }
                         rowCounter++;
                     }
@@ -160,7 +166,7 @@ public final class ExportImportManager {
                         Toast.makeText(context, "Invalid file format - two first column cannot be empty", Toast.LENGTH_SHORT).show();
                         return false;
                     } else {
-                        cardHolderList.add(new CardHolder(question, answer, note));
+                        cardHolderList.add(new CardHolder(question, answer, note, isPractice));
                     }
 
                 }
@@ -182,6 +188,12 @@ public final class ExportImportManager {
             String note = cardHolderList.get(i).getNote();
             String cardId = dbManager.createCard(question, answer, note);
             dbManager.createCardDeck(cardId, deckId);
+
+            if(cardHolderList.get(i).getIsPractice().trim().toLowerCase().equals( "false") ||
+                    cardHolderList.get(i).getIsPractice().equals( "0")){
+                dbManager.togglePractice_Card(cardId, deckId);
+            }
+
         }
 
         Toast.makeText(context, "Deck \"" + fileName + "\" imported", Toast.LENGTH_SHORT).show();
@@ -207,7 +219,7 @@ public final class ExportImportManager {
         if (!dir.exists()) {
             dir.mkdirs();
             if (!dir.exists()) {
-                Toast.makeText(context, "Give app permission to access storage to export", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Give app permission to access storage to export all", Toast.LENGTH_SHORT).show();
                 return false;
             }
         }
@@ -372,6 +384,7 @@ public final class ExportImportManager {
     }
 
     public static void importAllDecks(Context context, Activity activity) {
+
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/zip");   //xlxs only
@@ -436,11 +449,21 @@ public final class ExportImportManager {
         private String question;
         private String answer;
         private String note;
+        private String isPractice;
 
-        public CardHolder(String question, String answer, String note) {
+        public CardHolder(String question, String answer, String note, String isPractice) {
             this.question = question;
             this.answer = answer;
             this.note = note;
+            this.isPractice = isPractice;
+        }
+
+        public String getIsPractice() {
+            return isPractice;
+        }
+
+        public void setIsPractice(String isPractice) {
+            this.isPractice = isPractice;
         }
 
         public String getQuestion() {

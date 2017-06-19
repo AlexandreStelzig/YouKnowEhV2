@@ -19,6 +19,12 @@
                 app:showAsAction="never" />
 
             <item
+                android:id="@+id/action_remove_practice"
+                android:icon="@drawable/ic_review_toggle"
+                android:title="Remove from Review"
+                app:showAsAction="never" />
+
+            <item
                 android:id="@+id/action_always_show_answer"
                 android:icon="@drawable/ic_check_box_outline_blank_black_24dp"
                 android:title="Always show answer"

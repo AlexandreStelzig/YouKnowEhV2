@@ -1395,13 +1395,7 @@ public class CardListFragment extends Fragment {
                 if (currentState == CardListState.EDIT_DECK) {
                     // Edit
                     cardList = dbManager.getCards();
-
-                    if (filterPractice) {
-                        SortingStateManager.getInstance().sortByPractice(getContext(), cardList, getCurrentDeckIdSelected());
-                    }
-
                     isPartOfList = new boolean[cardList.size()];
-
 
                     for (int i = 0; i < isPartOfList.length; i++)
                         isPartOfList[i] = false;

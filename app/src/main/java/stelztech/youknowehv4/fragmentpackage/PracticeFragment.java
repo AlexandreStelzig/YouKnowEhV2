@@ -28,7 +28,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
@@ -68,7 +70,7 @@ public class PracticeFragment extends Fragment {
     // question answers
     private List<String> questionList;
     private List<String> answerList;
-    private int[] questionOrder;
+    private List<Integer> questionOrder;
     private int currentQuestion;
 
     private ProgressBar progressBar;
@@ -125,6 +127,7 @@ public class PracticeFragment extends Fragment {
         orientationTextView = (TextView) view.findViewById(R.id.practice_orientation);
         progressBar = (ProgressBar) view.findViewById(R.id.practice_progress_bar);
 
+        questionOrder = new ArrayList<>();
         questionList = new ArrayList<>();
         answerList = new ArrayList<>();
 
@@ -203,8 +206,6 @@ public class PracticeFragment extends Fragment {
 //        reverseLayout.setVisibility(View.GONE);
 
 
-
-
         setOrientationText();
         initSpinner();
         switchPracticeCards();
@@ -215,10 +216,10 @@ public class PracticeFragment extends Fragment {
 
     private void setShowButtonEnable() {
 
-        if (!alwaysShowAnswer){
+        if (!alwaysShowAnswer) {
             showButton.setText("show");
             showButton.setEnabled(true);
-        } else{
+        } else {
             showButton.setText("always showing");
             showButton.setEnabled(false);
         }
@@ -270,6 +271,61 @@ public class PracticeFragment extends Fragment {
                     }
 
 
+                    return true;
+                case R.id.action_remove_practice:
+                    if (mCardList != null && !mCardList.isEmpty() && !isSelectedDeckAll()) {
+                        int deckPosition = spinner.getSelectedItemPosition() - 1;
+                        int indexRemoved = questionOrder.get(currentQuestion);
+
+                        dbManager.togglePractice_Card(mCardList.get(indexRemoved).getCardId(),
+                                deckList.get(deckPosition).getDeckId());
+
+
+                        String cardInfo = "\'" + mCardList.get(indexRemoved).getQuestion() + "/" + mCardList.get(indexRemoved).getAnswer()  + "\'";
+
+
+                        mCardList.remove(indexRemoved);
+                        questionList.remove(indexRemoved);
+                        answerList.remove(indexRemoved);
+
+
+                        questionOrder.remove(currentQuestion);
+
+                        for(int i = 0; i < questionOrder.size();i++){
+                            int temp = questionOrder.get(i);
+                            if(questionOrder.get(i) > indexRemoved)
+                                questionOrder.set(i, temp-1);
+                        }
+
+                        if (questionOrder.size() == 0) {
+                            questionTextView.setText("No Review Cards");
+                            answerTextView.setText("");
+                        } else {
+                            if (currentQuestion == questionOrder.size()) {
+                                long seed = System.nanoTime();
+                                Collections.shuffle(questionOrder, new Random(seed));
+                                currentQuestion = 0;
+                            }
+                            setQuestionAnswerText();
+
+                        }
+
+                        int nbCardsPractice = mCardList.size();
+                        String nbCardsString = nbCardsPractice + " ";
+
+                        if (nbCardsPractice == 1)
+                            nbCardsString += "Review Card";
+                        else
+                            nbCardsString += "Review Cards";
+                        praticeNbCards.setText(nbCardsString);
+
+                        showPreviousIsOkay = false;
+
+                        Toast.makeText(getContext(), cardInfo + " toggled from review", Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        Toast.makeText(getContext(), "Cannot toggle from review", Toast.LENGTH_SHORT).show();
+                    }
                     return true;
             }
         }
@@ -413,11 +469,11 @@ public class PracticeFragment extends Fragment {
     // helpers
     private void nextButtonClicked() {
 
-        if (questionOrder.length < 2) {
+        if (questionOrder.size() < 2) {
             String message = "";
-            if (questionOrder.length == 0) {
+            if (questionOrder.size() == 0) {
                 message = "No Review Cards";
-            } else if (questionOrder.length == 1) {
+            } else if (questionOrder.size() == 1) {
                 message = "Only one Review card in deck";
             }
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
@@ -430,12 +486,12 @@ public class PracticeFragment extends Fragment {
             } else {
                 showPreviousIsOkay = true;
                 showingPrevious = false;
-                previousCard = mCardList.get(questionOrder[currentQuestion]);
+                previousCard = mCardList.get(questionOrder.get(currentQuestion));
 
                 answerTextView.scrollTo(0, 0);
                 questionTextView.scrollTo(0, 0);
 
-                if ((currentQuestion + 1) < questionOrder.length) {
+                if ((currentQuestion + 1) < questionOrder.size()) {
                     currentQuestion++;
                     setQuestionAnswerText();
                 } else {
@@ -454,7 +510,7 @@ public class PracticeFragment extends Fragment {
 
     private void showButtonClicked() {
 
-        if (questionOrder.length == 0) {
+        if (questionOrder.size() == 0) {
             Toast.makeText(getContext(), "No Review Cards", Toast.LENGTH_SHORT).show();
         } else {
 
@@ -465,7 +521,7 @@ public class PracticeFragment extends Fragment {
                     else
                         answerTextView.setText(previousCard.getAnswer());
                 } else {
-                    answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
+                    answerTextView.setText(answerList.get(questionOrder.get(currentQuestion)));
                 }
 
                 answerHidden = false;
@@ -478,7 +534,7 @@ public class PracticeFragment extends Fragment {
                     if (showingPrevious) {
                         answerTextView.setText(previousCard.getAnswer());
                     } else {
-                        answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
+                        answerTextView.setText(answerList.get(questionOrder.get(currentQuestion)));
                     }
                 }
 
@@ -490,24 +546,24 @@ public class PracticeFragment extends Fragment {
 
     private void randomizeQuestionOrder() {
 
-        if (questionOrder.length > 1) {
+        if (questionOrder.size() > 1) {
 
-            int lastQuestion = questionOrder[currentQuestion];
+            int lastQuestion = questionOrder.get(currentQuestion);
 
+            long seed = System.nanoTime();
+            Collections.shuffle(questionOrder, new Random(seed));
 
-            for (int i = 0; i < questionOrder.length; i++) {
-                int random = (int) (Math.random() * questionOrder.length);
+//            for (int i = 0; i < questionOrder.size(); i++) {
+//                int random = (int) (Math.random() * questionOrder.size());
+//
+//                int temp = questionOrder[random];
+//                questionOrder[random] = questionOrder[i];
+//                questionOrder[i] = temp;
+//            }
 
-                int temp = questionOrder[random];
-                questionOrder[random] = questionOrder[i];
-                questionOrder[i] = temp;
-            }
-
-            if (questionOrder[0] == lastQuestion && currentQuestion != 0) {
-                int random = (int) (Math.random() * (questionOrder.length - 1));
-                int temp = questionOrder[random + 1];
-                questionOrder[random + 1] = questionOrder[0];
-                questionOrder[0] = temp;
+            if (questionOrder.get(0) == lastQuestion && currentQuestion != 0) {
+                int random = (int) (Math.random() * (questionOrder.size() - 1));
+                Collections.swap(questionOrder, random + 1, 0);
             }
 
         }
@@ -519,7 +575,7 @@ public class PracticeFragment extends Fragment {
         answerTextView.scrollTo(0, 0);
         questionTextView.scrollTo(0, 0);
 
-        if (questionOrder.length == 0) {
+        if (questionOrder.size() == 0) {
             questionTextView.setText("No Review Cards");
             answerTextView.setText("");
         } else {
@@ -541,11 +597,11 @@ public class PracticeFragment extends Fragment {
 
 
             } else {
-                questionTextView.setText(questionList.get(questionOrder[currentQuestion]));
+                questionTextView.setText(questionList.get(questionOrder.get(currentQuestion)));
                 if (!alwaysShowAnswer)
                     answerTextView.setText(answerHiddenString);
                 else
-                    answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
+                    answerTextView.setText(answerList.get(questionOrder.get(currentQuestion)));
             }
             answerHidden = true;
         }
@@ -565,12 +621,12 @@ public class PracticeFragment extends Fragment {
         questionList.clear();
         answerList.clear();
         if (!isReverseOrder) {
-            for (int counter = 0; counter < questionOrder.length; counter++) {
+            for (int counter = 0; counter < questionOrder.size(); counter++) {
                 questionList.add(mCardList.get(counter).getQuestion());
                 answerList.add(mCardList.get(counter).getAnswer());
             }
         } else {
-            for (int counter = 0; counter < questionOrder.length; counter++) {
+            for (int counter = 0; counter < questionOrder.size(); counter++) {
                 answerList.add(mCardList.get(counter).getQuestion());
                 questionList.add(mCardList.get(counter).getAnswer());
             }
@@ -597,7 +653,7 @@ public class PracticeFragment extends Fragment {
                 if (showingPrevious)
                     answerTextView.setText(previousCard.getAnswer());
 
-                answerTextView.setText(answerList.get(questionOrder[currentQuestion]));
+                answerTextView.setText(answerList.get(questionOrder.get(currentQuestion)));
                 answerHidden = false;
             }
         }
@@ -624,11 +680,11 @@ public class PracticeFragment extends Fragment {
                 mCardList = dbManager.getDeckPracticeCards(deckId);
             }
 
-            questionOrder = new int[mCardList.size()];
+            questionOrder.clear();
 
             // init order
-            for (int i = 0; i < questionOrder.length; i++) {
-                questionOrder[i] = i;
+            for (int i = 0; i < mCardList.size(); i++) {
+                questionOrder.add(i);
             }
 
             setQuestionAnswerOrder();

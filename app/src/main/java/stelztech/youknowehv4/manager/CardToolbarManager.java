@@ -66,7 +66,7 @@ public class CardToolbarManager {
             case CARD_LIST_EDIT:
                 setMenuItemVisibility(activity, menu, !DROPDOWN_IS_VISIBLE, !SEARCH_IS_VISIBLE,
                         REVERSES_IS_VISIBLE, DONE_IS_VISIBLE, !EDIT_DECK_IS_VISIBLE, CANCEL_IS_VISIBLE,
-                        !TOGGLE_PRACTICE_IS_VISIBLE, SORT_IS_VISIBLE, !QUICK_CREATE_IS_VISIBLE, FILTER_PRACTICE_IS_VISIBLE);
+                        !TOGGLE_PRACTICE_IS_VISIBLE, SORT_IS_VISIBLE, !QUICK_CREATE_IS_VISIBLE, !FILTER_PRACTICE_IS_VISIBLE);
                 break;
             case SEARCH:
                 setMenuItemVisibility(activity, menu, !DROPDOWN_IS_VISIBLE, SEARCH_IS_VISIBLE,

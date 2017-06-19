@@ -68,6 +68,7 @@ public class DeckListFragment extends Fragment {
 
     // list
     private List<Deck> deckList;
+    private List<Integer> nbCardsInDeckList;
     private CustomListAdapter customListAdapter;
 
     // dialog
@@ -103,6 +104,7 @@ public class DeckListFragment extends Fragment {
         dbManager = DatabaseManager.getInstance(getActivity());
         progressBar = (ProgressBar) view.findViewById(R.id.list_loading_indicator);
 
+        nbCardsInDeckList = new ArrayList<>();
 
         deckOrdering = false;
         loading = false;
@@ -154,7 +156,7 @@ public class DeckListFragment extends Fragment {
                         deckOrdering = true;
                         ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
                         getActivity().invalidateOptionsMenu();
-                        customListAdapter.notifyDataSetChanged();
+                        customListAdapter.notifyDataSetChanged(); // valid
                     }
                     return true;
                 case R.id.action_done:
@@ -171,7 +173,7 @@ public class DeckListFragment extends Fragment {
         deckOrderingLastElement = -1;
         ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.DECK, getActivity());
         getActivity().invalidateOptionsMenu();
-        customListAdapter.notifyDataSetChanged();
+        customListAdapter.notifyDataSetChanged(); // valid
         Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
     }
 
@@ -185,12 +187,15 @@ public class DeckListFragment extends Fragment {
         progressBar.setRotation((float) (Math.random() * 360));
         progressBar.setVisibility(View.VISIBLE);
         listView.setVisibility(View.GONE);
+        placerholderTextView.setVisibility(View.GONE);
+        nbDeck.setVisibility(View.GONE);
 
         ((MainActivityManager) getActivity()).enableDrawerSwipe(false);
         new LoadData().execute("");
     }
 
     private void setNumberDeckText() {
+        nbDeck.setVisibility(View.VISIBLE);
         int numberOfDecks = deckList.size();
         String message;
         if (numberOfDecks == 0)
@@ -271,11 +276,12 @@ public class DeckListFragment extends Fragment {
         dbManager.deleteDeck((String) deckList.get(indexSelected).getDeckId());
         String deckDeletedName = deckList.get(indexSelected).getDeckName();
         deckList.remove(indexSelected);
+        nbCardsInDeckList.remove(indexSelected);
         if (deckList.isEmpty()) {
             placerholderTextView.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
         }
-        customListAdapter.notifyDataSetChanged();
+        customListAdapter.notifyDataSetChanged(); // valid
         setNumberDeckText();
         Toast.makeText(getContext(), "\"" + deckDeletedName + "\" deck deleted", Toast.LENGTH_SHORT).show();
     }
@@ -350,24 +356,25 @@ public class DeckListFragment extends Fragment {
                         } else {
                             switch (dialogType) {
                                 case NEW:
-                                    addToDatabase(deckNameHolder);
-                                    deckList = dbManager.getDecks();
-                                    if (deckList.size() == 1) {
-                                        populateListView();
-                                    } else {
-                                        customListAdapter.notifyDataSetChanged();
-                                        setNumberDeckText();
-                                    }
+                                    Deck deck = addToDatabase(deckNameHolder);
+                                    nbCardsInDeckList.add(0);
+                                    deckList.add(deck);
+                                    customListAdapter.notifyDataSetChanged(); // valid
                                     alertDialog.dismiss();
                                     listView.smoothScrollToPosition(customListAdapter.getCount() - 1);
+
+                                    if(deckList.size() == 1){
+                                        placerholderTextView.setVisibility(View.GONE);
+                                        listView.setVisibility(View.VISIBLE);
+                                    }
+                                    setNumberDeckText();
 
                                     break;
                                 case UPDATE:
                                     if (!deckNameHolder.equals((String) deckList.get(indexSelected).getDeckName())) {
                                         updateDatabase();
-                                        deckList = dbManager.getDecks();
-                                        customListAdapter.notifyDataSetChanged();
-                                        setNumberDeckText();
+                                        deckList.get(indexSelected).setDeckName(deckNameHolder);
+                                        customListAdapter.notifyDataSetChanged(); // valid
                                         alertDialog.dismiss();
                                     } else {
                                         Toast.makeText(getContext(), "Invalid: same name", Toast.LENGTH_SHORT).show();
@@ -446,9 +453,10 @@ public class DeckListFragment extends Fragment {
 
     // DATABASE HANDLING
 
-    private void addToDatabase(String name) {
-        dbManager.createDeck(name);
+    private Deck addToDatabase(String name) {
+        String newDeckid = dbManager.createDeck(name);
         Toast.makeText(getContext(), "Deck created", Toast.LENGTH_SHORT).show();
+        return dbManager.getDeckFromId(newDeckid);
     }
 
 
@@ -557,7 +565,8 @@ public class DeckListFragment extends Fragment {
 
             holder.deckName.setText(deckList.get(position).getDeckName());
 
-            int nbCards = dbManager.getCardsFromDeck(deckList.get(position).getDeckId()).size();
+//            int nbCards = dbManager.getCardsFromDeck(deckList.get(position).getDeckId()).size();
+            int nbCards = nbCardsInDeckList.get(position);
 
             if (nbCards == 1)
                 holder.numberOfCardsLabel.setText("1 Card");
@@ -623,8 +632,8 @@ public class DeckListFragment extends Fragment {
                         deckOrderingLastElement = position - 1;
                         dbManager.swapDeckPosition(deckList.get(position), deckList.get(position - 1));
                         Collections.swap(deckList, position, position - 1);
-                        deckList = dbManager.getDecks();
-                        customListAdapter.notifyDataSetChanged();
+                        Collections.swap(nbCardsInDeckList, position, position - 1);
+                        customListAdapter.notifyDataSetChanged(); // valid
                     }
                 }
             });
@@ -636,8 +645,8 @@ public class DeckListFragment extends Fragment {
                         deckOrderingLastElement = position + 1;
                         dbManager.swapDeckPosition(deckList.get(position), deckList.get(position + 1));
                         Collections.swap(deckList, position, position + 1);
-                        deckList = dbManager.getDecks();
-                        customListAdapter.notifyDataSetChanged();
+                        Collections.swap(nbCardsInDeckList, position, position + 1);
+                        customListAdapter.notifyDataSetChanged(); // valid
                     }
                 }
             });
@@ -657,6 +666,13 @@ public class DeckListFragment extends Fragment {
             loading = true;
             deckList = dbManager.getDecks();
 
+            nbCardsInDeckList.clear();
+
+            for(int i = 0; i < deckList.size(); i++){
+                nbCardsInDeckList.add(dbManager.getCardsFromDeck(deckList.get(i).getDeckId()).size());
+            }
+
+
             return null;
         }
 
@@ -668,7 +684,6 @@ public class DeckListFragment extends Fragment {
             if (!deckList.isEmpty()) {
 
                 placerholderTextView.setVisibility(View.GONE);
-
 
                 customListAdapter.notifyDataSetChanged();
 
