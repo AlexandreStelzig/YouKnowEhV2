@@ -15,8 +15,9 @@ public class User {
     private boolean displayNbDecksSpecificCards;
     private boolean allowPracticeAll;
     private boolean allowOnQueryChanged;
+    private int quickToggle;
 
-    public User(String userId, String dateCreated, String activeProfileId, int defaultSortingPosition, boolean allowProfileDeletion, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards, boolean allowPracticeAll, boolean allowOnQueryChanged) {
+    public User(String userId, String dateCreated, String activeProfileId, int defaultSortingPosition, boolean allowProfileDeletion, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards, boolean allowPracticeAll, boolean allowOnQueryChanged, int quickToggle) {
         this.userId = userId;
         this.dateCreated = dateCreated;
         this.activeProfileId = activeProfileId;
@@ -26,6 +27,16 @@ public class User {
         this.displayNbDecksSpecificCards = displayNbDecksSpecificCards;
         this.allowPracticeAll = allowPracticeAll;
         this.allowOnQueryChanged = allowOnQueryChanged;
+        this.quickToggle = quickToggle;
+    }
+
+
+    public int getQuickToggle() {
+        return quickToggle;
+    }
+
+    public void setQuickToggle(int quickToggle) {
+        this.quickToggle = quickToggle;
     }
 
     public boolean isAllowOnQueryChanged() {

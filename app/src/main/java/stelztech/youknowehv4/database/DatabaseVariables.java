@@ -61,6 +61,7 @@ public final class DatabaseVariables {
             + TableUser.COLUMN_NAME_ALLOW_PROFILE_DELETION + " BOOLEAN,"
             + TableUser.COLUMN_NAME_DISPLAY_ALL_CARDS + " BOOLEAN,"
             + TableUser.COLUMN_NAME_DISPLAY_SPECIFIC_DECK + " BOOLEAN,"
+            + TableUser.COLUMN_NAME_QUICK_TOGGLE_REVIEW + " INTEGER,"
             + TableUser.COLUMN_NAME_ALLOW_SEARCH_ON_QUERY_CHANGED + " BOOLEAN,"
             + TableUser.COLUMN_NAME_ALLOW_PRACTICE_ALL + " BOOLEAN,"
             + TableUser.COLUMN_NAME_DATE_CREATED + " DATE,"
@@ -129,5 +130,6 @@ public final class DatabaseVariables {
         public static final String COLUMN_NAME_DISPLAY_SPECIFIC_DECK = "displayspecificdeck";
         public static final String COLUMN_NAME_ALLOW_PRACTICE_ALL = "allpracticeall";
         public static final String COLUMN_NAME_ALLOW_SEARCH_ON_QUERY_CHANGED = "allowsearchonquerychange";
+        public static final String COLUMN_NAME_QUICK_TOGGLE_REVIEW = "quicktogglereview";
     }
 }

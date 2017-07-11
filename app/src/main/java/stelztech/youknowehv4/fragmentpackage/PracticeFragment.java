@@ -294,9 +294,14 @@ public class PracticeFragment extends Fragment {
                     if (mCardList != null && !mCardList.isEmpty() && !isSelectedDeckAll()) {
                         togglePracticeClicked();
 
+                    } else {
+                        Toast.makeText(getContext(), "Cannot toggle from review", Toast.LENGTH_SHORT).show();
+                    }
+                    return true;
+                case R.id.action_quick_remove_practice:
+                    if (mCardList != null && !mCardList.isEmpty() && !isSelectedDeckAll()) {
+                        toggleFromPractice(dbManager.getUser().getQuickToggle());
 
-//
-//
                     } else {
                         Toast.makeText(getContext(), "Cannot toggle from review", Toast.LENGTH_SHORT).show();
                     }

@@ -2,6 +2,7 @@ package stelztech.youknowehv4.fragmentpackage;
 
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,8 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +43,7 @@ public class SettingsFragment extends Fragment {
     private ListView exportImportLV;
     private ListView deletedCardsLV;
     private ListView sortingLV;
+    private ListView reviewLV;
 
     private CheckBox allowProfileDeletionCheckbox;
     private CheckBox showOnAllCheckbox;
@@ -70,6 +74,7 @@ public class SettingsFragment extends Fragment {
         exportImportLV = (ListView) view.findViewById(R.id.settings_export_import_lv);
         deletedCardsLV = (ListView) view.findViewById(R.id.settings_deleted_cards_lv);
         sortingLV = (ListView) view.findViewById(R.id.settings_sorting_lv);
+        reviewLV = (ListView) view.findViewById(R.id.settings_review_lv);
 
         allowProfileDeletionCheckbox = (CheckBox) view.findViewById(R.id.settings_profile_checkbox);
         showOnAllCheckbox = (CheckBox) view.findViewById(R.id.settings_show_on_all_checkbox);
@@ -163,6 +168,7 @@ public class SettingsFragment extends Fragment {
         setupExportImportLV();
         setupDeletedCardsLV();
         setupSortingLV();
+        setupReviewLV();
 
         return view;
     }
@@ -282,6 +288,33 @@ public class SettingsFragment extends Fragment {
 
     }
 
+    private void setupReviewLV() {
+
+        // export import listview
+        final String[] exportImportChoices = getContext().getResources().getStringArray(R.array.settings_review_options);
+
+        exportImportChoices[0] = exportImportChoices[0] +" " + dbManager.getUser().getQuickToggle() + " hours";
+
+        ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, exportImportChoices);
+        sortingLV.setAdapter(adapter);
+        sortingLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                switch (position) {
+                    // Default quick toggle
+                    case 0:
+                        showQuickToggleDialog();
+                        break;
+                }
+
+            }
+        });
+
+        Helper.getInstance().setListViewHeightBasedOnChildren(sortingLV);
+
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         getActivity().getMenuInflater().inflate(R.menu.toolbar_other, menu);
@@ -326,5 +359,40 @@ public class SettingsFragment extends Fragment {
         return alert;
     }
 
+    public void showQuickToggleDialog()
+    {
+
+        View viewPicker = View.inflate(getContext(), R.layout.custom_number_picker_dialog, null);
+        AlertDialog.Builder db = new AlertDialog.Builder(getContext());
+        db.setView(viewPicker);
+        db.setTitle("Quick Toggle Review");
+
+        final NumberPicker np = (NumberPicker) viewPicker.findViewById(R.id.numberPicker1);
+        np.setMaxValue(1000); // max value 100
+        np.setMinValue(0);   // min value 0
+        np.setWrapSelectorWheel(false);
+        np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+
+            }
+        });
+
+        np.setValue(dbManager.getUser().getQuickToggle());
+
+
+        db.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dbManager.updateQuickToggleReviewHours(np.getValue());
+                setupReviewLV();
+                Toast.makeText(getContext(), "Default Quick Review Value changed to " + np.getValue(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        AlertDialog dialog = db.show();
+
+
+
+
+    }
 
 }

@@ -549,6 +549,7 @@ public class DatabaseManager {
             values.put(DatabaseVariables.TableUser.COLUMN_NAME_DISPLAY_SPECIFIC_DECK, 0);
             values.put(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_PRACTICE_ALL, 0);
             values.put(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_SEARCH_ON_QUERY_CHANGED, 1);
+            values.put(DatabaseVariables.TableUser.COLUMN_NAME_QUICK_TOGGLE_REVIEW, 12);
 
 
             long newRowId = -1;
@@ -644,6 +645,18 @@ public class DatabaseManager {
         db.update(DatabaseVariables.TableUser.TABLE_NAME, values,
                 DatabaseVariables.TableUser.COLUMN_NAME_USER_ID + "=" + user.getUserId(), null);
     }
+
+    public void updateQuickToggleReviewHours(int hours) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        User user = getUser();
+
+        values.put(DatabaseVariables.TableUser.COLUMN_NAME_QUICK_TOGGLE_REVIEW, hours);
+        db.update(DatabaseVariables.TableUser.TABLE_NAME, values,
+                DatabaseVariables.TableUser.COLUMN_NAME_USER_ID + "=" + user.getUserId(), null);
+    }
+
 
 
     ////////////// OTHER //////////////
@@ -878,9 +891,11 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_PRACTICE_ALL)) > 0;
         boolean allowOnQueryChanged = cursor.getInt(cursor
                 .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_SEARCH_ON_QUERY_CHANGED)) > 0;
+        int quickToggle = cursor.getInt(cursor
+                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_QUICK_TOGGLE_REVIEW));
 
 
-        return new User(userId, dateCreated, activeProfileId, defaultSorting, allowProfileDeletion, displayAllCards, displaySpecificDeck, allowPracticeAll, allowOnQueryChanged);
+        return new User(userId, dateCreated, activeProfileId, defaultSorting, allowProfileDeletion, displayAllCards, displaySpecificDeck, allowPracticeAll, allowOnQueryChanged, quickToggle);
     }
 
     private String getDateNow() {

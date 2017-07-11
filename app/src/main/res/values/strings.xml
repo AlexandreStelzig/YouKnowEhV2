@@ -40,6 +40,10 @@
         <item>Default sorting</item>
     </string-array>
 
+    <string-array name="settings_review_options">
+        <item>Quick Toggle time:</item>
+    </string-array>
+
     <string-array name="about_contact_options">
         <item>alexandre.stelzig@gmail.com</item>
         <item>github.com/AlexandreStelzig</item>
