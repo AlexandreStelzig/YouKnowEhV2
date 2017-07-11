@@ -296,8 +296,8 @@ public class SettingsFragment extends Fragment {
         exportImportChoices[0] = exportImportChoices[0] +" " + dbManager.getUser().getQuickToggle() + " hours";
 
         ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, exportImportChoices);
-        sortingLV.setAdapter(adapter);
-        sortingLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        reviewLV.setAdapter(adapter);
+        reviewLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -311,7 +311,7 @@ public class SettingsFragment extends Fragment {
             }
         });
 
-        Helper.getInstance().setListViewHeightBasedOnChildren(sortingLV);
+        Helper.getInstance().setListViewHeightBasedOnChildren(reviewLV);
 
     }
 
