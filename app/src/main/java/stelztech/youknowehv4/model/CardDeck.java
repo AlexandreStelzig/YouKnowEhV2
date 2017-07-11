@@ -9,17 +9,26 @@ public class CardDeck {
     private String cardId;
     private boolean isPractice;
     private String dateAdded;
+    private String practiceToggleDate;
 
     CardDeck() {
     }
 
-    public CardDeck(String deckId, String cardId, boolean isPractice, String dateAdded) {
+    public CardDeck(String deckId, String cardId, boolean isPractice, String dateAdded, String practiceToggleDate) {
         this.deckId = deckId;
         this.cardId = cardId;
         this.isPractice = isPractice;
         this.dateAdded = dateAdded;
+        this.practiceToggleDate = practiceToggleDate;
     }
 
+    public String getPracticeToggleDate() {
+        return practiceToggleDate;
+    }
+
+    public void setPracticeToggleDate(String practiceToggleDate) {
+        this.practiceToggleDate = practiceToggleDate;
+    }
 
     public String getDeckId() {
         return deckId;

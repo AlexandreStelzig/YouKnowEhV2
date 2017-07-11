@@ -50,6 +50,7 @@ import stelztech.youknowehv4.manager.ActionButtonManager;
 import stelztech.youknowehv4.manager.CardToolbarManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.model.Card;
+import stelztech.youknowehv4.model.CardDeck;
 import stelztech.youknowehv4.model.Deck;
 import stelztech.youknowehv4.model.Profile;
 import stelztech.youknowehv4.model.User;
@@ -852,13 +853,13 @@ public class CardListFragment extends Fragment {
     }
 
     private void toggleCardFromPractice() {
-        dbManager.togglePractice_Card(cardList.get(indexSelected).getCardId(), getCurrentDeckIdSelected());
+        dbManager.togglePractice_Card(cardList.get(indexSelected).getCardId(), getCurrentDeckIdSelected(), -1);
     }
 
     private void toggleCardsFromPractice() {
         for (int counter = 0; counter < isPracticeList.length; counter++) {
             if (isPracticeList[counter] != isPracticeListTemp[counter]) {
-                dbManager.togglePractice_Card(cardList.get(counter).getCardId(), getCurrentDeckIdSelected());
+                dbManager.togglePractice_Card(cardList.get(counter).getCardId(), getCurrentDeckIdSelected(), -1);
             }
         }
     }

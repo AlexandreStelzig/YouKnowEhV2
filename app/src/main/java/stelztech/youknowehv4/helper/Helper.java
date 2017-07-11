@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import stelztech.youknowehv4.fragmentpackage.PracticeFragment;
 import stelztech.youknowehv4.model.Deck;
 
 /**
@@ -121,6 +122,51 @@ public class Helper {
         titleTV.setText(title);
         titleTV.setPadding(35, 35, 0, 0);
         return titleTV;
+    }
+
+
+
+    public PracticeFragment.PracticeToggle convertStringToPracticeToggle(String practiceToggleString){
+
+        switch (practiceToggleString){
+            case "HOURS_3":
+                return PracticeFragment.PracticeToggle.HOURS_3;
+            case "HOURS_12":
+                return PracticeFragment.PracticeToggle.HOURS_12;
+            case "HOURS_24":
+                return PracticeFragment.PracticeToggle.HOURS_24;
+            case "HOURS_48":
+                return PracticeFragment.PracticeToggle.HOURS_48;
+            case "DAYS_3":
+                return PracticeFragment.PracticeToggle.DAYS_3;
+            case "DAYS_5":
+                return PracticeFragment.PracticeToggle.DAYS_5;
+            case "Forever":
+                return PracticeFragment.PracticeToggle.ALWAYS;
+        }
+        return PracticeFragment.PracticeToggle.HOURS_12;
+    }
+
+    public String convertPracticeToggleToString(PracticeFragment.PracticeToggle practiceToggle){
+
+        switch (practiceToggle){
+
+            case HOURS_3:
+                return "3 Hours";
+            case HOURS_12:
+                return "12 Hours";
+            case HOURS_24:
+                return "24 Hours";
+            case HOURS_48:
+                return "48 Hours";
+            case DAYS_3:
+                return "3 days";
+            case DAYS_5:
+                return "5 days";
+            case ALWAYS:
+                return "Forever";
+        }
+        return "";
     }
 
 }

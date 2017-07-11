@@ -25,6 +25,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
 
         DatabaseManager dbManager = DatabaseManager.getInstance(this);
+        dbManager.verifyPracticeCards();
 
         if (dbManager.getUser() == null) {
             dbManager.createUser();

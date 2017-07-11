@@ -191,7 +191,7 @@ public final class ExportImportManager {
 
             if(cardHolderList.get(i).getIsPractice().trim().toLowerCase().equals( "false") ||
                     cardHolderList.get(i).getIsPractice().equals( "0")){
-                dbManager.togglePractice_Card(cardId, deckId);
+                dbManager.togglePractice_Card(cardId, deckId, -1);
             }
 
         }

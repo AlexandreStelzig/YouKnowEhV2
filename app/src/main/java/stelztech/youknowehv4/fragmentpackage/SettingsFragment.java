@@ -196,6 +196,7 @@ public class SettingsFragment extends Fragment {
         dbManager.toggleAllowPracticeAll();
         User user = dbManager.getUser();
         allowPracticeAllCheckbox.setChecked(user.isAllowPracticeAll());
+        ((MainActivityManager) getActivity()).resetFragmentPractice();
     }
 
     private void setupDeletedCardsLV() {

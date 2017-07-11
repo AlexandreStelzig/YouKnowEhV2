@@ -2,6 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+
+    <item
+        android:id="@+id/action_remove_practice"
+        android:icon="@mipmap/ic_review_white"
+        android:title="Remove from Review"
+        app:showAsAction="always" />
+
     <item
         android:id="@+id/action_more"
         android:icon="@drawable/ic_more_vert_white_24dp"
@@ -12,16 +20,11 @@
 
         <menu>
 
+
             <item
                 android:id="@+id/action_previous"
                 android:icon="@drawable/ic_keyboard_arrow_left_black_24dp"
                 android:title="Previous Card"
-                app:showAsAction="never" />
-
-            <item
-                android:id="@+id/action_remove_practice"
-                android:icon="@drawable/ic_review_toggle"
-                android:title="Remove from Review"
                 app:showAsAction="never" />
 
             <item

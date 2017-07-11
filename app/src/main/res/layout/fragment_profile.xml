@@ -32,18 +32,16 @@
                 android:id="@+id/profile_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:background="@drawable/custom_spinner_background">
-
-
-            </Spinner>
+                android:background="@drawable/custom_spinner_background"/>
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="10dp" />
 
             <LinearLayout
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:orientation="horizontal">
 
                 <Button
@@ -53,12 +51,8 @@
                     android:layout_weight="1"
                     android:background="@drawable/ripple_button"
                     android:text="DELETE"
-                    android:textColor="@color/colorTextIcon" />
-
-                <View
-                    android:layout_width="5dp"
-                    android:layout_height="0dp" />
-
+                    android:textColor="@color/colorTextIcon"
+                    android:layout_marginEnd="5dp"/>
 
                 <Button
                     android:id="@+id/profile_edit"
@@ -69,11 +63,8 @@
                     android:text="EDIT"
                     android:textColor="@color/colorTextIcon" />
 
-                <View
-                    android:layout_width="5dp"
-                    android:layout_height="0dp" />
-
                 <Button
+                    android:layout_marginLeft="5dp"
                     android:id="@+id/profile_new"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -135,11 +126,11 @@
                     android:id="@+id/profile_question_edit"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:layout_weight="0.10"
                     android:layout_gravity="center"
-                    android:gravity="center"
+                    android:layout_weight="0.10"
                     android:background="?selectableItemBackgroundBorderless"
-                    android:clickable="true">
+                    android:clickable="true"
+                    android:gravity="center">
 
                     <Button
                         android:layout_width="20dp"
@@ -181,11 +172,11 @@
                     android:id="@+id/profile_answer_edit"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:layout_weight="0.10"
                     android:layout_gravity="center"
-                    android:gravity="center"
+                    android:layout_weight="0.10"
                     android:background="?selectableItemBackgroundBorderless"
-                    android:clickable="true">
+                    android:clickable="true"
+                    android:gravity="center">
 
                     <Button
                         android:layout_width="20dp"

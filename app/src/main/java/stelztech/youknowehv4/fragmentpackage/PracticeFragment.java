@@ -2,6 +2,8 @@ package stelztech.youknowehv4.fragmentpackage;
 
 
 import android.animation.ObjectAnimator;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -11,11 +13,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.text.method.ScrollingMovementMethod;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -35,6 +40,7 @@ import java.util.Random;
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.ActionButtonManager;
 import stelztech.youknowehv4.model.Card;
 import stelztech.youknowehv4.model.Deck;
@@ -47,6 +53,16 @@ import stelztech.youknowehv4.model.Profile;
 public class PracticeFragment extends Fragment {
 
     View view;
+
+    public enum PracticeToggle {
+        HOURS_3,
+        HOURS_12,
+        HOURS_24,
+        HOURS_48,
+        DAYS_3,
+        DAYS_5,
+        ALWAYS
+    }
 
     // Spinner
     private Spinner spinner;
@@ -68,21 +84,22 @@ public class PracticeFragment extends Fragment {
     private TextView praticeNbCards;
 
     // question answers
-    private List<String> questionList;
-    private List<String> answerList;
-    private List<Integer> questionOrder;
-    private int currentQuestion;
+    private List<String> questionList = new ArrayList<>();
+    private List<String> answerList = new ArrayList<>();
+    private List<Integer> questionOrder = new ArrayList<>();
+    private int currentQuestion = 0;
 
     private ProgressBar progressBar;
 
     // hidden text
-    private boolean answerHidden;
+    private boolean answerHidden = true;
     private String answerHiddenString = "----";
 
     // reverse order
-    private boolean isReverseOrder;
+    private boolean isReverseOrder = false;
 
-    private List<Card> mCardList;
+    private List<Card> mCardList = new ArrayList<>();
+    ;
 
     private final int SELECT_ALL_CARDS = 0;
     private final int SPINNER_OFFSET = 1;
@@ -96,11 +113,17 @@ public class PracticeFragment extends Fragment {
     private String answerLabel;
 
     // show previous
-    private boolean showPreviousIsOkay;
-    private boolean showingPrevious;
+    private boolean showPreviousIsOkay = false;
+    private boolean showingPrevious = false;
     private Card previousCard;
 
-    private boolean loading;
+    private boolean loading = false;
+
+    private int selectedSpinnerPosition = 0;
+
+    private int nbCards;
+    private boolean firstTimeOpening;
+    private boolean loadNewData = false;
 
 
     @Override
@@ -112,7 +135,8 @@ public class PracticeFragment extends Fragment {
         ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
         setHasOptionsMenu(true);
 
-
+        firstTimeOpening = true;
+        loadNewData = false;
         // init
         dbManager = DatabaseManager.getInstance(getActivity());
         spinner = ((Spinner) view.findViewById(R.id.practice_spinner));
@@ -127,16 +151,6 @@ public class PracticeFragment extends Fragment {
         orientationTextView = (TextView) view.findViewById(R.id.practice_orientation);
         progressBar = (ProgressBar) view.findViewById(R.id.practice_progress_bar);
 
-        questionOrder = new ArrayList<>();
-        questionList = new ArrayList<>();
-        answerList = new ArrayList<>();
-
-        currentQuestion = 0;
-        answerHidden = true;
-        isReverseOrder = false;
-        showPreviousIsOkay = false;
-        showingPrevious = false;
-        loading = false;
 
         // init orientation text holders
         Profile currentProfile = dbManager.getActiveProfile();
@@ -187,7 +201,7 @@ public class PracticeFragment extends Fragment {
                 if (deckList.size() > 0) {
                     if (!loading)
                         ((MainActivityManager) getActivity())
-                                .displayDeckInfo(deckList.get(spinner.getSelectedItemPosition() - SPINNER_OFFSET).getDeckId());
+                                .displayDeckInfo(deckList.get(selectedSpinnerPosition - SPINNER_OFFSET).getDeckId());
                 }
 
             }
@@ -203,13 +217,13 @@ public class PracticeFragment extends Fragment {
             }
         });
 
-//        reverseLayout.setVisibility(View.GONE);
-
 
         setOrientationText();
-        initSpinner();
+        if (firstTimeOpening)
+            initSpinner();
         switchPracticeCards();
         setShowButtonEnable();
+
 
         return view;
     }
@@ -225,6 +239,7 @@ public class PracticeFragment extends Fragment {
         }
 
     }
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -266,6 +281,7 @@ public class PracticeFragment extends Fragment {
                         showPreviousIsOkay = false;
                         showingPrevious = true;
                         setQuestionAnswerText();
+                        setNbPracticeCards();
                     } else {
                         Toast.makeText(getContext(), "Cannot show previous card", Toast.LENGTH_SHORT).show();
                     }
@@ -273,56 +289,14 @@ public class PracticeFragment extends Fragment {
 
                     return true;
                 case R.id.action_remove_practice:
+
+
                     if (mCardList != null && !mCardList.isEmpty() && !isSelectedDeckAll()) {
-                        int deckPosition = spinner.getSelectedItemPosition() - 1;
-                        int indexRemoved = questionOrder.get(currentQuestion);
-
-                        dbManager.togglePractice_Card(mCardList.get(indexRemoved).getCardId(),
-                                deckList.get(deckPosition).getDeckId());
+                        togglePracticeClicked();
 
 
-                        String cardInfo = "\'" + mCardList.get(indexRemoved).getQuestion() + "/" + mCardList.get(indexRemoved).getAnswer()  + "\'";
-
-
-                        mCardList.remove(indexRemoved);
-                        questionList.remove(indexRemoved);
-                        answerList.remove(indexRemoved);
-
-
-                        questionOrder.remove(currentQuestion);
-
-                        for(int i = 0; i < questionOrder.size();i++){
-                            int temp = questionOrder.get(i);
-                            if(questionOrder.get(i) > indexRemoved)
-                                questionOrder.set(i, temp-1);
-                        }
-
-                        if (questionOrder.size() == 0) {
-                            questionTextView.setText("No Review Cards");
-                            answerTextView.setText("");
-                        } else {
-                            if (currentQuestion == questionOrder.size()) {
-                                long seed = System.nanoTime();
-                                Collections.shuffle(questionOrder, new Random(seed));
-                                currentQuestion = 0;
-                            }
-                            setQuestionAnswerText();
-
-                        }
-
-                        int nbCardsPractice = mCardList.size();
-                        String nbCardsString = nbCardsPractice + " ";
-
-                        if (nbCardsPractice == 1)
-                            nbCardsString += "Review Card";
-                        else
-                            nbCardsString += "Review Cards";
-                        praticeNbCards.setText(nbCardsString);
-
-                        showPreviousIsOkay = false;
-
-                        Toast.makeText(getContext(), cardInfo + " toggled from review", Toast.LENGTH_SHORT).show();
-
+//
+//
                     } else {
                         Toast.makeText(getContext(), "Cannot toggle from review", Toast.LENGTH_SHORT).show();
                     }
@@ -331,6 +305,40 @@ public class PracticeFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private int findCardIndex(Card card) {
+        for (int i = 0; i < mCardList.size(); i++) {
+            if (mCardList.get(i).getCardId() == card.getCardId())
+                return i;
+        }
+        return -1;
+    }
+
+
+    private int findQuestionIndex(int index) {
+        for (int i = 0; i < questionOrder.size(); i++) {
+            int temp = questionOrder.get(i);
+            if (temp == index)
+                return i;
+        }
+        return -1;
+    }
+
+    private void setNbPracticeCards() {
+        String nbCardsString = "";
+        if (showingPrevious)
+            nbCardsString = "Previous / ";
+        else if (nbCards != 0)
+            nbCardsString = (currentQuestion + 1) + " / ";
+        nbCardsString += nbCards + " ";
+
+        if (nbCards == 1)
+            nbCardsString += "Review Card";
+        else
+            nbCardsString += "Review Cards";
+
+        praticeNbCards.setText(nbCardsString);
     }
 
     private void initSpinner() {
@@ -396,7 +404,7 @@ public class PracticeFragment extends Fragment {
                 }
 
 
-                if (position == spinner.getSelectedItemPosition())
+                if (position == selectedSpinnerPosition)
                     mView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_grey));
                 else
                     mView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_normal));
@@ -423,18 +431,38 @@ public class PracticeFragment extends Fragment {
 
         spinner.setAdapter(deckArrayAdapter);
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switchPracticeCards();
-                return;
-            }
+        SpinnerInteractionListener listener = new SpinnerInteractionListener();
+        spinner.setOnTouchListener(listener);
+        spinner.setOnItemSelectedListener(listener);
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                return;
+
+    }
+
+    public class SpinnerInteractionListener implements AdapterView.OnItemSelectedListener, View.OnTouchListener {
+
+        boolean userSelect = false;
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            userSelect = true;
+            return false;
+        }
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            if (userSelect) {
+                loadNewData = true;
+                selectedSpinnerPosition = pos;
+                switchPracticeCards();
+                userSelect = false;
             }
-        });
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
+        }
+
     }
 
     private void switchPracticeCards() {
@@ -447,21 +475,32 @@ public class PracticeFragment extends Fragment {
             progressBar.setVisibility(View.GONE);
 
         } else {
+            if (loadNewData || mCardList.isEmpty()) {
+                progressBar.setVisibility(View.VISIBLE);
+                questionTextView.setVisibility(View.GONE);
+                answerTextView.setText("");
+                praticeNbCards.setVisibility(View.GONE);
+                ((MainActivityManager) getActivity()).enableDrawerSwipe(false);
 
-            progressBar.setVisibility(View.VISIBLE);
-            questionTextView.setVisibility(View.GONE);
-            answerTextView.setText("");
-            praticeNbCards.setVisibility(View.GONE);
-            ((MainActivityManager) getActivity()).enableDrawerSwipe(false);
+                showPreviousIsOkay = false;
+                previousCard = null;
+                showingPrevious = false;
 
-            showPreviousIsOkay = false;
-            previousCard = null;
-            showingPrevious = false;
-            currentQuestion = 0;
-            int selectedDeck = spinner.getSelectedItemPosition();
-            spinner.setEnabled(false);
-            new LoadData().execute(selectedDeck);
+                int selectedDeck = selectedSpinnerPosition;
+                spinner.setEnabled(false);
 
+                currentQuestion = 0;
+                new LoadData().execute(selectedDeck);
+            } else {
+                progressBar.setVisibility(View.GONE);
+
+                nbCards = mCardList.size();
+                setNbPracticeCards();
+                setQuestionAnswerText();
+            }
+
+            questionTextView.setTextIsSelectable(true);
+            answerTextView.setTextIsSelectable(true);
         }
 
     }
@@ -504,8 +543,9 @@ public class PracticeFragment extends Fragment {
 
             if (!alwaysShowAnswer)
                 showButton.setText("show");
-
         }
+
+        setNbPracticeCards();
     }
 
     private void showButtonClicked() {
@@ -552,14 +592,6 @@ public class PracticeFragment extends Fragment {
 
             long seed = System.nanoTime();
             Collections.shuffle(questionOrder, new Random(seed));
-
-//            for (int i = 0; i < questionOrder.size(); i++) {
-//                int random = (int) (Math.random() * questionOrder.size());
-//
-//                int temp = questionOrder[random];
-//                questionOrder[random] = questionOrder[i];
-//                questionOrder[i] = temp;
-//            }
 
             if (questionOrder.get(0) == lastQuestion && currentQuestion != 0) {
                 int random = (int) (Math.random() * (questionOrder.size() - 1));
@@ -634,7 +666,7 @@ public class PracticeFragment extends Fragment {
     }
 
     private boolean isSelectedDeckAll() {
-        return spinner.getSelectedItemPosition() == SELECT_ALL_CARDS;
+        return selectedSpinnerPosition == SELECT_ALL_CARDS;
     }
 
     private void reserveButtonClicked() {
@@ -661,6 +693,130 @@ public class PracticeFragment extends Fragment {
 
         setOrientationText();
         Toast.makeText(getContext(), "Orientation: " + orientationTextView.getText().toString(), Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void togglePracticeClicked() {
+
+        Helper helper = Helper.getInstance();
+        String[] options = new String[]{helper.convertPracticeToggleToString(PracticeToggle.ALWAYS), helper.convertPracticeToggleToString(PracticeToggle.HOURS_3),
+                helper.convertPracticeToggleToString(PracticeToggle.HOURS_12),
+                helper.convertPracticeToggleToString(PracticeToggle.HOURS_24), helper.convertPracticeToggleToString(PracticeToggle.HOURS_48),
+                helper.convertPracticeToggleToString(PracticeToggle.DAYS_3), helper.convertPracticeToggleToString(PracticeToggle.DAYS_5)};
+
+        Card currentCard = mCardList.get(currentQuestion);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Toggle From Review: " + currentCard.getQuestion() + " / " + currentCard.getAnswer())
+                .setItems(options, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                toggleFromPractice(-1);
+                                break;
+                            case 1:
+                                toggleFromPractice(3);
+                                break;
+                            case 2:
+                                toggleFromPractice(12);
+                                break;
+                            case 3:
+                                toggleFromPractice(24);
+                                break;
+                            case 4:
+                                toggleFromPractice(48);
+                                break;
+                            case 5:
+                                toggleFromPractice(72);
+                                break;
+                            case 6:
+                                toggleFromPractice(120);
+                                break;
+
+                        }
+                    }
+                });
+        builder.create().show();
+    }
+
+    private void toggleFromPractice(int hours) {
+        String cardInfo = "";
+
+        if (showingPrevious) {
+            int deckPosition = selectedSpinnerPosition - 1;
+
+            nextButtonClicked();
+
+
+            dbManager.togglePractice_Card(previousCard.getCardId(),
+                    deckList.get(deckPosition).getDeckId(), hours);
+
+            cardInfo = "\'" + previousCard.getQuestion() + "/" + previousCard.getAnswer() + "\'";
+
+            int previousCardIndex = findCardIndex(previousCard);
+
+            mCardList.remove(previousCardIndex);
+            questionList.remove(previousCardIndex);
+            answerList.remove(previousCardIndex);
+
+            // TODO
+            questionOrder.remove(findQuestionIndex(previousCardIndex));
+
+            for (int i = 0; i < questionOrder.size(); i++) {
+                int temp = questionOrder.get(i);
+                if (questionOrder.get(i) > previousCardIndex)
+                    questionOrder.set(i, temp - 1);
+            }
+
+        } else {
+
+            int deckPosition = selectedSpinnerPosition - 1;
+            int indexRemoved = questionOrder.get(currentQuestion);
+
+            dbManager.togglePractice_Card(mCardList.get(indexRemoved).getCardId(),
+                    deckList.get(deckPosition).getDeckId(), hours);
+
+
+            cardInfo = "\'" + mCardList.get(indexRemoved).getQuestion() + "/" + mCardList.get(indexRemoved).getAnswer() + "\'";
+
+
+            mCardList.remove(indexRemoved);
+            questionList.remove(indexRemoved);
+            answerList.remove(indexRemoved);
+
+            questionOrder.remove(currentQuestion);
+
+            for (int i = 0; i < questionOrder.size(); i++) {
+                int temp = questionOrder.get(i);
+                if (questionOrder.get(i) > indexRemoved)
+                    questionOrder.set(i, temp - 1);
+            }
+        }
+
+        if (questionOrder.size() == 0) {
+            questionTextView.setText("No Review Cards");
+            answerTextView.setText("");
+        } else {
+            if (currentQuestion == questionOrder.size()) {
+                long seed = System.nanoTime();
+                Collections.shuffle(questionOrder, new Random(seed));
+                currentQuestion = 0;
+            }
+            setQuestionAnswerText();
+        }
+
+        nbCards = mCardList.size();
+
+        setNbPracticeCards();
+
+        showPreviousIsOkay = false;
+
+        String lengthMessage = "";
+        if (hours == -1)
+            lengthMessage = "until manual toggle";
+        else
+            lengthMessage = "for " + hours + " hours";
+        Toast.makeText(getContext(), cardInfo + " toggled from review " + lengthMessage, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -698,24 +854,17 @@ public class PracticeFragment extends Fragment {
             super.onPostExecute(s);
 
 
-            int nbCardsPractice = mCardList.size();
-            String nbCardsString = nbCardsPractice + " ";
-
-            if (nbCardsPractice == 1)
-                nbCardsString += "Review Card";
-            else
-                nbCardsString += "Review Cards";
+            nbCards = mCardList.size();
+            setNbPracticeCards();
+            setQuestionAnswerText();
 
 
             ((MainActivityManager) getActivity()).enableDrawerSwipe(true);
-            praticeNbCards.setText(nbCardsString);
+
 
             loading = false;
 
-
             spinner.setEnabled(true);
-
-            setQuestionAnswerText();
 
             if (!alwaysShowAnswer)
                 showButton.setText("show");
@@ -730,5 +879,12 @@ public class PracticeFragment extends Fragment {
 
     public boolean isLoading() {
         return loading;
+    }
+
+    public void resetFragment() {
+        mCardList.clear();
+        questionOrder.clear();
+        questionList.clear();
+        answerList.clear();
     }
 }

@@ -37,6 +37,7 @@ public final class DatabaseVariables {
             + TableCardDeck.COLUMN_NAME_CARD_ID + " INTEGER,"
             + TableCardDeck.COLUMN_NAME_DECK_ID + " INTEGER,"
             + TableCardDeck.COLUMN_NAME_IS_PRACTICE + " BOOLEAN,"
+            + TableCardDeck.COLUMN_NAME_DATE_TOGGLE_PRACTICE + " DATE,"
             + TableCardDeck.COLUMN_NAME_DATE_ADDED + " DATE,"
             + " FOREIGN KEY " + "(" + TableCardDeck.COLUMN_NAME_CARD_ID + ")"
             + " REFERENCES " + TableCard.TABLE_NAME + "(" + TableCard.COLUMN_NAME_CARD_ID + "),"
@@ -103,6 +104,7 @@ public final class DatabaseVariables {
         public static final String COLUMN_NAME_CARD_ID = "cardid";
         public static final String COLUMN_NAME_DATE_ADDED = "dateadded";
         public static final String COLUMN_NAME_IS_PRACTICE = "ispractice";
+        public static final String COLUMN_NAME_DATE_TOGGLE_PRACTICE = "datetogglepractice";
 
     }
 

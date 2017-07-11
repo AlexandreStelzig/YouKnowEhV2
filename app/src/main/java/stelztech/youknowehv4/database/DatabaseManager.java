@@ -4,8 +4,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
+import org.apache.commons.lang3.time.DateUtils;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -203,6 +207,59 @@ public class DatabaseManager {
         return decks;
     }
 
+    public void verifyPracticeCards() {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableCardDeck.TABLE_NAME, null);
+
+        // get all card-deck
+        List<CardDeck> cardDecks = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+            while (cursor.isAfterLast() == false) {
+                cardDecks.add(fetchCardDeckFromCursor(cursor));
+                cursor.moveToNext();
+            }
+        }
+
+        List<CardDeck> cardDecksNotPractice = new ArrayList<>();
+        for (int i = 0; i < cardDecks.size(); i++) {
+            if (!cardDecks.get(i).isPractice())
+                cardDecksNotPractice.add(cardDecks.get(i));
+        }
+
+        cardDecks.clear();
+
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        Date now = Calendar.getInstance().getTime();
+
+
+        for (int counter = 0; counter < cardDecksNotPractice.size(); counter++) {
+
+            CardDeck temp = cardDecksNotPractice.get(counter);
+            String dateToggle = temp.getPracticeToggleDate();
+
+            if (!dateToggle.equals("")) {
+
+                Date date = null;
+                try {
+                    date = df.parse(dateToggle);
+
+                    boolean readyToToggle = now.after(date);
+
+                    if(readyToToggle){
+                        togglePractice_Card(temp.getCardId(), temp.getDeckId(), -1);
+                    }
+
+                } catch (ParseException e) {
+                    Log.e("DATABASE","error with date formatting");
+                }
+
+
+
+            }
+        }
+
+    }
 
     public List<Card> getDeckPracticeCards(String deckId) {
         SQLiteDatabase db = database.getReadableDatabase();
@@ -441,6 +498,7 @@ public class DatabaseManager {
         values.put(DatabaseVariables.TableCardDeck.COLUMN_NAME_CARD_ID, cardId);
         values.put(DatabaseVariables.TableCardDeck.COLUMN_NAME_DATE_ADDED, date);
         values.put(DatabaseVariables.TableCardDeck.COLUMN_NAME_IS_PRACTICE, 1);
+        values.put(DatabaseVariables.TableCardDeck.COLUMN_NAME_DATE_TOGGLE_PRACTICE, "");
 
         long newRowId = -1;
         newRowId = db.insert(
@@ -590,9 +648,20 @@ public class DatabaseManager {
 
     ////////////// OTHER //////////////
 
-    public void togglePractice_Card(String cardId, String deckId) {
+    public void togglePractice_Card(String cardId, String deckId, int time) {
 
         CardDeck cardDeck = getCardDeck(cardId, deckId);
+
+        String dateToToggle = "";
+        if (time != -1) {
+            DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+            Date now = Calendar.getInstance().getTime();
+
+            Date newDate = DateUtils.addHours(now, time);
+            dateToToggle = df.format(newDate);
+        }
+
+        Log.d("Database", "Toggle practice: " + dateToToggle);
 
         boolean isPracticeCurrent = cardDeck.isPractice();
         boolean newIsPractice = !isPracticeCurrent;
@@ -601,6 +670,7 @@ public class DatabaseManager {
         ContentValues values = new ContentValues();
 
         values.put(DatabaseVariables.TableCardDeck.COLUMN_NAME_IS_PRACTICE, newIsPractice);
+        values.put(DatabaseVariables.TableCardDeck.COLUMN_NAME_DATE_TOGGLE_PRACTICE, dateToToggle);
         db.update(DatabaseVariables.TableCardDeck.TABLE_NAME, values, DatabaseVariables.TableCardDeck.COLUMN_NAME_CARD_ID
                 + "=" + cardId + " AND " + DatabaseVariables.TableCardDeck.COLUMN_NAME_DECK_ID + "=" + deckId, null);
 
@@ -764,9 +834,11 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TableCardDeck.COLUMN_NAME_IS_PRACTICE)) > 0;
         String dateAdded = cursor.getString(cursor
                 .getColumnIndex(DatabaseVariables.TableCardDeck.COLUMN_NAME_DATE_ADDED));
+        String dateTogglePractice = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TableCardDeck.COLUMN_NAME_DATE_TOGGLE_PRACTICE));
 
 
-        return new CardDeck(deckId, cardId, isPractice, dateAdded);
+        return new CardDeck(deckId, cardId, isPractice, dateAdded, dateTogglePractice);
     }
 
     private Profile fetchProfileFromCursor(Cursor cursor) {

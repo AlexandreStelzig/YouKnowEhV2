@@ -444,5 +444,7 @@ public class MainActivityManager extends AppCompatActivity
         this.goBackToDecks = goBackToDecks;
     }
 
-
+    public void resetFragmentPractice(){
+        mPracticeFragment.resetFragment();
+    }
 }

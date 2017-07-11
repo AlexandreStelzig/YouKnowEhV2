@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/toggle_review_12_hours"
+        android:title="Edit Deck" />
+
+    <item
+        android:id="@+id/toggle_review_24_hours"
+        android:title="Quick Info" />
+
+
+    <item
+        android:id="@+id/toggle_review_48_hours"
+        android:title="Export Deck" />
+
+
+    <item
+        android:id="@+id/toggle_review_5_days"
+        android:title="Delete Deck" />
+
+</menu>
