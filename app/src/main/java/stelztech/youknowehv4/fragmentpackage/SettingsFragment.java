@@ -369,7 +369,7 @@ public class SettingsFragment extends Fragment {
 
         final NumberPicker np = (NumberPicker) viewPicker.findViewById(R.id.numberPicker1);
         np.setMaxValue(1000); // max value 100
-        np.setMinValue(0);   // min value 0
+        np.setMinValue(1);   // min value 0
         np.setWrapSelectorWheel(false);
         np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
