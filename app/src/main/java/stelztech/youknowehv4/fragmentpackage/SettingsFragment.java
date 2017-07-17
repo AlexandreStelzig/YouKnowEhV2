@@ -390,9 +390,6 @@ public class SettingsFragment extends Fragment {
         });
         AlertDialog dialog = db.show();
 
-
-
-
     }
 
 }

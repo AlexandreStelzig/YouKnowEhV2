@@ -8,47 +8,57 @@
 
 
     <LinearLayout
-        android:id="@+id/deck_order_layout"
+        android:id="@+id/custom_deck_reorder_layout"
         android:layout_width="40dp"
         android:layout_height="70dp"
         android:layout_gravity="center"
+        android:clickable="true"
         android:gravity="center"
         android:orientation="vertical">
 
 
         <LinearLayout
-            android:id="@+id/custom_deck_up_layout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_gravity="center"
             android:layout_weight="1"
-            android:clickable="true">
+            android:gravity="center">
 
-            <Button
+            <!--<Button-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:background="@drawable/ic_expand_less_black_24dp"-->
+            <!--android:clickable="false" />-->
+
+
+            <TextView
+                android:id="@+id/custom_deck_item_reorder_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@drawable/ic_expand_less_black_24dp"
-                android:clickable="false" />
+                android:text="01"
+                android:textColor="@color/textPrimary"
+                android:textSize="20sp" />
+
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/custom_deck_down_layout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:clickable="true">
+        <!--<LinearLayout-->
+        <!--android:id="@+id/custom_deck_down_layout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_weight="1"-->
+        <!--android:clickable="true">-->
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/ic_expand_more_black_24dp"
-                android:clickable="false"
-                android:gravity="center" />
-        </LinearLayout>
+        <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:background="@drawable/ic_expand_more_black_24dp"-->
+        <!--android:clickable="false"-->
+        <!--android:gravity="center" />-->
+        <!--</LinearLayout>-->
 
 
     </LinearLayout>

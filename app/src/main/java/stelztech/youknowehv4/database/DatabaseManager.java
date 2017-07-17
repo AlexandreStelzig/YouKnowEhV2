@@ -350,6 +350,7 @@ public class DatabaseManager {
     }
 
 
+
     public boolean deleteCard(String cardId) {
         SQLiteDatabase db = database.getReadableDatabase();
 
@@ -910,6 +911,41 @@ public class DatabaseManager {
         Profile profile = getProfileFromId(user.getActiveProfileId());
 
         return profile;
+    }
+
+    public void changeDeckPosition(int newPosition, Deck deck){
+
+
+        SQLiteDatabase db = database.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        List<Deck> deckList = getDecks();
+
+
+
+        values.put(DatabaseVariables.TableDeck.COLUMN_NAME_POSITION, newPosition);
+        db.update(DatabaseVariables.TableDeck.TABLE_NAME, values,
+                DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deck.getDeckId(), null);
+
+        for (int i = 0; i < deckList.size(); i++) {
+            int deckTempPosition = deckList.get(i).getPosition();
+            if(deck.getPosition() < newPosition) {
+                if (deckTempPosition > deck.getPosition() && deckTempPosition <= newPosition) {
+                    values.put(DatabaseVariables.TableDeck.COLUMN_NAME_POSITION, deckTempPosition - 1);
+                    db.update(DatabaseVariables.TableDeck.TABLE_NAME, values,
+                            DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deckList.get(i).getDeckId(), null);
+                }
+            }else{
+                if (deckTempPosition < deck.getPosition() && deckTempPosition >= newPosition) {
+                    values.put(DatabaseVariables.TableDeck.COLUMN_NAME_POSITION, deckTempPosition + 1);
+                    db.update(DatabaseVariables.TableDeck.TABLE_NAME, values,
+                            DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deckList.get(i).getDeckId(), null);
+                }
+            }
+        }
+
+
+
     }
 
 }
