@@ -658,6 +658,11 @@ public class DeckListFragment extends Fragment {
                     dbManager.changeDeckPosition(newPosition, deck);
 
                     deckList = dbManager.getDecks();
+                    nbCardsInDeckList.clear();
+
+                    for (int i = 0; i < deckList.size(); i++) {
+                        nbCardsInDeckList.add(dbManager.getCardsFromDeck(deckList.get(i).getDeckId()).size());
+                    }
                     customListAdapter.notifyDataSetChanged();
                 }
             });
