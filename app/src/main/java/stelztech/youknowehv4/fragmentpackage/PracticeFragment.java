@@ -2,7 +2,6 @@ package stelztech.youknowehv4.fragmentpackage;
 
 
 import android.animation.ObjectAnimator;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -15,7 +14,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.text.method.ScrollingMovementMethod;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -124,6 +122,9 @@ public class PracticeFragment extends Fragment {
     private int nbCards;
     private boolean firstTimeOpening;
     private boolean loadNewData = false;
+
+    private boolean[] tempPartOfDeckList;
+    private boolean[] isPartOfDeckList;
 
 
     @Override
@@ -306,7 +307,20 @@ public class PracticeFragment extends Fragment {
                         Toast.makeText(getContext(), "Cannot toggle from review", Toast.LENGTH_SHORT).show();
                     }
                     return true;
+                case R.id.action_modify_card_decks:
+                    if (mCardList != null && !mCardList.isEmpty()) {
+                        if (showingPrevious) {
+                            showModifyCardDecksDialog(previousCard);
+                        } else {
+                            showModifyCardDecksDialog(mCardList.get(questionOrder.get(currentQuestion)));
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Please select a deck", Toast.LENGTH_SHORT).show();
+                    }
+
+                    return true;
             }
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -750,7 +764,8 @@ public class PracticeFragment extends Fragment {
         if (showingPrevious) {
             int deckPosition = selectedSpinnerPosition - 1;
 
-            nextButtonClicked();
+            showPreviousIsOkay = false;
+            showingPrevious = false;
 
 
             dbManager.togglePractice_Card(previousCard.getCardId(),
@@ -759,19 +774,21 @@ public class PracticeFragment extends Fragment {
             cardInfo = "\'" + previousCard.getQuestion() + "/" + previousCard.getAnswer() + "\'";
 
             int previousCardIndex = findCardIndex(previousCard);
+            int previousCardOrderIndex = findQuestionIndex(previousCardIndex);
 
             mCardList.remove(previousCardIndex);
             questionList.remove(previousCardIndex);
             answerList.remove(previousCardIndex);
-
-            // TODO
-            questionOrder.remove(findQuestionIndex(previousCardIndex));
+            questionOrder.remove(previousCardOrderIndex);
 
             for (int i = 0; i < questionOrder.size(); i++) {
                 int temp = questionOrder.get(i);
                 if (questionOrder.get(i) > previousCardIndex)
                     questionOrder.set(i, temp - 1);
             }
+
+            if (previousCardOrderIndex < currentQuestion)
+                currentQuestion--;
 
         } else {
 
@@ -824,6 +841,107 @@ public class PracticeFragment extends Fragment {
         Toast.makeText(getContext(), cardInfo + " toggled from review " + lengthMessage, Toast.LENGTH_SHORT).show();
     }
 
+    private void showModifyCardDecksDialog(final Card card) {
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        final View dialogView = inflater.inflate(R.layout.custom_scrollable_dialog_list, null, false);
+
+        dialogView.findViewById(R.id.card_info_dialog_add_deck).setVisibility(View.GONE);
+
+        android.app.AlertDialog.Builder deckListAlertDialog = new android.app.AlertDialog.Builder(getContext());
+
+        deckListAlertDialog.setTitle("Modify " + card.getQuestion() + "/" + card.getAnswer() + " decks");
+
+
+        List<Deck> cardSpecificDeck = dbManager.getDecksFromCard(card.getCardId());
+
+
+        isPartOfDeckList = new boolean[deckList.size()];
+        for (int counter = 0; counter < isPartOfDeckList.length; counter++) {
+            for (int i = 0; i < cardSpecificDeck.size(); i++) {
+                if (deckList.get(counter).getDeckId().equals(cardSpecificDeck.get(i).getDeckId()))
+                    isPartOfDeckList[counter] = true;
+            }
+        }
+        tempPartOfDeckList = isPartOfDeckList.clone();
+
+
+        CharSequence[] deckListDisplayName = new CharSequence[deckList.size()];
+
+        for (int i = 0; i < deckList.size(); i++) {
+            deckListDisplayName[i] = deckList.get(i).getDeckName();
+        }
+
+
+        final int deckPosition = selectedSpinnerPosition - 1;
+
+        // display a checkbox list
+        deckListAlertDialog.setMultiChoiceItems(deckListDisplayName, isPartOfDeckList, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int indexSelected, boolean isChecked) {
+
+
+                if (indexSelected == deckPosition) {
+                    ((android.app.AlertDialog) dialog).getListView().setItemChecked(indexSelected, true);
+                    Toast.makeText(getContext(), "Cannot remove from displayed deck", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        });
+
+        deckListAlertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                if (deckListIsDifferent()) {
+
+                    for (int i = 0; i < tempPartOfDeckList.length; i++) {
+                        if (tempPartOfDeckList[i] != isPartOfDeckList[i]){
+                            if(tempPartOfDeckList[i]){
+                                // remove
+                                dbManager.deleteCardDeck(card.getCardId(), deckList.get(i).getDeckId());
+                            }else{
+                                // add
+                                dbManager.createCardDeck(card.getCardId(), deckList.get(i).getDeckId());
+                            }
+                        }
+                    }
+
+
+                    Toast.makeText(getContext(), "Decks modified", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        deckListAlertDialog.setView(dialogView);
+        deckListAlertDialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        deckListAlertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+
+            }
+        });
+
+        final android.app.AlertDialog alert = deckListAlertDialog.create();
+
+        alert.show();
+    }
+
+    private boolean deckListIsDifferent() {
+
+        for (int i = 0; i < tempPartOfDeckList.length; i++) {
+            if (tempPartOfDeckList[i] != isPartOfDeckList[i])
+                return true;
+        }
+
+        return false;
+    }
 
     private class LoadData extends AsyncTask<Integer, Void, String> {
 

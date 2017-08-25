@@ -488,6 +488,36 @@ public class DatabaseManager {
         return Long.toString(newRowId);
     }
 
+    public String createCard(String question, String answer, String moreInfo, String dateCreated, String dateModified) {
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        String date = getDateNow();
+
+        String activeProfileId = getActiveProfile().getProfileId();
+
+        if(dateCreated.isEmpty())
+            dateCreated = date;
+        if ((dateModified.isEmpty()))
+            dateModified = date;
+
+
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_QUESTION, question);
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_ANSWER, answer);
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_MORE_INFORMATION, moreInfo);
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_DATE_CREATED, dateCreated);
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_DATE_MODIFIED, dateModified);
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_PROFILE_ID, activeProfileId);
+        values.put(DatabaseVariables.TableCard.COLUMN_NAME_ARCHIVED, false);
+
+        long newRowId = -1;
+        newRowId = db.insert(
+                DatabaseVariables.TableCard.TABLE_NAME,
+                null,
+                values);
+        return Long.toString(newRowId);
+    }
+
 
     public String createCardDeck(String cardId, String deckId) {
         SQLiteDatabase db = database.getWritableDatabase();
@@ -508,6 +538,7 @@ public class DatabaseManager {
                 values);
         return Long.toString(newRowId);
     }
+
 
 
     public String createProfile(String name) {

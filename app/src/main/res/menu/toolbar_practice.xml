@@ -32,6 +32,12 @@
                 app:showAsAction="never" />
 
             <item
+                android:id="@+id/action_modify_card_decks"
+                android:icon="@drawable/ic_folder_black_24dp"
+                android:title="Modify Card Decks"
+                app:showAsAction="never" />
+
+            <item
                 android:id="@+id/action_always_show_answer"
                 android:icon="@drawable/ic_check_box_outline_blank_black_24dp"
                 android:title="Always show answer"

@@ -826,14 +826,23 @@ public class CardListFragment extends Fragment {
         Card card = cardList.get(indexSelected);
         String cardQuestion = questionLabel + ": " + card.getQuestion();
         String cardAnswer = answerLabel + ": " + card.getAnswer();
+        String cardComments = card.getMoreInfo();
 
         List<Deck> decks = dbManager.getDecksFromCard(card.getCardId());
         String numberOfDecks = "Number of Decks: " + decks.size();
         String cardDateCreated = "Date created: " + card.getDateCreated();
         String cardDateModified = "Date modified: " + card.getDateModified();
 
+
+        String cardCommentsText = "Comments:\n" + cardComments;
+
         String message = cardQuestion + "\n" + cardAnswer + "\n" + numberOfDecks + "\n"
                 + cardDateCreated + "\n" + cardDateModified;
+
+        if(!cardComments.isEmpty()){
+            message += "\n" + cardCommentsText;
+        }
+
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
         builder.setMessage(message).setPositiveButton("done", null).show();
     }

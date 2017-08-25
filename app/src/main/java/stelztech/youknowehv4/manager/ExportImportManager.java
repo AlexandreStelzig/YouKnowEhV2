@@ -75,7 +75,7 @@ public final class ExportImportManager {
         try {
             CSVWriter writer = new CSVWriter(new FileWriter(file));
 
-            String[] data = new String[4];
+            String[] data = new String[6];
             for (int counter = 0; counter < numberOfCards; counter++) {
 
                 Card cardTemp = cardList.get(counter);
@@ -84,6 +84,8 @@ public final class ExportImportManager {
                 data[1] = cardTemp.getAnswer();
                 data[2] = cardTemp.getMoreInfo();
                 data[3] = "" + cardDeck.isPractice();
+                data[4] = cardTemp.getDateCreated();
+                data[5] = "" + cardTemp.getDateModified();
 
                 writer.writeNext(data);
 
@@ -140,7 +142,7 @@ public final class ExportImportManager {
                 // nextLine[] is an array of values from the line
                 System.out.println(nextLine[0] + nextLine[1] + "etc...");
 
-                if (nextLine.length > 4) {
+                if (nextLine.length > 6) {
                     Toast.makeText(context, "Invalid file format", Toast.LENGTH_SHORT).show();
                     return false;
                 } else {
@@ -148,6 +150,8 @@ public final class ExportImportManager {
                     String answer = "";
                     String note = "";
                     String isPractice = "";
+                    String dateCreated = "";
+                    String dateModified = "";
                     int rowCounter = 0;
                     for (int i = 0; i < nextLine.length; i++) {
                         if (rowCounter == 0) {
@@ -156,8 +160,12 @@ public final class ExportImportManager {
                             answer = nextLine[1];
                         } else if (rowCounter == 2) {
                             note = nextLine[2];
-                        }else if(rowCounter == 3){
+                        } else if (rowCounter == 3) {
                             isPractice = nextLine[3];
+                        } else if (rowCounter == 4) {
+                            dateCreated = nextLine[4];
+                        } else if (rowCounter == 5) {
+                            dateModified = nextLine[5];
                         }
                         rowCounter++;
                     }
@@ -166,7 +174,7 @@ public final class ExportImportManager {
                         Toast.makeText(context, "Invalid file format - two first column cannot be empty", Toast.LENGTH_SHORT).show();
                         return false;
                     } else {
-                        cardHolderList.add(new CardHolder(question, answer, note, isPractice));
+                        cardHolderList.add(new CardHolder(question, answer, note, isPractice, dateCreated, dateModified));
                     }
 
                 }
@@ -186,11 +194,13 @@ public final class ExportImportManager {
             String question = cardHolderList.get(i).getQuestion();
             String answer = cardHolderList.get(i).getAnswer();
             String note = cardHolderList.get(i).getNote();
-            String cardId = dbManager.createCard(question, answer, note);
+            String dateCreated = cardHolderList.get(i).getDateCreated();
+            String dateModified = cardHolderList.get(i).getDateModified();
+            String cardId = dbManager.createCard(question, answer, note, dateCreated, dateModified);
             dbManager.createCardDeck(cardId, deckId);
 
-            if(cardHolderList.get(i).getIsPractice().trim().toLowerCase().equals( "false") ||
-                    cardHolderList.get(i).getIsPractice().equals( "0")){
+            if (cardHolderList.get(i).getIsPractice().trim().toLowerCase().equals("false") ||
+                    cardHolderList.get(i).getIsPractice().equals("0")) {
                 dbManager.togglePractice_Card(cardId, deckId, -1);
             }
 
@@ -262,7 +272,7 @@ public final class ExportImportManager {
         return true;
     }
 
-    public static void readAllCSV(Context context, Uri uri){
+    public static void readAllCSV(Context context, Uri uri) {
 
         try {
 
@@ -276,20 +286,19 @@ public final class ExportImportManager {
             zipentry = zipinputstream.getNextEntry();
             List<File> files = new ArrayList<>();
 
-            while (zipentry != null)
-            {
+            while (zipentry != null) {
                 //for each entry to be extracted
                 String entryName = zipentry.getName();
-                System.out.println("entryname "+entryName);
+                System.out.println("entryname " + entryName);
 
                 String extension = "";
 
                 int i = entryName.lastIndexOf('.');
                 if (i > 0) {
-                    extension = entryName.substring(i+1);
+                    extension = entryName.substring(i + 1);
                 }
 
-                if(!extension.equals("csv")){
+                if (!extension.equals("csv")) {
                     break;
                 }
 
@@ -298,21 +307,20 @@ public final class ExportImportManager {
                 File newFile = new File(entryName);
                 String directory = newFile.getParent();
 
-                if(directory == null)
-                {
-                    if(newFile.isDirectory())
+                if (directory == null) {
+                    if (newFile.isDirectory())
                         break;
                 }
 
                 File sdCard = Environment.getExternalStorageDirectory();
                 String destinationname = sdCard.getAbsolutePath() + "/YouKnowEh/Export/";
                 fileoutputstream = new FileOutputStream(
-                        destinationname+entryName);
+                        destinationname + entryName);
 
                 while ((n = zipinputstream.read(buf, 0, 1024)) > -1)
                     fileoutputstream.write(buf, 0, n);
 
-                files.add(new File(destinationname+entryName));
+                files.add(new File(destinationname + entryName));
 
 
                 fileoutputstream.close();
@@ -324,7 +332,7 @@ public final class ExportImportManager {
             zipinputstream.close();
 
 
-            for(int i = 0; i < files.size(); i++){
+            for (int i = 0; i < files.size(); i++) {
                 readCSV(context, Uri.fromFile(files.get(i)));
             }
 
@@ -410,7 +418,7 @@ public final class ExportImportManager {
             } finally {
                 cursor.close();
             }
-        }else if (uri.getScheme().equals("file")) {
+        } else if (uri.getScheme().equals("file")) {
             fileName = uri.getLastPathSegment();
         }
         if (fileName == null) {
@@ -424,8 +432,6 @@ public final class ExportImportManager {
         return fileName;
 
     }
-
-
 
 
     public static boolean isExternalStorageReadOnly() {
@@ -450,12 +456,32 @@ public final class ExportImportManager {
         private String answer;
         private String note;
         private String isPractice;
+        private String dateCreated;
+        private String dateModified;
 
-        public CardHolder(String question, String answer, String note, String isPractice) {
+        public CardHolder(String question, String answer, String note, String isPractice, String dateCreated, String dateModified) {
             this.question = question;
             this.answer = answer;
             this.note = note;
             this.isPractice = isPractice;
+            this.dateCreated = dateCreated;
+            this.dateModified = dateModified;
+        }
+
+        public String getDateCreated() {
+            return dateCreated;
+        }
+
+        public void setDateCreated(String dateCreated) {
+            this.dateCreated = dateCreated;
+        }
+
+        public String getDateModified() {
+            return dateModified;
+        }
+
+        public void setDateModified(String dateModified) {
+            this.dateModified = dateModified;
         }
 
         public String getIsPractice() {

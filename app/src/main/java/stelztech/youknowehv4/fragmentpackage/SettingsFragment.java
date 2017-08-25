@@ -2,7 +2,6 @@ package stelztech.youknowehv4.fragmentpackage;
 
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,12 +14,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.ArchivedActivity;
@@ -30,6 +32,8 @@ import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.ActionButtonManager;
 import stelztech.youknowehv4.manager.ExportImportManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
+import stelztech.youknowehv4.model.Card;
+import stelztech.youknowehv4.model.Deck;
 import stelztech.youknowehv4.model.User;
 
 /**
@@ -44,6 +48,7 @@ public class SettingsFragment extends Fragment {
     private ListView deletedCardsLV;
     private ListView sortingLV;
     private ListView reviewLV;
+    private ListView otherLV;
 
     private CheckBox allowProfileDeletionCheckbox;
     private CheckBox showOnAllCheckbox;
@@ -75,6 +80,7 @@ public class SettingsFragment extends Fragment {
         deletedCardsLV = (ListView) view.findViewById(R.id.settings_deleted_cards_lv);
         sortingLV = (ListView) view.findViewById(R.id.settings_sorting_lv);
         reviewLV = (ListView) view.findViewById(R.id.settings_review_lv);
+        otherLV = (ListView) view.findViewById(R.id.settings_other_lv);
 
         allowProfileDeletionCheckbox = (CheckBox) view.findViewById(R.id.settings_profile_checkbox);
         showOnAllCheckbox = (CheckBox) view.findViewById(R.id.settings_show_on_all_checkbox);
@@ -169,6 +175,7 @@ public class SettingsFragment extends Fragment {
         setupDeletedCardsLV();
         setupSortingLV();
         setupReviewLV();
+        setupOtherLV();
 
         return view;
     }
@@ -288,12 +295,38 @@ public class SettingsFragment extends Fragment {
 
     }
 
+    private void setupOtherLV() {
+
+        // other import listview
+        final String[] otherChoices = getContext().getResources().getStringArray(R.array.settings_other_options);
+
+        ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, otherChoices);
+        otherLV.setAdapter(adapter);
+        otherLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                switch (position) {
+                    // Default sorting
+                    case 0:
+                        mergeDuplicates();
+                        break;
+                }
+
+            }
+        });
+
+        Helper.getInstance().setListViewHeightBasedOnChildren(otherLV);
+
+
+    }
+
     private void setupReviewLV() {
 
         // export import listview
         final String[] exportImportChoices = getContext().getResources().getStringArray(R.array.settings_review_options);
 
-        exportImportChoices[0] = exportImportChoices[0] +" " + dbManager.getUser().getQuickToggle() + " hours";
+        exportImportChoices[0] = exportImportChoices[0] + " " + dbManager.getUser().getQuickToggle() + " hours";
 
         ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, exportImportChoices);
         reviewLV.setAdapter(adapter);
@@ -359,8 +392,7 @@ public class SettingsFragment extends Fragment {
         return alert;
     }
 
-    public void showQuickToggleDialog()
-    {
+    public void showQuickToggleDialog() {
 
         View viewPicker = View.inflate(getContext(), R.layout.custom_number_picker_dialog, null);
         AlertDialog.Builder db = new AlertDialog.Builder(getContext());
@@ -391,5 +423,48 @@ public class SettingsFragment extends Fragment {
         AlertDialog dialog = db.show();
 
     }
+
+
+    private void mergeDuplicates() {
+
+        List<Card> allCards = dbManager.getCards();
+
+        for (int counterOne = 0; counterOne < allCards.size(); counterOne++) {
+
+            Card cardOne = allCards.get(counterOne);
+            List<Integer> removedCardsIndex = new ArrayList<>();
+
+            int counterTwo = counterOne + 1;
+            while (counterTwo < allCards.size()) {
+
+                Card cardTwo = allCards.get(counterTwo);
+
+                if (Objects.equals(cardOne.getQuestion(), cardTwo.getQuestion()) &&
+                        Objects.equals(cardOne.getAnswer(), cardTwo.getAnswer()) &&
+                        Objects.equals(cardOne.getMoreInfo(), cardTwo.getMoreInfo())) {
+
+                    List<Deck> duplicateCardDecks = dbManager.getDecksFromCard(cardTwo.getCardId());
+
+                    for (int i = 0; i < duplicateCardDecks.size(); i++) {
+                        dbManager.createCardDeck(cardOne.getCardId(), duplicateCardDecks.get(i).getDeckId());
+                    }
+
+                    dbManager.deleteCard(cardTwo.getCardId());
+                    allCards.remove(counterTwo);
+                } else {
+                    counterTwo++;
+                }
+
+
+            }
+
+
+        }
+
+        Toast.makeText(getContext(), "Merge completed", Toast.LENGTH_SHORT).show();
+
+
+    }
+
 
 }
