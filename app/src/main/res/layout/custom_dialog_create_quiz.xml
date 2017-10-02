@@ -1,0 +1,18 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/default_padding"
+    android:paddingRight="@dimen/default_padding">
+
+
+
+    <ListView
+        android:id="@+id/custom_dialog_create_quiz_listview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+
+    </ListView>
+</LinearLayout>

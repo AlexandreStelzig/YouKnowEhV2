@@ -684,7 +684,7 @@ public class DeckListFragment extends Fragment {
             nbCardsInDeckList.clear();
 
             for (int i = 0; i < deckList.size(); i++) {
-                nbCardsInDeckList.add(dbManager.getCardsFromDeck(deckList.get(i).getDeckId()).size());
+                nbCardsInDeckList.add(dbManager.numberCardsInDeck(deckList.get(i).getDeckId()));
             }
 
 

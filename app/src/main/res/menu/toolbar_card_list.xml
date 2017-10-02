@@ -48,7 +48,7 @@
 
             <item
                 android:id="@+id/action_practice_toggle"
-                android:icon="@drawable/ic_review_toggle"
+                android:icon="@drawable/ic_action_toggle_black"
                 android:title="Review toggle"
                 app:showAsAction="never" />
 

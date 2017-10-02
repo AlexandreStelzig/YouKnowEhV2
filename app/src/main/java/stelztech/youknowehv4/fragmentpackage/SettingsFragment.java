@@ -443,10 +443,24 @@ public class SettingsFragment extends Fragment {
                         Objects.equals(cardOne.getAnswer(), cardTwo.getAnswer()) &&
                         Objects.equals(cardOne.getMoreInfo(), cardTwo.getMoreInfo())) {
 
-                    List<Deck> duplicateCardDecks = dbManager.getDecksFromCard(cardTwo.getCardId());
+                    List<Deck> cardOneDecks = dbManager.getDecksFromCard(cardOne.getCardId());
+                    List<Deck> cardTwoDecks = dbManager.getDecksFromCard(cardTwo.getCardId());
 
-                    for (int i = 0; i < duplicateCardDecks.size(); i++) {
-                        dbManager.createCardDeck(cardOne.getCardId(), duplicateCardDecks.get(i).getDeckId());
+                    boolean isInSameDeck = false;
+
+                    for (int cardOneCounter = 0; cardOneCounter < cardOneDecks.size(); cardOneCounter++) {
+                        for (int cardTwoDecksCounter = 0; cardTwoDecksCounter < cardTwoDecks.size(); cardTwoDecksCounter++) {
+                            if (cardOneDecks.get(cardOneCounter).getDeckId().equals(cardTwoDecks.get(cardTwoDecksCounter).getDeckId())) {
+                                isInSameDeck = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!isInSameDeck) {
+                        for (int i = 0; i < cardTwoDecks.size(); i++) {
+                            dbManager.createCardDeck(cardOne.getCardId(), cardTwoDecks.get(i).getDeckId());
+                        }
                     }
 
                     dbManager.deleteCard(cardTwo.getCardId());

@@ -45,6 +45,7 @@ import java.util.List;
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.helper.CardHelper;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.ActionButtonManager;
 import stelztech.youknowehv4.manager.CardToolbarManager;
@@ -485,7 +486,13 @@ public class CardListFragment extends Fragment {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
 
-        final String[] sortingChoices = getContext().getResources().getStringArray(R.array.sort_options);
+        String[] sortingOptions = getContext().getResources().getStringArray(R.array.sort_options);
+        sortingOptions[0] = currentProfile.getQuestionLabel() + ": A-Z";
+        sortingOptions[1] = currentProfile.getQuestionLabel() + ": Z-A";
+        sortingOptions[2] = currentProfile.getAnswerLabel() + ": A-Z";
+        sortingOptions[3] = currentProfile.getAnswerLabel() + ": Z-A";
+
+        final String[] sortingChoices = sortingOptions;
         builder.setTitle("Sort by");
 
         builder.setSingleChoiceItems(sortingChoices, SortingStateManager.getInstance().getSelectedPosition(),
@@ -552,11 +559,7 @@ public class CardListFragment extends Fragment {
 
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-
-
         View dialogView = inflater.inflate(R.layout.custom_dialog_quick_create_card, null);
-
-
         builder.setView(dialogView);
 
 
@@ -580,7 +583,7 @@ public class CardListFragment extends Fragment {
             else
                 deckPlaceHolder.setText(dbManager.getDeckFromId(currentSelectedDeckId).getDeckName());
         } else {
-            int numberDecks = dbManager.getDecksFromCard(card.getCardId()).size();
+            int numberDecks = dbManager.numberDecksInCard(card.getCardId());
             if (numberDecks == 0) {
                 deckPlaceHolder.setText("No Deck");
             } else if (numberDecks == 1) {
@@ -791,7 +794,8 @@ public class CardListFragment extends Fragment {
                 displayConfirmationDialog();
                 return true;
             case R.id.info_card:
-                showQuickInfoCard();
+                CardHelper.showQuickInfoCard(getContext(), getActivity(), cardList.get(indexSelected));
+
                 return true;
             case R.id.toggle_practice:
                 if (getCurrentDeckIdSelected() != ALL_DECKS_ITEM) {
@@ -821,31 +825,6 @@ public class CardListFragment extends Fragment {
         }
     }
 
-
-    private void showQuickInfoCard() {
-        Card card = cardList.get(indexSelected);
-        String cardQuestion = questionLabel + ": " + card.getQuestion();
-        String cardAnswer = answerLabel + ": " + card.getAnswer();
-        String cardComments = card.getMoreInfo();
-
-        List<Deck> decks = dbManager.getDecksFromCard(card.getCardId());
-        String numberOfDecks = "Number of Decks: " + decks.size();
-        String cardDateCreated = "Date created: " + card.getDateCreated();
-        String cardDateModified = "Date modified: " + card.getDateModified();
-
-
-        String cardCommentsText = "Comments:\n" + cardComments;
-
-        String message = cardQuestion + "\n" + cardAnswer + "\n" + numberOfDecks + "\n"
-                + cardDateCreated + "\n" + cardDateModified;
-
-        if(!cardComments.isEmpty()){
-            message += "\n" + cardCommentsText;
-        }
-
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
-        builder.setMessage(message).setPositiveButton("done", null).show();
-    }
 
     private void deleteCardFromDatabase() {
         dbManager.toggleArchiveCard((String) cardList.get(indexSelected).getCardId());
@@ -990,17 +969,14 @@ public class CardListFragment extends Fragment {
         spinner.setAdapter(deckArrayAdapter);
 
 
-
-
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                if (selectionFromActivity){
+                if (selectionFromActivity) {
                     selectionFromActivity = false;
                     scrollToTop = false;
-                }
-                else
+                } else
                     scrollToTop = true;
 
 
@@ -1022,7 +998,6 @@ public class CardListFragment extends Fragment {
         });
 
         setSpinnerSelected();
-
 
 
     }

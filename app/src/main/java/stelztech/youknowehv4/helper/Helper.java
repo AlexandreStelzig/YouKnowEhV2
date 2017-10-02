@@ -2,14 +2,11 @@ package stelztech.youknowehv4.helper;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Point;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -23,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import stelztech.youknowehv4.fragmentpackage.PracticeFragment;
+import stelztech.youknowehv4.fragmentpackage.ReviewFragment;
 import stelztech.youknowehv4.model.Deck;
 
 /**
@@ -126,30 +123,30 @@ public class Helper {
 
 
 
-    public PracticeFragment.PracticeToggle convertStringToPracticeToggle(String practiceToggleString){
+    public ReviewFragment.ReviewToggle convertStringToPracticeToggle(String practiceToggleString){
 
         switch (practiceToggleString){
             case "HOURS_3":
-                return PracticeFragment.PracticeToggle.HOURS_3;
+                return ReviewFragment.ReviewToggle.HOURS_3;
             case "HOURS_12":
-                return PracticeFragment.PracticeToggle.HOURS_12;
+                return ReviewFragment.ReviewToggle.HOURS_12;
             case "HOURS_24":
-                return PracticeFragment.PracticeToggle.HOURS_24;
+                return ReviewFragment.ReviewToggle.HOURS_24;
             case "HOURS_48":
-                return PracticeFragment.PracticeToggle.HOURS_48;
+                return ReviewFragment.ReviewToggle.HOURS_48;
             case "DAYS_3":
-                return PracticeFragment.PracticeToggle.DAYS_3;
+                return ReviewFragment.ReviewToggle.DAYS_3;
             case "DAYS_5":
-                return PracticeFragment.PracticeToggle.DAYS_5;
+                return ReviewFragment.ReviewToggle.DAYS_5;
             case "Forever":
-                return PracticeFragment.PracticeToggle.ALWAYS;
+                return ReviewFragment.ReviewToggle.ALWAYS;
         }
-        return PracticeFragment.PracticeToggle.HOURS_12;
+        return ReviewFragment.ReviewToggle.HOURS_12;
     }
 
-    public String convertPracticeToggleToString(PracticeFragment.PracticeToggle practiceToggle){
+    public String convertPracticeToggleToString(ReviewFragment.ReviewToggle reviewToggle){
 
-        switch (practiceToggle){
+        switch (reviewToggle){
 
             case HOURS_3:
                 return "3 Hours";

@@ -6,7 +6,7 @@
         android:checkableBehavior="single">
 
         <item
-            android:id="@+id/practice"
+            android:id="@+id/review"
             android:icon="@drawable/ic_question_answer_black_24dp"
             android:title="Review" />
         <item
@@ -17,6 +17,21 @@
             android:id="@+id/deck_list"
             android:icon="@drawable/ic_folder_black_24dp"
             android:title="Deck List" />
+    </group>
+
+    <group
+        android:id="@+id/menuGroup_middle"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/quiz"
+            android:icon="@drawable/ic_quiz_black"
+            android:title="Quiz" />
+        <item
+            android:id="@+id/quiz_history"
+            android:icon="@drawable/ic_history_black_24dp"
+            android:title="Quiz history" />
+
     </group>
 
 

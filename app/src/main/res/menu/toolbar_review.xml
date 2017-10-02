@@ -38,6 +38,18 @@
                 app:showAsAction="never" />
 
             <item
+                android:id="@+id/action_quick_info"
+                android:icon="@drawable/ic_info_outline_black_24dp"
+                android:title="Card Quick Info"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/action_shuffle"
+                android:icon="@drawable/ic_shuffle_black_24dp"
+                android:title="Shuffle Order"
+                app:showAsAction="never" />
+
+            <item
                 android:id="@+id/action_always_show_answer"
                 android:icon="@drawable/ic_check_box_outline_blank_black_24dp"
                 android:title="Always show answer"

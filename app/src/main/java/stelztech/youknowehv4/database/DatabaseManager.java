@@ -3,6 +3,7 @@ package stelztech.youknowehv4.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -246,14 +247,13 @@ public class DatabaseManager {
 
                     boolean readyToToggle = now.after(date);
 
-                    if(readyToToggle){
+                    if (readyToToggle) {
                         togglePractice_Card(temp.getCardId(), temp.getDeckId(), -1);
                     }
 
                 } catch (ParseException e) {
-                    Log.e("DATABASE","error with date formatting");
+                    Log.e("DATABASE", "error with date formatting");
                 }
-
 
 
             }
@@ -348,7 +348,6 @@ public class DatabaseManager {
         return db.delete(DatabaseVariables.TableDeck.TABLE_NAME,
                 DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deckId, null) > 0;
     }
-
 
 
     public boolean deleteCard(String cardId) {
@@ -496,7 +495,7 @@ public class DatabaseManager {
 
         String activeProfileId = getActiveProfile().getProfileId();
 
-        if(dateCreated.isEmpty())
+        if (dateCreated.isEmpty())
             dateCreated = date;
         if ((dateModified.isEmpty()))
             dateModified = date;
@@ -538,7 +537,6 @@ public class DatabaseManager {
                 values);
         return Long.toString(newRowId);
     }
-
 
 
     public String createProfile(String name) {
@@ -688,7 +686,6 @@ public class DatabaseManager {
         db.update(DatabaseVariables.TableUser.TABLE_NAME, values,
                 DatabaseVariables.TableUser.COLUMN_NAME_USER_ID + "=" + user.getUserId(), null);
     }
-
 
 
     ////////////// OTHER //////////////
@@ -944,7 +941,7 @@ public class DatabaseManager {
         return profile;
     }
 
-    public void changeDeckPosition(int newPosition, Deck deck){
+    public void changeDeckPosition(int newPosition, Deck deck) {
 
 
         SQLiteDatabase db = database.getReadableDatabase();
@@ -953,20 +950,19 @@ public class DatabaseManager {
         List<Deck> deckList = getDecks();
 
 
-
         values.put(DatabaseVariables.TableDeck.COLUMN_NAME_POSITION, newPosition);
         db.update(DatabaseVariables.TableDeck.TABLE_NAME, values,
                 DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deck.getDeckId(), null);
 
         for (int i = 0; i < deckList.size(); i++) {
             int deckTempPosition = deckList.get(i).getPosition();
-            if(deck.getPosition() < newPosition) {
+            if (deck.getPosition() < newPosition) {
                 if (deckTempPosition > deck.getPosition() && deckTempPosition <= newPosition) {
                     values.put(DatabaseVariables.TableDeck.COLUMN_NAME_POSITION, deckTempPosition - 1);
                     db.update(DatabaseVariables.TableDeck.TABLE_NAME, values,
                             DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deckList.get(i).getDeckId(), null);
                 }
-            }else{
+            } else {
                 if (deckTempPosition < deck.getPosition() && deckTempPosition >= newPosition) {
                     values.put(DatabaseVariables.TableDeck.COLUMN_NAME_POSITION, deckTempPosition + 1);
                     db.update(DatabaseVariables.TableDeck.TABLE_NAME, values,
@@ -975,8 +971,21 @@ public class DatabaseManager {
             }
         }
 
+    }
 
+    public int numberCardsInDeck(String deckId) {
+        SQLiteDatabase db = database.getReadableDatabase();
 
+        int numRows = (int) DatabaseUtils.longForQuery(db, "SELECT COUNT(*) FROM " + DatabaseVariables.TableCardDeck.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deckId, null);
+        return numRows;
+    }
+
+    public int numberDecksInCard(String cardId) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        int numRows = (int) DatabaseUtils.longForQuery(db, "SELECT COUNT(*) FROM " + DatabaseVariables.TableCardDeck.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TableCardDeck.COLUMN_NAME_CARD_ID + "=" + cardId, null);
+        return numRows;
     }
 
 }

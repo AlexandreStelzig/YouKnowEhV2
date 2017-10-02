@@ -94,7 +94,7 @@
                     android:layout_height="45dp"
                     android:layout_gravity="center"
                     android:layout_weight="1.5"
-                    android:background="@drawable/ripple_button"
+                    android:background="@drawable/button_drawable_selector"
                     android:drawableLeft="@drawable/ic_info_outline_white_24dp"
                     android:padding="5dp"
                     android:text="VIEW"
@@ -212,7 +212,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1"
-                android:background="@drawable/ripple_button"
+                android:background="@drawable/button_drawable_selector"
                 android:text="Show"
                 android:textColor="@color/colorTextIcon" />
 
@@ -226,7 +226,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1"
-                android:background="@drawable/ripple_button"
+                android:background="@drawable/button_drawable_selector"
                 android:drawablePadding="0dp"
                 android:text="Next"
                 android:textColor="@color/colorTextIcon" />

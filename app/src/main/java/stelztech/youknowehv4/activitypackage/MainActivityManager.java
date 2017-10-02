@@ -15,14 +15,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.fragmentpackage.AboutFragment;
 import stelztech.youknowehv4.fragmentpackage.CardListFragment;
 import stelztech.youknowehv4.fragmentpackage.DeckListFragment;
-import stelztech.youknowehv4.fragmentpackage.PracticeFragment;
+import stelztech.youknowehv4.fragmentpackage.QuizFragment;
+import stelztech.youknowehv4.fragmentpackage.ReviewFragment;
 import stelztech.youknowehv4.fragmentpackage.ProfileFragment;
 import stelztech.youknowehv4.fragmentpackage.SettingsFragment;
 import stelztech.youknowehv4.helper.Helper;
@@ -39,10 +39,11 @@ public class MainActivityManager extends AppCompatActivity
 //    private List<Fragment> fragmentList;
     private DeckListFragment mDeckListFragment;
     private CardListFragment mCardListFragment;
-    private PracticeFragment mPracticeFragment;
+    private ReviewFragment mReviewFragment;
     private SettingsFragment mSettingsFragment;
     private AboutFragment mAboutFragment;
     private ProfileFragment mProfileFragment;
+    private QuizFragment mQuizFragment;
     private boolean mViewIsAtHome;
 
     private Fragment previousFragment;
@@ -116,22 +117,14 @@ public class MainActivityManager extends AppCompatActivity
         // init fragments
         mDeckListFragment = new DeckListFragment();
         mCardListFragment = new CardListFragment();
-        mPracticeFragment = new PracticeFragment();
+        mReviewFragment = new ReviewFragment();
         mSettingsFragment = new SettingsFragment();
         mAboutFragment = new AboutFragment();
         mProfileFragment = new ProfileFragment();
-
-//        fragmentList = new ArrayList<>();
-//        fragmentList.add(mPracticeFragment);
-//        fragmentList.add(mCardListFragment);
-//        fragmentList.add(mDeckListFragment);
-//        fragmentList.add(mProfileFragment);
-//        fragmentList.add(mSettingsFragment);
-//        fragmentList.add(mAboutFragment);
-
+        mQuizFragment = new QuizFragment();
 
         // default page
-        displayFragment(R.id.practice);
+        displayFragment(R.id.review);
 
 
     }
@@ -183,11 +176,11 @@ public class MainActivityManager extends AppCompatActivity
         currentFragment = null;
         String title = getString(R.string.app_name);
         String subtitle = "";
+        DatabaseManager dbManager = DatabaseManager.getInstance(MainActivityManager.this);
 
         switch (fragmentId) {
-            case R.id.practice:
-                currentFragment = mPracticeFragment;
-                DatabaseManager dbManager = DatabaseManager.getInstance(MainActivityManager.this);
+            case R.id.review:
+                currentFragment = mReviewFragment;
                 title = "Review";
                 subtitle = dbManager.getActiveProfile().getProfileName();
                 break;
@@ -212,6 +205,15 @@ public class MainActivityManager extends AppCompatActivity
                 currentFragment = mProfileFragment;
                 title = "Profile";
                 break;
+            case R.id.quiz:
+                currentFragment = mQuizFragment;
+                title = "Quiz";
+                subtitle = dbManager.getActiveProfile().getProfileName();
+                break;
+            case R.id.quiz_history:
+                title = "Quiz History";
+                subtitle = dbManager.getActiveProfile().getProfileName();
+                break;
         }
 
         // set the toolbar title
@@ -231,7 +233,7 @@ public class MainActivityManager extends AppCompatActivity
 
 
         // set hardware back button boolean
-        if (fragmentId == R.id.practice) {
+        if (fragmentId == R.id.review) {
             mViewIsAtHome = true;
         } else {
             mViewIsAtHome = false;
@@ -276,7 +278,7 @@ public class MainActivityManager extends AppCompatActivity
                 drawer.closeDrawer(GravityCompat.START);
             } else {
 
-                if (!mCardListFragment.isLoading() && !mDeckListFragment.isLoading() && !mPracticeFragment.isLoading()) {
+                if (!mCardListFragment.isLoading() && !mDeckListFragment.isLoading() && !mReviewFragment.isLoading()) {
 
                     if (currentFragment.equals(mDeckListFragment) && mDeckListFragment.isDeckOrdering()) {
                         mDeckListFragment.actionDone();
@@ -291,8 +293,8 @@ public class MainActivityManager extends AppCompatActivity
                             goBackToDecks = false;
                         } else {
                             if (!mViewIsAtHome) { //if the current view is not the News fragment
-                                displayFragment(R.id.practice);
-                                navigationView.setCheckedItem(R.id.practice);
+                                displayFragment(R.id.review);
+                                navigationView.setCheckedItem(R.id.review);
                             } else {
                                 moveTaskToBack(true);  // if view is a practice, exit app
                             }
@@ -313,7 +315,7 @@ public class MainActivityManager extends AppCompatActivity
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        if (fragment.equals(mPracticeFragment) && previousFragment != null) {
+        if (fragment.equals(mReviewFragment) && previousFragment != null) {
             transaction.setCustomAnimations(R.anim.slide_in_down, R.anim.slide_out_down);
         } else if (fragment.equals(mCardListFragment)) {
             if (previousFragment != null && previousFragment.equals(mDeckListFragment))
@@ -321,7 +323,7 @@ public class MainActivityManager extends AppCompatActivity
             else
                 transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up);
         } else if (fragment.equals(mDeckListFragment)) {
-            if (previousFragment != null && previousFragment.equals(mPracticeFragment)
+            if (previousFragment != null && previousFragment.equals(mReviewFragment)
                     || previousFragment.equals(mCardListFragment))
                 transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up);
             else
@@ -444,7 +446,7 @@ public class MainActivityManager extends AppCompatActivity
         this.goBackToDecks = goBackToDecks;
     }
 
-    public void resetFragmentPractice(){
-        mPracticeFragment.resetFragment();
+    public void resetFragmentPractice() {
+        mReviewFragment.resetFragment();
     }
 }

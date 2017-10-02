@@ -34,6 +34,7 @@ import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.model.Card;
 import stelztech.youknowehv4.model.Profile;
+import stelztech.youknowehv4.model.User;
 
 /**
  * Created by alex on 2017-05-09.
@@ -335,8 +336,18 @@ public class ArchivedActivity extends AppCompatActivity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        final String[] sortingChoices = getResources().getStringArray(R.array.sort_options);
+        Profile currentProfile = dbManager.getActiveProfile();
+
+        String[] sortingOptions = getResources().getStringArray(R.array.sort_options);
+        sortingOptions[0] = currentProfile.getQuestionLabel() + ": A-Z";
+        sortingOptions[1] = currentProfile.getQuestionLabel() + ": Z-A";
+        sortingOptions[2] = currentProfile.getAnswerLabel() + ": A-Z";
+        sortingOptions[3] = currentProfile.getAnswerLabel() + ": Z-A";
+
+        final String[] sortingChoices = sortingOptions;
         builder.setTitle("Sort by");
+
+
 
         builder.setSingleChoiceItems(sortingChoices, SortingStateManager.getInstance().getSelectedPosition(),
                 new DialogInterface.OnClickListener() {
