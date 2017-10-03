@@ -130,7 +130,7 @@ public class QuizFragment extends Fragment {
 
 
                 Button neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-                neutralButton.setEnabled(false);
+                neutralButton.setVisibility(View.GONE);
             }
         });
 

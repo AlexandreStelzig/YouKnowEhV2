@@ -487,7 +487,6 @@ public class ReviewFragment extends Fragment {
                 selectedSpinnerPosition = pos;
                 switchPracticeCards();
                 userSelect = false;
-                setButtonsEnable();
             }
         }
 
@@ -844,6 +843,7 @@ public class ReviewFragment extends Fragment {
 
         setNbPracticeCards();
         resetShowButtonLabel();
+        setButtonsEnable();
 
         showPreviousIsOkay = false;
 
@@ -994,6 +994,7 @@ public class ReviewFragment extends Fragment {
             nbCards = mCardList.size();
             setNbPracticeCards();
             setQuestionAnswerText();
+            setButtonsEnable();
 
 
             ((MainActivityManager) getActivity()).enableDrawerSwipe(true);
@@ -1025,7 +1026,7 @@ public class ReviewFragment extends Fragment {
     }
 
     public void setButtonsEnable() {
-        if (isSelectedDeckAll() && !(dbManager.getUser().isAllowPracticeAll())) {
+        if (isSelectedDeckAll() && !(dbManager.getUser().isAllowPracticeAll()) || mCardList.isEmpty()) {
             nextButton.setEnabled(false);
             showButton.setEnabled(false);
         } else {
