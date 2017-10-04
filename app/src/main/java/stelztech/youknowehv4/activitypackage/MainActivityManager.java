@@ -64,7 +64,7 @@ public class MainActivityManager extends AppCompatActivity
     // Activity results
     public final static int CARD_RESULT = 1;
     public final static int EXPORT_RESULT = 2;
-    public final static int ARCHIVED_RESULT = 3;
+    public final static int RESULT_ANIMATION_RIGHT_TO_LEFT = 3;
     public final static int EXPORT_RESULT_ALL = 4;
 
     // set fragment after drawer close
@@ -416,7 +416,7 @@ public class MainActivityManager extends AppCompatActivity
                 Uri selectedDocument = data.getData();
                 ExportImportManager.readCSV(this, selectedDocument);
             }
-        } else if (requestCode == ARCHIVED_RESULT) {
+        } else if (requestCode == RESULT_ANIMATION_RIGHT_TO_LEFT) {
             overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
         } else if (requestCode == EXPORT_RESULT_ALL) {
             if (resultCode == RESULT_OK) {

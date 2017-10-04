@@ -236,7 +236,7 @@ public class SettingsFragment extends Fragment {
 
     private void startArchivedActivity() {
         Intent intent = new Intent(getActivity(), ArchivedActivity.class);
-        getActivity().startActivityForResult(intent, MainActivityManager.ARCHIVED_RESULT);
+        getActivity().startActivityForResult(intent, MainActivityManager.RESULT_ANIMATION_RIGHT_TO_LEFT);
     }
 
 

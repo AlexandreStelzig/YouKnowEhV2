@@ -32,6 +32,10 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".activitypackage.QuizActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".activitypackage.FirstTimeOpeningActivity"
             android:screenOrientation="portrait" />
 
