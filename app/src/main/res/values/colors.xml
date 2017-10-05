@@ -8,10 +8,12 @@
     <color name="textPrimary">#212121</color>
     <color name="textSecondary">#757575</color>
     <color name="colorDivider">#BDBDBD</color>
+    <color name="colorDividerLight">#80BDBDBD</color>
     <color name="colorButtonDisabled">#800288D1</color>
     <color name="colorNotPractice">#ebebeb</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="colorPrimarySelected">#750288D1</color>
 
 
 </resources>

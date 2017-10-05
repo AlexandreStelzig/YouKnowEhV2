@@ -63,6 +63,9 @@ public class ReviewFragment extends Fragment {
         ALWAYS
     }
 
+    private final int TOGGLE_FOREVER = -1;
+    private final int TOGGLE_REMOVE = -2;
+
     // Spinner
     private Spinner spinner;
     private ArrayAdapter<String> deckArrayAdapter;
@@ -743,7 +746,7 @@ public class ReviewFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0:
-                                toggleFromPractice(-1);
+                                toggleFromPractice(TOGGLE_FOREVER);
                                 break;
                             case 1:
                                 toggleFromPractice(3);
@@ -848,11 +851,13 @@ public class ReviewFragment extends Fragment {
         showPreviousIsOkay = false;
 
         String lengthMessage = "";
-        if (hours == -1)
+        if (hours == TOGGLE_FOREVER)
             lengthMessage = "until manual toggle";
         else
             lengthMessage = "for " + hours + " hours";
-        Toast.makeText(getContext(), cardInfo + " toggled from review " + lengthMessage, Toast.LENGTH_SHORT).show();
+
+        if (hours != TOGGLE_REMOVE)
+            Toast.makeText(getContext(), cardInfo + " toggled from review " + lengthMessage, Toast.LENGTH_SHORT).show();
     }
 
     private void showModifyCardDecksDialog(final Card card) {
@@ -895,10 +900,6 @@ public class ReviewFragment extends Fragment {
             public void onClick(DialogInterface dialog, int indexSelected, boolean isChecked) {
 
 
-                if (indexSelected == deckPosition) {
-                    ((android.app.AlertDialog) dialog).getListView().setItemChecked(indexSelected, true);
-                    Toast.makeText(getContext(), "Cannot remove from displayed deck", Toast.LENGTH_SHORT).show();
-                }
             }
 
         });
@@ -909,10 +910,17 @@ public class ReviewFragment extends Fragment {
 
                 if (deckListIsDifferent()) {
 
+
                     for (int i = 0; i < tempPartOfDeckList.length; i++) {
                         if (tempPartOfDeckList[i] != isPartOfDeckList[i]) {
                             if (tempPartOfDeckList[i]) {
                                 // remove
+
+                                if (i == deckPosition) {
+                                    // put the card in a temp position, not reviewing
+                                    toggleFromPractice(TOGGLE_REMOVE);
+                                }
+
                                 dbManager.deleteCardDeck(card.getCardId(), deckList.get(i).getDeckId());
                             } else {
                                 // add

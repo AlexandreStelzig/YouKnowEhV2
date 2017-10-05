@@ -22,6 +22,7 @@ import stelztech.youknowehv4.fragmentpackage.AboutFragment;
 import stelztech.youknowehv4.fragmentpackage.CardListFragment;
 import stelztech.youknowehv4.fragmentpackage.DeckListFragment;
 import stelztech.youknowehv4.fragmentpackage.QuizFragment;
+import stelztech.youknowehv4.fragmentpackage.QuizHistoryFragment;
 import stelztech.youknowehv4.fragmentpackage.ReviewFragment;
 import stelztech.youknowehv4.fragmentpackage.ProfileFragment;
 import stelztech.youknowehv4.fragmentpackage.SettingsFragment;
@@ -44,6 +45,7 @@ public class MainActivityManager extends AppCompatActivity
     private AboutFragment mAboutFragment;
     private ProfileFragment mProfileFragment;
     private QuizFragment mQuizFragment;
+    private QuizHistoryFragment mQuizHistoryFragment;
     private boolean mViewIsAtHome;
 
     private Fragment previousFragment;
@@ -122,6 +124,7 @@ public class MainActivityManager extends AppCompatActivity
         mAboutFragment = new AboutFragment();
         mProfileFragment = new ProfileFragment();
         mQuizFragment = new QuizFragment();
+        mQuizHistoryFragment = new QuizHistoryFragment();
 
         // default page
         displayFragment(R.id.review);
@@ -211,6 +214,7 @@ public class MainActivityManager extends AppCompatActivity
                 subtitle = dbManager.getActiveProfile().getProfileName();
                 break;
             case R.id.quiz_history:
+                currentFragment = mQuizHistoryFragment;
                 title = "Quiz History";
                 subtitle = dbManager.getActiveProfile().getProfileName();
                 break;

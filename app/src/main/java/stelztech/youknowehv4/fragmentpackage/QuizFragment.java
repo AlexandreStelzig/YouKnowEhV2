@@ -177,6 +177,7 @@ public class QuizFragment extends Fragment {
                 final Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 final Button neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
 
+                neutralButton.setVisibility(View.GONE);
 
                 positiveButton.setOnClickListener(new View.OnClickListener() {
 

@@ -33,6 +33,7 @@ public class AboutFragment extends Fragment {
 
     View view;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -72,16 +73,6 @@ public class AboutFragment extends Fragment {
                         emailIntent.putExtra(Intent.EXTRA_EMAIL, emailTo);
                         startActivity(emailIntent);
 
-                        break;
-                    // github
-                    case 1:
-                        Intent githubintent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/AlexandreStelzig"));
-                        startActivity(githubintent);
-                        break;
-                    // website
-                    case 2:
-                        Intent websiteintent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://alexandrestelzig.github.io/"));
-                        startActivity(websiteintent);
                         break;
                 }
 

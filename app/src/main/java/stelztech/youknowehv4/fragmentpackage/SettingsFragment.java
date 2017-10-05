@@ -12,11 +12,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.NumberPicker;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,13 +36,14 @@ import stelztech.youknowehv4.manager.ExportImportManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.model.Card;
 import stelztech.youknowehv4.model.Deck;
+import stelztech.youknowehv4.model.Profile;
 import stelztech.youknowehv4.model.User;
 
 /**
  * Created by alex on 2017-04-03.
  */
 
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends Fragment{
 
     View view;
 
@@ -50,19 +53,19 @@ public class SettingsFragment extends Fragment {
     private ListView reviewLV;
     private ListView otherLV;
 
-    private CheckBox allowProfileDeletionCheckbox;
-    private CheckBox showOnAllCheckbox;
-    private CheckBox showOnSpecificCheckbox;
-    private CheckBox allowPracticeAllCheckbox;
-    private CheckBox allowOnQueryChangedCheckbox;
+    private Switch showOnAllSwitch;
+    private Switch showOnSpecificSwitch;
+    private Switch allowPracticeAllSwitch;
+    private Switch allowOnQueryChangedSwitch;
 
-    private TextView allowProfileDeletionTextView;
-    private TextView showOnAllTextView;
-    private TextView showOnSpecificTextView;
-    private TextView allowPracticeAllTextView;
-    private TextView allowOnQueryChangedTextView;
+    private Switch allowProfileDeletionSwitch;
 
     private DatabaseManager dbManager;
+
+    // sort
+    private String[] sortChoices;
+    private ArrayAdapter sortAdapter;
+    private String[] sortingOptions;
 
 
     @Override
@@ -82,59 +85,35 @@ public class SettingsFragment extends Fragment {
         reviewLV = (ListView) view.findViewById(R.id.settings_review_lv);
         otherLV = (ListView) view.findViewById(R.id.settings_other_lv);
 
-        allowProfileDeletionCheckbox = (CheckBox) view.findViewById(R.id.settings_profile_checkbox);
-        showOnAllCheckbox = (CheckBox) view.findViewById(R.id.settings_show_on_all_checkbox);
-        showOnSpecificCheckbox = (CheckBox) view.findViewById(R.id.settings_show_on_specific_checkbox);
-        allowPracticeAllCheckbox = (CheckBox) view.findViewById(R.id.settings_practice_all_checkbox);
-        allowOnQueryChangedCheckbox = (CheckBox) view.findViewById(R.id.settings_allow_on_query_changed_checkbox);
-
-        allowProfileDeletionTextView = (TextView) view.findViewById(R.id.settings_profile_textview);
-        showOnAllTextView = (TextView) view.findViewById(R.id.settings_show_on_all_textview);
-        showOnSpecificTextView = (TextView) view.findViewById(R.id.settings_show_on_specific_textview);
-        allowPracticeAllTextView = (TextView) view.findViewById(R.id.settings_practice_all_textview);
-        allowOnQueryChangedTextView = (TextView) view.findViewById(R.id.settings_allow_on_query_changed_textview);
+        allowProfileDeletionSwitch = (Switch) view.findViewById(R.id.settings_profile_switch);
+        showOnAllSwitch = (Switch) view.findViewById(R.id.settings_show_on_all_switch);
+        showOnSpecificSwitch = (Switch) view.findViewById(R.id.settings_show_on_specific_switch);
+        allowPracticeAllSwitch = (Switch) view.findViewById(R.id.settings_practice_all_switch);
+        allowOnQueryChangedSwitch = (Switch) view.findViewById(R.id.settings_allow_on_query_changed_switch);
 
 
-        allowProfileDeletionCheckbox.setChecked(user.isAllowProfileDeletion());
-        showOnAllCheckbox.setChecked(user.isDisplayNbDecksAllCards());
-        showOnSpecificCheckbox.setChecked(user.isDisplayNbDecksSpecificCards());
-        allowPracticeAllCheckbox.setChecked(user.isAllowPracticeAll());
-        allowOnQueryChangedCheckbox.setChecked(user.isAllowOnQueryChanged());
+        allowProfileDeletionSwitch.setChecked(user.isAllowProfileDeletion());
+        showOnAllSwitch.setChecked(user.isDisplayNbDecksAllCards());
+        showOnSpecificSwitch.setChecked(user.isDisplayNbDecksSpecificCards());
+        allowPracticeAllSwitch.setChecked(user.isAllowPracticeAll());
+        allowOnQueryChangedSwitch.setChecked(user.isAllowOnQueryChanged());
 
 
-        allowProfileDeletionCheckbox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                allowProfileDeletionClicked();
-            }
-        });
-        allowProfileDeletionTextView.setOnClickListener(new View.OnClickListener() {
+        allowProfileDeletionSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 allowProfileDeletionClicked();
             }
         });
 
-        showOnAllCheckbox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showOnAllCardsClicked();
-            }
-        });
-        showOnAllTextView.setOnClickListener(new View.OnClickListener() {
+        showOnAllSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showOnAllCardsClicked();
             }
         });
 
-        showOnSpecificCheckbox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showOnSpecificDeckClicked();
-            }
-        });
-        showOnSpecificTextView.setOnClickListener(new View.OnClickListener() {
+        showOnSpecificSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showOnSpecificDeckClicked();
@@ -142,28 +121,15 @@ public class SettingsFragment extends Fragment {
         });
 
 
-        allowPracticeAllTextView.setOnClickListener(new View.OnClickListener() {
+        allowPracticeAllSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 allowPracticeAllClicked();
             }
         });
 
-        allowPracticeAllCheckbox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                allowPracticeAllClicked();
-            }
-        });
 
-        allowOnQueryChangedTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                allowOnQueryChangedClicked();
-            }
-        });
-
-        allowOnQueryChangedCheckbox.setOnClickListener(new View.OnClickListener() {
+        allowOnQueryChangedSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 allowOnQueryChangedClicked();
@@ -183,32 +149,32 @@ public class SettingsFragment extends Fragment {
     private void allowOnQueryChangedClicked() {
         dbManager.toggleAllowSearchOnQueryChanged();
         User user = dbManager.getUser();
-        allowOnQueryChangedCheckbox.setChecked(user.isAllowOnQueryChanged());
+        allowOnQueryChangedSwitch.setChecked(user.isAllowOnQueryChanged());
     }
 
 
     private void allowProfileDeletionClicked() {
         dbManager.toggleAllowProfileDeletion();
         User user = dbManager.getUser();
-        allowProfileDeletionCheckbox.setChecked(user.isAllowProfileDeletion());
+        allowProfileDeletionSwitch.setChecked(user.isAllowProfileDeletion());
     }
 
     private void showOnAllCardsClicked() {
         dbManager.toggleDisplayNumberDecksAll();
         User user = dbManager.getUser();
-        showOnAllCheckbox.setChecked(user.isDisplayNbDecksAllCards());
+        showOnAllSwitch.setChecked(user.isDisplayNbDecksAllCards());
     }
 
     private void showOnSpecificDeckClicked() {
         dbManager.toggleDisplayNumberDecksSpecific();
         User user = dbManager.getUser();
-        showOnSpecificCheckbox.setChecked(user.isDisplayNbDecksSpecificCards());
+        showOnSpecificSwitch.setChecked(user.isDisplayNbDecksSpecificCards());
     }
 
     private void allowPracticeAllClicked() {
         dbManager.toggleAllowPracticeAll();
         User user = dbManager.getUser();
-        allowPracticeAllCheckbox.setChecked(user.isAllowPracticeAll());
+        allowPracticeAllSwitch.setChecked(user.isAllowPracticeAll());
         ((MainActivityManager) getActivity()).resetFragmentPractice();
     }
 
@@ -274,9 +240,23 @@ public class SettingsFragment extends Fragment {
     private void setupSortingLV() {
 
         // export import listview
-        final String[] exportImportChoices = getContext().getResources().getStringArray(R.array.settings_sorting_options);
-        ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, exportImportChoices);
-        sortingLV.setAdapter(adapter);
+        sortChoices = getContext().getResources().getStringArray(R.array.settings_sorting_options);
+
+
+        Profile currentProfile = dbManager.getActiveProfile();
+        sortingOptions = getResources().getStringArray(R.array.sort_options);
+        sortingOptions[0] = currentProfile.getQuestionLabel() + " (A-Z)";
+        sortingOptions[1] = currentProfile.getQuestionLabel() + " (Z-A)";
+        sortingOptions[2] = currentProfile.getAnswerLabel() + " (A-Z)";
+        sortingOptions[3] = currentProfile.getAnswerLabel() + " (Z-A)";
+
+
+        SortingStateManager sortingStateManager = SortingStateManager.getInstance();
+        sortChoices[0] = "Default sorting: " + sortingOptions[sortingStateManager.getSelectedPosition()];
+
+
+        sortAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, sortChoices);
+        sortingLV.setAdapter(sortAdapter);
         sortingLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -292,7 +272,6 @@ public class SettingsFragment extends Fragment {
         });
 
         Helper.getInstance().setListViewHeightBasedOnChildren(sortingLV);
-
     }
 
     private void setupOtherLV() {
@@ -307,7 +286,6 @@ public class SettingsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 switch (position) {
-                    // Default sorting
                     case 0:
                         mergeDuplicates();
                         break;
@@ -362,19 +340,21 @@ public class SettingsFragment extends Fragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-        final String[] sortingChoices = getResources().getStringArray(R.array.sort_options);
         builder.setTitle("Sort by");
 
-        builder.setSingleChoiceItems(sortingChoices, SortingStateManager.getInstance().getDefaultSort(),
+        builder.setSingleChoiceItems(sortingOptions, SortingStateManager.getInstance().getDefaultSort(),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        SortingStateManager sortingStateManager = SortingStateManager.getInstance();
-
                         DatabaseManager.getInstance(getContext()).updateDefaultSortPosition(which);
                         dialog.dismiss();
-                        Toast.makeText(getContext(), "Default sort by: " + sortingChoices[which], Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Default sort by: " + sortingOptions[which], Toast.LENGTH_SHORT).show();
+
+
+                        sortChoices[0] = "Default sorting: " + sortingOptions[which];
+                        sortAdapter.notifyDataSetChanged();
+
                     }
                 });
 
