@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.fragmentpackage;
+package stelztech.youknowehv4.fragmentpackage.quiz;
 
 
 import android.app.AlertDialog;
@@ -161,6 +161,7 @@ public class QuizFragment extends Fragment {
         numDeckTextView.setVisibility(View.GONE);
 
 
+
         final AlertDialog dialog = builder.create();
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
@@ -173,7 +174,7 @@ public class QuizFragment extends Fragment {
             @Override
             public void onShow(DialogInterface dialogInterface) {
 
-
+                dialog.setCanceledOnTouchOutside(false);
                 final Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 final Button neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
 

@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.firsttimeopening.FirstTimeOpeningActivity;
 
 /**
  * Created by alex on 2017-04-28.

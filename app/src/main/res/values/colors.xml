@@ -15,5 +15,8 @@
     <color name="black">#000000</color>
     <color name="colorPrimarySelected">#750288D1</color>
 
+    <color name="progressbarNeutral">#ff5a5d5a</color>
+    <color name="progressbarFail">#FF0000</color>
+    <color name="progressbarPass">#00cf00</color>
 
 </resources>

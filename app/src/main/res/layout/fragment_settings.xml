@@ -17,10 +17,10 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
                 android:background="@color/white"
                 android:elevation="5dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="5dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -50,10 +50,10 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
                 android:background="@color/white"
                 android:elevation="5dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="5dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -83,10 +83,10 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
                 android:background="@color/white"
                 android:elevation="5dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="5dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -116,10 +116,10 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="5dp"
                 android:background="@color/white"
-                android:elevation="5dp">
+                android:elevation="5dp"
+                android:orientation="vertical"
+                android:padding="5dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -149,10 +149,10 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="5dp"
                 android:background="@color/white"
-                android:elevation="5dp">
+                android:elevation="5dp"
+                android:orientation="vertical"
+                android:padding="5dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -173,17 +173,17 @@
                 </ListView>
 
                 <View
-                    android:layout_marginBottom="2dp"
                     android:layout_width="match_parent"
-                    android:background="@color/colorDividerLight"
-                    android:layout_height="1dp"/>
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@color/colorDividerLight" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:layout_marginEnd="15dp"
                     android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp">
+                    android:orientation="horizontal">
 
                     <Switch
                         android:id="@+id/settings_profile_switch"
@@ -191,21 +191,23 @@
                         android:layout_height="wrap_content"
                         android:text="Allow Profile deletion"
                         android:textColor="@color/textPrimary"
-                        android:textSize="16sp"/>
+                        android:textSize="16sp" />
 
                 </LinearLayout>
+
                 <View
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
                     android:layout_width="match_parent"
-                    android:background="@color/colorDividerLight"
-                    android:layout_height="1dp"/>
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/colorDividerLight" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:layout_marginEnd="15dp"
                     android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp">
+                    android:orientation="horizontal">
 
                     <Switch
                         android:id="@+id/settings_practice_all_switch"
@@ -213,21 +215,23 @@
                         android:layout_height="wrap_content"
                         android:text="Allow Review all Cards"
                         android:textColor="@color/textPrimary"
-                        android:textSize="16sp"/>
+                        android:textSize="16sp" />
 
                 </LinearLayout>
+
                 <View
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
                     android:layout_width="match_parent"
-                    android:background="@color/colorDividerLight"
-                    android:layout_height="1dp"/>
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/colorDividerLight" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:layout_marginEnd="15dp"
                     android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp">
+                    android:orientation="horizontal">
 
                     <Switch
                         android:id="@+id/settings_allow_on_query_changed_switch"
@@ -235,21 +239,23 @@
                         android:layout_height="wrap_content"
                         android:text="Allow Search on query changed"
                         android:textColor="@color/textPrimary"
-                        android:textSize="16sp"/>
+                        android:textSize="16sp" />
 
                 </LinearLayout>
+
                 <View
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
                     android:layout_width="match_parent"
-                    android:background="@color/colorDividerLight"
-                    android:layout_height="1dp"/>
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/colorDividerLight" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:layout_marginEnd="15dp"
                     android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp">
+                    android:orientation="horizontal">
 
                     <Switch
                         android:id="@+id/settings_show_on_all_switch"
@@ -257,23 +263,23 @@
                         android:layout_height="wrap_content"
                         android:text="Display number of Decks on Cards (All Cards)"
                         android:textColor="@color/textPrimary"
-                        android:textSize="16sp"/>
+                        android:textSize="16sp" />
 
                 </LinearLayout>
 
                 <View
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
                     android:layout_width="match_parent"
-                    android:background="@color/colorDividerLight"
-                    android:layout_height="1dp"/>
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/colorDividerLight" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:layout_marginEnd="15dp"
                     android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp">
+                    android:orientation="horizontal">
 
                     <Switch
                         android:id="@+id/settings_show_on_specific_switch"
@@ -281,7 +287,7 @@
                         android:layout_height="wrap_content"
                         android:text="Display number of Decks on Cards (Specific Deck)"
                         android:textColor="@color/textPrimary"
-                        android:textSize="16sp"/>
+                        android:textSize="16sp" />
 
                 </LinearLayout>
 

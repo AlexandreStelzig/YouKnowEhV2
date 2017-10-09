@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import stelztech.youknowehv4.fragmentpackage.ReviewFragment;
+import stelztech.youknowehv4.fragmentpackage.review.ReviewFragment;
 import stelztech.youknowehv4.model.Deck;
 
 /**

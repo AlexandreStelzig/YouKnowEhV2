@@ -51,8 +51,11 @@ public final class DatabaseVariables {
             + TableProfile.COLUMN_NAME_PROFILE_NAME + " TEXT NOT NULL,"
             + TableProfile.COLUMN_NAME_QUESTION_LABEL + " TEXT NOT NULL,"
             + TableProfile.COLUMN_NAME_ANSWER_LABEL + " TEXT NOT NULL,"
+            + TableProfile.COLUMN_NAME_ACTIVE_QUIZ_ID + " INTEGER,"
             + TableProfile.COLUMN_NAME_DATE_CREATED + " DATE,"
-            + TableProfile.COLUMN_NAME_DATE_MODIFIED + " DATE" + " );";
+            + TableProfile.COLUMN_NAME_DATE_MODIFIED + " DATE"
+            + " FOREIGN KEY " + "(" + TableProfile.COLUMN_NAME_ACTIVE_QUIZ_ID + ")"
+            + " REFERENCES " + TableQuiz.TABLE_NAME + "(" + TableQuiz.COLUMN_NAME_QUIZ_ID + ")" + " );";
 
     public static final String SQL_CREATE_TABLE_USER = "CREATE TABLE "
             + TableUser.TABLE_NAME + " ("
@@ -69,12 +72,39 @@ public final class DatabaseVariables {
             + " FOREIGN KEY " + "(" + TableUser.COLUMN_NAME_ACTIVE_PROFILE_ID + ")"
             + " REFERENCES " + TableProfile.TABLE_NAME + "(" + TableProfile.COLUMN_NAME_PROFILE_ID + ") " + ");";
 
+    public static final String SQL_CREATE_TABLE_QUIZ = "CREATE TABLE "
+            + TableQuiz.TABLE_NAME + " ("
+            + TableQuiz.COLUMN_NAME_QUIZ_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + TableQuiz.COLUMN_NAME_DATE_CREATED + " DATE,"
+            + TableQuiz.COLUMN_NAME_DATE_FINISHED + " DATE,"
+            + TableQuiz.COLUMN_NAME_MODE + " TEXT,"
+            + TableQuiz.COLUMN_NAME_REPEAT + " BOOLEAN,"
+            + TableQuiz.COLUMN_NAME_PROFILE_ID + " INTEGER,"
+            + TableQuiz.COLUMN_NAME_REVERSE + " BOOLEAN"
+            + " FOREIGN KEY " + "(" + TableQuiz.COLUMN_NAME_PROFILE_ID + ")"
+            + " REFERENCES " + TableProfile.TABLE_NAME + "(" + TableProfile.COLUMN_NAME_PROFILE_ID + ")" + " );";
+
+    public static final String SQL_CREATE_TABLE_QUIZ_CARD = "CREATE TABLE "
+            + TableQuizCard.TABLE_NAME + " ("
+            + TableQuizCard.COLUMN_NAME_CARD_ID + " INTEGER,"
+            + TableQuizCard.COLUMN_NAME_QUIZ_ID + " INTEGER,"
+            + TableQuizCard.COLUMN_NAME_NUM_FAILED + " INTEGER,"
+            + TableQuizCard.COLUMN_NAME_POSITION + " INTEGER,"
+            + TableQuizCard.COLUMN_NAME_PASSED + " BOOLEAN,"
+            + " FOREIGN KEY " + "(" + TableQuizCard.COLUMN_NAME_CARD_ID + ")"
+            + " REFERENCES " + TableCard.TABLE_NAME + "(" + TableCard.COLUMN_NAME_CARD_ID + "),"
+            + " FOREIGN KEY " + "(" + TableQuizCard.COLUMN_NAME_QUIZ_ID + ")"
+            + " REFERENCES " + TableQuiz.TABLE_NAME + "(" + TableQuiz.COLUMN_NAME_QUIZ_ID + ")"
+            + " PRIMARY KEY (" + TableQuizCard.COLUMN_NAME_CARD_ID + ", " + TableQuizCard.COLUMN_NAME_QUIZ_ID + ") " + ");";
+
 
     public static final String SQL_DELETE_TABLE_CARD = "DROP TABLE IF EXISTS " + TableCard.TABLE_NAME;
     public static final String SQL_DELETE_TABLE_DECK = "DROP TABLE IF EXISTS " + TableDeck.TABLE_NAME;
     public static final String SQL_DELETE_TABLE_CARD_DECK = "DROP TABLE IF EXISTS " + TableCardDeck.TABLE_NAME;
     public static final String SQL_DELETE_TABLE_USER = "DROP TABLE IF EXISTS " + TableUser.TABLE_NAME;
     public static final String SQL_DELETE_TABLE_PROFILE = "DROP TABLE IF EXISTS " + TableProfile.TABLE_NAME;
+    public static final String SQL_DELETE_TABLE_QUIZ = "DROP TABLE IF EXISTS " + TableQuiz.TABLE_NAME;
+    public static final String SQL_DELETE_TABLE_QUIZ_CARD = "DROP TABLE IF EXISTS " + TableQuizCard.TABLE_NAME;
 
     public static abstract class TableCard implements BaseColumns {
         public static final String TABLE_NAME = "card";
@@ -117,6 +147,7 @@ public final class DatabaseVariables {
         public static final String COLUMN_NAME_DATE_MODIFIED = "datemodified";
         public static final String COLUMN_NAME_QUESTION_LABEL = "questionlabel";
         public static final String COLUMN_NAME_ANSWER_LABEL = "answerlabel";
+        public static final String COLUMN_NAME_ACTIVE_QUIZ_ID = "activequizid";
     }
 
     public static abstract class TableUser implements BaseColumns{
@@ -131,5 +162,25 @@ public final class DatabaseVariables {
         public static final String COLUMN_NAME_ALLOW_PRACTICE_ALL = "allpracticeall";
         public static final String COLUMN_NAME_ALLOW_SEARCH_ON_QUERY_CHANGED = "allowsearchonquerychange";
         public static final String COLUMN_NAME_QUICK_TOGGLE_REVIEW = "quicktogglereview";
+    }
+
+    public static abstract class TableQuiz implements BaseColumns{
+        public static final String TABLE_NAME = "quiz";
+        public static final String COLUMN_NAME_QUIZ_ID = "quizid";
+        public static final String COLUMN_NAME_DATE_CREATED = "datecreated";
+        public static final String COLUMN_NAME_DATE_FINISHED = "datefinish";
+        public static final String COLUMN_NAME_REPEAT = "repeat";
+        public static final String COLUMN_NAME_REVERSE = "reverse";
+        public static final String COLUMN_NAME_MODE = "mode";
+        public static final String COLUMN_NAME_PROFILE_ID = "profileid";
+    }
+
+    public static abstract class TableQuizCard implements BaseColumns{
+        public static final String TABLE_NAME = "quizcard";
+        public static final String COLUMN_NAME_QUIZ_ID = "quizid";
+        public static final String COLUMN_NAME_CARD_ID = "cardid";
+        public static final String COLUMN_NAME_NUM_FAILED = "numfail";
+        public static final String COLUMN_NAME_PASSED = "passed";
+        public static final String COLUMN_NAME_POSITION = "position";
     }
 }

@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.fragmentpackage;
+package stelztech.youknowehv4.fragmentpackage.otherfragments;
 
 
 import android.app.AlertDialog;
@@ -12,14 +12,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -66,7 +63,6 @@ public class SettingsFragment extends Fragment{
     private String[] sortChoices;
     private ArrayAdapter sortAdapter;
     private String[] sortingOptions;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

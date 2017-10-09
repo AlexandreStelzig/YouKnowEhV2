@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.viewpager;
+package stelztech.youknowehv4.firsttimeopening;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.activitypackage.FirstTimeOpeningActivity;
 
 /**
  * Created by alex on 2017-05-06.

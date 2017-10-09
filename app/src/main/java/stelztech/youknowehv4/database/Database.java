@@ -16,9 +16,6 @@ public class Database extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    // relation many to many from Deck -> Work
-
-
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_CARD);
@@ -26,6 +23,8 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_CARD_DECK);
         db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_PROFILE);
         db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_USER);
+        db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_QUIZ);
+        db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_QUIZ_CARD);
     }
 
     @Override
@@ -35,6 +34,8 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_CARD_DECK);
         db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_PROFILE);
         db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_USER);
+        db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_QUIZ);
+        db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_QUIZ_CARD);
         onCreate(db);
     }
 

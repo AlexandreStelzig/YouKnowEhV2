@@ -2,7 +2,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <stelztech.youknowehv4.helper.NumberPicker
+    <stelztech.youknowehv4.components.NumberPicker
         android:id="@+id/numberPicker1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

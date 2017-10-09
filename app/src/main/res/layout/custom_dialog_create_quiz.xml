@@ -69,48 +69,46 @@
         android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="0dp"
+        <RadioGroup
+            android:id="@+id/toggle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="10dp"
-            android:background="@color/colorPrimarySelected">
+            android:background="@drawable/quiz_selector_out_line"
+            android:checkedButton="@+id/quiz_orientation_normal"
+            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <RadioButton
+                android:id="@+id/quiz_orientation_normal"
+                android:padding="15dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="1dp"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/quiz_selector_background"
+                android:button="@null"
                 android:gravity="center"
-                android:text="Question\nTo\nAnswer"
-                android:textColor="@color/textPrimary"
-                android:textSize="16sp" />
+                android:text="English\nto\nKorean"
+                android:textSize="16sp"
+                android:textColor="@drawable/text_color_selector" />
 
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/colorDividerLight" />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <RadioButton
+                android:id="@+id/quiz_orientation_reverse"
+                android:padding="15dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="1dp"
+                android:layout_marginEnd="1dp"
+                android:layout_marginTop="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/quiz_selector_background"
+                android:button="@null"
                 android:gravity="center"
-                android:text="Answer\nTo\nQuestion"
-                android:textColor="@color/textPrimary"
-                android:textSize="16sp" />
-
-
-        </LinearLayout>
+                android:text="Korean\nto\nEnglish"
+                android:textSize="16sp"
+                android:textColor="@drawable/text_color_selector" />
+        </RadioGroup>
 
     </LinearLayout>
 

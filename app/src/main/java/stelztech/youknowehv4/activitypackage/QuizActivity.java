@@ -1,39 +1,19 @@
 package stelztech.youknowehv4.activitypackage;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.CheckBox;
+import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.List;
 
 import stelztech.youknowehv4.R;
+import stelztech.youknowehv4.components.DoubleProgressBar;
 import stelztech.youknowehv4.database.DatabaseManager;
-import stelztech.youknowehv4.helper.Helper;
-import stelztech.youknowehv4.manager.SortingStateManager;
-import stelztech.youknowehv4.model.Card;
-import stelztech.youknowehv4.model.Profile;
 
 /**
  * Created by alex on 2017-05-09.
@@ -46,27 +26,136 @@ public class QuizActivity extends AppCompatActivity {
     private DatabaseManager dbManager;
 
 
+    // progress
+    private DoubleProgressBar progressBar;
+    private TextView passText;
+    private TextView failText;
+    private TextView remainingText;
+    int numPassed;
+    int numFailed;
+    int totalPassedFailed;
+    int maximumNumQuestion;
+
+    // flow
+    private Button showButton;
+    private Button passButton;
+    private Button failButton;
+    private LinearLayout showLayout;
+    private LinearLayout passFailLayout;
+
+
+    QuizActivity(){
+        maximumNumQuestion = 10;
+    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // intro animation
         overridePendingTransition(R.anim.enter, R.anim.exit);
 
         setContentView(R.layout.activity_quiz);
 
         getSupportActionBar().setTitle("Quiz");
-
-
-        dbManager = DatabaseManager.getInstance(this);
-
         // set back button instead of drawer
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        dbManager = DatabaseManager.getInstance(this);
+
+        // init components
+        showButton = (Button) findViewById(R.id.quiz_show_button);
+        passButton = (Button) findViewById(R.id.quiz_pass_button);
+        failButton = (Button) findViewById(R.id.quiz_fail_button);
+        showLayout = (LinearLayout) findViewById(R.id.quiz_show_layout);
+        passFailLayout = (LinearLayout) findViewById(R.id.quiz_pass_fail_layout);
+        passText = (TextView) findViewById(R.id.quiz_progress_bar_pass_text);
+        failText = (TextView) findViewById(R.id.quiz_progress_bar_fail_text);
+        remainingText = (TextView) findViewById(R.id.quiz_progress_bar_remaining_text);
+
+        initProgressBar();
+        initButtons();
     }
 
 
+    private void initProgressBar() {
+        totalPassedFailed = numPassed = numFailed = 0;
+        progressBar = (DoubleProgressBar) findViewById(R.id.quiz_progress_bar);
+        progressBar.setMax(maximumNumQuestion);
+        updateProgressBar();
+    }
 
+
+    private void initButtons() {
+        showButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setShowLayoutVisible(false);
+            }
+        });
+        passButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                numPassed++;
+                setShowLayoutVisible(true);
+                updateProgressBar();
+            }
+        });
+
+        failButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                numFailed++;
+                setShowLayoutVisible(true);
+                updateProgressBar();
+            }
+        });
+
+    }
+
+    private void resetProgressBar() {
+        totalPassedFailed = numPassed = numFailed = 0;
+        updateProgressBar();
+    }
+
+    private void updateProgressBar() {
+
+        totalPassedFailed = numPassed + numFailed;
+
+
+        progressBar.setProgress(numPassed);
+        progressBar.setSecondaryProgress(totalPassedFailed);
+
+
+        if (totalPassedFailed == maximumNumQuestion) {
+
+        } else if (totalPassedFailed == 0) {
+            // reset
+        }
+
+        updateProgressBarText();
+    }
+
+    private void updateProgressBarText() {
+
+        int remaining = maximumNumQuestion - numFailed - numPassed;
+
+        passText.setText(numPassed + " PASSED");
+        failText.setText(numFailed + " FAILED");
+        remainingText.setText(remaining + " REMAINING");
+
+    }
+
+
+    private void setShowLayoutVisible(boolean visible) {
+        if (visible) {
+            passFailLayout.setVisibility(View.GONE);
+            showLayout.setVisibility(View.VISIBLE);
+        } else {
+            showLayout.setVisibility(View.GONE);
+            passFailLayout.setVisibility(View.VISIBLE);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -83,7 +83,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginLeft="5dp"
-                        android:background="@drawable/button_enabled"
+                        android:background="@drawable/button_ripple_primary"
                         android:minHeight="0dp"
                         android:minWidth="0dp"
                         android:paddingBottom="10dp"

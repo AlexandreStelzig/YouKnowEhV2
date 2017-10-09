@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.activitypackage;
+package stelztech.youknowehv4.firsttimeopening;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -13,8 +13,8 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.viewpager.ViewPagerProfile;
-import stelztech.youknowehv4.viewpager.ViewPagerWelcome;
+import stelztech.youknowehv4.firsttimeopening.ViewPagerProfile;
+import stelztech.youknowehv4.firsttimeopening.ViewPagerWelcome;
 
 /**
  * Created by alex on 2017-04-28.

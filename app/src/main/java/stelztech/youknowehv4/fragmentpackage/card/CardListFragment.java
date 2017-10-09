@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.fragmentpackage;
+package stelztech.youknowehv4.fragmentpackage.card;
 
 
 import android.app.AlertDialog;
@@ -51,7 +51,6 @@ import stelztech.youknowehv4.manager.ActionButtonManager;
 import stelztech.youknowehv4.manager.CardToolbarManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.model.Card;
-import stelztech.youknowehv4.model.CardDeck;
 import stelztech.youknowehv4.model.Deck;
 import stelztech.youknowehv4.model.Profile;
 import stelztech.youknowehv4.model.User;

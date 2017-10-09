@@ -550,6 +550,7 @@ public class DatabaseManager {
         values.put(DatabaseVariables.TableProfile.COLUMN_NAME_DATE_MODIFIED, date);
         values.put(DatabaseVariables.TableProfile.COLUMN_NAME_QUESTION_LABEL, "Question");
         values.put(DatabaseVariables.TableProfile.COLUMN_NAME_ANSWER_LABEL, "Answer");
+        values.put(DatabaseVariables.TableProfile.COLUMN_NAME_ACTIVE_QUIZ_ID, "");
 
         long newRowId = -1;
         newRowId = db.insert(
@@ -894,9 +895,11 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_QUESTION_LABEL));
         String answerLabel = cursor.getString(cursor
                 .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_ANSWER_LABEL));
+        String activeQuizId = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_ACTIVE_QUIZ_ID));
 
 
-        return new Profile(profileId, profileName, dateAdded, questionLabel, answerLabel);
+        return new Profile(profileId, profileName, dateAdded, questionLabel, answerLabel, null);
     }
 
 

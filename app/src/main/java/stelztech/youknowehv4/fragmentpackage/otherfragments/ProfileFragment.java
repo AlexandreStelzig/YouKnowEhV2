@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.fragmentpackage;
+package stelztech.youknowehv4.fragmentpackage.otherfragments;
 
 
 import android.content.DialogInterface;
@@ -34,7 +34,6 @@ import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.ActionButtonManager;
-import stelztech.youknowehv4.manager.CardToolbarManager;
 import stelztech.youknowehv4.model.Profile;
 
 /**

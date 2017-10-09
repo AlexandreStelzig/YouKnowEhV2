@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.fragmentpackage;
+package stelztech.youknowehv4.fragmentpackage.otherfragments;
 
 
 import android.content.Intent;
@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;

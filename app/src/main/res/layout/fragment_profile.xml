@@ -59,7 +59,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@drawable/button_enabled"
+                    android:background="@drawable/button_ripple_primary"
                     android:text="EDIT"
                     android:textColor="@color/colorTextIcon" />
 
@@ -69,7 +69,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@drawable/button_enabled"
+                    android:background="@drawable/button_ripple_primary"
                     android:text="NEW"
                     android:textColor="@color/colorTextIcon" />
 

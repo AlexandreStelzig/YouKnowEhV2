@@ -11,9 +11,6 @@ public class CardDeck {
     private String dateAdded;
     private String practiceToggleDate;
 
-    CardDeck() {
-    }
-
     public CardDeck(String deckId, String cardId, boolean isPractice, String dateAdded, String practiceToggleDate) {
         this.deckId = deckId;
         this.cardId = cardId;
