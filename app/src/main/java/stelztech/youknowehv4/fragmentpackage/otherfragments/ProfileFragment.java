@@ -34,7 +34,7 @@ import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
-import stelztech.youknowehv4.model.Profile;
+import stelztech.youknowehv4.database.profile.Profile;
 
 /**
  * Created by alex on 2017-04-03.

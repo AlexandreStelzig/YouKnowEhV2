@@ -31,8 +31,8 @@ import java.util.zip.ZipOutputStream;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.database.card.Card;
-import stelztech.youknowehv4.model.CardDeck;
-import stelztech.youknowehv4.model.Deck;
+import stelztech.youknowehv4.database.carddeck.CardDeck;
+import stelztech.youknowehv4.database.deck.Deck;
 
 /**
  * Created by alex on 2017-05-02.

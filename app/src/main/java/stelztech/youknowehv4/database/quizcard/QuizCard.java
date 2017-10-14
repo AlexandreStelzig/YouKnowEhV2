@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.model;
+package stelztech.youknowehv4.database.quizcard;
 
 /**
  * Created by Alexandre on 4/25/2016.

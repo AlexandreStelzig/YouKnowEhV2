@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.model;
+package stelztech.youknowehv4.database.quiz;
 
 /**
  * Created by Alexandre on 4/25/2016.
@@ -10,15 +10,16 @@ public class Quiz {
         WRITING
     }
 
-    private String quizId;
+    private int quizId;
     private String dateCreated;
     private String dateFinished;
     private MODE mode;
     private boolean reverse;
     private boolean repeat;
     private boolean reviewOnly;
+    private int profileId;
 
-    public Quiz(String quizId, String dateCreated, String dateFinished, MODE mode, boolean reverse, boolean repeat, boolean reviewOnly) {
+    public Quiz(int quizId, String dateCreated, String dateFinished, MODE mode, boolean reverse, boolean repeat, boolean reviewOnly, int profileId) {
         this.quizId = quizId;
         this.dateCreated = dateCreated;
         this.dateFinished = dateFinished;
@@ -26,6 +27,15 @@ public class Quiz {
         this.reverse = reverse;
         this.repeat = repeat;
         this.reviewOnly = reviewOnly;
+        this.profileId = profileId;
+    }
+
+    public int getProfileId() {
+        return profileId;
+    }
+
+    public void setProfileId(int profileId) {
+        this.profileId = profileId;
     }
 
     public boolean isReviewOnly() {
@@ -36,11 +46,11 @@ public class Quiz {
         this.reviewOnly = reviewOnly;
     }
 
-    public String getQuizId() {
+    public int getQuizId() {
         return quizId;
     }
 
-    public void setQuizId(String quizId) {
+    public void setQuizId(int quizId) {
         this.quizId = quizId;
     }
 

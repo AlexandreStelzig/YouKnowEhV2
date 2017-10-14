@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 import stelztech.youknowehv4.fragmentpackage.review.ReviewFragment;
-import stelztech.youknowehv4.model.Deck;
+import stelztech.youknowehv4.database.deck.Deck;
 
 /**
  * Created by alex on 2017-04-10.

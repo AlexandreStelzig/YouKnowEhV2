@@ -51,9 +51,9 @@ import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.CardToolbarManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.database.card.Card;
-import stelztech.youknowehv4.model.Deck;
-import stelztech.youknowehv4.model.Profile;
-import stelztech.youknowehv4.model.User;
+import stelztech.youknowehv4.database.deck.Deck;
+import stelztech.youknowehv4.database.profile.Profile;
+import stelztech.youknowehv4.database.user.User;
 
 /**
  * Created by alex on 2017-04-03.

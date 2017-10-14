@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.model;
+package stelztech.youknowehv4.database.user;
 
 /**
  * Created by alex on 2017-05-11.

@@ -1,4 +1,6 @@
-package stelztech.youknowehv4.model;
+package stelztech.youknowehv4.database.profile;
+
+import java.util.Date;
 
 /**
  * Created by alex on 2017-05-06.
@@ -7,15 +9,15 @@ package stelztech.youknowehv4.model;
 public class Profile {
 
 
-    private String profileId;
+    private int profileId;
     private String profileName;
-    private String dateCreated;
+    private Date dateCreated;
     private String questionLabel;
     private String answerLabel;
     private String activeQuizId;
 
 
-    public Profile(String profileId, String profileName, String dateCreated, String questionLabel, String answerLabel, String activeQuizId) {
+    public Profile(int profileId, String profileName, Date dateCreated, String questionLabel, String answerLabel, String activeQuizId) {
         this.profileId = profileId;
         this.profileName = profileName;
         this.dateCreated = dateCreated;
@@ -24,11 +26,11 @@ public class Profile {
         this.activeQuizId = activeQuizId;
     }
 
-    public String getProfileId() {
+    public int getProfileId() {
         return profileId;
     }
 
-    public void setProfileId(String profileId) {
+    public void setProfileId(int profileId) {
         this.profileId = profileId;
     }
 
@@ -40,11 +42,11 @@ public class Profile {
         this.profileName = profileName;
     }
 
-    public String getDateCreated() {
+    public Date getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(String dateCreated) {
+    public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
     }
 

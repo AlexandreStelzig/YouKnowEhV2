@@ -38,8 +38,8 @@ import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.CardInfoToolbarManager;
 import stelztech.youknowehv4.database.card.Card;
-import stelztech.youknowehv4.model.Deck;
-import stelztech.youknowehv4.model.Profile;
+import stelztech.youknowehv4.database.deck.Deck;
+import stelztech.youknowehv4.database.profile.Profile;
 
 /**
  * Created by alex on 2017-04-04.

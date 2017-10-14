@@ -27,7 +27,7 @@ import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.activitypackage.QuizActivity;
 import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
-import stelztech.youknowehv4.model.Deck;
+import stelztech.youknowehv4.database.deck.Deck;
 
 /**
  * Created by alex on 2017-04-03.
