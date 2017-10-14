@@ -30,7 +30,7 @@ import java.util.zip.ZipOutputStream;
 
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
-import stelztech.youknowehv4.model.Card;
+import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.model.CardDeck;
 import stelztech.youknowehv4.model.Deck;
 
@@ -140,7 +140,7 @@ public final class ExportImportManager {
             String[] nextLine;
             while ((nextLine = reader.readNext()) != null) {
                 // nextLine[] is an array of values from the line
-                System.out.println(nextLine[0] + nextLine[1] + "etc...");
+//                System.out.println(nextLine[0] + nextLine[1] + "etc...");
 
                 if (nextLine.length > 6) {
                     Toast.makeText(context, "Invalid file format", Toast.LENGTH_SHORT).show();
@@ -289,7 +289,7 @@ public final class ExportImportManager {
             while (zipentry != null) {
                 //for each entry to be extracted
                 String entryName = zipentry.getName();
-                System.out.println("entryname " + entryName);
+//                System.out.println("entryname " + entryName);
 
                 String extension = "";
 

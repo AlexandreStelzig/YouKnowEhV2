@@ -40,8 +40,8 @@ import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.helper.CardHelper;
 import stelztech.youknowehv4.helper.Helper;
-import stelztech.youknowehv4.manager.ActionButtonManager;
-import stelztech.youknowehv4.model.Card;
+import stelztech.youknowehv4.manager.FloatingActionButtonManager;
+import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.model.Deck;
 import stelztech.youknowehv4.model.Profile;
 
@@ -137,7 +137,7 @@ public class ReviewFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_review, container, false);
 
-        ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
+        FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
         setHasOptionsMenu(true);
 
         firstTimeOpening = true;
@@ -1034,12 +1034,13 @@ public class ReviewFragment extends Fragment {
     }
 
     public void setButtonsEnable() {
+
         if (isSelectedDeckAll() && !(dbManager.getUser().isAllowPracticeAll()) || mCardList.isEmpty()) {
             nextButton.setEnabled(false);
             showButton.setEnabled(false);
         } else {
             nextButton.setEnabled(true);
-            showButton.setEnabled(true);
+            showButton.setEnabled(!alwaysShowAnswer);
         }
 
         infoButton.setEnabled(!isSelectedDeckAll());

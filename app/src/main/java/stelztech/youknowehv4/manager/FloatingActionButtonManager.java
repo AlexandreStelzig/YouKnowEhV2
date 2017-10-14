@@ -12,7 +12,7 @@ import stelztech.youknowehv4.activitypackage.MainActivityManager;
  * Created by alex on 2017-04-04.
  */
 
-public class ActionButtonManager {
+public class FloatingActionButtonManager {
 
     public enum ActionButtonState {
         ADD_CARD,
@@ -22,16 +22,16 @@ public class ActionButtonManager {
 
     private ActionButtonState currentState;
 
-    private static ActionButtonManager instance;
+    private static FloatingActionButtonManager instance;
     private Context context;
 
-    private ActionButtonManager() {
+    private FloatingActionButtonManager() {
         currentState = ActionButtonState.GONE;
     }
 
-    public static ActionButtonManager getInstance() {
+    public static FloatingActionButtonManager getInstance() {
         if (instance == null) {
-            instance = new ActionButtonManager();
+            instance = new FloatingActionButtonManager();
         }
         return instance;
     }

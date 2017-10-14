@@ -18,7 +18,7 @@ import android.widget.ListView;
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.helper.Helper;
-import stelztech.youknowehv4.manager.ActionButtonManager;
+import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 
 /**
  * Created by alex on 2017-04-03.
@@ -39,7 +39,7 @@ public class AboutFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_about, container, false);
 
-        ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
+        FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
         setHasOptionsMenu(true);
 
         contactListView = (ListView) view.findViewById(R.id.about_contact_listview);

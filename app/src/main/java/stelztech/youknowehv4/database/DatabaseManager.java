@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 import stelztech.youknowehv4.manager.SortingStateManager;
-import stelztech.youknowehv4.model.Card;
+import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.model.CardDeck;
 import stelztech.youknowehv4.model.Deck;
 import stelztech.youknowehv4.model.Profile;
@@ -899,7 +899,7 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_ACTIVE_QUIZ_ID));
 
 
-        return new Profile(profileId, profileName, dateAdded, questionLabel, answerLabel, null);
+        return new Profile(profileId, profileName, dateAdded, questionLabel, answerLabel, activeQuizId);
     }
 
 

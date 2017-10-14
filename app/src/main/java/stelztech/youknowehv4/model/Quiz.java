@@ -5,7 +5,7 @@ package stelztech.youknowehv4.model;
  */
 public class Quiz {
 
-    private enum MODE{
+    private enum MODE {
         READING,
         WRITING
     }
@@ -16,14 +16,24 @@ public class Quiz {
     private MODE mode;
     private boolean reverse;
     private boolean repeat;
+    private boolean reviewOnly;
 
-    public Quiz(String quizId, String dateCreated, String dateFinished, MODE mode, boolean reverse, boolean repeat) {
+    public Quiz(String quizId, String dateCreated, String dateFinished, MODE mode, boolean reverse, boolean repeat, boolean reviewOnly) {
         this.quizId = quizId;
         this.dateCreated = dateCreated;
         this.dateFinished = dateFinished;
         this.mode = mode;
         this.reverse = reverse;
         this.repeat = repeat;
+        this.reviewOnly = reviewOnly;
+    }
+
+    public boolean isReviewOnly() {
+        return reviewOnly;
+    }
+
+    public void setReviewOnly(boolean reviewOnly) {
+        this.reviewOnly = reviewOnly;
     }
 
     public String getQuizId() {

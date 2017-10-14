@@ -28,10 +28,10 @@ import stelztech.youknowehv4.activitypackage.ArchivedActivity;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.helper.Helper;
-import stelztech.youknowehv4.manager.ActionButtonManager;
+import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.ExportImportManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
-import stelztech.youknowehv4.model.Card;
+import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.model.Deck;
 import stelztech.youknowehv4.model.Profile;
 import stelztech.youknowehv4.model.User;
@@ -69,7 +69,7 @@ public class SettingsFragment extends Fragment{
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
+        FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
         setHasOptionsMenu(true);
 
         dbManager = DatabaseManager.getInstance(getContext());

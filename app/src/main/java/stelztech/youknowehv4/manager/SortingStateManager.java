@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Locale;
 
 import stelztech.youknowehv4.database.DatabaseManager;
-import stelztech.youknowehv4.model.Card;
+import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.model.CardDeck;
 import stelztech.youknowehv4.model.Deck;
 import stelztech.youknowehv4.model.User;

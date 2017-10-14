@@ -37,10 +37,10 @@ import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.helper.Helper;
-import stelztech.youknowehv4.manager.ActionButtonManager;
+import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.DeckToolbarManager;
 import stelztech.youknowehv4.manager.ExportImportManager;
-import stelztech.youknowehv4.model.Card;
+import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.model.Deck;
 
 /**
@@ -90,7 +90,7 @@ public class DeckListFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_list, container, false);
 
-        ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.DECK, getActivity());
+        FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.DECK, getActivity());
         setHasOptionsMenu(true);
 
         // init variables
@@ -151,7 +151,7 @@ public class DeckListFragment extends Fragment {
                         Toast.makeText(getContext(), "Need more decks to reorder", Toast.LENGTH_SHORT).show();
                     } else {
                         deckOrdering = true;
-                        ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
+                        FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
                         getActivity().invalidateOptionsMenu();
                         customListAdapter.notifyDataSetChanged(); // valid
                     }
@@ -168,7 +168,7 @@ public class DeckListFragment extends Fragment {
     public void actionDone() {
         deckOrdering = false;
         deckOrderingLastElement = -1;
-        ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.DECK, getActivity());
+        FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.DECK, getActivity());
         getActivity().invalidateOptionsMenu();
         customListAdapter.notifyDataSetChanged(); // valid
         Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();

@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.database.DatabaseManager;
@@ -27,7 +28,7 @@ import stelztech.youknowehv4.fragmentpackage.review.ReviewFragment;
 import stelztech.youknowehv4.fragmentpackage.otherfragments.ProfileFragment;
 import stelztech.youknowehv4.fragmentpackage.otherfragments.SettingsFragment;
 import stelztech.youknowehv4.helper.Helper;
-import stelztech.youknowehv4.manager.ActionButtonManager;
+import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.CardInfoToolbarManager;
 import stelztech.youknowehv4.manager.CardToolbarManager;
 import stelztech.youknowehv4.manager.ExportImportManager;
@@ -88,9 +89,9 @@ public class MainActivityManager extends AppCompatActivity
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         final FrameLayout frame = (FrameLayout) findViewById(R.id.content_frame);
 
-        ActionButtonManager actionButtonManager = ActionButtonManager.getInstance();
-        actionButtonManager.setContext(this);
-        actionButtonManager.setState(ActionButtonManager.ActionButtonState.GONE, this);
+        FloatingActionButtonManager floatingActionButtonManager = FloatingActionButtonManager.getInstance();
+        floatingActionButtonManager.setContext(this);
+        floatingActionButtonManager.setState(FloatingActionButtonManager.ActionButtonState.GONE, this);
 
         CardToolbarManager.getInstance().setContext(this);
         CardInfoToolbarManager.getInstance().setContext(this);

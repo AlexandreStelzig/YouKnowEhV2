@@ -53,7 +53,7 @@ public final class DatabaseVariables {
             + TableProfile.COLUMN_NAME_ANSWER_LABEL + " TEXT NOT NULL,"
             + TableProfile.COLUMN_NAME_ACTIVE_QUIZ_ID + " INTEGER,"
             + TableProfile.COLUMN_NAME_DATE_CREATED + " DATE,"
-            + TableProfile.COLUMN_NAME_DATE_MODIFIED + " DATE"
+            + TableProfile.COLUMN_NAME_DATE_MODIFIED + " DATE,"
             + " FOREIGN KEY " + "(" + TableProfile.COLUMN_NAME_ACTIVE_QUIZ_ID + ")"
             + " REFERENCES " + TableQuiz.TABLE_NAME + "(" + TableQuiz.COLUMN_NAME_QUIZ_ID + ")" + " );";
 
@@ -80,7 +80,8 @@ public final class DatabaseVariables {
             + TableQuiz.COLUMN_NAME_MODE + " TEXT,"
             + TableQuiz.COLUMN_NAME_REPEAT + " BOOLEAN,"
             + TableQuiz.COLUMN_NAME_PROFILE_ID + " INTEGER,"
-            + TableQuiz.COLUMN_NAME_REVERSE + " BOOLEAN"
+            + TableQuiz.COLUMN_NAME_REVIEW_ONLY + " BOOLEAN,"
+            + TableQuiz.COLUMN_NAME_REVERSE + " BOOLEAN,"
             + " FOREIGN KEY " + "(" + TableQuiz.COLUMN_NAME_PROFILE_ID + ")"
             + " REFERENCES " + TableProfile.TABLE_NAME + "(" + TableProfile.COLUMN_NAME_PROFILE_ID + ")" + " );";
 
@@ -173,6 +174,7 @@ public final class DatabaseVariables {
         public static final String COLUMN_NAME_REVERSE = "reverse";
         public static final String COLUMN_NAME_MODE = "mode";
         public static final String COLUMN_NAME_PROFILE_ID = "profileid";
+        public static final String COLUMN_NAME_REVIEW_ONLY = "reviewonly";
     }
 
     public static abstract class TableQuizCard implements BaseColumns{

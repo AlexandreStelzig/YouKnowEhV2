@@ -26,7 +26,7 @@ import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.activitypackage.QuizActivity;
 import stelztech.youknowehv4.database.DatabaseManager;
-import stelztech.youknowehv4.manager.ActionButtonManager;
+import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.model.Deck;
 
 /**
@@ -70,7 +70,7 @@ public class QuizFragment extends Fragment {
 
         Button newQuizButton = (Button) view.findViewById(R.id.quiz_new_button);
 
-        ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
+        FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
         setHasOptionsMenu(true);
 
         newQuizButton.setOnClickListener(new View.OnClickListener() {

@@ -37,7 +37,7 @@ import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.CardInfoToolbarManager;
-import stelztech.youknowehv4.model.Card;
+import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.model.Deck;
 import stelztech.youknowehv4.model.Profile;
 

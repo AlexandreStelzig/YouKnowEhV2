@@ -47,10 +47,10 @@ import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.helper.CardHelper;
 import stelztech.youknowehv4.helper.Helper;
-import stelztech.youknowehv4.manager.ActionButtonManager;
+import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.CardToolbarManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
-import stelztech.youknowehv4.model.Card;
+import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.model.Deck;
 import stelztech.youknowehv4.model.Profile;
 import stelztech.youknowehv4.model.User;
@@ -155,7 +155,7 @@ public class CardListFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_list, container, false);
 
-//        ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.ADD_CARD, getActivity());
+//        FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.ADD_CARD, getActivity());
         setHasOptionsMenu(true);
 
         // init
@@ -221,16 +221,16 @@ public class CardListFragment extends Fragment {
                 CardToolbarManager.getInstance().setState(CardToolbarManager.CardToolbarState.ALL_CARDS, menu, getActivity());
             else
                 CardToolbarManager.getInstance().setState(CardToolbarManager.CardToolbarState.CARD, menu, getActivity());
-            ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.ADD_CARD, getActivity());
+            FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.ADD_CARD, getActivity());
         } else if (currentState == CardListState.SEARCH) {
             if (getCurrentDeckIdSelected().equals(ALL_DECKS_ITEM))
                 CardToolbarManager.getInstance().setState(CardToolbarManager.CardToolbarState.SEARCH_ALL, menu, getActivity());
             else
                 CardToolbarManager.getInstance().setState(CardToolbarManager.CardToolbarState.SEARCH, menu, getActivity());
-            ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
+            FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
         } else {
             CardToolbarManager.getInstance().setState(CardToolbarManager.CardToolbarState.CARD_LIST_EDIT, menu, getActivity());
-            ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
+            FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
 
         }
 
@@ -292,7 +292,7 @@ public class CardListFragment extends Fragment {
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-//                ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.ADD_CARD, getActivity());
+//                FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.ADD_CARD, getActivity());
                 changeState(CardListState.VIEW);
                 ((MainActivityManager) getActivity()).enableDrawerSwipe(true);
                 return true;
@@ -463,7 +463,7 @@ public class CardListFragment extends Fragment {
                 isPracticeList = null;
                 populateSearchListView("");
 
-                ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
+                FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
                 break;
         }
     }

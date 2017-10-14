@@ -33,7 +33,7 @@ import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.DatabaseManager;
 import stelztech.youknowehv4.helper.Helper;
-import stelztech.youknowehv4.manager.ActionButtonManager;
+import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.model.Profile;
 
 /**
@@ -78,7 +78,7 @@ public class ProfileFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        ActionButtonManager.getInstance().setState(ActionButtonManager.ActionButtonState.GONE, getActivity());
+        FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
         setHasOptionsMenu(true);
 
         dbManager = DatabaseManager.getInstance(getContext());

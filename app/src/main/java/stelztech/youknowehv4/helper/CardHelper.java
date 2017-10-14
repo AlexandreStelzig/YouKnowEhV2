@@ -6,7 +6,7 @@ import android.content.Context;
 import java.util.List;
 
 import stelztech.youknowehv4.database.DatabaseManager;
-import stelztech.youknowehv4.model.Card;
+import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.model.Deck;
 import stelztech.youknowehv4.model.Profile;
 
