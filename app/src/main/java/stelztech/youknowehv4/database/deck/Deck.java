@@ -7,7 +7,7 @@ import java.util.Date;
  */
 public class Deck {
 
-    private int deckId;
+    private long deckId;
     private String deckName;
     private Date dateCreated;
     private Date dateModified;
@@ -27,11 +27,11 @@ public class Deck {
         this.position = position;
     }
 
-    public int getDeckId() {
+    public long getDeckId() {
         return deckId;
     }
 
-    public void setDeckId(int deckId) {
+    public void setDeckId(long deckId) {
         this.deckId = deckId;
     }
 

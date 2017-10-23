@@ -10,32 +10,32 @@ import stelztech.youknowehv4.database.quiz.IQuizSchema;
 public interface IQuizCardSchema {
 
     // COLUMNS NAME
-    String TABLE_NAME = "quizcard";
-    String COLUMN_NAME_QUIZ_ID = "quizid";
-    String COLUMN_NAME_CARD_ID = "cardid";
-    String COLUMN_NAME_NUM_FAILED = "numfail";
-    String COLUMN_NAME_PASSED = "passed";
-    String COLUMN_NAME_POSITION = "position";
+    String QUIZ_CARD_TABLE = "quiz_card_table";
+    String COLUMN_QUIZ_ID = "quizid";
+    String COLUMN_CARD_ID = "cardid";
+    String COLUMN_NUM_FAILED = "numfail";
+    String COLUMN_PASSED = "passed";
+    String COLUMN_POSITION = "position";
 
 
     // ON CREATE
     String SQL_CREATE_TABLE_QUIZ_CARD = "CREATE TABLE "
-            + TABLE_NAME + " ("
-            + COLUMN_NAME_CARD_ID + " INTEGER,"
-            + COLUMN_NAME_QUIZ_ID + " INTEGER,"
-            + COLUMN_NAME_NUM_FAILED + " INTEGER,"
-            + COLUMN_NAME_POSITION + " INTEGER,"
-            + COLUMN_NAME_PASSED + " BOOLEAN,"
-            + " FOREIGN KEY " + "(" + COLUMN_NAME_CARD_ID + ")"
-            + " REFERENCES " + ICardSchema.TABLE_NAME + "(" + ICardSchema.COLUMN_NAME_CARD_ID + "),"
-            + " FOREIGN KEY " + "(" + COLUMN_NAME_QUIZ_ID + ")"
-            + " REFERENCES " + IQuizSchema.TABLE_NAME + "(" + IQuizSchema.COLUMN_NAME_QUIZ_ID + ")"
-            + " PRIMARY KEY (" + COLUMN_NAME_CARD_ID + ", " + COLUMN_NAME_QUIZ_ID + ") " + ");";
+            + QUIZ_CARD_TABLE + " ("
+            + COLUMN_CARD_ID + " INTEGER,"
+            + COLUMN_QUIZ_ID + " INTEGER,"
+            + COLUMN_NUM_FAILED + " INTEGER,"
+            + COLUMN_POSITION + " INTEGER,"
+            + COLUMN_PASSED + " BOOLEAN,"
+            + " FOREIGN KEY " + "(" + COLUMN_CARD_ID + ")"
+            + " REFERENCES " + ICardSchema.CARD_TABLE + "(" + ICardSchema.COLUMN_CARD_ID + "),"
+            + " FOREIGN KEY " + "(" + COLUMN_QUIZ_ID + ")"
+            + " REFERENCES " + IQuizSchema.QUIZ_TABLE + "(" + IQuizSchema.COLUMN_QUIZ_ID + ")"
+            + " PRIMARY KEY (" + COLUMN_CARD_ID + ", " + COLUMN_QUIZ_ID + ") " + ");";
 
     // ON DELETE
-    String SQL_DELETE_TABLE_QUIZ_CARD = "DROP TABLE IF EXISTS " + TABLE_NAME;
+    String SQL_DELETE_TABLE_QUIZ_CARD = "DROP TABLE IF EXISTS " + QUIZ_CARD_TABLE;
 
     // COLUMNS
-    String[] QUIZCARD_COLUMNS = new String[]{COLUMN_NAME_QUIZ_ID,
-            COLUMN_NAME_CARD_ID, COLUMN_NAME_NUM_FAILED, COLUMN_NAME_PASSED, COLUMN_NAME_POSITION};
+    String[] QUIZCARD_COLUMNS = new String[]{COLUMN_QUIZ_ID,
+            COLUMN_CARD_ID, COLUMN_NUM_FAILED, COLUMN_PASSED, COLUMN_POSITION};
 }

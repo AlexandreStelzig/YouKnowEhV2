@@ -9,35 +9,35 @@ import stelztech.youknowehv4.database.profile.IProfileSchema;
 public interface IQuizSchema {
 
     // COLUMNS NAME
-    String TABLE_NAME = "quiz";
-    String COLUMN_NAME_QUIZ_ID = "quiz_id";
-    String COLUMN_NAME_DATE_CREATED = "date_created";
-    String COLUMN_NAME_DATE_FINISHED = "date_finished";
-    String COLUMN_NAME_REPEAT = "quiz_failed_repeat";
-    String COLUMN_NAME_REVERSE = "quiz_orientation_reverse";
-    String COLUMN_NAME_MODE = "quiz_mode";
-    String COLUMN_NAME_PROFILE_ID = "profile_id";
-    String COLUMN_NAME_REVIEW_ONLY = "review_cards_only";
+    String QUIZ_TABLE = "quiz_table";
+    String COLUMN_QUIZ_ID = "quiz_id";
+    String COLUMN_DATE_CREATED = "date_created";
+    String COLUMN_DATE_FINISHED = "date_finished";
+    String COLUMN_REPEAT = "quiz_failed_repeat";
+    String COLUMN_REVERSE = "quiz_orientation_reverse";
+    String COLUMN_MODE = "quiz_mode";
+    String COLUMN_PROFILE_ID = "profile_id";
+    String COLUMN_REVIEW_ONLY = "review_cards_only";
 
     // ON CREATE
     String SQL_CREATE_TABLE_QUIZ = "CREATE TABLE "
-            + TABLE_NAME + " ("
-            + COLUMN_NAME_QUIZ_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + COLUMN_NAME_DATE_CREATED + " DATE,"
-            + COLUMN_NAME_DATE_FINISHED + " DATE,"
-            + COLUMN_NAME_MODE + " TEXT,"
-            + COLUMN_NAME_REPEAT + " BOOLEAN,"
-            + COLUMN_NAME_PROFILE_ID + " INTEGER,"
-            + COLUMN_NAME_REVIEW_ONLY + " BOOLEAN,"
-            + COLUMN_NAME_REVERSE + " BOOLEAN,"
-            + " FOREIGN KEY " + "(" + COLUMN_NAME_PROFILE_ID + ")"
-            + " REFERENCES " + IProfileSchema.TABLE_NAME + "(" + IProfileSchema.COLUMN_NAME_PROFILE_ID + ")" + " );";
+            + QUIZ_TABLE + " ("
+            + COLUMN_QUIZ_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + COLUMN_DATE_CREATED + " DATE,"
+            + COLUMN_DATE_FINISHED + " DATE,"
+            + COLUMN_MODE + " TEXT,"
+            + COLUMN_REPEAT + " BOOLEAN,"
+            + COLUMN_PROFILE_ID + " INTEGER,"
+            + COLUMN_REVIEW_ONLY + " BOOLEAN,"
+            + COLUMN_REVERSE + " BOOLEAN,"
+            + " FOREIGN KEY " + "(" + COLUMN_PROFILE_ID + ")"
+            + " REFERENCES " + IProfileSchema.PROFILE_TABLE + "(" + IProfileSchema.COLUMN_PROFILE_ID + ")" + " );";
 
     // ON DELETE
-    String SQL_DELETE_TABLE_QUIZ = "DROP TABLE IF EXISTS " + TABLE_NAME;
+    String SQL_DELETE_TABLE_QUIZ = "DROP TABLE IF EXISTS " + QUIZ_TABLE;
 
     // COLUMNS
-    String[] QUIZ_COLUMNS = new String[]{COLUMN_NAME_QUIZ_ID,
-            COLUMN_NAME_DATE_CREATED, COLUMN_NAME_DATE_FINISHED, COLUMN_NAME_REPEAT, COLUMN_NAME_REVERSE,
-            COLUMN_NAME_MODE, COLUMN_NAME_PROFILE_ID, COLUMN_NAME_REVIEW_ONLY};
+    String[] QUIZ_COLUMNS = new String[]{COLUMN_QUIZ_ID,
+            COLUMN_DATE_CREATED, COLUMN_DATE_FINISHED, COLUMN_REPEAT, COLUMN_REVERSE,
+            COLUMN_MODE, COLUMN_PROFILE_ID, COLUMN_REVIEW_ONLY};
 }

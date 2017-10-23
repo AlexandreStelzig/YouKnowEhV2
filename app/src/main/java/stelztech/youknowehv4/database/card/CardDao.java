@@ -1,8 +1,10 @@
 package stelztech.youknowehv4.database.card;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import stelztech.youknowehv4.database.DbContentProvider;
@@ -13,6 +15,9 @@ import stelztech.youknowehv4.database.DbContentProvider;
 
 public class CardDao extends DbContentProvider implements ICardDao, ICardSchema {
 
+    private ContentValues initialValues;
+    private Cursor cursor;
+
     public CardDao(SQLiteDatabase db) {
         super(db);
     }
@@ -20,12 +25,40 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
 
     @Override
     public List<Card> fetchAllCards() {
-        return null;
+
+        List<Card> cardList = new ArrayList<Card>();
+        cursor = super.query(CARD_TABLE, CARD_COLUMNS, null, null, COLUMN_CARD_ID);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Card card = cursorToEntity(cursor);
+                cardList.add(card);
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+
+        return cardList;
     }
 
     @Override
-    public List<Card> fetchCardById(int cardId) {
-        return null;
+    public Card fetchCardById(int cardId) {
+        final String selectionArgs[] = { String.valueOf(cardId) };
+        final String selection = COLUMN_CARD_ID + " = ?";
+        Card card = null;
+        cursor = super.query(CARD_TABLE, CARD_COLUMNS, selection,
+                selectionArgs, COLUMN_CARD_ID);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                card = cursorToEntity(cursor);
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+
+        return card;
     }
 
     @Override

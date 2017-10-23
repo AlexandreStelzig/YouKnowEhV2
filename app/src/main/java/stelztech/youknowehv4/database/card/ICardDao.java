@@ -9,7 +9,7 @@ import java.util.List;
 public interface ICardDao {
 
     List<Card> fetchAllCards();
-    List<Card> fetchCardById(int cardId);
+    Card fetchCardById(int cardId);
     int createCard(String question, String answer, String moreInfo);
     int createCard(String question, String answer, String moreInfo, String dateCreated, String dateModified);
     void updateCard(int cardId, String question, String answer, String moreInfo);

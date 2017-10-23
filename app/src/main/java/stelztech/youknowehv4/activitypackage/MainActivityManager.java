@@ -15,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.database.DatabaseManager;
@@ -62,7 +61,7 @@ public class MainActivityManager extends AppCompatActivity
     private final int INT_NULL = -1;
 
     private boolean backToPreviousActivity = false;
-    private String lastWordInfoSeen = "";
+    private long lastWordInfoSeen = "";
 
     // Activity results
     public final static int CARD_RESULT = 1;
@@ -260,7 +259,7 @@ public class MainActivityManager extends AppCompatActivity
     }
 
     //
-    public void displayDeckInfo(String deckId) {
+    public void displayDeckInfo(long deckId) {
         displayFragment(R.id.card_list);
         mCardListFragment.setToSelectDeckId(deckId);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -359,7 +358,7 @@ public class MainActivityManager extends AppCompatActivity
     }
 
     // returns the currently selected deck in card list
-    public String getCurrentDeckIdSelected() {
+    public long getCurrentDeckIdSelected() {
         return mCardListFragment.getCurrentDeckIdSelected();
     }
 
@@ -374,7 +373,7 @@ public class MainActivityManager extends AppCompatActivity
     }
 
     // activity to view a new card
-    public void startActivityViewCard(String cardId) {
+    public void startActivityViewCard(long cardId) {
         lastWordInfoSeen = cardId;
         Intent i = new Intent(this, CardInfoActivity.class);
         i.putExtra("initialState", CardInfoActivity.CardInfoState.VIEW);
@@ -382,7 +381,7 @@ public class MainActivityManager extends AppCompatActivity
         this.startActivityForResult(i, MainActivityManager.CARD_RESULT);
     }
 
-    public void startActivityEditCard(String cardId) {
+    public void startActivityEditCard(long cardId) {
         lastWordInfoSeen = cardId;
         Intent i = new Intent(this, CardInfoActivity.class);
         i.putExtra("initialState", CardInfoActivity.CardInfoState.EDIT);

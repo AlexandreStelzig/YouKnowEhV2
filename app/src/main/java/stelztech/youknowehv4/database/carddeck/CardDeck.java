@@ -5,13 +5,13 @@ package stelztech.youknowehv4.database.carddeck;
  */
 public class CardDeck {
 
-    private int deckId;
-    private int cardId;
+    private long deckId;
+    private long cardId;
     private boolean isPractice;
     private String dateAdded;
     private String practiceToggleDate;
 
-    public CardDeck(int deckId, int cardId, boolean isPractice, String dateAdded, String practiceToggleDate) {
+    public CardDeck(long deckId, long cardId, boolean isPractice, String dateAdded, String practiceToggleDate) {
         this.deckId = deckId;
         this.cardId = cardId;
         this.isPractice = isPractice;
@@ -27,11 +27,11 @@ public class CardDeck {
         this.practiceToggleDate = practiceToggleDate;
     }
 
-    public int getDeckId() {
+    public long getDeckId() {
         return deckId;
     }
 
-    public void setDeckId(int deckId) {
+    public void setDeckId(long deckId) {
         this.deckId = deckId;
     }
 
@@ -51,11 +51,11 @@ public class CardDeck {
         this.dateAdded = dateAdded;
     }
 
-    public int getCardId() {
+    public long getCardId() {
         return cardId;
     }
 
-    public void setCardId(int cardId) {
+    public void setCardId(long cardId) {
         this.cardId = cardId;
     }
 }

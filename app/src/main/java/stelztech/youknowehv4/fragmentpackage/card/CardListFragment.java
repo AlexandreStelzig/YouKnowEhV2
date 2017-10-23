@@ -80,7 +80,7 @@ public class CardListFragment extends Fragment {
     }
 
 
-    public final String ALL_DECKS_ITEM = "" + -1;
+    public final long ALL_DECKS_ITEM = "" + -1;
     private final int SPINNER_OFFSET = 1;
 
     // components
@@ -90,7 +90,7 @@ public class CardListFragment extends Fragment {
     private Spinner spinner;
     private ArrayAdapter<String> deckArrayAdapter;
     private List<Deck> deckList;
-    private String toSelectDeckId = ALL_DECKS_ITEM;
+    private long toSelectDeckId = ALL_DECKS_ITEM;
 
     // database
     private DatabaseManager dbManager;
@@ -569,7 +569,7 @@ public class CardListFragment extends Fragment {
         questionEditTextView.setHint(questionLabel + " (mandatory)");
         answerEditTextView.setHint(answerLabel + " (mandatory)");
 
-        final String currentSelectedDeckId = getCurrentDeckIdSelected();
+        final long currentSelectedDeckId = getCurrentDeckIdSelected();
 
         questionEditTextView.setText(questionHolder);
         answerEditTextView.setText(answerHolder);
@@ -835,7 +835,7 @@ public class CardListFragment extends Fragment {
     }
 
     private void editCard() {
-        String cardId = cardList.get(indexSelected).getCardId();
+        long cardId = cardList.get(indexSelected).getCardId();
         ((MainActivityManager) getActivity()).startActivityEditCard(cardId);
     }
 
@@ -979,7 +979,7 @@ public class CardListFragment extends Fragment {
                     scrollToTop = true;
 
 
-                String deckId;
+                long deckId;
                 if (position == 0) {
                     deckId = ALL_DECKS_ITEM;
                 } else {
@@ -1014,7 +1014,7 @@ public class CardListFragment extends Fragment {
 
     }
 
-    public void populateListView(String idDeck) {
+    public void populateListView(long idDeck) {
 
         ((MainActivityManager) getActivity()).enableDrawerSwipe(false);
 
@@ -1082,11 +1082,11 @@ public class CardListFragment extends Fragment {
     }
 
 
-    public void setToSelectDeckId(String deckId) {
+    public void setToSelectDeckId(long deckId) {
         toSelectDeckId = deckId;
     }
 
-    public String getCurrentDeckIdSelected() {
+    public long getCurrentDeckIdSelected() {
         if (spinner.getSelectedItemPosition() == 0)
             return ALL_DECKS_ITEM;
         else
@@ -1294,7 +1294,7 @@ public class CardListFragment extends Fragment {
 
                     // TODO Auto-generated method stub
                     if (currentState == CardListState.VIEW || currentState == CardListState.SEARCH) {
-                        String cardId = cardList.get(position).getCardId();
+                        long cardId = cardList.get(position).getCardId();
                         ((MainActivityManager) getActivity()).startActivityViewCard(cardId);
                     } else if (currentState == CardListState.EDIT_DECK) {
                         isPartOfList[position] = !isPartOfList[position];

@@ -8,7 +8,7 @@ import java.util.Date;
 public class Card {
 
 
-    private int cardId;
+    private long cardId;
     private String question;
     private String answer;
     private String moreInfo;
@@ -16,7 +16,7 @@ public class Card {
     private Date dateModified;
 
 
-    public Card(int cardId, String question, String answer, String moreInfo, Date dateCreated, Date dateModified, boolean archived) {
+    public Card(long cardId, String question, String answer, String moreInfo, Date dateCreated, Date dateModified, boolean archived) {
         this.cardId = cardId;
         this.question = question;
         this.answer = answer;
@@ -37,11 +37,11 @@ public class Card {
     private boolean archived;
 
 
-    public int getCardId() {
+    public long getCardId() {
         return cardId;
     }
 
-    public void setCardId(int cardId) {
+    public void setCardId(long cardId) {
         this.cardId = cardId;
     }
 

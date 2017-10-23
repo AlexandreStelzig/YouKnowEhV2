@@ -977,7 +977,7 @@ public class ReviewFragment extends Fragment {
             if (isSelectedDeckAll()) {
                 mCardList = dbManager.getCards();
             } else {
-                String deckId = deckList.get(selectedDeck - SPINNER_OFFSET).getDeckId();
+                long deckId = deckList.get(selectedDeck - SPINNER_OFFSET).getDeckId();
                 mCardList = dbManager.getDeckPracticeCards(deckId);
             }
 

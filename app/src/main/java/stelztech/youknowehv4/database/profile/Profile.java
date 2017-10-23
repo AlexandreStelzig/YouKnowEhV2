@@ -9,7 +9,7 @@ import java.util.Date;
 public class Profile {
 
 
-    private int profileId;
+    private long profileId;
     private String profileName;
     private Date dateCreated;
     private String questionLabel;
@@ -17,7 +17,7 @@ public class Profile {
     private String activeQuizId;
 
 
-    public Profile(int profileId, String profileName, Date dateCreated, String questionLabel, String answerLabel, String activeQuizId) {
+    public Profile(long profileId, String profileName, Date dateCreated, String questionLabel, String answerLabel, String activeQuizId) {
         this.profileId = profileId;
         this.profileName = profileName;
         this.dateCreated = dateCreated;
@@ -26,11 +26,11 @@ public class Profile {
         this.activeQuizId = activeQuizId;
     }
 
-    public int getProfileId() {
+    public long getProfileId() {
         return profileId;
     }
 
-    public void setProfileId(int profileId) {
+    public void setProfileId(long profileId) {
         this.profileId = profileId;
     }
 

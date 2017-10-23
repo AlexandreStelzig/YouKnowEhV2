@@ -605,7 +605,7 @@ public class CardInfoActivity extends AppCompatActivity {
             deckListAlertDialog.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int indexSelected) {
-                    String deckIdReturn = mCardSpecificDeck.get(indexSelected).getDeckId();
+                    long deckIdReturn = mCardSpecificDeck.get(indexSelected).getDeckId();
                     getIntent().putExtra("deckIdReturn", deckIdReturn);
                     setResult(1, getIntent());
                     setKeyboardVisibility(false);

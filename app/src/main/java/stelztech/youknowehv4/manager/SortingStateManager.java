@@ -246,7 +246,7 @@ public class SortingStateManager {
 
     }
 
-    public List<Card> sortByPractice(Context context, List<Card> cardList, String deckId) {
+    public List<Card> sortByPractice(Context context, List<Card> cardList, long deckId) {
 
         DatabaseManager dbManager = DatabaseManager.getInstance(context);
 

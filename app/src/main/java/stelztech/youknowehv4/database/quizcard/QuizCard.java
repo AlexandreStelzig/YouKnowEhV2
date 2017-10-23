@@ -5,31 +5,31 @@ package stelztech.youknowehv4.database.quizcard;
  */
 public class QuizCard {
 
-    private String quizId;
-    private String cardId;
+    private long quizId;
+    private long cardId;
     private boolean passed;
     private int numFailed;
 
-    public QuizCard(String quizId, String cardId, boolean passed, int numFailed) {
+    public QuizCard(long quizId, long cardId, boolean passed, int numFailed) {
         this.quizId = quizId;
         this.cardId = cardId;
         this.passed = passed;
         this.numFailed = numFailed;
     }
 
-    public String getQuizId() {
+    public long getQuizId() {
         return quizId;
     }
 
-    public void setQuizId(String quizId) {
+    public void setQuizId(long quizId) {
         this.quizId = quizId;
     }
 
-    public String getCardId() {
+    public long getCardId() {
         return cardId;
     }
 
-    public void setCardId(String cardId) {
+    public void setCardId(long cardId) {
         this.cardId = cardId;
     }
 

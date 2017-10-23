@@ -298,7 +298,7 @@ public class ArchivedActivity extends AppCompatActivity {
 
 
     // confirmation dialog
-    private void displayPermDeleteConfirmation(final String cardId) {
+    private void displayPermDeleteConfirmation(final long cardId) {
         final android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(this);
         alertDialog.setMessage("Are you sure you want to permanently delete this card?\n" +
                 "The card will be lost forever.");

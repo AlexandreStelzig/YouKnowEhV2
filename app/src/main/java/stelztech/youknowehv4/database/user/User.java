@@ -1,23 +1,25 @@
 package stelztech.youknowehv4.database.user;
 
+import java.util.Date;
+
 /**
  * Created by alex on 2017-05-11.
  */
 
 public class User {
 
-    private String userId;
-    private String dateCreated;
-    private String activeProfileId;
+    private long userId;
+    private Date dateCreated;
+    private Date activeProfileId;
     private int defaultSortingPosition;
     private boolean allowProfileDeletion;
     private boolean displayNbDecksAllCards;
     private boolean displayNbDecksSpecificCards;
     private boolean allowPracticeAll;
     private boolean allowOnQueryChanged;
-    private int quickToggle;
+    private int quickToggleHours;
 
-    public User(String userId, String dateCreated, String activeProfileId, int defaultSortingPosition, boolean allowProfileDeletion, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards, boolean allowPracticeAll, boolean allowOnQueryChanged, int quickToggle) {
+    public User(long userId, Date dateCreated, Date activeProfileId, int defaultSortingPosition, boolean allowProfileDeletion, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards, boolean allowPracticeAll, boolean allowOnQueryChanged, int quickToggleHours) {
         this.userId = userId;
         this.dateCreated = dateCreated;
         this.activeProfileId = activeProfileId;
@@ -27,16 +29,16 @@ public class User {
         this.displayNbDecksSpecificCards = displayNbDecksSpecificCards;
         this.allowPracticeAll = allowPracticeAll;
         this.allowOnQueryChanged = allowOnQueryChanged;
-        this.quickToggle = quickToggle;
+        this.quickToggleHours = quickToggleHours;
     }
 
 
-    public int getQuickToggle() {
-        return quickToggle;
+    public int getQuickToggleHours() {
+        return quickToggleHours;
     }
 
-    public void setQuickToggle(int quickToggle) {
-        this.quickToggle = quickToggle;
+    public void setQuickToggleHours(int quickToggleHours) {
+        this.quickToggleHours = quickToggleHours;
     }
 
     public boolean isAllowOnQueryChanged() {
@@ -79,27 +81,27 @@ public class User {
         this.displayNbDecksSpecificCards = displayNbDecksSpecificCards;
     }
 
-    public String getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
-    public String getDateCreated() {
+    public Date getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(String dateCreated) {
+    public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
     }
 
-    public String getActiveProfileId() {
+    public Date getActiveProfileId() {
         return activeProfileId;
     }
 
-    public void setActiveProfileId(String activeProfileId) {
+    public void setActiveProfileId(Date activeProfileId) {
         this.activeProfileId = activeProfileId;
     }
 

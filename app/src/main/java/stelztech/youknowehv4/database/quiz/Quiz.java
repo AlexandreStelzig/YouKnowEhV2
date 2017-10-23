@@ -10,16 +10,16 @@ public class Quiz {
         WRITING
     }
 
-    private int quizId;
+    private long quizId;
     private String dateCreated;
     private String dateFinished;
     private MODE mode;
     private boolean reverse;
     private boolean repeat;
     private boolean reviewOnly;
-    private int profileId;
+    private long profileId;
 
-    public Quiz(int quizId, String dateCreated, String dateFinished, MODE mode, boolean reverse, boolean repeat, boolean reviewOnly, int profileId) {
+    public Quiz(long quizId, String dateCreated, String dateFinished, MODE mode, boolean reverse, boolean repeat, boolean reviewOnly, long profileId) {
         this.quizId = quizId;
         this.dateCreated = dateCreated;
         this.dateFinished = dateFinished;
@@ -30,11 +30,11 @@ public class Quiz {
         this.profileId = profileId;
     }
 
-    public int getProfileId() {
+    public long getProfileId() {
         return profileId;
     }
 
-    public void setProfileId(int profileId) {
+    public void setProfileId(long profileId) {
         this.profileId = profileId;
     }
 
@@ -46,11 +46,11 @@ public class Quiz {
         this.reviewOnly = reviewOnly;
     }
 
-    public int getQuizId() {
+    public long getQuizId() {
         return quizId;
     }
 
-    public void setQuizId(int quizId) {
+    public void setQuizId(long quizId) {
         this.quizId = quizId;
     }
 
