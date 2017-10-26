@@ -20,11 +20,11 @@ public interface IDeckSchema {
     // ON CREATE
     String SQL_CREATE_TABLE_DECK = "CREATE TABLE "
             + DECK_TABLE + " ("
-            + COLUMN_DECK_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + COLUMN_DECK_ID + " LONG PRIMARY KEY AUTOINCREMENT,"
             + COLUMN_DECK_NAME + " TEXT NOT NULL,"
-            + COLUMN_DATE_CREATED + " DATE,"
-            + COLUMN_DATE_MODIFIED + " DATE,"
-            + COLUMN_PROFILE_ID + " INTEGER,"
+            + COLUMN_DATE_CREATED + " BIGINT,"
+            + COLUMN_DATE_MODIFIED + " BIGINT,"
+            + COLUMN_PROFILE_ID + " LONG,"
             + COLUMN_POSITION + " INTEGER,"
             + " FOREIGN KEY " + "(" + COLUMN_PROFILE_ID + ")"
             + " REFERENCES " + IProfileSchema.PROFILE_TABLE + "(" + IProfileSchema.COLUMN_PROFILE_ID + ")" + " );";

@@ -11,10 +11,10 @@ import stelztech.youknowehv4.database.profile.Profile;
 public interface IDeckDao {
 
     List<Deck> fetchAllDecks();
-    Deck fetchDeckFromId(int deckId);
-    boolean deleteDeck(int deckId);
-    int createDeck(String deckName);
-    boolean updateDeck(int deckId, String newDeckName);
+    Deck fetchDeckFromId(long deckId);
+    boolean deleteDeck(long deckId);
+    long createDeck(String deckName);
+    boolean updateDeck(long deckId, String newDeckName);
     void swapDeckPosition(Deck deck1, Deck deck2);
     void changeDeckPosition(int newPosition, Deck deck);
 }

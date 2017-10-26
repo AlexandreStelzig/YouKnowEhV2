@@ -14,8 +14,14 @@ import stelztech.youknowehv4.database.profile.Profile;
 
 public class UserDao extends DbContentProvider implements IUserDao, IUserSchema {
 
+
     public UserDao(SQLiteDatabase db) {
         super(db);
+    }
+
+    @Override
+    protected User cursorToEntity(Cursor cursor) {
+        return null;
     }
 
     @Override
@@ -24,8 +30,8 @@ public class UserDao extends DbContentProvider implements IUserDao, IUserSchema 
     }
 
     @Override
-    public String createUser() {
-        return null;
+    public long createUser() {
+        return 0;
     }
 
     @Override
@@ -39,7 +45,7 @@ public class UserDao extends DbContentProvider implements IUserDao, IUserSchema 
     }
 
     @Override
-    public boolean setActiveProfile(String profileId) {
+    public boolean setActiveProfile(long profileId) {
         return false;
     }
 
@@ -57,11 +63,4 @@ public class UserDao extends DbContentProvider implements IUserDao, IUserSchema 
     public Profile fetchActiveProfile() {
         return null;
     }
-
-
-    @Override
-    protected User cursorToEntity(Cursor cursor) {
-        return null;
-    }
-
 }

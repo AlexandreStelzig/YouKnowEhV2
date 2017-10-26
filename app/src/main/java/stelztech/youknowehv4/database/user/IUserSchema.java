@@ -24,7 +24,7 @@ public interface IUserSchema {
     // ON CREATE
   String SQL_CREATE_TABLE_USER = "CREATE TABLE "
             + USER_TABLE + " ("
-            + COLUMN_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + COLUMN_USER_ID + " LONG PRIMARY KEY AUTOINCREMENT,"
             + COLUMN_DEFAULT_SORTING + " INTEGER NOT NULL,"
             + COLUMN_ALLOW_PROFILE_DELETION + " BOOLEAN,"
             + COLUMN_DISPLAY_ALL_CARDS + " BOOLEAN,"
@@ -32,8 +32,8 @@ public interface IUserSchema {
             + COLUMN_QUICK_TOGGLE_REVIEW + " INTEGER,"
             + COLUMN_ALLOW_SEARCH_ON_QUERY_CHANGED + " BOOLEAN,"
             + COLUMN_ALLOW_PRACTICE_ALL + " BOOLEAN,"
-            + COLUMN_DATE_CREATED + " DATE,"
-            + COLUMN_ACTIVE_PROFILE_ID + " INTEGER,"
+            + COLUMN_DATE_CREATED + " BIGINT,"
+            + COLUMN_ACTIVE_PROFILE_ID + " LONG,"
             + " FOREIGN KEY " + "(" + COLUMN_ACTIVE_PROFILE_ID + ")"
             + " REFERENCES " + IProfileSchema.PROFILE_TABLE + "(" + IProfileSchema.COLUMN_PROFILE_ID + ") " + ");";
 

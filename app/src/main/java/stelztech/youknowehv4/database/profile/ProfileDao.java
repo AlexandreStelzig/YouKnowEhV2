@@ -6,9 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.List;
 
 import stelztech.youknowehv4.database.DbContentProvider;
-import stelztech.youknowehv4.database.card.Card;
-import stelztech.youknowehv4.database.card.ICardDao;
-import stelztech.youknowehv4.database.card.ICardSchema;
 
 /**
  * Created by alex on 10/14/2017.
@@ -20,6 +17,10 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
         super(db);
     }
 
+    @Override
+    protected Profile cursorToEntity(Cursor cursor) {
+        return null;
+    }
 
     @Override
     public List<Profile> fetchAllProfiles() {
@@ -27,32 +28,32 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
     }
 
     @Override
-    public Profile fetchProfileFromId(int profileId) {
+    public Profile fetchProfileFromId(long profileId) {
         return null;
     }
 
     @Override
-    public boolean deleteProfile(int profileId) {
+    public boolean deleteProfile(long profileId) {
         return false;
     }
 
     @Override
-    public int createProfile(String name) {
+    public long createProfile(String name) {
         return 0;
     }
 
     @Override
-    public boolean updateProfile(int profileId, String name) {
+    public boolean updateProfile(long profileId, String name) {
         return false;
     }
 
     @Override
-    public boolean updateProfileQuestionLabel(int profileId, String questionLabel) {
+    public boolean updateProfileQuestionLabel(long profileId, String questionLabel) {
         return false;
     }
 
     @Override
-    public boolean updateProfileAnswerLabel(int profileId, String answerLabel) {
+    public boolean updateProfileAnswerLabel(long profileId, String answerLabel) {
         return false;
     }
 
@@ -70,10 +71,4 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
     public boolean toggleDisplayNumDecksSpecificCard() {
         return false;
     }
-
-    @Override
-    protected Profile cursorToEntity(Cursor cursor) {
-        return null;
-    }
-
 }

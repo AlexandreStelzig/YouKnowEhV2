@@ -11,12 +11,12 @@ import stelztech.youknowehv4.database.card.Card;
 public interface IProfileDao {
 
     List<Profile> fetchAllProfiles();
-    Profile fetchProfileFromId(int profileId);
-    boolean deleteProfile(int profileId);
-    int createProfile(String name);
-    boolean updateProfile(int profileId, String name);
-    boolean updateProfileQuestionLabel(int profileId, String questionLabel);
-    boolean updateProfileAnswerLabel(int profileId, String answerLabel);
+    Profile fetchProfileFromId(long profileId);
+    boolean deleteProfile(long profileId);
+    long createProfile(String name);
+    boolean updateProfile(long profileId, String name);
+    boolean updateProfileQuestionLabel(long profileId, String questionLabel);
+    boolean updateProfileAnswerLabel(long profileId, String answerLabel);
     boolean toggleAllowPracticeAll();
     boolean toggleDisplayNumDecksAllCards();
     boolean toggleDisplayNumDecksSpecificCard();

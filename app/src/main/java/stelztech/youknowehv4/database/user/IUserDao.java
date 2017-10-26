@@ -11,10 +11,10 @@ import stelztech.youknowehv4.database.profile.Profile;
 public interface IUserDao {
 
     User fetchUser(); // only one ever created
-    String createUser();
+    long createUser();
     boolean updateDefaultSortPosition(int position);
     boolean updateQuickToggleReviewHours(int hours);
-    boolean setActiveProfile(String profileId);
+    boolean setActiveProfile(long profileId);
     boolean toggleAllowProfileDeletion();
     boolean toggleAllowSearchOnQueryChanged();
     Profile fetchActiveProfile();

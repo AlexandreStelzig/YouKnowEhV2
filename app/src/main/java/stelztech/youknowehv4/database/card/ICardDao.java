@@ -9,11 +9,10 @@ import java.util.List;
 public interface ICardDao {
 
     List<Card> fetchAllCards();
-    Card fetchCardById(int cardId);
-    int createCard(String question, String answer, String moreInfo);
-    int createCard(String question, String answer, String moreInfo, String dateCreated, String dateModified);
-    void updateCard(int cardId, String question, String answer, String moreInfo);
-    boolean deleteCard(int cardId);
-    boolean toggleArchiveCard(int cardId);
+    Card fetchCardById(long cardId);
+    long createCard(String question, String answer, String moreInfo);
+    boolean updateCard(long cardId, String question, String answer, String moreInfo);
+    boolean deleteCard(long cardId);
+    boolean toggleArchiveCard(long cardId);
     List<Card> fetchArchivedCards(); // for current profile
 }

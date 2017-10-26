@@ -21,8 +21,8 @@ public interface IQuizCardSchema {
     // ON CREATE
     String SQL_CREATE_TABLE_QUIZ_CARD = "CREATE TABLE "
             + QUIZ_CARD_TABLE + " ("
-            + COLUMN_CARD_ID + " INTEGER,"
-            + COLUMN_QUIZ_ID + " INTEGER,"
+            + COLUMN_CARD_ID + " LONG NOT NULL,"
+            + COLUMN_QUIZ_ID + " LONG NOT NULL,"
             + COLUMN_NUM_FAILED + " INTEGER,"
             + COLUMN_POSITION + " INTEGER,"
             + COLUMN_PASSED + " BOOLEAN,"

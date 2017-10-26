@@ -31,21 +31,13 @@ public class Database {
     private static DatabaseHelper mDatabaseHelper;
 
     // tables
-    public CardDao mCardDao;
-    public CardDeckDao mCardDeckDao;
-    public DeckDao mDeckDao;
-    public ProfileDao mProfileDao;
-    public QuizDao mQuizDao;
-    public QuizCardDao mQuizCardDao;
-    public UserDao mUserDao;
-
-    public static Database getInstance() {
-        if (database == null) {
-            Log.e(TAG, "Cannot get instance of database - database is not open");
-            return null;
-        }
-        return database;
-    }
+    public static CardDao mCardDao;
+    public static CardDeckDao mCardDeckDao;
+    public static DeckDao mDeckDao;
+    public static ProfileDao mProfileDao;
+    public static QuizDao mQuizDao;
+    public static QuizCardDao mQuizCardDao;
+    public static UserDao mUserDao;
 
     private Database(Context context) {
         mDatabaseHelper = new DatabaseHelper(context);

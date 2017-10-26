@@ -47,28 +47,6 @@ public class DatabaseManager {
 
     ////////////// GET //////////////
 
-//    public List<Card> getCards() {
-//        SQLiteDatabase db = database.getReadableDatabase();
-//
-//        String activeProfileId = getActiveProfile().getProfileId();
-//
-//        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableCard.TABLE_NAME + " WHERE "
-//                + DatabaseVariables.TableCard.COLUMN_NAME_ARCHIVED + "=" + 0 + " AND "
-//                + DatabaseVariables.TableCard.COLUMN_NAME_PROFILE_ID + "=" + activeProfileId, null);
-//        List<Card> cardList = new ArrayList<Card>();
-//
-//        if (cursor.moveToFirst()) {
-//            while (cursor.isAfterLast() == false) {
-//                cardList.add(fetchCardFromCursor(cursor));
-//                cursor.moveToNext();
-//            }
-//        }
-//        cursor.close();
-//
-//        cardList = SortingStateManager.getInstance().sortCardList(cardList);
-//
-//        return cardList;
-//    }
 
 //    public List<Deck> getDecks() {
 //        SQLiteDatabase db = database.getReadableDatabase();
@@ -109,20 +87,6 @@ public class DatabaseManager {
 //        return user;
 //    }
 
-
-//    public Card getCardFromId(String cardId) {
-//        SQLiteDatabase db = database.getReadableDatabase();
-//        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableCard.TABLE_NAME + " WHERE "
-//                + DatabaseVariables.TableCard.COLUMN_NAME_CARD_ID + "=" + cardId, null);
-//        Card card = null;
-//
-//        if (cursor.moveToFirst()) {
-//            card = fetchCardFromCursor(cursor);
-//            cursor.moveToNext();
-//        }
-//        cursor.close();
-//        return card;
-//    }
 
 //    public Deck getDeckFromId(String deckId) {
 //        SQLiteDatabase db = database.getReadableDatabase();
@@ -391,24 +355,6 @@ public class DatabaseManager {
 
     ////////////// ARCHIVED //////////////
 
-//    public void toggleArchiveCard(String cardId) {
-//        SQLiteDatabase db = database.getReadableDatabase();
-//        ContentValues values = new ContentValues();
-//
-//        boolean currentArchive = getCardFromId(cardId).isArchived();
-//
-//        if (!currentArchive) {
-//            List<Deck> decks = getDecksFromCard(cardId);
-//            // delete card-deck
-//            for (int counter = 0; counter < decks.size(); counter++) {
-//                deleteCardDeck(cardId, decks.get(counter).getDeckId());
-//            }
-//        }
-//
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_ARCHIVED, !currentArchive);
-//        db.update(DatabaseVariables.TableCard.TABLE_NAME, values,
-//                DatabaseVariables.TableCard.COLUMN_NAME_CARD_ID + "=" + cardId, null);
-//    }
 //
 //
 //    public List<Card> getArchivedCards() {
@@ -461,61 +407,6 @@ public class DatabaseManager {
 //        return Long.toString(newRowId);
 //    }
 
-
-//    public String createCard(String question, String answer, String moreInfo) {
-//        SQLiteDatabase db = database.getWritableDatabase();
-//        ContentValues values = new ContentValues();
-//
-//        String date = getDateNow();
-//
-//        String activeProfileId = getActiveProfile().getProfileId();
-//
-//
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_QUESTION, question);
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_ANSWER, answer);
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_MORE_INFORMATION, moreInfo);
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_DATE_CREATED, date);
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_DATE_MODIFIED, date);
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_PROFILE_ID, activeProfileId);
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_ARCHIVED, false);
-//
-//        long newRowId = -1;
-//        newRowId = db.insert(
-//                DatabaseVariables.TableCard.TABLE_NAME,
-//                null,
-//                values);
-//        return Long.toString(newRowId);
-//    }
-
-//    public String createCard(String question, String answer, String moreInfo, String dateCreated, String dateModified) {
-//        SQLiteDatabase db = database.getWritableDatabase();
-//        ContentValues values = new ContentValues();
-//
-//        String date = getDateNow();
-//
-//        String activeProfileId = getActiveProfile().getProfileId();
-//
-//        if (dateCreated.isEmpty())
-//            dateCreated = date;
-//        if ((dateModified.isEmpty()))
-//            dateModified = date;
-//
-//
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_QUESTION, question);
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_ANSWER, answer);
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_MORE_INFORMATION, moreInfo);
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_DATE_CREATED, dateCreated);
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_DATE_MODIFIED, dateModified);
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_PROFILE_ID, activeProfileId);
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_ARCHIVED, false);
-//
-//        long newRowId = -1;
-//        newRowId = db.insert(
-//                DatabaseVariables.TableCard.TABLE_NAME,
-//                null,
-//                values);
-//        return Long.toString(newRowId);
-//    }
 
 
 //    public String createCardDeck(String cardId, String deckId) {
@@ -615,19 +506,6 @@ public class DatabaseManager {
 //    }
 
 
-//    public void updateCard(String cardId, String question, String answer, String moreInfo) {
-//        SQLiteDatabase db = database.getReadableDatabase();
-//        ContentValues values = new ContentValues();
-//
-//        String date = getDateNow();
-//
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_QUESTION, question);
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_ANSWER, answer);
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_MORE_INFORMATION, moreInfo);
-//        values.put(DatabaseVariables.TableCard.COLUMN_NAME_DATE_MODIFIED, date);
-//        db.update(DatabaseVariables.TableCard.TABLE_NAME, values,
-//                DatabaseVariables.TableCard.COLUMN_NAME_CARD_ID + "=" + cardId, null);
-//    }
 
 //    public void updateProfile(String profileId, String name) {
 //        SQLiteDatabase db = database.getReadableDatabase();
@@ -832,25 +710,6 @@ public class DatabaseManager {
 
     ////////////// HELPERS //////////////
 
-//    private Card fetchCardFromCursor(Cursor cursor) {
-//
-//        String id = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableCard.COLUMN_NAME_CARD_ID));
-//        String question = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableCard.COLUMN_NAME_QUESTION));
-//        String answer = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableCard.COLUMN_NAME_ANSWER));
-//        String moreInfo = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableCard.COLUMN_NAME_MORE_INFORMATION));
-//        String dateCreated = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableCard.COLUMN_NAME_DATE_CREATED));
-//        String dateModified = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableCard.COLUMN_NAME_DATE_MODIFIED));
-//        boolean archived = cursor.getInt(cursor
-//                .getColumnIndex(DatabaseVariables.TableCard.COLUMN_NAME_ARCHIVED)) > 0;
-//
-//        return new Card(id, question, answer, moreInfo, dateCreated, dateModified, archived);
-//    }
 //
 //    private Deck fetchDeckFromCursor(Cursor cursor) {
 //        String id = cursor.getString(cursor
@@ -869,19 +728,7 @@ public class DatabaseManager {
 
 
 //    private CardDeck fetchCardDeckFromCursor(Cursor cursor) {
-//        String deckId = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableCardDeck.COLUMN_NAME_DECK_ID));
-//        String cardId = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableCardDeck.COLUMN_NAME_CARD_ID));
-//        boolean isPractice = cursor.getInt(cursor
-//                .getColumnIndex(DatabaseVariables.TableCardDeck.COLUMN_NAME_IS_PRACTICE)) > 0;
-//        String dateAdded = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableCardDeck.COLUMN_NAME_DATE_ADDED));
-//        String dateTogglePractice = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableCardDeck.COLUMN_NAME_DATE_TOGGLE_PRACTICE));
-//
-//
-//        return new CardDeck(deckId, cardId, isPractice, dateAdded, dateTogglePractice);
+
 //    }
 
 //    private Profile fetchProfileFromCursor(Cursor cursor) {
@@ -930,12 +777,6 @@ public class DatabaseManager {
 //        return new User(userId, dateCreated, activeProfileId, defaultSorting, allowProfileDeletion, displayAllCards, displaySpecificDeck, allowPracticeAll, allowOnQueryChanged, quickToggle);
 //    }
 
-    private String getDateNow() {
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-        Date now = Calendar.getInstance().getTime();
-        return df.format(now);
-    }
-//
 //    public Profile getActiveProfile() {
 //
 //        User user = getUser();

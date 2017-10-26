@@ -1,5 +1,7 @@
 package stelztech.youknowehv4.database.carddeck;
 
+import java.util.Date;
+
 /**
  * Created by Alexandre on 4/25/2016.
  */
@@ -8,22 +10,22 @@ public class CardDeck {
     private long deckId;
     private long cardId;
     private boolean isPractice;
-    private String dateAdded;
-    private String practiceToggleDate;
+    private Date dateCreated;
+    private Date practiceToggleDate;
 
-    public CardDeck(long deckId, long cardId, boolean isPractice, String dateAdded, String practiceToggleDate) {
+    public CardDeck(long deckId, long cardId, boolean isPractice, Date dateCreated, Date practiceToggleDate) {
         this.deckId = deckId;
         this.cardId = cardId;
         this.isPractice = isPractice;
-        this.dateAdded = dateAdded;
+        this.dateCreated = dateCreated;
         this.practiceToggleDate = practiceToggleDate;
     }
 
-    public String getPracticeToggleDate() {
+    public Date getPracticeToggleDate() {
         return practiceToggleDate;
     }
 
-    public void setPracticeToggleDate(String practiceToggleDate) {
+    public void setPracticeToggleDate(Date practiceToggleDate) {
         this.practiceToggleDate = practiceToggleDate;
     }
 
@@ -43,12 +45,12 @@ public class CardDeck {
         isPractice = practice;
     }
 
-    public String getDateAdded() {
-        return dateAdded;
+    public Date getDateCreated() {
+        return dateCreated;
     }
 
-    public void setDateAdded(String dateAdded) {
-        this.dateAdded = dateAdded;
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
     }
 
     public long getCardId() {
