@@ -21,7 +21,6 @@ import stelztech.youknowehv4.helper.DateHelper;
 
 public class CardDao extends DbContentProvider implements ICardDao, ICardSchema {
 
-    private ContentValues initialValues;
     private Cursor cursor;
 
     public CardDao(SQLiteDatabase db) {

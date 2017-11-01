@@ -29,22 +29,6 @@ import stelztech.youknowehv4.database.user.User;
  */
 public class DatabaseManager {
 
-    private static DatabaseManager databaseManager = null;
-    private Database database;
-
-
-    public static DatabaseManager getInstance(Context context) {
-        if (databaseManager == null) {
-            databaseManager = new DatabaseManager(context);
-        }
-        return databaseManager;
-    }
-
-
-    DatabaseManager(Context context) {
-        database = new Database(context);
-    }
-
     ////////////// GET //////////////
 
 
