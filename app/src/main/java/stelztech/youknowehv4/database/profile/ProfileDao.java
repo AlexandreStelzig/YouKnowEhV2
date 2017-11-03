@@ -3,6 +3,7 @@ package stelztech.youknowehv4.database.profile;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.Date;
 import java.util.List;
 
 import stelztech.youknowehv4.database.DbContentProvider;
@@ -18,17 +19,12 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
     }
 
     @Override
-    protected Profile cursorToEntity(Cursor cursor) {
-        return null;
-    }
-
-    @Override
     public List<Profile> fetchAllProfiles() {
         return null;
     }
 
     @Override
-    public Profile fetchProfileFromId(long profileId) {
+    public Profile fetchProfileById(long profileId) {
         return null;
     }
 
@@ -71,4 +67,19 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
     public boolean toggleDisplayNumDecksSpecificCard() {
         return false;
     }
+
+    @Override
+    protected Profile cursorToEntity(Cursor cursor) {
+
+        long profileId = cursor.getLong(cursor.getColumnIndex(COLUMN_PROFILE_ID));
+        String profileName = cursor.getString(cursor.getColumnIndex(COLUMN_PROFILE_NAME));
+        Date dateAdded = new Date(cursor.getLong(cursor.getColumnIndex(COLUMN_DATE_CREATED)));
+        String questionLabel = cursor.getString(cursor.getColumnIndex(COLUMN_QUESTION_LABEL));
+        String answerLabel = cursor.getString(cursor.getColumnIndex(COLUMN_ANSWER_LABEL));
+        long activeQuizId = cursor.getLong(cursor.getColumnIndex(COLUMN_ACTIVE_QUIZ_ID));
+
+
+        return new Profile(profileId, profileName, dateAdded, questionLabel, answerLabel, activeQuizId);
+    }
+
 }

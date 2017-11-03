@@ -14,10 +14,10 @@ public class Profile {
     private Date dateCreated;
     private String questionLabel;
     private String answerLabel;
-    private String activeQuizId;
+    private long activeQuizId;
 
 
-    public Profile(long profileId, String profileName, Date dateCreated, String questionLabel, String answerLabel, String activeQuizId) {
+    public Profile(long profileId, String profileName, Date dateCreated, String questionLabel, String answerLabel, long activeQuizId) {
         this.profileId = profileId;
         this.profileName = profileName;
         this.dateCreated = dateCreated;
@@ -66,11 +66,11 @@ public class Profile {
         this.answerLabel = answerLabel;
     }
 
-    public String getActiveQuizId() {
+    public long getActiveQuizId() {
         return activeQuizId;
     }
 
-    public void setActiveQuizId(String activeQuizId) {
+    public void setActiveQuizId(long activeQuizId) {
         this.activeQuizId = activeQuizId;
     }
 }

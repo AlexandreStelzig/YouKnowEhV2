@@ -32,46 +32,6 @@ public class DatabaseManager {
     ////////////// GET //////////////
 
 
-//    public List<Deck> getDecks() {
-//        SQLiteDatabase db = database.getReadableDatabase();
-//
-//        String activeProfileId = getActiveProfile().getProfileId();
-//
-//        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableDeck.TABLE_NAME + " WHERE "
-//                + DatabaseVariables.TableDeck.COLUMN_NAME_PROFILE_ID + "=" + activeProfileId, null);
-//        List<Deck> deckList = new ArrayList<Deck>();
-//
-//        if (cursor.moveToFirst()) {
-//            while (cursor.isAfterLast() == false) {
-//                deckList.add(fetchDeckFromCursor(cursor));
-//                cursor.moveToNext();
-//            }
-//        }
-//
-//        deckList = SortingStateManager.getInstance().sortDeck(deckList);
-//
-//
-//        cursor.close();
-//        return deckList;
-//    }
-
-//    public User getUser() {
-//        SQLiteDatabase db = database.getReadableDatabase();
-//
-//        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableUser.TABLE_NAME, null);
-//        User user = null;
-//
-//        if (cursor.moveToFirst()) {
-//            user = (fetchUserFromCursor(cursor));
-//            cursor.moveToNext();
-//
-//        }
-//
-//        cursor.close();
-//        return user;
-//    }
-
-
 //    public Deck getDeckFromId(String deckId) {
 //        SQLiteDatabase db = database.getReadableDatabase();
 //        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TableDeck.TABLE_NAME + " WHERE "
@@ -439,40 +399,7 @@ public class DatabaseManager {
 //        return Long.toString(newRowId);
 //    }
 
-//    public String createUser() {
-//
-//        if (getUser() == null) {
-//            SQLiteDatabase db = database.getWritableDatabase();
-//            ContentValues values = new ContentValues();
-//
-//            String date = getDateNow();
-//
-//            values.put(DatabaseVariables.TableUser.COLUMN_NAME_DATE_CREATED, date);
-//            values.put(DatabaseVariables.TableUser.COLUMN_NAME_ACTIVE_PROFILE_ID, "-1");
-//            values.put(DatabaseVariables.TableUser.COLUMN_NAME_DEFAULT_SORTING, "0");
-//            values.put(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_PROFILE_DELETION, 0);
-//            values.put(DatabaseVariables.TableUser.COLUMN_NAME_DISPLAY_ALL_CARDS, 1);
-//            values.put(DatabaseVariables.TableUser.COLUMN_NAME_DISPLAY_SPECIFIC_DECK, 0);
-//            values.put(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_PRACTICE_ALL, 0);
-//            values.put(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_SEARCH_ON_QUERY_CHANGED, 1);
-//            values.put(DatabaseVariables.TableUser.COLUMN_NAME_QUICK_TOGGLE_REVIEW, 12);
-//
-//
-//            long newRowId = -1;
-//            newRowId = db.insert(
-//                    DatabaseVariables.TableUser.TABLE_NAME,
-//                    null,
-//                    values);
-//
-//            // set newly created profile to active
-//            setActiveProfile(Long.toString(newRowId));
-//
-//            return Long.toString(newRowId);
-//        } else {
-//            return "-1";
-//        }
-//
-//    }
+
 
     ////////////// UPDATE //////////////
 
@@ -528,27 +455,6 @@ public class DatabaseManager {
 //                DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_ID + "=" + profileId, null);
 //    }
 
-//    public void updateDefaultSortPosition(int position) {
-//        SQLiteDatabase db = database.getReadableDatabase();
-//        ContentValues values = new ContentValues();
-//
-//        User user = getUser();
-//
-//        values.put(DatabaseVariables.TableUser.COLUMN_NAME_DEFAULT_SORTING, position);
-//        db.update(DatabaseVariables.TableUser.TABLE_NAME, values,
-//                DatabaseVariables.TableUser.COLUMN_NAME_USER_ID + "=" + user.getUserId(), null);
-//    }
-//
-//    public void updateQuickToggleReviewHours(int hours) {
-//        SQLiteDatabase db = database.getReadableDatabase();
-//        ContentValues values = new ContentValues();
-//
-//        User user = getUser();
-//
-//        values.put(DatabaseVariables.TableUser.COLUMN_NAME_QUICK_TOGGLE_REVIEW, hours);
-//        db.update(DatabaseVariables.TableUser.TABLE_NAME, values,
-//                DatabaseVariables.TableUser.COLUMN_NAME_USER_ID + "=" + user.getUserId(), null);
-//    }
 
 
     ////////////// OTHER //////////////
@@ -581,17 +487,6 @@ public class DatabaseManager {
 //
 //    }
 
-//    public void setActiveProfile(String profileId) {
-//        SQLiteDatabase db = database.getReadableDatabase();
-//        ContentValues values = new ContentValues();
-//
-//        User user = getUser();
-//
-//        values.put(DatabaseVariables.TableUser.COLUMN_NAME_ACTIVE_PROFILE_ID, profileId);
-//        db.update(DatabaseVariables.TableUser.TABLE_NAME, values,
-//                DatabaseVariables.TableUser.COLUMN_NAME_USER_ID + "=" + user.getUserId(), null);
-//
-//    }
 //
 //    public void swapDeckPosition(Deck deck1, Deck deck2) {
 //        SQLiteDatabase db = database.getReadableDatabase();
@@ -607,39 +502,6 @@ public class DatabaseManager {
 //        values.put(DatabaseVariables.TableDeck.COLUMN_NAME_POSITION, deck1Position);
 //        db.update(DatabaseVariables.TableDeck.TABLE_NAME, values,
 //                DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID + "=" + deck2.getDeckId(), null);
-//
-//    }
-
-
-//    public void toggleAllowProfileDeletion() {
-//
-//        User user = getUser();
-//
-//        boolean currentIsProfileDeletion = user.isAllowProfileDeletion();
-//        boolean newIsProfileDeletion = !currentIsProfileDeletion;
-//
-//        SQLiteDatabase db = database.getReadableDatabase();
-//        ContentValues values = new ContentValues();
-//
-//        values.put(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_PROFILE_DELETION, newIsProfileDeletion);
-//        db.update(DatabaseVariables.TableUser.TABLE_NAME, values,
-//                DatabaseVariables.TableUser.COLUMN_NAME_USER_ID + "=" + user.getUserId(), null);
-//
-//    }
-
-//    public void toggleAllowSearchOnQueryChanged() {
-//
-//        User user = getUser();
-//
-//        boolean current = user.isAllowOnQueryChanged();
-//        boolean next = !current;
-//
-//        SQLiteDatabase db = database.getReadableDatabase();
-//        ContentValues values = new ContentValues();
-//
-//        values.put(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_SEARCH_ON_QUERY_CHANGED, next);
-//        db.update(DatabaseVariables.TableUser.TABLE_NAME, values,
-//                DatabaseVariables.TableUser.COLUMN_NAME_USER_ID + "=" + user.getUserId(), null);
 //
 //    }
 
@@ -693,73 +555,6 @@ public class DatabaseManager {
 
 
     ////////////// HELPERS //////////////
-
-//
-//    private Deck fetchDeckFromCursor(Cursor cursor) {
-//        String id = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableDeck.COLUMN_NAME_DECK_ID));
-//        String name = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableDeck.COLUMN_NAME_DECK_NAME));
-//        String dateCreated = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableDeck.COLUMN_NAME_DATE_CREATED));
-//        String dateModified = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableDeck.COLUMN_NAME_DATE_MODIFIED));
-//        int position = cursor.getInt(cursor
-//                .getColumnIndex(DatabaseVariables.TableDeck.COLUMN_NAME_POSITION));
-//
-//        return new Deck(id, name, dateCreated, dateModified, position);
-//    }
-
-
-//    private CardDeck fetchCardDeckFromCursor(Cursor cursor) {
-
-//    }
-
-//    private Profile fetchProfileFromCursor(Cursor cursor) {
-//        String profileId = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_ID));
-//        String profileName = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_PROFILE_NAME));
-//        String dateAdded = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_DATE_CREATED));
-//        String questionLabel = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_QUESTION_LABEL));
-//        String answerLabel = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_ANSWER_LABEL));
-//        String activeQuizId = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableProfile.COLUMN_NAME_ACTIVE_QUIZ_ID));
-//
-//
-//        return new Profile(profileId, profileName, dateAdded, questionLabel, answerLabel, activeQuizId);
-//    }
-
-
-//    private User fetchUserFromCursor(Cursor cursor) {
-//
-//        String userId = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_USER_ID));
-//        String activeProfileId = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_ACTIVE_PROFILE_ID));
-//        String dateCreated = cursor.getString(cursor
-//                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_DATE_CREATED));
-//        int defaultSorting = cursor.getInt(cursor
-//                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_DEFAULT_SORTING));
-//        boolean allowProfileDeletion = cursor.getInt(cursor
-//                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_PROFILE_DELETION)) > 0;
-//        boolean displayAllCards = cursor.getInt(cursor
-//                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_DISPLAY_ALL_CARDS)) > 0;
-//        boolean displaySpecificDeck = cursor.getInt(cursor
-//                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_DISPLAY_SPECIFIC_DECK)) > 0;
-//        boolean allowPracticeAll = cursor.getInt(cursor
-//                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_PRACTICE_ALL)) > 0;
-//        boolean allowOnQueryChanged = cursor.getInt(cursor
-//                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_ALLOW_SEARCH_ON_QUERY_CHANGED)) > 0;
-//        int quickToggle = cursor.getInt(cursor
-//                .getColumnIndex(DatabaseVariables.TableUser.COLUMN_NAME_QUICK_TOGGLE_REVIEW));
-//
-//
-//        return new User(userId, dateCreated, activeProfileId, defaultSorting, allowProfileDeletion, displayAllCards, displaySpecificDeck, allowPracticeAll, allowOnQueryChanged, quickToggle);
-//    }
 
 //    public Profile getActiveProfile() {
 //

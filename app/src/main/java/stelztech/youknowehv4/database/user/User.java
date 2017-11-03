@@ -10,7 +10,7 @@ public class User {
 
     private long userId;
     private Date dateCreated;
-    private Date activeProfileId;
+    private long activeProfileId;
     private int defaultSortingPosition;
     private boolean allowProfileDeletion;
     private boolean displayNbDecksAllCards;
@@ -19,7 +19,7 @@ public class User {
     private boolean allowOnQueryChanged;
     private int quickToggleHours;
 
-    public User(long userId, Date dateCreated, Date activeProfileId, int defaultSortingPosition, boolean allowProfileDeletion, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards, boolean allowPracticeAll, boolean allowOnQueryChanged, int quickToggleHours) {
+    public User(long userId, Date dateCreated, long activeProfileId, int defaultSortingPosition, boolean allowProfileDeletion, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards, boolean allowPracticeAll, boolean allowOnQueryChanged, int quickToggleHours) {
         this.userId = userId;
         this.dateCreated = dateCreated;
         this.activeProfileId = activeProfileId;
@@ -97,11 +97,11 @@ public class User {
         this.dateCreated = dateCreated;
     }
 
-    public Date getActiveProfileId() {
+    public long getActiveProfileId() {
         return activeProfileId;
     }
 
-    public void setActiveProfileId(Date activeProfileId) {
+    public void setActiveProfileId(long activeProfileId) {
         this.activeProfileId = activeProfileId;
     }
 

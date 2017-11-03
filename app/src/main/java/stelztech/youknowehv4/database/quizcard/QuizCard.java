@@ -9,12 +9,22 @@ public class QuizCard {
     private long cardId;
     private boolean passed;
     private int numFailed;
+    private int position;
 
-    public QuizCard(long quizId, long cardId, boolean passed, int numFailed) {
+    public QuizCard(long quizId, long cardId, boolean passed, int numFailed, int position) {
         this.quizId = quizId;
         this.cardId = cardId;
         this.passed = passed;
         this.numFailed = numFailed;
+        this.position = position;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     public long getQuizId() {

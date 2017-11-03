@@ -1,25 +1,28 @@
 package stelztech.youknowehv4.database.quiz;
 
+import java.util.Date;
+
 /**
  * Created by Alexandre on 4/25/2016.
  */
 public class Quiz {
 
-    private enum MODE {
+    public enum MODE {
         READING,
         WRITING
     }
 
+
     private long quizId;
-    private String dateCreated;
-    private String dateFinished;
+    private Date dateCreated;
+    private Date dateFinished;
     private MODE mode;
     private boolean reverse;
     private boolean repeat;
     private boolean reviewOnly;
     private long profileId;
 
-    public Quiz(long quizId, String dateCreated, String dateFinished, MODE mode, boolean reverse, boolean repeat, boolean reviewOnly, long profileId) {
+    public Quiz(long quizId, Date dateCreated, Date dateFinished, MODE mode, boolean reverse, boolean repeat, boolean reviewOnly, long profileId) {
         this.quizId = quizId;
         this.dateCreated = dateCreated;
         this.dateFinished = dateFinished;
@@ -54,19 +57,19 @@ public class Quiz {
         this.quizId = quizId;
     }
 
-    public String getDateCreated() {
+    public Date getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(String dateCreated) {
+    public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
     }
 
-    public String getDateFinished() {
+    public Date getDateFinished() {
         return dateFinished;
     }
 
-    public void setDateFinished(String dateFinished) {
+    public void setDateFinished(Date dateFinished) {
         this.dateFinished = dateFinished;
     }
 

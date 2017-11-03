@@ -11,7 +11,7 @@ import stelztech.youknowehv4.database.profile.Profile;
 public interface IDeckDao {
 
     List<Deck> fetchAllDecks();
-    Deck fetchDeckFromId(long deckId);
+    Deck fetchDeckById(long deckId);
     boolean deleteDeck(long deckId);
     long createDeck(String deckName);
     boolean updateDeck(long deckId, String newDeckName);

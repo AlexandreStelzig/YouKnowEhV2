@@ -11,7 +11,7 @@ import stelztech.youknowehv4.database.card.Card;
 public interface IProfileDao {
 
     List<Profile> fetchAllProfiles();
-    Profile fetchProfileFromId(long profileId);
+    Profile fetchProfileById(long profileId);
     boolean deleteProfile(long profileId);
     long createProfile(String name);
     boolean updateProfile(long profileId, String name);

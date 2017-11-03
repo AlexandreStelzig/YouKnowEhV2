@@ -11,20 +11,26 @@ public class Deck {
     private String deckName;
     private Date dateCreated;
     private Date dateModified;
-
-
-
     private int position;
+    private long profileId;
 
-    Deck() {
-    }
 
-    public Deck(int deckId, String deckName, Date dateCreated, Date dateModified, int position) {
+
+    public Deck(long deckId, String deckName, Date dateCreated, Date dateModified, int position, long profileId) {
         this.deckId = deckId;
         this.deckName = deckName;
         this.dateCreated = dateCreated;
         this.dateModified = dateModified;
         this.position = position;
+        this.profileId = profileId;
+    }
+
+    public long getProfileId() {
+        return profileId;
+    }
+
+    public void setProfileId(long profileId) {
+        this.profileId = profileId;
     }
 
     public long getDeckId() {

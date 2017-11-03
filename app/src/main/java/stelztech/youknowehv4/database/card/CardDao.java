@@ -14,6 +14,7 @@ import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.DbContentProvider;
 import stelztech.youknowehv4.database.deck.Deck;
 import stelztech.youknowehv4.helper.DateHelper;
+import stelztech.youknowehv4.manager.SortingStateManager;
 
 /**
  * Created by alex on 10/14/2017.
@@ -31,8 +32,12 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
     @Override
     public List<Card> fetchAllCards() {
 
+        long activeProfileId = Database.mUserDao.fetchActiveProfile().getProfileId();
+        cursor = super.rawQuery("SELECT * FROM " + CARD_TABLE + " WHERE "
+                + COLUMN_ARCHIVED + "=" + 0 + " AND "
+                + COLUMN_PROFILE_ID + "=" + activeProfileId, null);
+
         List<Card> cardList = new ArrayList<Card>();
-        cursor = super.query(CARD_TABLE, CARD_COLUMNS, null, null, COLUMN_CARD_ID);
 
         if (cursor != null) {
             cursor.moveToFirst();
@@ -44,16 +49,18 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
             cursor.close();
         }
 
+        cardList = SortingStateManager.getInstance().sortCardList(cardList);
+
         return cardList;
     }
 
     @Override
     public Card fetchCardById(long cardId) {
-        final String selectionArgs[] = {String.valueOf(cardId)};
-        final String selection = COLUMN_CARD_ID + " = ?";
+
         Card card = null;
-        cursor = super.query(CARD_TABLE, CARD_COLUMNS, selection,
-                selectionArgs, COLUMN_CARD_ID);
+        cursor = super.rawQuery("SELECT * FROM " + CARD_TABLE + " WHERE "
+                + COLUMN_CARD_ID + "=" + cardId, null);
+
         if (cursor != null) {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -94,8 +101,6 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
 
     @Override
     public boolean updateCard(long cardId, String question, String answer, String moreInfo) {
-        final String selectionArgs[] = {String.valueOf(cardId)};
-        final String selection = COLUMN_CARD_ID + " = ?";
 
         ContentValues values = new ContentValues();
 
@@ -107,7 +112,7 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
             values.put(COLUMN_MORE_INFORMATION, moreInfo);
             values.put(COLUMN_DATE_MODIFIED, date);
 
-            return super.update(CARD_TABLE, values, selection, selectionArgs) > 0;
+            return super.update(CARD_TABLE, values, COLUMN_CARD_ID + "=" + cardId, null) > 0;
         } catch (SQLiteConstraintException ex) {
             Log.w("Database", ex.getMessage());
             return false;
@@ -117,16 +122,13 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
     @Override
     public boolean deleteCard(long cardId) {
 
-        final String selectionArgs[] = {String.valueOf(cardId)};
-        final String selection = COLUMN_CARD_ID + " = ?";
-
         try {
             List<Deck> decks = Database.mCardDeckDao.fetchDecksByCardId(cardId);
             // delete all card-deck for this card
             for (int counter = 0; counter < decks.size(); counter++) {
                 Database.mCardDeckDao.deleteCardDeck(cardId, decks.get(counter).getDeckId());
             }
-            return super.delete(CARD_TABLE, selection, selectionArgs) > 0;
+            return super.delete(CARD_TABLE, COLUMN_CARD_ID + "=" + cardId, null) > 0;
         } catch (SQLiteConstraintException ex) {
             Log.w("Database", ex.getMessage());
             return false;
@@ -135,8 +137,6 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
 
     @Override
     public boolean toggleArchiveCard(long cardId) {
-        final String selectionArgs[] = {String.valueOf(cardId)};
-        final String selection = COLUMN_CARD_ID + " = ?";
 
         ContentValues values = new ContentValues();
 
@@ -150,7 +150,7 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
                 }
             }
             values.put(COLUMN_ARCHIVED, !currentArchive);
-            return super.update(CARD_TABLE, values, selection, selectionArgs) > 0;
+            return super.update(CARD_TABLE, values, COLUMN_CARD_ID + "=" + cardId, null) > 0;
         } catch (SQLiteConstraintException ex) {
             Log.w("Database", ex.getMessage());
             return false;
@@ -164,7 +164,7 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
 
         cursor = super.rawQuery("SELECT * FROM " + CARD_TABLE + " WHERE "
                 + COLUMN_ARCHIVED + "=" + 1 + " AND "
-                + COLUMN_PROFILE_ID + "=" + activeProfileId, null);
+                + COLUMN_PROFILE_ID + "=" + activeProfileId);
 
         List<Card> cardList = new ArrayList<Card>();
 
@@ -177,6 +177,8 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
             }
             cursor.close();
         }
+
+        cardList = SortingStateManager.getInstance().sortCardList(cardList);
 
         return cardList;
     }
