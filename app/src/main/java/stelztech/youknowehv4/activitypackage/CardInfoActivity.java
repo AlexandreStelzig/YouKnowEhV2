@@ -34,7 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.database.Database;
+import stelztech.youknowehv4.helper.DateHelper;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.CardInfoToolbarManager;
 import stelztech.youknowehv4.database.card.Card;
@@ -63,13 +64,10 @@ public class CardInfoActivity extends AppCompatActivity {
     // deck list variables
     private boolean[] mIsPartOfDeckList;
     private boolean[] mTempPartOfDeckList;
-    private String mInitialDeckId;
+    private long mInitialDeckId;
     private List<Deck> mDeckList;
     private CharSequence[] mDeckListDisplayName;
     private List<Deck> mCardSpecificDeck;
-
-    // database
-    private DatabaseManager dbManager;
 
     // components
     private TextView numberOfDecksTextView;
@@ -104,7 +102,7 @@ public class CardInfoActivity extends AppCompatActivity {
 
     // mode
     private CardInfoState currentState;
-    private String mCardId;
+    private int mCardId;
     private boolean createAnotherCard;
     private CardInfoState initalStateFromIntent;
 
@@ -122,7 +120,6 @@ public class CardInfoActivity extends AppCompatActivity {
         goBackToViewModeFromEdit = false;
 
         // init
-        dbManager = DatabaseManager.getInstance(this);
         numberOfDecksTextView = (TextView) findViewById(R.id.number_of_decks_text_view);
         numberOfDecksString = (TextView) findViewById(R.id.number_of_decks_text_view_text);
         questionEditTextView = (EditText) findViewById(R.id.card_info_question_edit_text);
@@ -150,7 +147,7 @@ public class CardInfoActivity extends AppCompatActivity {
 
         // question answer labels
 
-        Profile currentProfile = dbManager.getActiveProfile();
+        Profile currentProfile = Database.mUserDao.fetchActiveProfile();
 
         String questionLabel = currentProfile.getQuestionLabel();
         String answerLabel = currentProfile.getAnswerLabel();
@@ -233,15 +230,15 @@ public class CardInfoActivity extends AppCompatActivity {
     private void initState(CardInfoState state) {
         switch (state) {
             case NEW:
-                mInitialDeckId = getIntent().getStringExtra("initialDeckId");
+                mInitialDeckId = getIntent().getLongExtra("initialDeckId", 1L);
                 setStateNew();
                 break;
             case VIEW:
-                mCardId = getIntent().getStringExtra("cardId");
+                mCardId = (int) getIntent().getLongExtra("cardId", 1);
                 setStateView();
                 break;
             case EDIT:
-                mCardId = getIntent().getStringExtra("cardId");
+                mCardId = (int) getIntent().getLongExtra("cardId", 1);
                 setStateEdit();
                 break;
             default:
@@ -422,10 +419,10 @@ public class CardInfoActivity extends AppCompatActivity {
     private void initActivityInformationNew() {
 
 
-        mDeckList = dbManager.getDecks();
+        mDeckList = Database.mDeckDao.fetchAllDecks();
         mIsPartOfDeckList = new boolean[mDeckList.size()];
         for (int counter = 0; counter < mIsPartOfDeckList.length; counter++) {
-            if (mDeckList.get(counter).getDeckId().equals(mInitialDeckId))
+            if (mDeckList.get(counter).getDeckId() == (mInitialDeckId))
                 mIsPartOfDeckList[counter] = true;
         }
         mTempPartOfDeckList = mIsPartOfDeckList.clone();
@@ -443,13 +440,13 @@ public class CardInfoActivity extends AppCompatActivity {
 
     private void initActivityInformationEdit() {
 
-        mCardSpecificDeck = dbManager.getDecksFromCard(mCardId);
+        mCardSpecificDeck = Database.mCardDeckDao.fetchDecksByCardId(mCardId);
 
-        mDeckList = dbManager.getDecks();
+        mDeckList = Database.mDeckDao.fetchAllDecks();
         mIsPartOfDeckList = new boolean[mDeckList.size()];
         for (int counter = 0; counter < mIsPartOfDeckList.length; counter++) {
             for (int i = 0; i < mCardSpecificDeck.size(); i++) {
-                if (mDeckList.get(counter).getDeckId().equals(mCardSpecificDeck.get(i).getDeckId()))
+                if (mDeckList.get(counter).getDeckId() == (mCardSpecificDeck.get(i).getDeckId()))
                     mIsPartOfDeckList[counter] = true;
             }
         }
@@ -468,13 +465,13 @@ public class CardInfoActivity extends AppCompatActivity {
 
     private void initActivityInformationView() {
 
-        mCardSpecificDeck = dbManager.getDecksFromCard(mCardId);
+        mCardSpecificDeck = Database.mCardDeckDao.fetchDecksByCardId(mCardId);
 
-        mDeckList = dbManager.getDecks();
+        mDeckList = Database.mDeckDao.fetchAllDecks();
         mIsPartOfDeckList = new boolean[mDeckList.size()];
         for (int counter = 0; counter < mIsPartOfDeckList.length; counter++) {
             for (int i = 0; i < mCardSpecificDeck.size(); i++) {
-                if (mDeckList.get(counter).getDeckId().equals(mCardSpecificDeck.get(i).getDeckId()))
+                if (mDeckList.get(counter).getDeckId() == (mCardSpecificDeck.get(i).getDeckId()))
                     mIsPartOfDeckList[counter] = true;
             }
         }
@@ -696,7 +693,7 @@ public class CardInfoActivity extends AppCompatActivity {
                             return;
                         } else {
 
-                            dbManager.createDeck(deckNameHolder);
+                            Database.mDeckDao.createDeck(deckNameHolder);
                             Toast.makeText(CardInfoActivity.this, "Deck created", Toast.LENGTH_SHORT).show();
 
                             if (currentState == CardInfoState.EDIT)
@@ -747,7 +744,7 @@ public class CardInfoActivity extends AppCompatActivity {
         // fields validation
         if (question.trim().isEmpty() || answer.trim().isEmpty()) {
             String toastMessageError = "";
-            Profile profile = dbManager.getActiveProfile();
+            Profile profile = Database.mUserDao.fetchActiveProfile();
             String questionLabel = profile.getQuestionLabel();
             String answerLabel = profile.getAnswerLabel();
             if (question.trim().isEmpty() && answer.trim().isEmpty())
@@ -762,8 +759,8 @@ public class CardInfoActivity extends AppCompatActivity {
             return false;
         } else {
             // create new card
-            String newCardId = dbManager.createCard(question, answer, note);
-            if (newCardId == "-1") {
+            int newCardId = Database.mCardDao.createCard(question, answer, note);
+            if (newCardId == -1) {
                 Toast.makeText(this, "Error while adding card to database",
                         Toast.LENGTH_SHORT).show();
                 return false;
@@ -778,7 +775,7 @@ public class CardInfoActivity extends AppCompatActivity {
             }
 
             for (int counter = 0; counter < checkedDecks.size(); counter++) {
-                dbManager.createCardDeck(newCardId, checkedDecks.get(counter).getDeckId());
+                Database.mCardDeckDao.createCardDeck(newCardId, checkedDecks.get(counter).getDeckId());
             }
 
             Toast.makeText(this, "Card created",
@@ -799,7 +796,7 @@ public class CardInfoActivity extends AppCompatActivity {
 
                 if (question.trim().isEmpty() || answer.trim().isEmpty()) {
                     String toastMessageError = "";
-                    Profile profile = dbManager.getActiveProfile();
+                    Profile profile = Database.mUserDao.fetchActiveProfile();
                     String questionLabel = profile.getQuestionLabel();
                     String answerLabel = profile.getAnswerLabel();
                     if (question.trim().isEmpty() && answer.trim().isEmpty())
@@ -815,16 +812,16 @@ public class CardInfoActivity extends AppCompatActivity {
 
                 } else {
                     // create new card
-                    dbManager.updateCard(mCardId, question, answer, note);
+                    Database.mCardDao.updateCard(mCardId, question, answer, note);
                 }
 
             } else {
                 for (int counter = 0; counter < mIsPartOfDeckList.length; counter++) {
                     if (mIsPartOfDeckList[counter] != mInitPartOfDeckTemp[counter]) {
                         if (mIsPartOfDeckList[counter] == true) {
-                            dbManager.createCardDeck(mCardId, mDeckList.get(counter).getDeckId());
+                            Database.mCardDeckDao.createCardDeck(mCardId, mDeckList.get(counter).getDeckId());
                         } else {
-                            dbManager.deleteCardDeck(mCardId, mDeckList.get(counter).getDeckId());
+                            Database.mCardDeckDao.deleteCardDeck(mCardId, mDeckList.get(counter).getDeckId());
                         }
                     }
                 }
@@ -863,7 +860,7 @@ public class CardInfoActivity extends AppCompatActivity {
     }
 
     private void setFieldsInfo() {
-        Card card = dbManager.getCardFromId(mCardId);
+        Card card = Database.mCardDao.fetchCardById(mCardId);
 
 
         if (currentState == CardInfoState.VIEW) {
@@ -886,8 +883,8 @@ public class CardInfoActivity extends AppCompatActivity {
         }
 
 
-        dateCreatedTV.setText(Helper.getInstance().getDateFormatted(card.getDateCreated()));
-        dateModifiedTV.setText(Helper.getInstance().getDateFormatted(card.getDateModified()));
+        dateCreatedTV.setText(DateHelper.dateToString(card.getDateCreated()));
+        dateModifiedTV.setText(DateHelper.dateToString(card.getDateModified()));
     }
 
     private void setEditTextEditable(boolean isEditable) {

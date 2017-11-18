@@ -14,6 +14,7 @@ import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.DbContentProvider;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.helper.DateHelper;
+import stelztech.youknowehv4.manager.SortingStateManager;
 
 /**
  * Created by alex on 10/14/2017.
@@ -44,16 +45,17 @@ public class DeckDao extends DbContentProvider implements IDeckDao, IDeckSchema 
             cursor.close();
         }
 
+        deckList = SortingStateManager.getInstance().sortDeck(deckList);
+
         return deckList;
     }
 
     @Override
-    public Deck fetchDeckById(long deckId) {
-        final String selectionArgs[] = {String.valueOf(deckId)};
-        final String selection = COLUMN_DECK_ID + " = ?";
+    public Deck fetchDeckById(int deckId) {
         Deck deck = null;
-        cursor = super.query(DECK_TABLE, DECK_COLUMNS, selection,
-                selectionArgs, COLUMN_DECK_ID);
+        cursor = super.rawQuery("SELECT * FROM " + DECK_TABLE + " WHERE "
+                + COLUMN_DECK_ID + "=" + deckId, null);
+
         if (cursor != null) {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -67,10 +69,7 @@ public class DeckDao extends DbContentProvider implements IDeckDao, IDeckSchema 
     }
 
     @Override
-    public boolean deleteDeck(long deckId) {
-
-        final String selectionArgs[] = {String.valueOf(deckId)};
-        final String selection = COLUMN_DECK_ID + " = ?";
+    public boolean deleteDeck(int deckId) {
 
         try {
             List<Card> cards = Database.mCardDeckDao.fetchCardsByDeckId(deckId);
@@ -92,7 +91,7 @@ public class DeckDao extends DbContentProvider implements IDeckDao, IDeckSchema 
                 }
             }
 
-            return super.delete(DECK_TABLE, selection, selectionArgs) > 0;
+            return super.delete(DECK_TABLE, COLUMN_DECK_ID + "=" + deckId, null) > 0;
         } catch (SQLiteConstraintException ex) {
             Log.w("Database", ex.getMessage());
             return false;
@@ -100,13 +99,13 @@ public class DeckDao extends DbContentProvider implements IDeckDao, IDeckSchema 
     }
 
     @Override
-    public long createDeck(String deckName) {
+    public int createDeck(String deckName) {
         ContentValues values = new ContentValues();
 
-        String date = DateHelper.getDateNow();
+        String date = DateHelper.getDateNowString();
 
         long activeProfileId = Database.mUserDao.fetchActiveProfile().getProfileId();
-        int position = fetchAllDecks().size() + 1; // TODO change ,size to SQL method
+        int position = fetchAllDecks().size() + 1; // TODO create SQL method to fetch deck.size()
 
         values.put(COLUMN_DECK_NAME, deckName);
         values.put(COLUMN_DATE_CREATED, date);
@@ -123,29 +122,85 @@ public class DeckDao extends DbContentProvider implements IDeckDao, IDeckSchema 
     }
 
     @Override
-    public boolean updateDeck(long deckId, String newDeckName) {
-        return false;
+    public boolean updateDeck(int deckId, String newDeckName) {
+        ContentValues values = new ContentValues();
+
+        try {
+
+            String date = DateHelper.getDateNowString();
+
+            values.put(COLUMN_DECK_NAME, newDeckName);
+            values.put(COLUMN_DATE_MODIFIED, date);
+
+            return super.update(DECK_TABLE, values, COLUMN_DECK_ID + "=" + deckId, null) > 0;
+        } catch (SQLiteConstraintException ex) {
+            Log.w("Database", ex.getMessage());
+            return false;
+        }
     }
 
     @Override
-    public void swapDeckPosition(Deck deck1, Deck deck2) {
+    public boolean swapDeckPosition(Deck deck1, Deck deck2) {
+        ContentValues values = new ContentValues();
 
+        try {
+
+            int deck1Position = deck1.getPosition();
+            int deck2Position = deck2.getPosition();
+
+            values.put(COLUMN_POSITION, deck2Position);
+
+            super.update(DECK_TABLE, values, COLUMN_DECK_ID + "=" + deck1.getDeckId(), null);
+
+            values.put(COLUMN_POSITION, deck1Position);
+            return super.update(DECK_TABLE, values, COLUMN_DECK_ID + "=" + deck2.getDeckId(), null) > 0;
+        } catch (SQLiteConstraintException ex) {
+            Log.w("Database", ex.getMessage());
+            return false;
+        }
     }
 
     @Override
-    public void changeDeckPosition(int newPosition, Deck deck) {
+    public boolean changeDeckPosition(int newPosition, Deck deck) {
+        ContentValues values = new ContentValues();
 
+        try {
+            List<Deck> deckList = fetchAllDecks();
+
+
+            values.put(COLUMN_POSITION, newPosition);
+            super.update(DECK_TABLE, values, COLUMN_DECK_ID + "=" + deck.getDeckId(), null);
+
+            for (int i = 0; i < deckList.size(); i++) {
+                int deckTempPosition = deckList.get(i).getPosition();
+                if (deck.getPosition() < newPosition) {
+                    if (deckTempPosition > deck.getPosition() && deckTempPosition <= newPosition) {
+                        values.put(COLUMN_POSITION, deckTempPosition - 1);
+                        super.update(DECK_TABLE, values, COLUMN_DECK_ID + "=" + deckList.get(i).getDeckId(), null);
+                    }
+                } else {
+                    if (deckTempPosition < deck.getPosition() && deckTempPosition >= newPosition) {
+                        values.put(COLUMN_POSITION, deckTempPosition + 1);
+                        super.update(DECK_TABLE, values, COLUMN_DECK_ID + "=" + deckList.get(i).getDeckId(), null);
+                    }
+                }
+            }
+            return true;
+        } catch (SQLiteConstraintException ex) {
+            Log.w("Database", ex.getMessage());
+            return false;
+        }
     }
 
 
     @Override
     protected Deck cursorToEntity(Cursor cursor) {
 
-        long deckId = cursor.getLong(cursor.getColumnIndex(COLUMN_DECK_ID));
-        long profileId = cursor.getLong(cursor.getColumnIndex(COLUMN_PROFILE_ID));
+        int deckId = cursor.getInt(cursor.getColumnIndex(COLUMN_DECK_ID));
+        int profileId = cursor.getInt(cursor.getColumnIndex(COLUMN_PROFILE_ID));
         String name = cursor.getString(cursor.getColumnIndex(COLUMN_DECK_NAME));
-        Date dateCreated = new Date(cursor.getLong(cursor.getColumnIndex(COLUMN_DATE_CREATED)));
-        Date dateModified = new Date(cursor.getLong(cursor.getColumnIndex(COLUMN_DATE_MODIFIED)));
+        String dateCreated = cursor.getString(cursor.getColumnIndex(COLUMN_DATE_CREATED));
+        String dateModified = cursor.getString(cursor.getColumnIndex(COLUMN_DATE_MODIFIED));
         int position = cursor.getInt(cursor.getColumnIndex(COLUMN_POSITION));
 
         return new Deck(deckId, name, dateCreated, dateModified, position, profileId);

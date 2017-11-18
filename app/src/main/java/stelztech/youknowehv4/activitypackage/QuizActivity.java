@@ -13,17 +13,12 @@ import android.widget.TextView;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.components.DoubleProgressBar;
-import stelztech.youknowehv4.database.DatabaseManager;
 
 /**
  * Created by alex on 2017-05-09.
  */
 
 public class QuizActivity extends AppCompatActivity {
-
-
-    // database
-    private DatabaseManager dbManager;
 
 
     // progress
@@ -60,8 +55,6 @@ public class QuizActivity extends AppCompatActivity {
         // set back button instead of drawer
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        dbManager = DatabaseManager.getInstance(this);
 
         // init components
         showButton = (Button) findViewById(R.id.quiz_show_button);

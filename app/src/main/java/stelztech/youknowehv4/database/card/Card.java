@@ -1,22 +1,20 @@
 package stelztech.youknowehv4.database.card;
 
-import java.util.Date;
-
 /**
  * Created by Alexandre on 4/25/2016.
  */
 public class Card {
 
 
-    private long cardId;
+    private int cardId;
     private String question;
     private String answer;
     private String moreInfo;
-    private Date dateCreated;
-    private Date dateModified;
+    private String dateCreated;
+    private String dateModified;
 
 
-    public Card(long cardId, String question, String answer, String moreInfo, Date dateCreated, Date dateModified, boolean archived) {
+    public Card(int cardId, String question, String answer, String moreInfo, String dateCreated, String dateModified, boolean archived) {
         this.cardId = cardId;
         this.question = question;
         this.answer = answer;
@@ -37,11 +35,11 @@ public class Card {
     private boolean archived;
 
 
-    public long getCardId() {
+    public int getCardId() {
         return cardId;
     }
 
-    public void setCardId(long cardId) {
+    public void setCardId(int cardId) {
         this.cardId = cardId;
     }
 
@@ -69,19 +67,19 @@ public class Card {
         this.moreInfo = moreInfo;
     }
 
-    public Date getDateCreated() {
+    public String getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(Date dateCreated) {
+    public void setDateCreated(String dateCreated) {
         this.dateCreated = dateCreated;
     }
 
-    public Date getDateModified() {
+    public String getDateModified() {
         return dateModified;
     }
 
-    public void setDateModified(Date dateModified) {
+    public void setDateModified(String dateModified) {
         this.dateModified = dateModified;
     }
 }

@@ -29,10 +29,12 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
-import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.carddeck.CardDeck;
 import stelztech.youknowehv4.database.deck.Deck;
+
+import static stelztech.youknowehv4.database.carddeck.CardDeck.REVIEW_TOGGLE_ID;
 
 /**
  * Created by alex on 2017-05-02.
@@ -79,12 +81,12 @@ public final class ExportImportManager {
             for (int counter = 0; counter < numberOfCards; counter++) {
 
                 Card cardTemp = cardList.get(counter);
-                CardDeck cardDeck = DatabaseManager.getInstance(context).getCardDeck(cardTemp.getCardId(), deckToExport.getDeckId());
+                CardDeck cardDeck = Database.mCardDeckDao.fetchCardDeckById(cardTemp.getCardId(), deckToExport.getDeckId());
                 data[0] = cardTemp.getQuestion();
                 data[1] = cardTemp.getAnswer();
                 data[2] = cardTemp.getMoreInfo();
                 data[3] = "" + cardDeck.isPractice();
-                data[4] = cardTemp.getDateCreated();
+                data[4] = "" + cardTemp.getDateCreated();
                 data[5] = "" + cardTemp.getDateModified();
 
                 writer.writeNext(data);
@@ -187,8 +189,7 @@ public final class ExportImportManager {
             return false;
         }
 
-        DatabaseManager dbManager = DatabaseManager.getInstance(context);
-        String deckId = dbManager.createDeck(fileName);
+        int deckId = Database.mDeckDao.createDeck(fileName);
 
         for (int i = 0; i < cardHolderList.size(); i++) {
             String question = cardHolderList.get(i).getQuestion();
@@ -196,12 +197,12 @@ public final class ExportImportManager {
             String note = cardHolderList.get(i).getNote();
             String dateCreated = cardHolderList.get(i).getDateCreated();
             String dateModified = cardHolderList.get(i).getDateModified();
-            String cardId = dbManager.createCard(question, answer, note, dateCreated, dateModified);
-            dbManager.createCardDeck(cardId, deckId);
+            int cardId = Database.mCardDao.createCard(question, answer, note, dateCreated, dateModified);
+            Database.mCardDeckDao.createCardDeck(cardId, deckId);
 
             if (cardHolderList.get(i).getIsPractice().trim().toLowerCase().equals("false") ||
                     cardHolderList.get(i).getIsPractice().equals("0")) {
-                dbManager.togglePractice_Card(cardId, deckId, -1);
+                Database.mCardDeckDao.changeCardReviewTime(cardId, deckId, REVIEW_TOGGLE_ID);
             }
 
         }
@@ -212,12 +213,12 @@ public final class ExportImportManager {
 
 
     public static boolean exportAllFiles(Context context) {
-        DatabaseManager database = DatabaseManager.getInstance(context);
-        List<Deck> deckList = database.getDecks();
+
+        List<Deck> deckList = Database.mDeckDao.fetchAllDecks();
         List<File> fileList = new ArrayList<>();
         for (int counter = 0; counter < deckList.size(); counter++) {
             Deck deck = deckList.get(counter);
-            List<Card> cardList = database.getCardsFromDeck(deck.getDeckId());
+            List<Card> cardList = Database.mCardDeckDao.fetchCardsByDeckId(deck.getDeckId());
             File tempFile = saveCSVFile(context, "ToExport", deck, cardList);
 
             if (tempFile != null)

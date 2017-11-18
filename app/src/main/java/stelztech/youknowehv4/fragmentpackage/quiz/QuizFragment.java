@@ -25,7 +25,7 @@ import java.util.List;
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.activitypackage.QuizActivity;
-import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.database.deck.Deck;
 
@@ -57,8 +57,6 @@ public class QuizFragment extends Fragment {
 
     private boolean isQuizActive = false;
 
-    private DatabaseManager databaseManager;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,7 +64,6 @@ public class QuizFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_quiz, container, false);
 
-        databaseManager = DatabaseManager.getInstance(getContext());
 
         Button newQuizButton = (Button) view.findViewById(R.id.quiz_new_button);
 
@@ -80,7 +77,7 @@ public class QuizFragment extends Fragment {
             }
         });
 
-        deckList = databaseManager.getDecks();
+        deckList = Database.mDeckDao.fetchAllDecks();
         allDecksEmpty = isAllDecksEmpty();
         deckSelectedArray = new boolean[deckList.size()];
 
@@ -96,7 +93,7 @@ public class QuizFragment extends Fragment {
     private boolean isAllDecksEmpty() {
 
         for (int i = 0; i < deckList.size(); i++) {
-            int cardCounter = databaseManager.numberCardsInDeck(deckList.get(i).getDeckId());
+            int cardCounter = Database.mCardDeckDao.fetchNumberCardsFromDeckId(deckList.get(i).getDeckId());
             if (cardCounter > 0)
                 return false;
         }

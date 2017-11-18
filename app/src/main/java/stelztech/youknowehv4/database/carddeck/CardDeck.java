@@ -1,19 +1,19 @@
 package stelztech.youknowehv4.database.carddeck;
 
-import java.util.Date;
-
 /**
  * Created by Alexandre on 4/25/2016.
  */
 public class CardDeck {
 
-    private long deckId;
-    private long cardId;
-    private boolean isPractice;
-    private Date dateCreated;
-    private Date practiceToggleDate;
+    public static final int REVIEW_TOGGLE_ID = -1;
 
-    public CardDeck(long deckId, long cardId, boolean isPractice, Date dateCreated, Date practiceToggleDate) {
+    private int deckId;
+    private int cardId;
+    private boolean isPractice;
+    private String dateCreated;
+    private String practiceToggleDate;
+
+    public CardDeck(int deckId, int cardId, boolean isPractice, String dateCreated, String practiceToggleDate) {
         this.deckId = deckId;
         this.cardId = cardId;
         this.isPractice = isPractice;
@@ -21,19 +21,19 @@ public class CardDeck {
         this.practiceToggleDate = practiceToggleDate;
     }
 
-    public Date getPracticeToggleDate() {
+    public String getPracticeToggleDate() {
         return practiceToggleDate;
     }
 
-    public void setPracticeToggleDate(Date practiceToggleDate) {
+    public void setPracticeToggleDate(String practiceToggleDate) {
         this.practiceToggleDate = practiceToggleDate;
     }
 
-    public long getDeckId() {
+    public int getDeckId() {
         return deckId;
     }
 
-    public void setDeckId(long deckId) {
+    public void setDeckId(int deckId) {
         this.deckId = deckId;
     }
 
@@ -45,19 +45,19 @@ public class CardDeck {
         isPractice = practice;
     }
 
-    public Date getDateCreated() {
+    public String getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(Date dateCreated) {
+    public void setDateCreated(String dateCreated) {
         this.dateCreated = dateCreated;
     }
 
-    public long getCardId() {
+    public int getCardId() {
         return cardId;
     }
 
-    public void setCardId(long cardId) {
+    public void setCardId(int cardId) {
         this.cardId = cardId;
     }
 }

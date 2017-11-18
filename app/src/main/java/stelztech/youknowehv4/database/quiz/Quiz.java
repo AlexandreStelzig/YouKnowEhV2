@@ -1,7 +1,5 @@
 package stelztech.youknowehv4.database.quiz;
 
-import java.util.Date;
-
 /**
  * Created by Alexandre on 4/25/2016.
  */
@@ -13,16 +11,16 @@ public class Quiz {
     }
 
 
-    private long quizId;
-    private Date dateCreated;
-    private Date dateFinished;
+    private int quizId;
+    private String dateCreated;
+    private String dateFinished;
     private MODE mode;
     private boolean reverse;
     private boolean repeat;
     private boolean reviewOnly;
-    private long profileId;
+    private int profileId;
 
-    public Quiz(long quizId, Date dateCreated, Date dateFinished, MODE mode, boolean reverse, boolean repeat, boolean reviewOnly, long profileId) {
+    public Quiz(int quizId, String dateCreated, String dateFinished, MODE mode, boolean reverse, boolean repeat, boolean reviewOnly, int profileId) {
         this.quizId = quizId;
         this.dateCreated = dateCreated;
         this.dateFinished = dateFinished;
@@ -33,11 +31,11 @@ public class Quiz {
         this.profileId = profileId;
     }
 
-    public long getProfileId() {
+    public int getProfileId() {
         return profileId;
     }
 
-    public void setProfileId(long profileId) {
+    public void setProfileId(int profileId) {
         this.profileId = profileId;
     }
 
@@ -49,27 +47,27 @@ public class Quiz {
         this.reviewOnly = reviewOnly;
     }
 
-    public long getQuizId() {
+    public int getQuizId() {
         return quizId;
     }
 
-    public void setQuizId(long quizId) {
+    public void setQuizId(int quizId) {
         this.quizId = quizId;
     }
 
-    public Date getDateCreated() {
+    public String getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(Date dateCreated) {
+    public void setDateCreated(String dateCreated) {
         this.dateCreated = dateCreated;
     }
 
-    public Date getDateFinished() {
+    public String getDateFinished() {
         return dateFinished;
     }
 
-    public void setDateFinished(Date dateFinished) {
+    public void setDateFinished(String dateFinished) {
         this.dateFinished = dateFinished;
     }
 

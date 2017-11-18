@@ -12,11 +12,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.carddeck.CardDeck;
 import stelztech.youknowehv4.database.deck.Deck;
-import stelztech.youknowehv4.database.user.User;
 
 /**
  * Created by alex on 2017-05-06.
@@ -188,8 +187,8 @@ public class SortingStateManager {
             public int compare(Card o1, Card o2) {
 
 
-                String o1Date = o1.getDateCreated();
-                String o2Date = o2.getDateCreated();
+                String o1Date = o1.getDateCreated().toString();
+                String o2Date = o2.getDateCreated().toString();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
@@ -213,8 +212,8 @@ public class SortingStateManager {
             public int compare(Card o1, Card o2) {
 
 
-                String o1Date = o1.getDateModified();
-                String o2Date = o2.getDateModified();
+                String o1Date = o1.getDateModified().toString();
+                String o2Date = o2.getDateModified().toString();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
@@ -246,16 +245,14 @@ public class SortingStateManager {
 
     }
 
-    public List<Card> sortByPractice(Context context, List<Card> cardList, long deckId) {
-
-        DatabaseManager dbManager = DatabaseManager.getInstance(context);
+    public List<Card> sortByPractice(List<Card> cardList, int deckId) {
 
 
         List<Card> nonPracticeCards = new ArrayList<>();
         List<Card> practiceCards = new ArrayList<>();
         for (int counter = 0; counter < cardList.size(); counter++) {
             Card card = cardList.get(counter);
-            CardDeck cardDeck = dbManager.getCardDeck(card.getCardId(), deckId);
+            CardDeck cardDeck = Database.mCardDeckDao.fetchCardDeckById(card.getCardId(), deckId);
 
             if (cardDeck.isPractice())
                 practiceCards.add(card);
@@ -277,8 +274,8 @@ public class SortingStateManager {
             @Override
             public int compare(Card o1, Card o2) {
 
-                int position1 = DatabaseManager.getInstance(context).getDecksFromCard(o1.getCardId()).size();
-                int position2 = DatabaseManager.getInstance(context).getDecksFromCard(o2.getCardId()).size();
+                int position1 = Database.mCardDeckDao.fetchNumberDecksFromCardId(o1.getCardId());
+                int position2 = Database.mCardDeckDao.fetchNumberDecksFromCardId(o2.getCardId());
 
 
                 return position1 - position2;
@@ -331,8 +328,7 @@ public class SortingStateManager {
     }
 
     public int getDefaultSort(){
-        User user = DatabaseManager.getInstance(context).getUser();
-        return user.getDefaultSortingPosition();
+        return Database.mUserDao.fetchUser().getDefaultSortingPosition();
     }
 
     public void changeStateByPosition(int position) {

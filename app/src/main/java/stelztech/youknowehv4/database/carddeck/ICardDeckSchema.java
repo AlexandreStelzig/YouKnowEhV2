@@ -14,17 +14,17 @@ public interface ICardDeckSchema {
     String COLUMN_DECK_ID = "deck_id";
     String COLUMN_CARD_ID = "card_id";
     String COLUMN_DATE_CREATED = "date_created";
-    String COLUMN_IS_PRACTICE = "is_practice";
-    String COLUMN_DATE_TOGGLE_PRACTICE = "date_toggle_practice";
+    String COLUMN_IS_REVIEW = "is_review";
+    String COLUMN_DATE_TOGGLE_REVIEW = "date_toggle_review";
     
     // ON CREATE
     String SQL_CREATE_TABLE_CARD_DECK = "CREATE TABLE "
             + CARD_DECK_TABLE + " ("
-            + COLUMN_CARD_ID + " LONG NOT NULL,"
-            + COLUMN_DECK_ID + " LONG NOT NULL,"
-            + COLUMN_IS_PRACTICE + " BOOLEAN,"
-            + COLUMN_DATE_TOGGLE_PRACTICE + " BIGINT,"
-            + COLUMN_DATE_CREATED + " BIGINT,"
+            + COLUMN_CARD_ID + " INTEGER NOT NULL,"
+            + COLUMN_DECK_ID + " INTEGER NOT NULL,"
+            + COLUMN_IS_REVIEW + " BOOLEAN,"
+            + COLUMN_DATE_TOGGLE_REVIEW + " TEXT,"
+            + COLUMN_DATE_CREATED + " TEXT,"
             + " FOREIGN KEY " + "(" + COLUMN_CARD_ID + ")"
             + " REFERENCES " + ICardSchema.CARD_TABLE + "(" + ICardSchema.COLUMN_CARD_ID + "),"
             + " FOREIGN KEY " + "(" + COLUMN_DECK_ID + ")"
@@ -36,5 +36,5 @@ public interface ICardDeckSchema {
 
     // COLUMNS
     String[] CARD_DECK_COLUMNS = new String[] { COLUMN_DECK_ID,
-            COLUMN_CARD_ID, COLUMN_DATE_CREATED, COLUMN_IS_PRACTICE, COLUMN_DATE_TOGGLE_PRACTICE };
+            COLUMN_CARD_ID, COLUMN_DATE_CREATED, COLUMN_IS_REVIEW, COLUMN_DATE_TOGGLE_REVIEW};
 }

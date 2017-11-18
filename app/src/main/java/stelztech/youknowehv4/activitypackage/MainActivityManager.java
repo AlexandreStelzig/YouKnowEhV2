@@ -17,7 +17,7 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.fragmentpackage.otherfragments.AboutFragment;
 import stelztech.youknowehv4.fragmentpackage.card.CardListFragment;
 import stelztech.youknowehv4.fragmentpackage.deck.DeckListFragment;
@@ -61,7 +61,7 @@ public class MainActivityManager extends AppCompatActivity
     private final int INT_NULL = -1;
 
     private boolean backToPreviousActivity = false;
-    private long lastWordInfoSeen = "";
+    private long lastWordInfoSeen = -1;
 
     // Activity results
     public final static int CARD_RESULT = 1;
@@ -179,13 +179,12 @@ public class MainActivityManager extends AppCompatActivity
         currentFragment = null;
         String title = getString(R.string.app_name);
         String subtitle = "";
-        DatabaseManager dbManager = DatabaseManager.getInstance(MainActivityManager.this);
 
         switch (fragmentId) {
             case R.id.review:
                 currentFragment = mReviewFragment;
                 title = "Review";
-                subtitle = dbManager.getActiveProfile().getProfileName();
+                subtitle = Database.mUserDao.fetchActiveProfile().getProfileName();
                 break;
             case R.id.card_list:
                 currentFragment = mCardListFragment;
@@ -211,12 +210,12 @@ public class MainActivityManager extends AppCompatActivity
             case R.id.quiz:
                 currentFragment = mQuizFragment;
                 title = "Quiz";
-                subtitle = dbManager.getActiveProfile().getProfileName();
+                subtitle = Database.mUserDao.fetchActiveProfile().getProfileName();
                 break;
             case R.id.quiz_history:
                 currentFragment = mQuizHistoryFragment;
                 title = "Quiz History";
-                subtitle = dbManager.getActiveProfile().getProfileName();
+                subtitle = Database.mUserDao.fetchActiveProfile().getProfileName();
                 break;
         }
 
@@ -310,7 +309,7 @@ public class MainActivityManager extends AppCompatActivity
 
         }
         backToPreviousActivity = false;
-        lastWordInfoSeen = "";
+        lastWordInfoSeen = -1;
     }
 
     // transition animation logic
@@ -398,7 +397,7 @@ public class MainActivityManager extends AppCompatActivity
             overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
 
             if (data != null && data.getStringExtra("deckIdReturn") != null) {
-                mCardListFragment.setToSelectDeckId(data.getStringExtra("deckIdReturn"));
+                mCardListFragment.setToSelectDeckId(data.getLongExtra("deckIdReturn", 1L));
                 backToPreviousActivity = true;
                 mCardListFragment.setScrollToTop(false);
                 mCardListFragment.setSpinnerSelected();

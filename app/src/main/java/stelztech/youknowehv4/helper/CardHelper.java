@@ -5,7 +5,7 @@ import android.content.Context;
 
 import java.util.List;
 
-import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.deck.Deck;
 import stelztech.youknowehv4.database.profile.Profile;
@@ -20,8 +20,7 @@ public class CardHelper {
 
     public static void showQuickInfoCard(Context context, Activity activity, Card cardToDisplay) {
 
-        DatabaseManager dbManager = DatabaseManager.getInstance(context);
-        Profile profile = dbManager.getActiveProfile();
+        Profile profile = Database.mUserDao.fetchActiveProfile();
 
         String questionLabel = profile.getQuestionLabel();
         String answerLabel = profile.getAnswerLabel();
@@ -31,7 +30,7 @@ public class CardHelper {
         String cardAnswer = answerLabel + ": " + cardToDisplay.getAnswer();
         String cardComments = cardToDisplay.getMoreInfo();
 
-        List<Deck> decks = dbManager.getDecksFromCard(cardToDisplay.getCardId());
+        List<Deck> decks = Database.mCardDeckDao.fetchDecksByCardId(cardToDisplay.getCardId());
         String numberOfDecks = "Number of Decks: " + decks.size();
         String cardDateCreated = "Date created: " + cardToDisplay.getDateCreated();
         String cardDateModified = "Date modified: " + cardToDisplay.getDateModified();

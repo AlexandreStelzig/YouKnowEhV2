@@ -1,7 +1,5 @@
 package stelztech.youknowehv4.database.user;
 
-import java.util.List;
-
 import stelztech.youknowehv4.database.profile.Profile;
 
 /**
@@ -11,11 +9,14 @@ import stelztech.youknowehv4.database.profile.Profile;
 public interface IUserDao {
 
     User fetchUser(); // only one ever created
-    long createUser();
+    int createUser();
     boolean updateDefaultSortPosition(int position);
     boolean updateQuickToggleReviewHours(int hours);
-    boolean setActiveProfile(long profileId);
+    boolean setActiveProfile(int profileId);
+    boolean toggleReviewAllCards();
     boolean toggleAllowProfileDeletion();
     boolean toggleAllowSearchOnQueryChanged();
     Profile fetchActiveProfile();
+    boolean toggleDisplayNumDecksAllCards();
+    boolean toggleDisplayNumDecksSpecificCard();
 }

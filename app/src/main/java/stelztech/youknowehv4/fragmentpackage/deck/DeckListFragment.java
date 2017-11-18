@@ -35,7 +35,7 @@ import java.util.List;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
-import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.DeckToolbarManager;
@@ -61,9 +61,6 @@ public class DeckListFragment extends Fragment {
     private View view;
     private ListView listView;
     private TextView placerholderTextView;
-
-    // database
-    private DatabaseManager dbManager;
 
     // list
     private List<Deck> deckList;
@@ -99,7 +96,6 @@ public class DeckListFragment extends Fragment {
         listView = (ListView) view.findViewById(R.id.listview);
         placerholderTextView = (TextView) view.findViewById(R.id.list_text);
         placerholderTextView.setText("Empty");
-        dbManager = DatabaseManager.getInstance(getActivity());
         progressBar = (ProgressBar) view.findViewById(R.id.list_loading_indicator);
 
         nbCardsInDeckList = new ArrayList<>();
@@ -233,7 +229,7 @@ public class DeckListFragment extends Fragment {
                 return true;
             case R.id.export_deck:
                 Deck selectedDeck = deckList.get(indexSelected);
-                List<Card> cardList = dbManager.getCardsFromDeck(selectedDeck.getDeckId());
+                List<Card> cardList = Database.mCardDeckDao.fetchCardsByDeckId(selectedDeck.getDeckId());
                 ExportImportManager.exportFileToEmail(getContext(), selectedDeck, cardList);
 
                 return true;
@@ -247,7 +243,7 @@ public class DeckListFragment extends Fragment {
         Deck deck = deckList.get(indexSelected);
         String deckName = "Deck name: " + deck.getDeckName();
 
-        int nbCardsNumber = dbManager.getCardsFromDeck(deck.getDeckId()).size();
+        int nbCardsNumber = Database.mCardDeckDao.fetchCardsByDeckId(deck.getDeckId()).size();
 
         String nbCards = "Number of Cards: " + nbCardsNumber;
 
@@ -271,7 +267,7 @@ public class DeckListFragment extends Fragment {
     }
 
     private void deleteDeckFromDatabase() {
-        dbManager.deleteDeck((String) deckList.get(indexSelected).getDeckId());
+        Database.mDeckDao.deleteDeck(deckList.get(indexSelected).getDeckId());
         String deckDeletedName = deckList.get(indexSelected).getDeckName();
         deckList.remove(indexSelected);
         nbCardsInDeckList.remove(indexSelected);
@@ -415,17 +411,17 @@ public class DeckListFragment extends Fragment {
 
 
                 if (checkBox.isChecked()) {
-                    List<Card> cardList = dbManager.getCardsFromDeck(deckList.get(indexSelected).getDeckId());
+                    List<Card> cardList = Database.mCardDeckDao.fetchCardsByDeckId(deckList.get(indexSelected).getDeckId());
 
                     if (cardList.isEmpty()) {
 
                     } else {
                         for (int counter = 0; counter < cardList.size(); counter++) {
                             Card temp = cardList.get(counter);
-                            List<Deck> tempDeckList = dbManager.getDecksFromCard(temp.getCardId());
+                            List<Deck> tempDeckList = Database.mCardDeckDao.fetchDecksByCardId(temp.getCardId());
                             // only have this deck
                             if (tempDeckList.size() == 1) {
-                                dbManager.toggleArchiveCard(temp.getCardId());
+                                Database.mCardDao.toggleArchiveCard(temp.getCardId());
 
                             }
                         }
@@ -452,15 +448,15 @@ public class DeckListFragment extends Fragment {
     // DATABASE HANDLING
 
     private Deck addToDatabase(String name) {
-        String newDeckid = dbManager.createDeck(name);
+        int newDeckid = Database.mDeckDao.createDeck(name);
         Toast.makeText(getContext(), "Deck created", Toast.LENGTH_SHORT).show();
-        return dbManager.getDeckFromId(newDeckid);
+        return Database.mDeckDao.fetchDeckById(newDeckid);
     }
 
 
     private void updateDatabase() {
 
-        dbManager.updateDeck((String) deckList.get(indexSelected).getDeckId(), deckNameHolder);
+        Database.mDeckDao.updateDeck(deckList.get(indexSelected).getDeckId(), deckNameHolder);
         Toast.makeText(getContext(), "Deck updated", Toast.LENGTH_SHORT).show();
 
     }
@@ -655,13 +651,13 @@ public class DeckListFragment extends Fragment {
                     int oldValue = deck.getPosition();
                     int newPosition = np.getValue();
 
-                    dbManager.changeDeckPosition(newPosition, deck);
+                    Database.mDeckDao.changeDeckPosition(newPosition, deck);
 
-                    deckList = dbManager.getDecks();
+                    deckList = Database.mDeckDao.fetchAllDecks();
                     nbCardsInDeckList.clear();
 
                     for (int i = 0; i < deckList.size(); i++) {
-                        nbCardsInDeckList.add(dbManager.getCardsFromDeck(deckList.get(i).getDeckId()).size());
+                        nbCardsInDeckList.add(Database.mCardDeckDao.fetchCardsByDeckId(deckList.get(i).getDeckId()).size());
                     }
                     customListAdapter.notifyDataSetChanged();
                 }
@@ -679,12 +675,12 @@ public class DeckListFragment extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             loading = true;
-            deckList = dbManager.getDecks();
+            deckList = Database.mDeckDao.fetchAllDecks();
 
             nbCardsInDeckList.clear();
 
             for (int i = 0; i < deckList.size(); i++) {
-                nbCardsInDeckList.add(dbManager.numberCardsInDeck(deckList.get(i).getDeckId()));
+                nbCardsInDeckList.add(Database.mCardDeckDao.fetchNumberCardsFromDeckId(deckList.get(i).getDeckId()));
             }
 
 

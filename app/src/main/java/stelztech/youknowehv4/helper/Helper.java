@@ -56,38 +56,6 @@ public class Helper {
         }
     }
 
-    public ArrayList CompareArrayList(List<Deck> a, List<Deck> b) {
-        ArrayList output = new ArrayList();
-        for (int i = 0; i < a.size(); i++) {
-            String str = (String) a.get(i).getDeckId();
-            if (!b.contains(str)) {
-                if (!output.contains(str)) // check for dupes
-                    output.add(str);
-            }
-        }
-        return output;
-    }
-
-    public String getDateFormatted(String dateString) {
-        DateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-
-        Date date = null;
-        try {
-            date = format.parse(dateString);
-        } catch (ParseException e) {
-            //Handle exception here, most of the time you will just log it.
-            e.printStackTrace();
-        }
-
-        String formattedDate = "";
-
-        if (date != null)
-            formattedDate = date.toString();
-
-
-        return formattedDate;
-    }
-
 
     public void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();

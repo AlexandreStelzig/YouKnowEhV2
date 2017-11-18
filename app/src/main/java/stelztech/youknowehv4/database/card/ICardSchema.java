@@ -22,14 +22,14 @@ public interface  ICardSchema {
     // ON CREATE
     String SQL_CREATE_TABLE_CARD = "CREATE TABLE "
             + CARD_TABLE + " ("
-            + COLUMN_CARD_ID + " LONG PRIMARY KEY AUTOINCREMENT,"
+            + COLUMN_CARD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + COLUMN_QUESTION + " TEXT NOT NULL,"
             + COLUMN_ANSWER + " TEXT NOT NULL,"
             + COLUMN_MORE_INFORMATION + " TEXT,"
-            + COLUMN_DATE_CREATED + " BIGINT,"
-            + COLUMN_DATE_MODIFIED + " BIGINT,"
+            + COLUMN_DATE_CREATED + " TEXT,"
+            + COLUMN_DATE_MODIFIED + " TEXT,"
             + COLUMN_ARCHIVED + " BOOLEAN,"
-            + COLUMN_PROFILE_ID + " LONG,"
+            + COLUMN_PROFILE_ID + " INTEGER,"
             + " FOREIGN KEY " + "(" + COLUMN_PROFILE_ID + ")"
             + " REFERENCES " + IProfileSchema.PROFILE_TABLE + "(" + IProfileSchema.COLUMN_PROFILE_ID + ")" + " );";
 

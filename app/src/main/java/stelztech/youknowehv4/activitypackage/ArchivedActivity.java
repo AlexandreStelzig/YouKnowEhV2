@@ -29,7 +29,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.database.card.Card;
@@ -40,10 +40,6 @@ import stelztech.youknowehv4.database.profile.Profile;
  */
 
 public class ArchivedActivity extends AppCompatActivity {
-
-
-    // database
-    private DatabaseManager dbManager;
 
     // list
     private List<Card> cardList;
@@ -83,7 +79,6 @@ public class ArchivedActivity extends AppCompatActivity {
         // init components
         progressBar = (ProgressBar) findViewById(R.id.list_loading_indicator);
         indexSelected = -1;
-        dbManager = DatabaseManager.getInstance(this);
         listView = (ListView) findViewById(R.id.listview);
         placeholderTextView = (TextView) findViewById(R.id.list_text);
         progressBar = (ProgressBar) findViewById(R.id.list_loading_indicator);
@@ -98,7 +93,7 @@ public class ArchivedActivity extends AppCompatActivity {
         nbCardsPractice.setVisibility(View.GONE);
 
 
-        Profile currentProfile = dbManager.getActiveProfile();
+        Profile currentProfile = Database.mUserDao.fetchActiveProfile();
         questionLabel = currentProfile.getQuestionLabel();
         answerLabel = currentProfile.getAnswerLabel();
 
@@ -125,7 +120,7 @@ public class ArchivedActivity extends AppCompatActivity {
             cardList.clear();
         }
 
-        cardList = dbManager.getArchivedCards();
+        cardList = Database.mCardDao.fetchArchivedCards();
         customListAdapter = new CustomListAdapter(this);
 
         if (!cardList.isEmpty()) {
@@ -173,7 +168,7 @@ public class ArchivedActivity extends AppCompatActivity {
                 showQuickInfoCard();
                 return true;
             case R.id.unarchived_card:
-                dbManager.toggleArchiveCard(cardList.get(indexSelected).getCardId());
+                Database.mCardDao.toggleArchiveCard(cardList.get(indexSelected).getCardId());
                 cardList.remove(indexSelected);
                 if (cardList.isEmpty()) {
                     listView.setVisibility(View.GONE);
@@ -280,7 +275,7 @@ public class ArchivedActivity extends AppCompatActivity {
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 for (int counter = 0; counter < cardList.size(); counter++) {
-                    dbManager.deleteCard(cardList.get(counter).getCardId());
+                    Database.mCardDao.deleteCard(cardList.get(counter).getCardId());
                 }
                 populateListView();
                 Toast.makeText(ArchivedActivity.this, "All deleted cards permanently deleted", Toast.LENGTH_SHORT).show();
@@ -298,7 +293,7 @@ public class ArchivedActivity extends AppCompatActivity {
 
 
     // confirmation dialog
-    private void displayPermDeleteConfirmation(final long cardId) {
+    private void displayPermDeleteConfirmation(final int cardId) {
         final android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(this);
         alertDialog.setMessage("Are you sure you want to permanently delete this card?\n" +
                 "The card will be lost forever.");
@@ -308,7 +303,7 @@ public class ArchivedActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 String question = cardList.get(indexSelected).getQuestion();
                 String answer = cardList.get(indexSelected).getAnswer();
-                dbManager.deleteCard(cardId);
+                Database.mCardDao.deleteCard(cardId);
                 cardList.remove(indexSelected);
                 if (cardList.isEmpty()) {
                     listView.setVisibility(View.GONE);
@@ -335,7 +330,7 @@ public class ArchivedActivity extends AppCompatActivity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        Profile currentProfile = dbManager.getActiveProfile();
+        Profile currentProfile = Database.mUserDao.fetchActiveProfile();
 
         String[] sortingOptions = getResources().getStringArray(R.array.sort_options);
         sortingOptions[0] = currentProfile.getQuestionLabel() + " (A-Z)";
@@ -355,7 +350,7 @@ public class ArchivedActivity extends AppCompatActivity {
 
                         SortingStateManager sortingStateManager = SortingStateManager.getInstance();
                         sortingStateManager.changeStateByPosition(which);
-                        cardList = dbManager.getArchivedCards();
+                        cardList = Database.mCardDao.fetchArchivedCards();
                         customListAdapter.notifyDataSetChanged();
                         dialog.dismiss();
                         listView.smoothScrollToPosition(0);

@@ -37,7 +37,7 @@ import java.util.Random;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
-import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.helper.CardHelper;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
@@ -70,9 +70,6 @@ public class ReviewFragment extends Fragment {
     private Spinner spinner;
     private ArrayAdapter<String> deckArrayAdapter;
     private List<Deck> deckList;
-
-    // database
-    private DatabaseManager dbManager;
 
     // components
     private TextView questionTextView;
@@ -143,7 +140,6 @@ public class ReviewFragment extends Fragment {
         firstTimeOpening = true;
         loadNewData = false;
         // init
-        dbManager = DatabaseManager.getInstance(getActivity());
         spinner = ((Spinner) view.findViewById(R.id.practice_spinner));
         questionTextView = (TextView) view.findViewById(R.id.practice_question);
         answerTextView = (TextView) view.findViewById(R.id.practice_answer);
@@ -158,7 +154,7 @@ public class ReviewFragment extends Fragment {
 
 
         // init orientation text holders
-        Profile currentProfile = dbManager.getActiveProfile();
+        Profile currentProfile = Database.mUserDao.fetchActiveProfile();
         questionLabel = currentProfile.getQuestionLabel();
         answerLabel = currentProfile.getAnswerLabel();
 
@@ -168,7 +164,7 @@ public class ReviewFragment extends Fragment {
         showButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isSelectedDeckAll() && !(dbManager.getUser().isAllowPracticeAll())) {
+                if (isSelectedDeckAll() && !(Database.mUserDao.fetchUser().isAllowPracticeAll())) {
                     Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
                 } else {
                     if (!loading)
@@ -185,7 +181,7 @@ public class ReviewFragment extends Fragment {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isSelectedDeckAll() && !(dbManager.getUser().isAllowPracticeAll())) {
+                if (isSelectedDeckAll() && !(Database.mUserDao.fetchUser().isAllowPracticeAll())) {
                     Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
                 } else {
                     if (!loading)
@@ -274,7 +270,7 @@ public class ReviewFragment extends Fragment {
                     else
                         item.setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_check_box_outline_blank_black_24dp));
 
-                    if (isSelectedDeckAll() && (dbManager.getUser().isAllowPracticeAll()) || !isSelectedDeckAll()) {
+                    if (!isSelectedDeckAll() || (Database.mUserDao.fetchUser().isAllowPracticeAll())) {
                         setQuestionAnswerText();
                     }
 
@@ -301,7 +297,7 @@ public class ReviewFragment extends Fragment {
 
                 case R.id.action_quick_remove_practice:
                     if (mCardList != null && !mCardList.isEmpty() && !isSelectedDeckAll()) {
-                        toggleFromPractice(dbManager.getUser().getQuickToggle());
+                        toggleFromPractice(Database.mUserDao.fetchUser().getQuickToggleHours());
                     } else {
                         Toast.makeText(getContext(), "Cannot toggle from review", Toast.LENGTH_SHORT).show();
                     }
@@ -321,7 +317,7 @@ public class ReviewFragment extends Fragment {
                     return true;
                 case R.id.action_quick_info:
 
-                    if (!(isSelectedDeckAll() && !(dbManager.getUser().isAllowPracticeAll()))) {
+                    if (!(isSelectedDeckAll() && !(Database.mUserDao.fetchUser().isAllowPracticeAll()))) {
                         if (showingPrevious)
                             CardHelper.showQuickInfoCard(getContext(), getActivity(), previousCard);
                         else
@@ -382,11 +378,11 @@ public class ReviewFragment extends Fragment {
         if (deckList != null)
             deckList.clear();
 
-        deckList = dbManager.getDecks();
+        deckList = Database.mDeckDao.fetchAllDecks();
         final List<String> deckListString = new ArrayList<>();
 
 
-        if (dbManager.getUser().isAllowPracticeAll())
+        if (Database.mUserDao.fetchUser().isAllowPracticeAll())
             deckListString.add("All Cards");
         else
             deckListString.add("- Select Deck -");
@@ -404,7 +400,7 @@ public class ReviewFragment extends Fragment {
             @Override
             public boolean isEnabled(int position) {
 
-                if (position == SELECT_ALL_CARDS && !(dbManager.getUser().isAllowPracticeAll())) {
+                if (position == SELECT_ALL_CARDS && !(Database.mUserDao.fetchUser().isAllowPracticeAll())) {
                     return false;
                 } else {
                     return true;
@@ -423,7 +419,7 @@ public class ReviewFragment extends Fragment {
 
 
                 if (position == SELECT_ALL_CARDS) {
-                    if (!(dbManager.getUser().isAllowPracticeAll())) {
+                    if (!(Database.mUserDao.fetchUser().isAllowPracticeAll())) {
                         mTextView.setTypeface(null, Typeface.NORMAL);
                         mTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.colorDivider));
                         mTextView.setTextColor(Color.GRAY);
@@ -454,7 +450,7 @@ public class ReviewFragment extends Fragment {
                 View mView = super.getDropDownView(position, convertView, parent);
                 TextView mTextView = (TextView) mView;
                 mTextView.setTextColor(Color.BLACK);
-                if (position == SELECT_ALL_CARDS && !(dbManager.getUser().isAllowPracticeAll())) {
+                if (position == SELECT_ALL_CARDS && !(Database.mUserDao.fetchUser().isAllowPracticeAll())) {
                     mTextView.setTextColor(Color.GRAY);
                 } else {
                     mTextView.setTextColor(Color.BLACK);
@@ -502,7 +498,7 @@ public class ReviewFragment extends Fragment {
 
     private void switchPracticeCards() {
 
-        if (isSelectedDeckAll() && !(dbManager.getUser().isAllowPracticeAll())) {
+        if (isSelectedDeckAll() && !(Database.mUserDao.fetchUser().isAllowPracticeAll())) {
 
             questionTextView.setText("Select Deck");
             answerTextView.setText("");
@@ -783,7 +779,7 @@ public class ReviewFragment extends Fragment {
             showingPrevious = false;
 
 
-            dbManager.togglePractice_Card(previousCard.getCardId(),
+            Database.mCardDeckDao.changeCardReviewTime(previousCard.getCardId(),
                     deckList.get(deckPosition).getDeckId(), hours);
 
             cardInfo = "\'" + previousCard.getQuestion() + "/" + previousCard.getAnswer() + "\'";
@@ -810,7 +806,7 @@ public class ReviewFragment extends Fragment {
             int deckPosition = selectedSpinnerPosition - 1;
             int indexRemoved = questionOrder.get(currentQuestion);
 
-            dbManager.togglePractice_Card(mCardList.get(indexRemoved).getCardId(),
+            Database.mCardDeckDao.changeCardReviewTime(mCardList.get(indexRemoved).getCardId(),
                     deckList.get(deckPosition).getDeckId(), hours);
 
 
@@ -872,13 +868,13 @@ public class ReviewFragment extends Fragment {
         deckListAlertDialog.setTitle("Modify " + card.getQuestion() + "/" + card.getAnswer() + " decks");
 
 
-        List<Deck> cardSpecificDeck = dbManager.getDecksFromCard(card.getCardId());
+        List<Deck> cardSpecificDeck = Database.mCardDeckDao.fetchDecksByCardId(card.getCardId());
 
 
         isPartOfDeckList = new boolean[deckList.size()];
         for (int counter = 0; counter < isPartOfDeckList.length; counter++) {
             for (int i = 0; i < cardSpecificDeck.size(); i++) {
-                if (deckList.get(counter).getDeckId().equals(cardSpecificDeck.get(i).getDeckId()))
+                if (deckList.get(counter).getDeckId() == (cardSpecificDeck.get(i).getDeckId()))
                     isPartOfDeckList[counter] = true;
             }
         }
@@ -921,10 +917,10 @@ public class ReviewFragment extends Fragment {
                                     toggleFromPractice(TOGGLE_REMOVE);
                                 }
 
-                                dbManager.deleteCardDeck(card.getCardId(), deckList.get(i).getDeckId());
+                                Database.mCardDeckDao.deleteCardDeck(card.getCardId(), deckList.get(i).getDeckId());
                             } else {
                                 // add
-                                dbManager.createCardDeck(card.getCardId(), deckList.get(i).getDeckId());
+                                Database.mCardDeckDao.createCardDeck(card.getCardId(), deckList.get(i).getDeckId());
                             }
                         }
                     }
@@ -975,10 +971,10 @@ public class ReviewFragment extends Fragment {
             int selectedDeck = params[0];
 
             if (isSelectedDeckAll()) {
-                mCardList = dbManager.getCards();
+                mCardList = Database.mCardDao.fetchAllCards();
             } else {
-                long deckId = deckList.get(selectedDeck - SPINNER_OFFSET).getDeckId();
-                mCardList = dbManager.getDeckPracticeCards(deckId);
+                int deckId = deckList.get(selectedDeck - SPINNER_OFFSET).getDeckId();
+                mCardList = Database.mCardDeckDao.fetchReviewCardsByDeckId(deckId);
             }
 
             questionOrder.clear();
@@ -1035,7 +1031,7 @@ public class ReviewFragment extends Fragment {
 
     public void setButtonsEnable() {
 
-        if (isSelectedDeckAll() && !(dbManager.getUser().isAllowPracticeAll()) || mCardList.isEmpty()) {
+        if (isSelectedDeckAll() && !(Database.mUserDao.fetchUser().isAllowPracticeAll()) || mCardList.isEmpty()) {
             nextButton.setEnabled(false);
             showButton.setEnabled(false);
         } else {

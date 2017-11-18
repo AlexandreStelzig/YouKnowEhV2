@@ -11,15 +11,15 @@ import stelztech.youknowehv4.database.deck.Deck;
 
 public interface ICardDeckDao {
 
-    CardDeck fetchCardDeckById(long cardId, long deckId);
-    List<Card> fetchCardsByDeckId(long deckId);
-    List<Deck> fetchDecksByCardId(long cardId);
+    CardDeck fetchCardDeckById(int cardId, int deckId);
+    List<Card> fetchCardsByDeckId(int deckId);
+    List<Deck> fetchDecksByCardId(int cardId);
     boolean revalidateReviewCards();
-    List<Card> fetchReviewCardsByDeckId(long deckId);
-    boolean deleteCardDeck(long cardId, long deckId);
-    long createCardDeck(long cardId, long deckId);
-    boolean toggleCardFromReview(long cardId, long deckId, int hours);
-    int fetchNumberCardsForDeck(long deckId);
-    int fetchNumberDecksForCar(long cardId);
+    List<Card> fetchReviewCardsByDeckId(int deckId);
+    boolean deleteCardDeck(int cardId, int deckId);
+    long createCardDeck(int cardId, int deckId);
+    boolean changeCardReviewTime(int cardId, int deckId, int hours);
+    int fetchNumberCardsFromDeckId(int deckId);
+    int fetchNumberDecksFromCardId(int cardId);
 
 }

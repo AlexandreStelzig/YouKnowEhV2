@@ -1,16 +1,14 @@
 package stelztech.youknowehv4.database.user;
 
-import java.util.Date;
-
 /**
  * Created by alex on 2017-05-11.
  */
 
 public class User {
 
-    private long userId;
-    private Date dateCreated;
-    private long activeProfileId;
+    private int userId;
+    private String dateCreated;
+    private int activeProfileId;
     private int defaultSortingPosition;
     private boolean allowProfileDeletion;
     private boolean displayNbDecksAllCards;
@@ -19,7 +17,7 @@ public class User {
     private boolean allowOnQueryChanged;
     private int quickToggleHours;
 
-    public User(long userId, Date dateCreated, long activeProfileId, int defaultSortingPosition, boolean allowProfileDeletion, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards, boolean allowPracticeAll, boolean allowOnQueryChanged, int quickToggleHours) {
+    public User(int userId, String dateCreated, int activeProfileId, int defaultSortingPosition, boolean allowProfileDeletion, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards, boolean allowPracticeAll, boolean allowOnQueryChanged, int quickToggleHours) {
         this.userId = userId;
         this.dateCreated = dateCreated;
         this.activeProfileId = activeProfileId;
@@ -81,27 +79,27 @@ public class User {
         this.displayNbDecksSpecificCards = displayNbDecksSpecificCards;
     }
 
-    public long getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
-    public Date getDateCreated() {
+    public String getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(Date dateCreated) {
+    public void setDateCreated(String dateCreated) {
         this.dateCreated = dateCreated;
     }
 
-    public long getActiveProfileId() {
+    public int getActiveProfileId() {
         return activeProfileId;
     }
 
-    public void setActiveProfileId(long activeProfileId) {
+    public void setActiveProfileId(int activeProfileId) {
         this.activeProfileId = activeProfileId;
     }
 

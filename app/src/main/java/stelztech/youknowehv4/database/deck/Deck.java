@@ -1,22 +1,20 @@
 package stelztech.youknowehv4.database.deck;
 
-import java.util.Date;
-
 /**
  * Created by Alexandre on 4/25/2016.
  */
 public class Deck {
 
-    private long deckId;
+    private int deckId;
     private String deckName;
-    private Date dateCreated;
-    private Date dateModified;
+    private String dateCreated;
+    private String dateModified;
     private int position;
-    private long profileId;
+    private int profileId;
 
 
 
-    public Deck(long deckId, String deckName, Date dateCreated, Date dateModified, int position, long profileId) {
+    public Deck(int deckId, String deckName, String dateCreated, String dateModified, int position, int profileId) {
         this.deckId = deckId;
         this.deckName = deckName;
         this.dateCreated = dateCreated;
@@ -25,19 +23,19 @@ public class Deck {
         this.profileId = profileId;
     }
 
-    public long getProfileId() {
+    public int getProfileId() {
         return profileId;
     }
 
-    public void setProfileId(long profileId) {
+    public void setProfileId(int profileId) {
         this.profileId = profileId;
     }
 
-    public long getDeckId() {
+    public int getDeckId() {
         return deckId;
     }
 
-    public void setDeckId(long deckId) {
+    public void setDeckId(int deckId) {
         this.deckId = deckId;
     }
 
@@ -49,19 +47,19 @@ public class Deck {
         this.deckName = deckName;
     }
 
-    public Date getDateCreated() {
+    public String getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(Date dateCreated) {
+    public void setDateCreated(String dateCreated) {
         this.dateCreated = dateCreated;
     }
 
-    public Date getDateModified() {
+    public String getDateModified() {
         return dateModified;
     }
 
-    public void setDateModified(Date dateModified) {
+    public void setDateModified(String dateModified) {
         this.dateModified = dateModified;
     }
 

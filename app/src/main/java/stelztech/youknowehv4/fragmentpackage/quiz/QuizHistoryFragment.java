@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
-import stelztech.youknowehv4.database.DatabaseManager;
 
 /**
  * Created by alex on 2017-04-03.
@@ -24,18 +23,11 @@ public class QuizHistoryFragment extends Fragment {
 
 
 
-    private DatabaseManager databaseManager;
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_quiz_history, container, false);
-
-        databaseManager = DatabaseManager.getInstance(getContext());
-
-
         return view;
     }
 

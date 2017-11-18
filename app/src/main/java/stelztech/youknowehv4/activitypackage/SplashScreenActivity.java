@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.firsttimeopening.FirstTimeOpeningActivity;
 
 /**
@@ -25,20 +25,19 @@ public class SplashScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
 
 
-        DatabaseManager dbManager = DatabaseManager.getInstance(this);
-        dbManager.verifyPracticeCards();
+        Database.open(this);
+        Database.mCardDeckDao.revalidateReviewCards();
 
-        if (dbManager.getUser() == null) {
-            dbManager.createUser();
+        if (Database.mUserDao.fetchUser() == null) {
+            Database.mUserDao.createUser();
         }
-        if (dbManager.getProfiles().isEmpty()) {
+        if (Database.mProfileDao.fetchAllProfiles().isEmpty()) {
             Intent i = new Intent(SplashScreenActivity.this, FirstTimeOpeningActivity.class);
             startActivity(i);
             finish();
         } else {
             transitionThread().start();
         }
-
 
     }
 

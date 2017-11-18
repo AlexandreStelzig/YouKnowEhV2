@@ -31,7 +31,7 @@ import java.util.List;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
-import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.database.profile.Profile;
@@ -64,8 +64,6 @@ public class ProfileFragment extends Fragment {
     private EditText questionLabel;
     private EditText answerLabel;
 
-    private DatabaseManager dbManager;
-
     private String dialogTextHolder;
 
     // spinner
@@ -81,7 +79,6 @@ public class ProfileFragment extends Fragment {
         FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
         setHasOptionsMenu(true);
 
-        dbManager = DatabaseManager.getInstance(getContext());
         dialogTextHolder = "";
 
         // init
@@ -120,6 +117,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 createProfile();
+
             }
         });
         editButton.setOnClickListener(new View.OnClickListener() {
@@ -129,7 +127,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        if (dbManager.getUser().isAllowProfileDeletion()) {
+        if (Database.mUserDao.fetchUser().isAllowProfileDeletion()) {
             deleteButton.setEnabled(true);
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -149,7 +147,7 @@ public class ProfileFragment extends Fragment {
 
     private void setLabelText() {
 
-        Profile profile = dbManager.getActiveProfile();
+        Profile profile = Database.mUserDao.fetchActiveProfile();
         String questionText = profile.getQuestionLabel();
         String answerText = profile.getAnswerLabel();
 
@@ -164,15 +162,15 @@ public class ProfileFragment extends Fragment {
         if (arrayAdapter != null)
             arrayAdapter.clear();
 
-        profileList = dbManager.getProfiles();
+        profileList = Database.mProfileDao.fetchAllProfiles();
 
         List<String> profileNameArray = new ArrayList<>();
         int activeProfilePosition = 1;
 
         for (int i = 0; i < profileList.size(); i++) {
             profileNameArray.add(profileList.get(i).getProfileName());
-            String activeProfileId = dbManager.getUser().getActiveProfileId();
-            if (profileList.get(i).getProfileId().equals(activeProfileId))
+            long activeProfileId = Database.mUserDao.fetchUser().getActiveProfileId();
+            if (profileList.get(i).getProfileId() == (activeProfileId))
                 activeProfilePosition = i;
         }
 
@@ -231,7 +229,7 @@ public class ProfileFragment extends Fragment {
 
 
     private void changeProfile(Profile profile) {
-        dbManager.setActiveProfile(profile.getProfileId());
+        Database.mUserDao.setActiveProfile(profile.getProfileId());
     }
 
 
@@ -343,21 +341,23 @@ public class ProfileFragment extends Fragment {
                         } else {
                             switch (dialogType) {
                                 case CREATE_PROFILE:
-                                    dbManager.createProfile(dialogTextHolder);
+                                    int profileId = Database.mProfileDao.createProfile(dialogTextHolder);
+                                    // set newly created profile to active
+                                    Database.mUserDao.setActiveProfile(profileId);
                                     populateInformation();
                                     break;
                                 case UPDATE_PROFILE:
-                                    dbManager.updateProfile(profileList.get(
+                                    Database.mProfileDao.updateProfile(profileList.get(
                                             getCurrentlySelectedProfilePosition()).getProfileId(), dialogTextHolder);
                                     populateInformation();
                                     break;
                                 case UPDATE_QUESTION:
-                                    dbManager.updateProfileQuestionLabel(profileList.get(
+                                    Database.mProfileDao.updateProfileQuestionLabel(profileList.get(
                                             getCurrentlySelectedProfilePosition()).getProfileId(), dialogTextHolder);
                                     populateInformation();
                                     break;
                                 case UPDATE_ANSWER:
-                                    dbManager.updateProfileAnswerLabel(profileList.get(
+                                    Database.mProfileDao.updateProfileAnswerLabel(profileList.get(
                                             getCurrentlySelectedProfilePosition()).getProfileId(), dialogTextHolder);
                                     populateInformation();
                                     break;
@@ -394,13 +394,13 @@ public class ProfileFragment extends Fragment {
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 for (int i = 0; i < profileList.size(); i++) {
-                    if (profileList.get(i).getProfileId().equals(profileToDelete.getProfileId())) {
+                    if (profileList.get(i).getProfileId() == (profileToDelete.getProfileId())) {
                         profileList.remove(i);
                         break;
                     }
                 }
-                dbManager.deleteProfile(profileToDelete.getProfileId());
-                dbManager.setActiveProfile(profileList.get(0).getProfileId());
+                Database.mProfileDao.deleteProfile(profileToDelete.getProfileId());
+                Database.mUserDao.setActiveProfile(profileList.get(0).getProfileId());
                 populateInformation();
             }
         });

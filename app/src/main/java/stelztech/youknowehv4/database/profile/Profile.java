@@ -1,7 +1,5 @@
 package stelztech.youknowehv4.database.profile;
 
-import java.util.Date;
-
 /**
  * Created by alex on 2017-05-06.
  */
@@ -9,15 +7,15 @@ import java.util.Date;
 public class Profile {
 
 
-    private long profileId;
+    private int profileId;
     private String profileName;
-    private Date dateCreated;
+    private String dateCreated;
     private String questionLabel;
     private String answerLabel;
-    private long activeQuizId;
+    private int activeQuizId;
 
 
-    public Profile(long profileId, String profileName, Date dateCreated, String questionLabel, String answerLabel, long activeQuizId) {
+    public Profile(int profileId, String profileName, String dateCreated, String questionLabel, String answerLabel, int activeQuizId) {
         this.profileId = profileId;
         this.profileName = profileName;
         this.dateCreated = dateCreated;
@@ -26,11 +24,11 @@ public class Profile {
         this.activeQuizId = activeQuizId;
     }
 
-    public long getProfileId() {
+    public int getProfileId() {
         return profileId;
     }
 
-    public void setProfileId(long profileId) {
+    public void setProfileId(int profileId) {
         this.profileId = profileId;
     }
 
@@ -42,11 +40,11 @@ public class Profile {
         this.profileName = profileName;
     }
 
-    public Date getDateCreated() {
+    public String getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(Date dateCreated) {
+    public void setDateCreated(String dateCreated) {
         this.dateCreated = dateCreated;
     }
 
@@ -66,11 +64,11 @@ public class Profile {
         this.answerLabel = answerLabel;
     }
 
-    public long getActiveQuizId() {
+    public int getActiveQuizId() {
         return activeQuizId;
     }
 
-    public void setActiveQuizId(long activeQuizId) {
+    public void setActiveQuizId(int activeQuizId) {
         this.activeQuizId = activeQuizId;
     }
 }

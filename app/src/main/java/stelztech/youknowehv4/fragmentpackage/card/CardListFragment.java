@@ -44,7 +44,7 @@ import java.util.List;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
-import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.helper.CardHelper;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
@@ -54,6 +54,8 @@ import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.deck.Deck;
 import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.database.user.User;
+
+import static stelztech.youknowehv4.database.carddeck.CardDeck.REVIEW_TOGGLE_ID;
 
 /**
  * Created by alex on 2017-04-03.
@@ -80,7 +82,7 @@ public class CardListFragment extends Fragment {
     }
 
 
-    public final long ALL_DECKS_ITEM = "" + -1;
+    public final int ALL_DECKS_ITEM = -1;
     private final int SPINNER_OFFSET = 1;
 
     // components
@@ -91,9 +93,6 @@ public class CardListFragment extends Fragment {
     private ArrayAdapter<String> deckArrayAdapter;
     private List<Deck> deckList;
     private long toSelectDeckId = ALL_DECKS_ITEM;
-
-    // database
-    private DatabaseManager dbManager;
 
     private boolean scrollToTop = false;
     private boolean selectionFromActivity = false;
@@ -161,7 +160,6 @@ public class CardListFragment extends Fragment {
         // init
         indexSelected = -1;
         spinner = ((Spinner) getActivity().findViewById(R.id.spinner_nav));
-        dbManager = DatabaseManager.getInstance(getActivity());
         listView = (ListView) view.findViewById(R.id.listview);
         placeholderTextView = (TextView) view.findViewById(R.id.list_text);
         progressBar = (ProgressBar) view.findViewById(R.id.list_loading_indicator);
@@ -179,7 +177,7 @@ public class CardListFragment extends Fragment {
         rebuild = true;
         isLoading = false;
 
-        currentProfile = dbManager.getActiveProfile();
+        currentProfile = Database.mUserDao.fetchActiveProfile();
 
         questionLabel = currentProfile.getQuestionLabel();
         answerLabel = currentProfile.getAnswerLabel();
@@ -217,13 +215,13 @@ public class CardListFragment extends Fragment {
 
 
         if (currentState == CardListState.VIEW) {
-            if (getCurrentDeckIdSelected().equals(ALL_DECKS_ITEM))
+            if (getCurrentDeckIdSelected() == (ALL_DECKS_ITEM))
                 CardToolbarManager.getInstance().setState(CardToolbarManager.CardToolbarState.ALL_CARDS, menu, getActivity());
             else
                 CardToolbarManager.getInstance().setState(CardToolbarManager.CardToolbarState.CARD, menu, getActivity());
             FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.ADD_CARD, getActivity());
         } else if (currentState == CardListState.SEARCH) {
-            if (getCurrentDeckIdSelected().equals(ALL_DECKS_ITEM))
+            if (getCurrentDeckIdSelected() == (ALL_DECKS_ITEM))
                 CardToolbarManager.getInstance().setState(CardToolbarManager.CardToolbarState.SEARCH_ALL, menu, getActivity());
             else
                 CardToolbarManager.getInstance().setState(CardToolbarManager.CardToolbarState.SEARCH, menu, getActivity());
@@ -257,7 +255,7 @@ public class CardListFragment extends Fragment {
             public boolean onQueryTextChange(String s) {
 
 
-                if (dbManager.getUser().isAllowOnQueryChanged())
+                if (Database.mUserDao.fetchUser().isAllowOnQueryChanged())
                     populateSearchListView(s);
 
                 return false;
@@ -273,16 +271,16 @@ public class CardListFragment extends Fragment {
                     return true;
                 }
 
-                if (getCurrentDeckIdSelected().equals(ALL_DECKS_ITEM))
+                if (getCurrentDeckIdSelected() == (ALL_DECKS_ITEM))
                     searchView.setQueryHint("Search All Cards...");
                 else {
-                    String deckName = dbManager.getDeckFromId(getCurrentDeckIdSelected()).getDeckName();
+                    String deckName = Database.mDeckDao.fetchDeckById(getCurrentDeckIdSelected()).getDeckName();
                     searchView.setQueryHint("Search " + deckName + " Cards...");
                 }
 
                 changeState(CardListState.SEARCH);
 
-                if (getCurrentDeckIdSelected().equals(ALL_DECKS_ITEM))
+                if (getCurrentDeckIdSelected() == (ALL_DECKS_ITEM))
                     CardToolbarManager.getInstance().setState(CardToolbarManager.CardToolbarState.SEARCH_ALL, menu, getActivity());
                 else
                     CardToolbarManager.getInstance().setState(CardToolbarManager.CardToolbarState.SEARCH, menu, getActivity());
@@ -326,7 +324,7 @@ public class CardListFragment extends Fragment {
                     if (deckList.isEmpty()) {
                         Toast.makeText(getContext(), "No decks", Toast.LENGTH_SHORT).show();
                         return true;
-                    } else if (dbManager.getCards().isEmpty()) {
+                    } else if (Database.mCardDao.fetchAllCards().isEmpty()) {
                         Toast.makeText(getContext(), "No cards", Toast.LENGTH_SHORT).show();
                     }
                     if (getCurrentDeckIdSelected() != ALL_DECKS_ITEM) {
@@ -340,7 +338,7 @@ public class CardListFragment extends Fragment {
                         Toast.makeText(getContext(), "No decks", Toast.LENGTH_SHORT).show();
                         return true;
                     }
-                    if (!getCurrentDeckIdSelected().equals(ALL_DECKS_ITEM)) {
+                    if (getCurrentDeckIdSelected() != (ALL_DECKS_ITEM)) {
                         if (cardList.isEmpty()) {
                             Toast.makeText(getContext(), "No cards in deck", Toast.LENGTH_SHORT).show();
                         } else {
@@ -446,14 +444,14 @@ public class CardListFragment extends Fragment {
             case EDIT_DECK:
                 currentState = CardListState.EDIT_DECK;
                 mainActivityManager.getSupportActionBar().setTitle("Add/Remove");
-                mainActivityManager.getSupportActionBar().setSubtitle(dbManager.getDeckFromId(getCurrentDeckIdSelected()).getDeckName());
+                mainActivityManager.getSupportActionBar().setSubtitle(Database.mDeckDao.fetchDeckById(getCurrentDeckIdSelected()).getDeckName());
                 populateListView(getCurrentDeckIdSelected());
                 getActivity().invalidateOptionsMenu();
                 break;
             case PRACTICE_TOGGLE:
                 currentState = CardListState.PRACTICE_TOGGLE;
                 mainActivityManager.getSupportActionBar().setTitle("Toggle Review");
-                mainActivityManager.getSupportActionBar().setSubtitle(dbManager.getDeckFromId(getCurrentDeckIdSelected()).getDeckName());
+                mainActivityManager.getSupportActionBar().setSubtitle(Database.mDeckDao.fetchDeckById(getCurrentDeckIdSelected()).getDeckName());
                 populateListView(getCurrentDeckIdSelected());
                 getActivity().invalidateOptionsMenu();
                 break;
@@ -569,7 +567,7 @@ public class CardListFragment extends Fragment {
         questionEditTextView.setHint(questionLabel + " (mandatory)");
         answerEditTextView.setHint(answerLabel + " (mandatory)");
 
-        final long currentSelectedDeckId = getCurrentDeckIdSelected();
+        final int currentSelectedDeckId = getCurrentDeckIdSelected();
 
         questionEditTextView.setText(questionHolder);
         answerEditTextView.setText(answerHolder);
@@ -577,12 +575,12 @@ public class CardListFragment extends Fragment {
 
 
         if (dialogType == CardQuickDialogOption.QUICK_NEW) {
-            if (getCurrentDeckIdSelected().equals(ALL_DECKS_ITEM))
+            if (getCurrentDeckIdSelected() == (ALL_DECKS_ITEM))
                 deckPlaceHolder.setText("No Deck");
             else
-                deckPlaceHolder.setText(dbManager.getDeckFromId(currentSelectedDeckId).getDeckName());
+                deckPlaceHolder.setText(Database.mDeckDao.fetchDeckById(currentSelectedDeckId).getDeckName());
         } else {
-            int numberDecks = dbManager.numberDecksInCard(card.getCardId());
+            int numberDecks = Database.mCardDeckDao.fetchNumberDecksFromCardId(card.getCardId());
             if (numberDecks == 0) {
                 deckPlaceHolder.setText("No Deck");
             } else if (numberDecks == 1) {
@@ -651,7 +649,7 @@ public class CardListFragment extends Fragment {
 
                         if (answerEmpty || questionEmpty) {
                             String toastMessageError = "";
-                            Profile profile = dbManager.getActiveProfile();
+                            Profile profile = Database.mUserDao.fetchActiveProfile();
                             String questionLabel = profile.getQuestionLabel();
                             String answerLabel = profile.getAnswerLabel();
                             if (answerEmpty && questionEmpty)
@@ -666,9 +664,9 @@ public class CardListFragment extends Fragment {
                         } else {
 
                             if (dialogType == CardQuickDialogOption.QUICK_NEW) {
-                                String newCardId = dbManager.createCard(questionHolder, answerHolder, "");
+                                int newCardId = Database.mCardDao.createCard(questionHolder, answerHolder, "");
                                 if (currentSelectedDeckId != ALL_DECKS_ITEM) {
-                                    dbManager.createCardDeck(newCardId, currentSelectedDeckId);
+                                    Database.mCardDeckDao.createCardDeck(newCardId, currentSelectedDeckId);
                                 }
                                 populateListView(getCurrentDeckIdSelected());
                                 Toast.makeText(getContext(), "Card created", Toast.LENGTH_SHORT).show();
@@ -678,13 +676,13 @@ public class CardListFragment extends Fragment {
                                 if (answerTemp.equals(answerHolder) && questionTemp.equals(questionHolder)) {
 
                                     String toastMessageError = "";
-                                    Profile profile = dbManager.getActiveProfile();
+                                    Profile profile = Database.mUserDao.fetchActiveProfile();
                                     String questionLabel = profile.getQuestionLabel();
                                     String answerLabel = profile.getAnswerLabel();
 
                                     Toast.makeText(getContext(), "Card not updated: " + questionLabel + " and " + answerLabel + " are the same", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    dbManager.updateCard(card.getCardId(), questionHolder, answerHolder, card.getMoreInfo());
+                                    Database.mCardDao.updateCard(card.getCardId(), questionHolder, answerHolder, card.getMoreInfo());
                                     populateListView(getCurrentDeckIdSelected());
                                     Toast.makeText(getContext(), "Card updated", Toast.LENGTH_SHORT).show();
                                     aDialog.dismiss();
@@ -712,7 +710,7 @@ public class CardListFragment extends Fragment {
 
                             if (answerEmpty || questionEmpty) {
                                 String toastMessageError = "";
-                                Profile profile = dbManager.getActiveProfile();
+                                Profile profile = Database.mUserDao.fetchActiveProfile();
                                 String questionLabel = profile.getQuestionLabel();
                                 String answerLabel = profile.getAnswerLabel();
                                 if (answerEmpty && questionEmpty)
@@ -727,9 +725,9 @@ public class CardListFragment extends Fragment {
                             } else {
 
                                 if (dialogType == CardQuickDialogOption.QUICK_NEW) {
-                                    String newCardId = dbManager.createCard(questionHolder, answerHolder, "");
+                                    int newCardId = Database.mCardDao.createCard(questionHolder, answerHolder, "");
                                     if (currentSelectedDeckId != ALL_DECKS_ITEM) {
-                                        dbManager.createCardDeck(newCardId, currentSelectedDeckId);
+                                        Database.mCardDeckDao.createCardDeck(newCardId, currentSelectedDeckId);
                                     }
 
                                     Toast.makeText(getContext(), "Card created", Toast.LENGTH_SHORT).show();
@@ -773,7 +771,7 @@ public class CardListFragment extends Fragment {
             MenuItem practice = menu.findItem(R.id.toggle_practice);
             MenuItem rmDeck = menu.findItem(R.id.remove_from_deck);
 
-            if (getCurrentDeckIdSelected().equals(ALL_DECKS_ITEM)) {
+            if (getCurrentDeckIdSelected() == (ALL_DECKS_ITEM)) {
                 practice.setVisible(false);
                 rmDeck.setVisible(false);
             } else {
@@ -806,7 +804,7 @@ public class CardListFragment extends Fragment {
                 return true;
             case R.id.remove_from_deck:
                 if (getCurrentDeckIdSelected() != ALL_DECKS_ITEM) {
-                    dbManager.deleteCardDeck(cardList.get(indexSelected).getCardId(), getCurrentDeckIdSelected());
+                    Database.mCardDeckDao.deleteCardDeck(cardList.get(indexSelected).getCardId(), getCurrentDeckIdSelected());
                     String cardRemoved = cardList.get(indexSelected).getQuestion() + " / " + cardList.get(indexSelected).getAnswer();
                     Toast.makeText(getContext(), "\"" + cardRemoved + "\" removed from deck", Toast.LENGTH_SHORT).show();
                     populateListView(getCurrentDeckIdSelected());
@@ -826,7 +824,7 @@ public class CardListFragment extends Fragment {
 
 
     private void deleteCardFromDatabase() {
-        dbManager.toggleArchiveCard((String) cardList.get(indexSelected).getCardId());
+        Database.mCardDao.toggleArchiveCard(cardList.get(indexSelected).getCardId());
         String question = cardList.get(indexSelected).getQuestion();
         String answer = cardList.get(indexSelected).getAnswer();
 
@@ -840,13 +838,13 @@ public class CardListFragment extends Fragment {
     }
 
     private void toggleCardFromPractice() {
-        dbManager.togglePractice_Card(cardList.get(indexSelected).getCardId(), getCurrentDeckIdSelected(), -1);
+        Database.mCardDeckDao.changeCardReviewTime(cardList.get(indexSelected).getCardId(), getCurrentDeckIdSelected(), REVIEW_TOGGLE_ID);
     }
 
     private void toggleCardsFromPractice() {
         for (int counter = 0; counter < isPracticeList.length; counter++) {
             if (isPracticeList[counter] != isPracticeListTemp[counter]) {
-                dbManager.togglePractice_Card(cardList.get(counter).getCardId(), getCurrentDeckIdSelected(), -1);
+                Database.mCardDeckDao.changeCardReviewTime(cardList.get(counter).getCardId(), getCurrentDeckIdSelected(), REVIEW_TOGGLE_ID);
             }
         }
     }
@@ -900,7 +898,7 @@ public class CardListFragment extends Fragment {
             deckList.clear();
 
 
-        deckList = dbManager.getDecks();
+        deckList = Database.mDeckDao.fetchAllDecks();
         final List<String> deckListString = new ArrayList<>();
 
 
@@ -979,7 +977,7 @@ public class CardListFragment extends Fragment {
                     scrollToTop = true;
 
 
-                long deckId;
+                int deckId;
                 if (position == 0) {
                     deckId = ALL_DECKS_ITEM;
                 } else {
@@ -1003,9 +1001,9 @@ public class CardListFragment extends Fragment {
 
     public void setSpinnerSelected() {
         selectionFromActivity = true;
-        if (!toSelectDeckId.isEmpty()) {
+        if (toSelectDeckId != -1) {
             for (int counter = 0; counter < deckList.size(); counter++) {
-                if (deckList.get(counter).getDeckId().equals(toSelectDeckId)) {
+                if (deckList.get(counter).getDeckId() == (toSelectDeckId)) {
                     spinner.setSelection(counter + SPINNER_OFFSET, false);
                     return;
                 }
@@ -1014,11 +1012,11 @@ public class CardListFragment extends Fragment {
 
     }
 
-    public void populateListView(long idDeck) {
+    public void populateListView(int idDeck) {
 
         ((MainActivityManager) getActivity()).enableDrawerSwipe(false);
 
-        if (getCurrentDeckIdSelected().equals(ALL_DECKS_ITEM)) {
+        if (getCurrentDeckIdSelected() == (ALL_DECKS_ITEM)) {
             nbCardsPractice.setVisibility(View.GONE);
         } else {
             nbCardsPractice.setVisibility(View.VISIBLE);
@@ -1073,9 +1071,9 @@ public class CardListFragment extends Fragment {
         for (int counter = 0; counter < isPartOfList.length; counter++) {
             if (isPartOfList[counter] != isPartOfListTemp[counter]) {
                 if (isPartOfList[counter]) {
-                    dbManager.createCardDeck(cardList.get(counter).getCardId(), getCurrentDeckIdSelected());
+                    Database.mCardDeckDao.createCardDeck(cardList.get(counter).getCardId(), getCurrentDeckIdSelected());
                 } else {
-                    dbManager.deleteCardDeck(cardList.get(counter).getCardId(), getCurrentDeckIdSelected());
+                    Database.mCardDeckDao.deleteCardDeck(cardList.get(counter).getCardId(), getCurrentDeckIdSelected());
                 }
             }
         }
@@ -1086,7 +1084,7 @@ public class CardListFragment extends Fragment {
         toSelectDeckId = deckId;
     }
 
-    public long getCurrentDeckIdSelected() {
+    public int getCurrentDeckIdSelected() {
         if (spinner.getSelectedItemPosition() == 0)
             return ALL_DECKS_ITEM;
         else
@@ -1183,12 +1181,12 @@ public class CardListFragment extends Fragment {
             holder.nbDecksLabel = (TextView) rowView.findViewById(R.id.custom_card_item_nb_decks_label);
 
 
-            User user = dbManager.getUser();
+            User user = Database.mUserDao.fetchUser();
 
-            if ((getCurrentDeckIdSelected().equals(ALL_DECKS_ITEM) && user.isDisplayNbDecksAllCards())
-                    || (!getCurrentDeckIdSelected().equals(ALL_DECKS_ITEM) && user.isDisplayNbDecksSpecificCards())) {
+            if ((getCurrentDeckIdSelected() == (ALL_DECKS_ITEM) && user.isDisplayNbDecksAllCards())
+                    || (getCurrentDeckIdSelected() != (ALL_DECKS_ITEM) && user.isDisplayNbDecksSpecificCards())) {
                 holder.nbDecksLayout.setVisibility(View.VISIBLE);
-                int nbDecks = dbManager.getDecksFromCard(cardList.get(position).getCardId()).size();
+                int nbDecks = Database.mCardDeckDao.fetchDecksByCardId(cardList.get(position).getCardId()).size();
                 String nbDeckString;
                 if (nbDecks == 1)
                     nbDeckString = "1 Deck";
@@ -1363,32 +1361,32 @@ public class CardListFragment extends Fragment {
 
     }
 
-    private class LoadData extends AsyncTask<String, Void, String> {
+    private class LoadData extends AsyncTask<Integer, Void, String> {
 
 
         @Override
-        protected String doInBackground(String... params) {
+        protected String doInBackground(Integer... params) {
 
-            String idDeck = params[0];
+            int idDeck = params[0];
 
             isLoading = true;
-            if (idDeck.equals(ALL_DECKS_ITEM)) {
-                cardList = dbManager.getCards();
+            if (idDeck == (ALL_DECKS_ITEM)) {
+                cardList = Database.mCardDao.fetchAllCards();
                 isPracticeList = null;
             } else {
                 if (currentState == CardListState.EDIT_DECK) {
                     // Edit
-                    cardList = dbManager.getCards();
+                    cardList = Database.mCardDao.fetchAllCards();
                     isPartOfList = new boolean[cardList.size()];
 
                     for (int i = 0; i < isPartOfList.length; i++)
                         isPartOfList[i] = false;
 
-                    List<Card> deckCards = dbManager.getCardsFromDeck(idDeck);
+                    List<Card> deckCards = Database.mCardDeckDao.fetchCardsByDeckId(idDeck);
 
                     for (int counterAll = 0; counterAll < cardList.size(); counterAll++) {
                         for (int counterCard = 0; counterCard < deckCards.size(); counterCard++) {
-                            if (cardList.get(counterAll).getCardId().equals(deckCards.get(counterCard).getCardId())) {
+                            if (cardList.get(counterAll).getCardId() == (deckCards.get(counterCard).getCardId())) {
                                 isPartOfList[counterAll] = true;
                                 break;
                             }
@@ -1397,19 +1395,19 @@ public class CardListFragment extends Fragment {
                     isPartOfListTemp = isPartOfList.clone();
 
                 } else {
-                    cardList = dbManager.getCardsFromDeck(idDeck);
+                    cardList = Database.mCardDeckDao.fetchCardsByDeckId(idDeck);
                     if (filterPractice) {
-                        SortingStateManager.getInstance().sortByPractice(getContext(), cardList, getCurrentDeckIdSelected());
+                        SortingStateManager.getInstance().sortByPractice(cardList, getCurrentDeckIdSelected());
                     }
                 }
 
                 // setup practice list
                 isPracticeList = new boolean[cardList.size()];
-                List<Card> practiceCards = dbManager.getDeckPracticeCards(getCurrentDeckIdSelected());
+                List<Card> practiceCards = Database.mCardDeckDao.fetchReviewCardsByDeckId(getCurrentDeckIdSelected());
 
                 for (int counterAll = 0; counterAll < cardList.size(); counterAll++) {
                     for (int counterPractice = 0; counterPractice < practiceCards.size(); counterPractice++) {
-                        if (cardList.get(counterAll).getCardId().equals(practiceCards.get(counterPractice).getCardId())) {
+                        if (cardList.get(counterAll).getCardId() == (practiceCards.get(counterPractice).getCardId())) {
                             isPracticeList[counterAll] = true;
                             break;
                         }
@@ -1485,10 +1483,10 @@ public class CardListFragment extends Fragment {
 
             String containsString = params[0];
 
-            if (getCurrentDeckIdSelected().equals(ALL_DECKS_ITEM))
-                allCardsListSearch = dbManager.getCards();
+            if (getCurrentDeckIdSelected() == (ALL_DECKS_ITEM))
+                allCardsListSearch = Database.mCardDao.fetchAllCards();
             else
-                allCardsListSearch = dbManager.getCardsFromDeck(getCurrentDeckIdSelected());
+                allCardsListSearch = Database.mCardDeckDao.fetchCardsByDeckId(getCurrentDeckIdSelected());
 
             cardList.clear();
 

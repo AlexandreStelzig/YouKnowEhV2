@@ -55,7 +55,7 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
     }
 
     @Override
-    public Card fetchCardById(long cardId) {
+    public Card fetchCardById(int cardId) {
 
         Card card = null;
         cursor = super.rawQuery("SELECT * FROM " + CARD_TABLE + " WHERE "
@@ -74,11 +74,11 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
     }
 
     @Override
-    public long createCard(String question, String answer, String moreInfo) {
+    public int createCard(String question, String answer, String moreInfo) {
 
         ContentValues values = new ContentValues();
 
-        String date = DateHelper.getDateNow();
+        String date = DateHelper.getDateNowString();
 
         long activeProfileId = Database.mUserDao.fetchActiveProfile().getProfileId();
 
@@ -100,12 +100,36 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
     }
 
     @Override
-    public boolean updateCard(long cardId, String question, String answer, String moreInfo) {
+    public int createCard(String question, String answer, String moreInfo, String dateCreate, String dateModified) {
+        ContentValues values = new ContentValues();
+
+        long activeProfileId = Database.mUserDao.fetchActiveProfile().getProfileId();
+
+
+        values.put(COLUMN_QUESTION, question);
+        values.put(COLUMN_ANSWER, answer);
+        values.put(COLUMN_MORE_INFORMATION, moreInfo);
+        values.put(COLUMN_DATE_CREATED, dateCreate);
+        values.put(COLUMN_DATE_MODIFIED, dateModified);
+        values.put(COLUMN_PROFILE_ID, activeProfileId);
+        values.put(COLUMN_ARCHIVED, false);
+
+        try {
+            return super.insert(CARD_TABLE, values);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("Database", ex.getMessage());
+            return -1;
+        }
+    }
+
+
+    @Override
+    public boolean updateCard(int cardId, String question, String answer, String moreInfo) {
 
         ContentValues values = new ContentValues();
 
         try {
-            String date = DateHelper.getDateNow();
+            String date = DateHelper.getDateNowString();
 
             values.put(COLUMN_QUESTION, question);
             values.put(COLUMN_ANSWER, answer);
@@ -120,7 +144,7 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
     }
 
     @Override
-    public boolean deleteCard(long cardId) {
+    public boolean deleteCard(int cardId) {
 
         try {
             List<Deck> decks = Database.mCardDeckDao.fetchDecksByCardId(cardId);
@@ -136,7 +160,7 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
     }
 
     @Override
-    public boolean toggleArchiveCard(long cardId) {
+    public boolean toggleArchiveCard(int cardId) {
 
         ContentValues values = new ContentValues();
 
@@ -149,7 +173,10 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
                     Database.mCardDeckDao.deleteCardDeck(cardId, decks.get(counter).getDeckId());
                 }
             }
-            values.put(COLUMN_ARCHIVED, !currentArchive);
+
+            boolean nextArchive = !currentArchive;
+
+            values.put(COLUMN_ARCHIVED, nextArchive);
             return super.update(CARD_TABLE, values, COLUMN_CARD_ID + "=" + cardId, null) > 0;
         } catch (SQLiteConstraintException ex) {
             Log.w("Database", ex.getMessage());
@@ -187,12 +214,12 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
     @Override
     protected Card cursorToEntity(Cursor cursor) {
 
-        long cardId = cursor.getLong(cursor.getColumnIndex(COLUMN_CARD_ID));
+        int cardId = cursor.getInt(cursor.getColumnIndex(COLUMN_CARD_ID));
         String question = cursor.getString(cursor.getColumnIndex(COLUMN_QUESTION));
         String answer = cursor.getString(cursor.getColumnIndex(COLUMN_ANSWER));
         String moreInfo = cursor.getString(cursor.getColumnIndex(COLUMN_MORE_INFORMATION));
-        Date dateCreated = new Date(cursor.getLong(cursor.getColumnIndex(COLUMN_DATE_CREATED)));
-        Date dateModified = new Date(cursor.getLong(cursor.getColumnIndex(COLUMN_DATE_MODIFIED)));
+        String dateCreated = cursor.getString(cursor.getColumnIndex(COLUMN_DATE_CREATED));
+        String dateModified = cursor.getString(cursor.getColumnIndex(COLUMN_DATE_MODIFIED));
         boolean archived = cursor.getInt(cursor.getColumnIndex(COLUMN_ARCHIVED)) > 0;
 
         return new Card(cardId, question, answer, moreInfo, dateCreated, dateModified, archived);

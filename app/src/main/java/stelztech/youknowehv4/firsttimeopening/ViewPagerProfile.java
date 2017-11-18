@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
-import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.database.Database;
 
 /**
  * Created by alex on 2017-05-06.
@@ -57,7 +57,8 @@ public class ViewPagerProfile extends Fragment{
             return;
         }
 
-        String profileId = DatabaseManager.getInstance(getContext()).createProfile(profileText);
+        int profileId = Database.mProfileDao.createProfile(profileText);
+        Database.mUserDao.setActiveProfile(profileId);
 
         Toast.makeText(getContext(), "Profile successfully created", Toast.LENGTH_SHORT).show();
 

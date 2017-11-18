@@ -21,13 +21,13 @@ public interface IProfileSchema {
    // ON CREATE
    String SQL_CREATE_TABLE_PROFILE = "CREATE TABLE "
             + PROFILE_TABLE + " ("
-            + COLUMN_PROFILE_ID + " LONG PRIMARY KEY AUTOINCREMENT,"
+            + COLUMN_PROFILE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + COLUMN_PROFILE_NAME + " TEXT NOT NULL,"
             + COLUMN_QUESTION_LABEL + " TEXT NOT NULL,"
             + COLUMN_ANSWER_LABEL + " TEXT NOT NULL,"
-            + COLUMN_ACTIVE_QUIZ_ID + " LONG,"
-            + COLUMN_DATE_CREATED + " BIGINT,"
-            + COLUMN_DATE_MODIFIED + " BIGINT,"
+            + COLUMN_ACTIVE_QUIZ_ID + " INTEGER,"
+            + COLUMN_DATE_CREATED + " TEXT,"
+            + COLUMN_DATE_MODIFIED + " TEXT,"
             + " FOREIGN KEY " + "(" + COLUMN_ACTIVE_QUIZ_ID + ")"
             + " REFERENCES " + IQuizSchema.QUIZ_TABLE + "(" + IQuizSchema.COLUMN_QUIZ_ID + ")" + " );";
 

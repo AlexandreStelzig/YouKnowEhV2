@@ -26,7 +26,7 @@ import java.util.Objects;
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.ArchivedActivity;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
-import stelztech.youknowehv4.database.DatabaseManager;
+import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.ExportImportManager;
@@ -56,13 +56,11 @@ public class SettingsFragment extends Fragment{
     private Switch allowOnQueryChangedSwitch;
 
     private Switch allowProfileDeletionSwitch;
-
-    private DatabaseManager dbManager;
-
     // sort
     private String[] sortChoices;
     private ArrayAdapter sortAdapter;
     private String[] sortingOptions;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,8 +70,7 @@ public class SettingsFragment extends Fragment{
         FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
         setHasOptionsMenu(true);
 
-        dbManager = DatabaseManager.getInstance(getContext());
-        User user = dbManager.getUser();
+        User user = Database.mUserDao.fetchUser();
 
         exportImportLV = (ListView) view.findViewById(R.id.settings_export_import_lv);
         deletedCardsLV = (ListView) view.findViewById(R.id.settings_deleted_cards_lv);
@@ -143,33 +140,33 @@ public class SettingsFragment extends Fragment{
     }
 
     private void allowOnQueryChangedClicked() {
-        dbManager.toggleAllowSearchOnQueryChanged();
-        User user = dbManager.getUser();
+        Database.mUserDao.toggleAllowSearchOnQueryChanged();
+        User user = Database.mUserDao.fetchUser();
         allowOnQueryChangedSwitch.setChecked(user.isAllowOnQueryChanged());
     }
 
 
     private void allowProfileDeletionClicked() {
-        dbManager.toggleAllowProfileDeletion();
-        User user = dbManager.getUser();
+        Database.mUserDao.toggleAllowProfileDeletion();
+        User user = Database.mUserDao.fetchUser();
         allowProfileDeletionSwitch.setChecked(user.isAllowProfileDeletion());
     }
 
     private void showOnAllCardsClicked() {
-        dbManager.toggleDisplayNumberDecksAll();
-        User user = dbManager.getUser();
+        Database.mUserDao.toggleDisplayNumDecksAllCards();
+        User user = Database.mUserDao.fetchUser();
         showOnAllSwitch.setChecked(user.isDisplayNbDecksAllCards());
     }
 
     private void showOnSpecificDeckClicked() {
-        dbManager.toggleDisplayNumberDecksSpecific();
-        User user = dbManager.getUser();
+        Database.mUserDao.toggleDisplayNumDecksSpecificCard();
+        User user = Database.mUserDao.fetchUser();
         showOnSpecificSwitch.setChecked(user.isDisplayNbDecksSpecificCards());
     }
 
     private void allowPracticeAllClicked() {
-        dbManager.toggleAllowPracticeAll();
-        User user = dbManager.getUser();
+        Database.mUserDao.toggleReviewAllCards();
+        User user = Database.mUserDao.fetchUser();
         allowPracticeAllSwitch.setChecked(user.isAllowPracticeAll());
         ((MainActivityManager) getActivity()).resetFragmentPractice();
     }
@@ -239,7 +236,7 @@ public class SettingsFragment extends Fragment{
         sortChoices = getContext().getResources().getStringArray(R.array.settings_sorting_options);
 
 
-        Profile currentProfile = dbManager.getActiveProfile();
+        Profile currentProfile = Database.mUserDao.fetchActiveProfile();
         sortingOptions = getResources().getStringArray(R.array.sort_options);
         sortingOptions[0] = currentProfile.getQuestionLabel() + " (A-Z)";
         sortingOptions[1] = currentProfile.getQuestionLabel() + " (Z-A)";
@@ -300,7 +297,7 @@ public class SettingsFragment extends Fragment{
         // export import listview
         final String[] exportImportChoices = getContext().getResources().getStringArray(R.array.settings_review_options);
 
-        exportImportChoices[0] = exportImportChoices[0] + " " + dbManager.getUser().getQuickToggle() + " hours";
+        exportImportChoices[0] = exportImportChoices[0] + " " + Database.mUserDao.fetchUser().getQuickToggleHours() + " hours";
 
         ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, exportImportChoices);
         reviewLV.setAdapter(adapter);
@@ -343,7 +340,7 @@ public class SettingsFragment extends Fragment{
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        DatabaseManager.getInstance(getContext()).updateDefaultSortPosition(which);
+                        Database.mUserDao.updateDefaultSortPosition(which);
                         dialog.dismiss();
                         Toast.makeText(getContext(), "Default sort by: " + sortingOptions[which], Toast.LENGTH_SHORT).show();
 
@@ -386,12 +383,12 @@ public class SettingsFragment extends Fragment{
             }
         });
 
-        np.setValue(dbManager.getUser().getQuickToggle());
+        np.setValue(Database.mUserDao.fetchUser().getQuickToggleHours());
 
 
         db.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                dbManager.updateQuickToggleReviewHours(np.getValue());
+                Database.mUserDao.updateQuickToggleReviewHours(np.getValue());
                 setupReviewLV();
                 Toast.makeText(getContext(), "Default Quick Review Value changed to " + np.getValue(), Toast.LENGTH_SHORT).show();
             }
@@ -403,7 +400,7 @@ public class SettingsFragment extends Fragment{
 
     private void mergeDuplicates() {
 
-        List<Card> allCards = dbManager.getCards();
+        List<Card> allCards = Database.mCardDao.fetchAllCards();
 
         for (int counterOne = 0; counterOne < allCards.size(); counterOne++) {
 
@@ -419,14 +416,14 @@ public class SettingsFragment extends Fragment{
                         Objects.equals(cardOne.getAnswer(), cardTwo.getAnswer()) &&
                         Objects.equals(cardOne.getMoreInfo(), cardTwo.getMoreInfo())) {
 
-                    List<Deck> cardOneDecks = dbManager.getDecksFromCard(cardOne.getCardId());
-                    List<Deck> cardTwoDecks = dbManager.getDecksFromCard(cardTwo.getCardId());
+                    List<Deck> cardOneDecks = Database.mCardDeckDao.fetchDecksByCardId(cardOne.getCardId());
+                    List<Deck> cardTwoDecks = Database.mCardDeckDao.fetchDecksByCardId(cardTwo.getCardId());
 
                     boolean isInSameDeck = false;
 
                     for (int cardOneCounter = 0; cardOneCounter < cardOneDecks.size(); cardOneCounter++) {
                         for (int cardTwoDecksCounter = 0; cardTwoDecksCounter < cardTwoDecks.size(); cardTwoDecksCounter++) {
-                            if (cardOneDecks.get(cardOneCounter).getDeckId().equals(cardTwoDecks.get(cardTwoDecksCounter).getDeckId())) {
+                            if (cardOneDecks.get(cardOneCounter).getDeckId() == (cardTwoDecks.get(cardTwoDecksCounter).getDeckId())) {
                                 isInSameDeck = true;
                                 break;
                             }
@@ -435,11 +432,11 @@ public class SettingsFragment extends Fragment{
 
                     if (!isInSameDeck) {
                         for (int i = 0; i < cardTwoDecks.size(); i++) {
-                            dbManager.createCardDeck(cardOne.getCardId(), cardTwoDecks.get(i).getDeckId());
+                            Database.mCardDeckDao.createCardDeck(cardOne.getCardId(), cardTwoDecks.get(i).getDeckId());
                         }
                     }
 
-                    dbManager.deleteCard(cardTwo.getCardId());
+                    Database.mCardDao.deleteCard(cardTwo.getCardId());
                     allCards.remove(counterTwo);
                 } else {
                     counterTwo++;

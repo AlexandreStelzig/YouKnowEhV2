@@ -5,13 +5,13 @@ package stelztech.youknowehv4.database.quizcard;
  */
 public class QuizCard {
 
-    private long quizId;
-    private long cardId;
+    private int quizId;
+    private int cardId;
     private boolean passed;
     private int numFailed;
     private int position;
 
-    public QuizCard(long quizId, long cardId, boolean passed, int numFailed, int position) {
+    public QuizCard(int quizId, int cardId, boolean passed, int numFailed, int position) {
         this.quizId = quizId;
         this.cardId = cardId;
         this.passed = passed;
@@ -27,19 +27,19 @@ public class QuizCard {
         this.position = position;
     }
 
-    public long getQuizId() {
+    public int getQuizId() {
         return quizId;
     }
 
-    public void setQuizId(long quizId) {
+    public void setQuizId(int quizId) {
         this.quizId = quizId;
     }
 
-    public long getCardId() {
+    public int getCardId() {
         return cardId;
     }
 
-    public void setCardId(long cardId) {
+    public void setCardId(int cardId) {
         this.cardId = cardId;
     }
 
