@@ -19,4 +19,9 @@
     <color name="progressbarFail">#FF0000</color>
     <color name="progressbarPass">#00cf00</color>
 
+
+    <color name="colorPrimaryGreen">#4CAF50</color>
+    <color name="colorPrimaryDarkGreen">#388E3C</color>
+    <color name="colorAccentGreen">#8BC34A</color>
+
 </resources>

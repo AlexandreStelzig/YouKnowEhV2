@@ -32,9 +32,9 @@ import java.util.List;
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.Database;
+import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
-import stelztech.youknowehv4.database.profile.Profile;
 
 /**
  * Created by alex on 2017-04-03.
@@ -127,17 +127,13 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        if (Database.mUserDao.fetchUser().isAllowProfileDeletion()) {
-            deleteButton.setEnabled(true);
-            deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    deleteProfile();
-                }
-            });
-        } else {
-            deleteButton.setEnabled(false);
-        }
+        deleteButton.setEnabled(true);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteProfile();
+            }
+        });
 
 
         populateInformation();
@@ -341,6 +337,12 @@ public class ProfileFragment extends Fragment {
                         } else {
                             switch (dialogType) {
                                 case CREATE_PROFILE:
+
+                                    if(profileNameExists(dialogTextHolder)){
+                                        Toast.makeText(getContext(), "Invalid name: profile name already exists", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    }
+
                                     int profileId = Database.mProfileDao.createProfile(dialogTextHolder);
                                     // set newly created profile to active
                                     Database.mUserDao.setActiveProfile(profileId);
@@ -383,6 +385,16 @@ public class ProfileFragment extends Fragment {
         input.setSelection(input.getText().length());
         return alertDialog;
 
+    }
+
+    private boolean profileNameExists(String profileName){
+        List<Profile> profileList = Database.mProfileDao.fetchAllProfiles();
+
+        for(Profile profile: profileList){
+            if(profile.getProfileName().toLowerCase().equals(profileName.toLowerCase()))
+                return true;
+        }
+        return false;
     }
 
     private AlertDialog.Builder deleteConfirmationDialog(final Profile profileToDelete) {

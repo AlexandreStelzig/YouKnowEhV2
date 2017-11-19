@@ -194,6 +194,7 @@ public class MainActivityManager extends AppCompatActivity
             case R.id.deck_list:
                 currentFragment = mDeckListFragment;
                 title = "Deck List";
+                subtitle = Database.mUserDao.fetchActiveProfile().getProfileName();
                 break;
             case R.id.settings:
                 currentFragment = mSettingsFragment;

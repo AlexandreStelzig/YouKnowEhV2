@@ -10,24 +10,9 @@
 
 
     <item
-        android:id="@+id/action_more"
-        android:icon="@drawable/ic_more_vert_white_24dp"
-        android:orderInCategory="100"
-        android:title="More"
-        app:showAsAction="always">
-
-
-        <menu>
-
-            <item
-                android:id="@+id/action_deck_order"
-                android:icon="@drawable/ic_low_priority_black_24dp"
-                android:title="Modify decks order"
-                app:showAsAction="never" />
-
-        </menu>
-
-    </item>
-
+        android:id="@+id/action_deck_order"
+        android:icon="@drawable/ic_low_priority_white_24dp"
+        android:title="Modify decks order"
+        app:showAsAction="always" />
 
 </menu>

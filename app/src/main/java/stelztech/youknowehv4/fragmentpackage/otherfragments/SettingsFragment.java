@@ -84,20 +84,11 @@ public class SettingsFragment extends Fragment{
         allowPracticeAllSwitch = (Switch) view.findViewById(R.id.settings_practice_all_switch);
         allowOnQueryChangedSwitch = (Switch) view.findViewById(R.id.settings_allow_on_query_changed_switch);
 
-
-        allowProfileDeletionSwitch.setChecked(user.isAllowProfileDeletion());
         showOnAllSwitch.setChecked(user.isDisplayNbDecksAllCards());
         showOnSpecificSwitch.setChecked(user.isDisplayNbDecksSpecificCards());
         allowPracticeAllSwitch.setChecked(user.isAllowPracticeAll());
         allowOnQueryChangedSwitch.setChecked(user.isAllowOnQueryChanged());
 
-
-        allowProfileDeletionSwitch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                allowProfileDeletionClicked();
-            }
-        });
 
         showOnAllSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,12 +136,6 @@ public class SettingsFragment extends Fragment{
         allowOnQueryChangedSwitch.setChecked(user.isAllowOnQueryChanged());
     }
 
-
-    private void allowProfileDeletionClicked() {
-        Database.mUserDao.toggleAllowProfileDeletion();
-        User user = Database.mUserDao.fetchUser();
-        allowProfileDeletionSwitch.setChecked(user.isAllowProfileDeletion());
-    }
 
     private void showOnAllCardsClicked() {
         Database.mUserDao.toggleDisplayNumDecksAllCards();
@@ -221,6 +206,9 @@ public class SettingsFragment extends Fragment{
                     case 2:
                         ExportImportManager.importAllDecks(getContext(), getActivity());
                         break;
+                    case 3:
+                        ExportImportManager.exportAllProfilesToEmail(getContext());
+                        break;
                 }
 
             }
@@ -243,9 +231,7 @@ public class SettingsFragment extends Fragment{
         sortingOptions[2] = currentProfile.getAnswerLabel() + " (A-Z)";
         sortingOptions[3] = currentProfile.getAnswerLabel() + " (Z-A)";
 
-
-        SortingStateManager sortingStateManager = SortingStateManager.getInstance();
-        sortChoices[0] = "Default sorting: " + sortingOptions[sortingStateManager.getSelectedPosition()];
+        sortChoices[0] = "Default sorting: " + sortingOptions[SortingStateManager.getInstance().getDefaultSort()];
 
 
         sortAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, sortChoices);

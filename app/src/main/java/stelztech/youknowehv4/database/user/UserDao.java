@@ -53,7 +53,6 @@ public class UserDao extends DbContentProvider implements IUserDao, IUserSchema 
             values.put(COLUMN_DATE_CREATED, date);
             values.put(COLUMN_ACTIVE_PROFILE_ID, -1);
             values.put(COLUMN_DEFAULT_SORTING, 0);
-            values.put(COLUMN_ALLOW_PROFILE_DELETION, 0);
             values.put(COLUMN_DISPLAY_ALL_CARDS, 1);
             values.put(COLUMN_DISPLAY_SPECIFIC_DECK, 0);
             values.put(COLUMN_ALLOW_REVIEW_ALL, 0);
@@ -142,28 +141,6 @@ public class UserDao extends DbContentProvider implements IUserDao, IUserSchema 
     }
 
     @Override
-    public boolean toggleAllowProfileDeletion() {
-
-        ContentValues values = new ContentValues();
-
-
-        try {
-
-            User user = fetchUser();
-
-            boolean currentIsProfileDeletion = user.isAllowProfileDeletion();
-            boolean newIsProfileDeletion = !currentIsProfileDeletion;
-
-            values.put(COLUMN_ALLOW_PROFILE_DELETION, newIsProfileDeletion);
-
-            return super.update(USER_TABLE, values, COLUMN_USER_ID + "=" + user.getUserId(), null) > 0;
-        } catch (SQLiteConstraintException ex) {
-            Log.w("Database", ex.getMessage());
-            return false;
-        }
-    }
-
-    @Override
     public boolean toggleAllowSearchOnQueryChanged() {
         ContentValues values = new ContentValues();
 
@@ -233,7 +210,6 @@ public class UserDao extends DbContentProvider implements IUserDao, IUserSchema 
         int activeProfileId = cursor.getInt(cursor.getColumnIndex(COLUMN_ACTIVE_PROFILE_ID));
         String dateCreated = cursor.getString(cursor.getColumnIndex(COLUMN_DATE_CREATED));
         int defaultSorting = cursor.getInt(cursor.getColumnIndex(COLUMN_DEFAULT_SORTING));
-        boolean allowProfileDeletion = cursor.getInt(cursor.getColumnIndex(COLUMN_ALLOW_PROFILE_DELETION)) > 0;
         boolean displayAllCards = cursor.getInt(cursor.getColumnIndex(COLUMN_DISPLAY_ALL_CARDS)) > 0;
         boolean displaySpecificDeck = cursor.getInt(cursor.getColumnIndex(COLUMN_DISPLAY_SPECIFIC_DECK)) > 0;
         boolean allowPracticeAll = cursor.getInt(cursor.getColumnIndex(COLUMN_ALLOW_REVIEW_ALL)) > 0;
@@ -241,6 +217,6 @@ public class UserDao extends DbContentProvider implements IUserDao, IUserSchema 
         int quickToggle = cursor.getInt(cursor.getColumnIndex(COLUMN_QUICK_TOGGLE_REVIEW));
 
 
-        return new User(userId, dateCreated, activeProfileId, defaultSorting, allowProfileDeletion, displayAllCards, displaySpecificDeck, allowPracticeAll, allowOnQueryChanged, quickToggle);
+        return new User(userId, dateCreated, activeProfileId, defaultSorting, displayAllCards, displaySpecificDeck, allowPracticeAll, allowOnQueryChanged, quickToggle);
     }
 }

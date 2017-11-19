@@ -2,6 +2,7 @@ package stelztech.youknowehv4.helper;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.Html;
 
 import java.util.List;
 
@@ -26,26 +27,27 @@ public class CardHelper {
         String answerLabel = profile.getAnswerLabel();
 
 
-        String cardQuestion = questionLabel + ": " + cardToDisplay.getQuestion();
-        String cardAnswer = answerLabel + ": " + cardToDisplay.getAnswer();
+        String cardQuestion = "<b>"+ questionLabel + ": </b>" + cardToDisplay.getQuestion();
+        String cardAnswer = "<b>"+answerLabel + ": </b>" + cardToDisplay.getAnswer();
         String cardComments = cardToDisplay.getMoreInfo();
 
         List<Deck> decks = Database.mCardDeckDao.fetchDecksByCardId(cardToDisplay.getCardId());
-        String numberOfDecks = "Number of Decks: " + decks.size();
-        String cardDateCreated = "Date created: " + cardToDisplay.getDateCreated();
-        String cardDateModified = "Date modified: " + cardToDisplay.getDateModified();
+        String numberOfDecks = "<b>Number of Decks: </b>" + decks.size();
+        String cardDateCreated = "<b>Date created: </b>" + cardToDisplay.getDateCreated();
+        String cardDateModified = "<b>Date modified: </b>" + cardToDisplay.getDateModified();
 
 
-        String cardCommentsText = "Comments:\n" + cardComments;
+        String cardCommentsText = "<b>Comments: </b><br>" + cardComments;
 
-        String message = cardQuestion + "\n" + cardAnswer + "\n" + numberOfDecks + "\n"
-                + cardDateCreated + "\n" + cardDateModified;
+        String message = cardQuestion + "<br>" + cardAnswer + "<br>" + numberOfDecks + "<br>"
+                + cardDateCreated + "<br>" + cardDateModified;
 
         if (!cardComments.isEmpty()) {
-            message += "\n" + cardCommentsText;
+            message += "<br>" + cardCommentsText;
         }
 
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(activity);
-        builder.setMessage(message).setPositiveButton("done", null).show();
+        builder.setTitle("Quick Info");
+        builder.setMessage(Html.fromHtml(message)).setPositiveButton("done", null).show();
     }
 }

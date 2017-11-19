@@ -14,7 +14,6 @@ public interface IUserDao {
     boolean updateQuickToggleReviewHours(int hours);
     boolean setActiveProfile(int profileId);
     boolean toggleReviewAllCards();
-    boolean toggleAllowProfileDeletion();
     boolean toggleAllowSearchOnQueryChanged();
     Profile fetchActiveProfile();
     boolean toggleDisplayNumDecksAllCards();

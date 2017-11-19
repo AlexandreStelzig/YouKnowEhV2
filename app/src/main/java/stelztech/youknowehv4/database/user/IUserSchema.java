@@ -14,7 +14,6 @@ public interface IUserSchema {
     String COLUMN_DATE_CREATED = "date_created";
     String COLUMN_DEFAULT_SORTING = "default_sorting";
     String COLUMN_ACTIVE_PROFILE_ID = "active_profile";
-    String COLUMN_ALLOW_PROFILE_DELETION = "allow_profile_deletion";
     String COLUMN_DISPLAY_ALL_CARDS = "display_all_cards";
     String COLUMN_DISPLAY_SPECIFIC_DECK = "display_specific_deck";
     String COLUMN_ALLOW_REVIEW_ALL = "all_review_all";
@@ -26,7 +25,6 @@ public interface IUserSchema {
             + USER_TABLE + " ("
             + COLUMN_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + COLUMN_DEFAULT_SORTING + " INTEGER NOT NULL,"
-            + COLUMN_ALLOW_PROFILE_DELETION + " BOOLEAN,"
             + COLUMN_DISPLAY_ALL_CARDS + " BOOLEAN,"
             + COLUMN_DISPLAY_SPECIFIC_DECK + " BOOLEAN,"
             + COLUMN_QUICK_TOGGLE_REVIEW + " INTEGER,"
@@ -42,7 +40,7 @@ public interface IUserSchema {
 
     // COLUMNS
     String[] USER_COLUMNS = new String[]{COLUMN_USER_ID,
-            COLUMN_DEFAULT_SORTING, COLUMN_DATE_CREATED, COLUMN_ALLOW_PROFILE_DELETION, COLUMN_DISPLAY_ALL_CARDS,
+            COLUMN_DEFAULT_SORTING, COLUMN_DATE_CREATED, COLUMN_DISPLAY_ALL_CARDS,
             COLUMN_DISPLAY_SPECIFIC_DECK, COLUMN_QUICK_TOGGLE_REVIEW, COLUMN_ALLOW_SEARCH_ON_QUERY_CHANGED, COLUMN_ALLOW_REVIEW_ALL,
             COLUMN_DATE_CREATED, COLUMN_ACTIVE_PROFILE_ID};
 }

@@ -63,7 +63,6 @@ public class DeckToolbarManager {
 
         menu.findItem(R.id.action_done).setVisible(isDoneVisible);
         menu.findItem(R.id.action_deck_order).setVisible(isDeckOrderVisible);
-        menu.findItem(R.id.action_more).setVisible(isDeckOrderVisible);
     }
 
 

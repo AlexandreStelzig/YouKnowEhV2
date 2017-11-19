@@ -33,6 +33,7 @@ import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.carddeck.CardDeck;
 import stelztech.youknowehv4.database.deck.Deck;
+import stelztech.youknowehv4.database.profile.Profile;
 
 import static stelztech.youknowehv4.database.carddeck.CardDeck.REVIEW_TOGGLE_ID;
 
@@ -46,10 +47,10 @@ public final class ExportImportManager {
 
     public final static String TAG = "ExportImportManager";
 
-    public final static String storingFolder = "/YouKnowEh/Export";
+    private final static String storingFolder = "/YouKnowEh/Export";
 
 
-    public static File saveCSVFile(Context context, String location, Deck deckToExport, List<Card> cardList) {
+    private static File saveCSVFile(Context context, String location, Deck deckToExport, List<Card> cardList) {
 
         // check if available and not read only
         if (!isExternalStorageAvailable() || isExternalStorageReadOnly()) {
@@ -212,7 +213,7 @@ public final class ExportImportManager {
     }
 
 
-    public static boolean exportAllFiles(Context context) {
+    private static boolean exportAllFiles(Context context) {
 
         List<Deck> deckList = Database.mDeckDao.fetchAllDecks();
         List<File> fileList = new ArrayList<>();
@@ -237,7 +238,8 @@ public final class ExportImportManager {
 
         try {
 
-            String zipFile = sdCard.getAbsolutePath() + storingFolder + "/YouKnowEhExportedDecks.zip";
+            String zipFile = sdCard.getAbsolutePath() + storingFolder + "/"
+                    + Database.mUserDao.fetchActiveProfile().getProfileName()+ "_YKHExport.zip";
 
             // create byte buffer
             byte[] buffer = new byte[1024];
@@ -363,7 +365,8 @@ public final class ExportImportManager {
         exportAllFiles(context);
 
         File sdCard = Environment.getExternalStorageDirectory();
-        String zipFile = sdCard.getAbsolutePath() + storingFolder + "/YouKnowEhExportedDecks.zip";
+        String zipFile = sdCard.getAbsolutePath() + storingFolder + "/"
+                + Database.mUserDao.fetchActiveProfile().getProfileName()+ "_YKHExport.zip";
         File dir = new File(zipFile);
 
         Uri U = Uri.fromFile(dir);
@@ -371,6 +374,38 @@ public final class ExportImportManager {
         emailIntent.setType("text/plain");
         emailIntent.putExtra(Intent.EXTRA_STREAM, U);
 
+
+        context.startActivity(emailIntent);
+
+    }
+
+    public static void exportAllProfilesToEmail(Context context){
+
+        int currentProfileId = Database.mUserDao.fetchActiveProfile().getProfileId();
+
+        List<Profile> profileList = Database.mProfileDao.fetchAllProfiles();
+
+        ArrayList<Uri> uris = new ArrayList<Uri>();
+
+        for (Profile profile: profileList) {
+            Database.mUserDao.setActiveProfile(profile.getProfileId());
+
+            exportAllFiles(context);
+
+            File sdCard = Environment.getExternalStorageDirectory();
+            String zipFile = sdCard.getAbsolutePath() + storingFolder + "/"
+                    + Database.mUserDao.fetchActiveProfile().getProfileName()+ "_YKHExport.zip";
+            File dir = new File(zipFile);
+
+            uris.add(Uri.fromFile(dir));
+
+        }
+
+        Database.mUserDao.setActiveProfile(currentProfileId);
+
+        Intent emailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        emailIntent.setType("text/plain");
+        emailIntent.putExtra(Intent.EXTRA_STREAM, uris);
 
         context.startActivity(emailIntent);
 

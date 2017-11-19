@@ -39,7 +39,7 @@ public class QuizActivity extends AppCompatActivity {
     private LinearLayout passFailLayout;
 
 
-    QuizActivity(){
+    public QuizActivity(){
         maximumNumQuestion = 10;
     }
 

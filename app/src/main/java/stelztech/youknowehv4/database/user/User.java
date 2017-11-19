@@ -10,19 +10,17 @@ public class User {
     private String dateCreated;
     private int activeProfileId;
     private int defaultSortingPosition;
-    private boolean allowProfileDeletion;
     private boolean displayNbDecksAllCards;
     private boolean displayNbDecksSpecificCards;
     private boolean allowPracticeAll;
     private boolean allowOnQueryChanged;
     private int quickToggleHours;
 
-    public User(int userId, String dateCreated, int activeProfileId, int defaultSortingPosition, boolean allowProfileDeletion, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards, boolean allowPracticeAll, boolean allowOnQueryChanged, int quickToggleHours) {
+    public User(int userId, String dateCreated, int activeProfileId, int defaultSortingPosition, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards, boolean allowPracticeAll, boolean allowOnQueryChanged, int quickToggleHours) {
         this.userId = userId;
         this.dateCreated = dateCreated;
         this.activeProfileId = activeProfileId;
         this.defaultSortingPosition = defaultSortingPosition;
-        this.allowProfileDeletion = allowProfileDeletion;
         this.displayNbDecksAllCards = displayNbDecksAllCards;
         this.displayNbDecksSpecificCards = displayNbDecksSpecificCards;
         this.allowPracticeAll = allowPracticeAll;
@@ -53,14 +51,6 @@ public class User {
 
     public void setAllowPracticeAll(boolean allowPracticeAll) {
         this.allowPracticeAll = allowPracticeAll;
-    }
-
-    public boolean isAllowProfileDeletion() {
-        return allowProfileDeletion;
-    }
-
-    public void setAllowProfileDeletion(boolean allowProfileDeletion) {
-        this.allowProfileDeletion = allowProfileDeletion;
     }
 
     public boolean isDisplayNbDecksAllCards() {
