@@ -17,6 +17,7 @@ public interface IProfileSchema {
    String COLUMN_QUESTION_LABEL = "question_label";
    String COLUMN_ANSWER_LABEL = "answer_label";
    String COLUMN_ACTIVE_QUIZ_ID = "active_quiz_id";
+   String COLUMN_PROFILE_COLOR = "profile_color";
 
    // ON CREATE
    String SQL_CREATE_TABLE_PROFILE = "CREATE TABLE "
@@ -28,6 +29,7 @@ public interface IProfileSchema {
             + COLUMN_ACTIVE_QUIZ_ID + " INTEGER,"
             + COLUMN_DATE_CREATED + " TEXT,"
             + COLUMN_DATE_MODIFIED + " TEXT,"
+            + COLUMN_PROFILE_COLOR + " TEXT,"
             + " FOREIGN KEY " + "(" + COLUMN_ACTIVE_QUIZ_ID + ")"
             + " REFERENCES " + IQuizSchema.QUIZ_TABLE + "(" + IQuizSchema.COLUMN_QUIZ_ID + ")" + " );";
 

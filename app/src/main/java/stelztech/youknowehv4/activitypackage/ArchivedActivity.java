@@ -34,6 +34,7 @@ import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.profile.Profile;
+import stelztech.youknowehv4.manager.ThemeManager;
 
 /**
  * Created by alex on 2017-05-09.
@@ -69,6 +70,8 @@ public class ArchivedActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setTheme(ThemeManager.getInstance().getCurrentAppThemeValue());
 
         overridePendingTransition(R.anim.enter, R.anim.exit);
 

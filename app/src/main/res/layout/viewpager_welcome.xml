@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/colorPrimaryDark"
+    android:background="?colorPrimaryDark"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -70,7 +70,7 @@
             android:drawableRight="@drawable/ic_navigate_next_white_24dp"
             android:paddingLeft="5dp"
             android:text="Get Started"
-            android:textColor="@color/colorTextIcon"
+            android:textColor="?colorTextIcon"
             android:textStyle="bold" />
     </LinearLayout>
 

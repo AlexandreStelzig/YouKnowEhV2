@@ -55,7 +55,6 @@ public class SettingsFragment extends Fragment{
     private Switch allowPracticeAllSwitch;
     private Switch allowOnQueryChangedSwitch;
 
-    private Switch allowProfileDeletionSwitch;
     // sort
     private String[] sortChoices;
     private ArrayAdapter sortAdapter;
@@ -78,7 +77,6 @@ public class SettingsFragment extends Fragment{
         reviewLV = (ListView) view.findViewById(R.id.settings_review_lv);
         otherLV = (ListView) view.findViewById(R.id.settings_other_lv);
 
-        allowProfileDeletionSwitch = (Switch) view.findViewById(R.id.settings_profile_switch);
         showOnAllSwitch = (Switch) view.findViewById(R.id.settings_show_on_all_switch);
         showOnSpecificSwitch = (Switch) view.findViewById(R.id.settings_show_on_specific_switch);
         allowPracticeAllSwitch = (Switch) view.findViewById(R.id.settings_practice_all_switch);

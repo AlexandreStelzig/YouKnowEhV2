@@ -13,8 +13,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.firsttimeopening.ViewPagerProfile;
-import stelztech.youknowehv4.firsttimeopening.ViewPagerWelcome;
+import stelztech.youknowehv4.manager.ThemeManager;
 
 /**
  * Created by alex on 2017-04-28.
@@ -45,6 +44,8 @@ public class FirstTimeOpeningActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_time_opening);
+
+        setTheme(ThemeManager.getInstance().getCurrentAppThemeValue());
 
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.pager);

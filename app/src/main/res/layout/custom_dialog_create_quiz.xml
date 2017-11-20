@@ -19,7 +19,7 @@
             android:paddingStart="5dp"
             android:paddingTop="10dp"
             android:text="TITLE"
-            android:textColor="@color/textPrimary"
+            android:textColor="?textPrimary"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -33,7 +33,7 @@
             android:paddingEnd="5dp"
             android:paddingTop="10dp"
             android:text="0 Deck(s)"
-            android:textColor="@color/textPrimary"
+            android:textColor="?textPrimary"
             android:textSize="16sp" />
 
     </LinearLayout>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="colorTextIcon" format="reference|color" />
+    <attr name="textPrimary" format="reference|color" />
+    <attr name="colorDivider" format="reference|color" />
+    <attr name="colorDividerLight" format="reference|color" />
+    <attr name="colorPrimaryLight" format="reference|color" />
+    <attr name="colorPrimarySelected" format="reference|color" />
+    <attr name="colorButtonDisabled" format="reference|color" />
+    <attr name="textSecondary" format="reference|color" />
+
+</resources>

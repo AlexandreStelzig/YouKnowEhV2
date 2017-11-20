@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.firsttimeopening.FirstTimeOpeningActivity;
+import stelztech.youknowehv4.manager.ThemeManager;
 
 /**
  * Created by alex on 2017-04-28.
@@ -22,11 +23,14 @@ public class SplashScreenActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setTheme(ThemeManager.getInstance().getCurrentAppThemeNoActionBarValue());
+
         setContentView(R.layout.activity_splash_screen);
 
 
         Database.open(this);
         Database.mCardDeckDao.revalidateReviewCards();
+
 
         if (Database.mUserDao.fetchUser() == null) {
             Database.mUserDao.createUser();
@@ -36,6 +40,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             startActivity(i);
             finish();
         } else {
+            ThemeManager.getInstance().changeTheme(Database.mUserDao.fetchActiveProfile().getProfileColor());
             transitionThread().start();
         }
 

@@ -27,7 +27,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Export/Import (CSV)"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?colorPrimary"
                     android:textSize="16dp"
                     android:textStyle="bold" />
 
@@ -60,7 +60,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Deleted Cards"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?colorPrimary"
                     android:textSize="16dp"
                     android:textStyle="bold" />
 
@@ -93,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Sorting"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?colorPrimary"
                     android:textSize="16dp"
                     android:textStyle="bold" />
 
@@ -126,7 +126,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Review"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?colorPrimary"
                     android:textSize="16dp"
                     android:textStyle="bold" />
 
@@ -159,7 +159,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Other"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?colorPrimary"
                     android:textSize="16dp"
                     android:textStyle="bold" />
 
@@ -176,31 +176,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginBottom="5dp"
-                    android:background="@color/colorDividerLight" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginStart="15dp"
-                    android:orientation="horizontal">
-
-                    <Switch
-                        android:id="@+id/settings_profile_switch"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Allow Profile deletion"
-                        android:textColor="@color/textPrimary"
-                        android:textSize="16sp" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginTop="5dp"
-                    android:background="@color/colorDividerLight" />
+                    android:background="?colorDividerLight" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -214,7 +190,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Allow Review all Cards"
-                        android:textColor="@color/textPrimary"
+                        android:textColor="?textPrimary"
                         android:textSize="16sp" />
 
                 </LinearLayout>
@@ -224,7 +200,7 @@
                     android:layout_height="1dp"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
-                    android:background="@color/colorDividerLight" />
+                    android:background="?colorDividerLight" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -238,7 +214,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Allow Search on query changed"
-                        android:textColor="@color/textPrimary"
+                        android:textColor="?textPrimary"
                         android:textSize="16sp" />
 
                 </LinearLayout>
@@ -248,7 +224,7 @@
                     android:layout_height="1dp"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
-                    android:background="@color/colorDividerLight" />
+                    android:background="?colorDividerLight" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -262,7 +238,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Display number of Decks on Cards (All Cards)"
-                        android:textColor="@color/textPrimary"
+                        android:textColor="?textPrimary"
                         android:textSize="16sp" />
 
                 </LinearLayout>
@@ -272,7 +248,7 @@
                     android:layout_height="1dp"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
-                    android:background="@color/colorDividerLight" />
+                    android:background="?colorDividerLight" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -286,7 +262,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Display number of Decks on Cards (Specific Deck)"
-                        android:textColor="@color/textPrimary"
+                        android:textColor="?textPrimary"
                         android:textSize="16sp" />
 
                 </LinearLayout>

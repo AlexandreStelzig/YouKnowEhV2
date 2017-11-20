@@ -1,11 +1,23 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppThemeBlue" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorTextIcon">@color/colorTextIcon</item>
+        <item name="textPrimary">@color/textPrimary</item>
+        <item name="textSecondary">@color/textSecondary</item>
+        <item name="colorDivider">@color/colorDivider</item>
+        <item name="colorDividerLight">@color/colorDividerLight</item>
+        <item name="colorButtonDisabled">@color/colorButtonDisabled</item>
+        <item name="colorPrimarySelected">@color/colorPrimarySelected</item>
+    </style>
+
+    <style name="AppThemeBlue.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="AppThemeGreen" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -13,12 +25,135 @@
         <item name="colorPrimary">@color/colorPrimaryGreen</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkGreen</item>
         <item name="colorAccent">@color/colorAccentGreen</item>
+        <item name="colorTextIcon">@color/colorTextIconGreen</item>
+        <item name="textPrimary">@color/textPrimaryGreen</item>
+        <item name="textSecondary">@color/textSecondaryGreen</item>
+        <item name="colorDivider">@color/colorDividerGreen</item>
+        <item name="colorDividerLight">@color/colorDividerLightGreen</item>
+        <item name="colorButtonDisabled">@color/colorButtonDisabledGreen</item>
+        <item name="colorPrimarySelected">@color/colorPrimarySelectedGreen</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="AppThemeGreen.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
+    <style name="AppThemeRed" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryRed</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkRed</item>
+        <item name="colorAccent">@color/colorAccentRed</item>
+        <item name="colorTextIcon">@color/colorTextIconRed</item>
+        <item name="textPrimary">@color/textPrimaryRed</item>
+        <item name="textSecondary">@color/textSecondaryRed</item>
+        <item name="colorDivider">@color/colorDividerRed</item>
+        <item name="colorDividerLight">@color/colorDividerLightRed</item>
+        <item name="colorButtonDisabled">@color/colorButtonDisabledRed</item>
+        <item name="colorPrimarySelected">@color/colorPrimarySelectedRed</item>
+    </style>
+
+    <style name="AppThemeRed.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppThemePurple" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryPurple</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkPurple</item>
+        <item name="colorAccent">@color/colorAccentPurple</item>
+        <item name="colorTextIcon">@color/colorTextIconPurple</item>
+        <item name="textPrimary">@color/textPrimaryPurple</item>
+        <item name="textSecondary">@color/textSecondaryPurple</item>
+        <item name="colorDivider">@color/colorDividerPurple</item>
+        <item name="colorDividerLight">@color/colorDividerLightPurple</item>
+        <item name="colorButtonDisabled">@color/colorButtonDisabledPurple</item>
+        <item name="colorPrimarySelected">@color/colorPrimarySelectedPurple</item>
+    </style>
+
+    <style name="AppThemePurple.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppThemeGrey" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryGrey</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkGrey</item>
+        <item name="colorAccent">@color/colorAccentGrey</item>
+        <item name="colorTextIcon">@color/colorTextIconGrey</item>
+        <item name="textPrimary">@color/textPrimaryGrey</item>
+        <item name="textSecondary">@color/textSecondaryGrey</item>
+        <item name="colorDivider">@color/colorDividerGrey</item>
+        <item name="colorDividerLight">@color/colorDividerLightGrey</item>
+        <item name="colorButtonDisabled">@color/colorButtonDisabledGrey</item>
+        <item name="colorPrimarySelected">@color/colorPrimarySelectedGrey</item>
+    </style>
+
+    <style name="AppThemeGrey.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppThemePink" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryPink</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkPink</item>
+        <item name="colorAccent">@color/colorAccentPink</item>
+        <item name="colorTextIcon">@color/colorTextIconPink</item>
+        <item name="textPrimary">@color/textPrimaryPink</item>
+        <item name="textSecondary">@color/textSecondaryPink</item>
+        <item name="colorDivider">@color/colorDividerPink</item>
+        <item name="colorDividerLight">@color/colorDividerLightPink</item>
+        <item name="colorButtonDisabled">@color/colorButtonDisabledPink</item>
+        <item name="colorPrimarySelected">@color/colorPrimarySelectedPink</item>
+    </style>
+
+    <style name="AppThemePink.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppThemeOrange" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryOrange</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkOrange</item>
+        <item name="colorAccent">@color/colorAccentOrange</item>
+        <item name="colorTextIcon">@color/colorTextIconOrange</item>
+        <item name="textPrimary">@color/textPrimaryOrange</item>
+        <item name="textSecondary">@color/textSecondaryOrange</item>
+        <item name="colorDivider">@color/colorDividerOrange</item>
+        <item name="colorDividerLight">@color/colorDividerLightOrange</item>
+        <item name="colorButtonDisabled">@color/colorButtonDisabledOrange</item>
+        <item name="colorPrimarySelected">@color/colorPrimarySelectedOrange</item>
+    </style>
+
+    <style name="AppThemeOrange.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppThemeIndigo" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryIndigo</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkIndigo</item>
+        <item name="colorAccent">@color/colorAccentIndigo</item>
+        <item name="colorTextIcon">@color/colorTextIconIndigo</item>
+        <item name="textPrimary">@color/textPrimaryIndigo</item>
+        <item name="textSecondary">@color/textSecondaryIndigo</item>
+        <item name="colorDivider">@color/colorDividerIndigo</item>
+        <item name="colorDividerLight">@color/colorDividerLightIndigo</item>
+        <item name="colorButtonDisabled">@color/colorButtonDisabledIndigo</item>
+        <item name="colorPrimarySelected">@color/colorPrimarySelectedIndigo</item>
+    </style>
+
+    <style name="AppThemeIndigo.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 

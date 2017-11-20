@@ -112,7 +112,7 @@
             android:maxLines="4"
             android:scrollbars="vertical"
             android:text="Question"
-            android:textColor="@color/textPrimary"
+            android:textColor="?textPrimary"
             android:textSize="32dp" />
 
         <LinearLayout
@@ -129,7 +129,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_weight="75"
-                android:background="@color/colorDivider" />
+                android:background="?colorDivider" />
 
         </LinearLayout>
 
@@ -144,7 +144,7 @@
             android:maxLines="4"
             android:scrollbars="vertical"
             android:text="Answer"
-            android:textColor="@color/textPrimary"
+            android:textColor="?textPrimary"
             android:textSize="30dp" />
 
     </LinearLayout>
@@ -166,7 +166,7 @@
             android:layout_gravity="center_horizontal"
             android:background="@drawable/button_drawable_selector"
             android:text="Show"
-            android:textColor="@color/colorTextIcon" />
+            android:textColor="?colorTextIcon" />
 
     </LinearLayout>
 
@@ -189,7 +189,7 @@
             android:layout_weight="1"
             android:background="@drawable/button_ripple_fail"
             android:text="Failed"
-            android:textColor="@color/colorTextIcon" />
+            android:textColor="?colorTextIcon" />
 
         <View
             android:layout_width="5dp"
@@ -203,7 +203,7 @@
             android:layout_weight="1"
             android:background="@drawable/button_ripple_pass"
             android:text="Passed"
-            android:textColor="@color/colorTextIcon" />
+            android:textColor="?colorTextIcon" />
 
     </LinearLayout>
 

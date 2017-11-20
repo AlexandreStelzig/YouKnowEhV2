@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.components.DoubleProgressBar;
+import stelztech.youknowehv4.manager.ThemeManager;
 
 /**
  * Created by alex on 2017-05-09.
@@ -45,6 +46,8 @@ public class QuizActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setTheme(ThemeManager.getInstance().getCurrentAppThemeValue());
 
         // intro animation
         overridePendingTransition(R.anim.enter, R.anim.exit);

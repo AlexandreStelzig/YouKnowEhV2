@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/colorButtonDisabled"><!-- The ripple will be highlight -->
+    android:color="?colorButtonDisabled"><!-- The ripple will be highlight -->
 
     <!--?android:colorControlHighlight-->
     <!-- the normal bg color will be white -->
@@ -8,7 +8,8 @@
 
         <shape>
             <corners android:radius="5dp" />
-            <solid android:color="@color/colorButtonDisabled" />
+            <solid android:color="?colorButtonDisabled" />
+
         </shape>
     </item>
 </ripple>

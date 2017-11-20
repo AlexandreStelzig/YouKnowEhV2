@@ -26,7 +26,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="What is this? "
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?colorPrimary"
                     android:textSize="16dp"
                     android:textStyle="bold" />
 
@@ -36,7 +36,7 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp"
                     android:text="You Know Eh? is a flash cards application that serves the purposes of learning new languages faster by repetitive memorization."
-                    android:textColor="@color/textPrimary"
+                    android:textColor="?textPrimary"
                     android:textSize="16dp" />
 
 
@@ -58,7 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Created by"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?colorPrimary"
                     android:textSize="16dp"
                     android:textStyle="bold" />
 
@@ -69,7 +69,7 @@
                     android:layout_marginStart="10dp"
                     android:padding="5dp"
                     android:text="Alexandre Stelzig"
-                    android:textColor="@color/textPrimary"
+                    android:textColor="?textPrimary"
                     android:textSize="16dp" />
 
             </LinearLayout>
@@ -90,7 +90,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Version"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?colorPrimary"
                     android:textSize="16dp"
                     android:textStyle="bold" />
 
@@ -101,7 +101,7 @@
                     android:layout_marginStart="10dp"
                     android:padding="5dp"
                     android:text="1.0"
-                    android:textColor="@color/textPrimary"
+                    android:textColor="?textPrimary"
                     android:textSize="16dp" />
 
             </LinearLayout>
@@ -124,7 +124,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Feedback"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?colorPrimary"
                     android:textSize="16dp"
                     android:textStyle="bold" />
 

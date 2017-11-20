@@ -1,5 +1,7 @@
 package stelztech.youknowehv4.database.profile;
 
+import stelztech.youknowehv4.manager.ThemeManager;
+
 /**
  * Created by alex on 2017-05-06.
  */
@@ -13,15 +15,24 @@ public class Profile {
     private String questionLabel;
     private String answerLabel;
     private int activeQuizId;
+    private ThemeManager.THEME_COLORS profileColor;
 
-
-    public Profile(int profileId, String profileName, String dateCreated, String questionLabel, String answerLabel, int activeQuizId) {
+    public Profile(int profileId, String profileName, String dateCreated, String questionLabel, String answerLabel, int activeQuizId, ThemeManager.THEME_COLORS profileColor) {
         this.profileId = profileId;
         this.profileName = profileName;
         this.dateCreated = dateCreated;
         this.questionLabel = questionLabel;
         this.answerLabel = answerLabel;
         this.activeQuizId = activeQuizId;
+        this.profileColor = profileColor;
+    }
+
+    public ThemeManager.THEME_COLORS getProfileColor() {
+        return profileColor;
+    }
+
+    public void setProfileColor(ThemeManager.THEME_COLORS profileColor) {
+        this.profileColor = profileColor;
     }
 
     public int getProfileId() {

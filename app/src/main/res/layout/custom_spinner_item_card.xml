@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:gravity="left"
     android:padding="5dip"
-    android:textColor="@color/colorTextIcon"
+    android:textColor="?colorTextIcon"
     android:textSize="18sp"
     android:maxLines="2"
     android:ellipsize="end"

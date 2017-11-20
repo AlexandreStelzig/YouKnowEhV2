@@ -1,27 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--blue theme-->
     <color name="colorPrimary">#0288D1</color>
     <color name="colorPrimaryDark">#01579B</color>
-    <color name="colorPrimaryLight">#B3E5FC</color>
-    <color name="colorTextIcon">#FFFFFF</color>
     <color name="colorAccent">#03A9F4</color>
+    <color name="colorTextIcon">#FFFFFF</color>
     <color name="textPrimary">#212121</color>
     <color name="textSecondary">#757575</color>
     <color name="colorDivider">#BDBDBD</color>
     <color name="colorDividerLight">#80BDBDBD</color>
     <color name="colorButtonDisabled">#800288D1</color>
-    <color name="colorNotPractice">#ebebeb</color>
-    <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
     <color name="colorPrimarySelected">#750288D1</color>
 
-    <color name="progressbarNeutral">#ff5a5d5a</color>
-    <color name="progressbarFail">#FF0000</color>
-    <color name="progressbarPass">#00cf00</color>
-
-
+    <!--green theme-->
     <color name="colorPrimaryGreen">#4CAF50</color>
     <color name="colorPrimaryDarkGreen">#388E3C</color>
     <color name="colorAccentGreen">#8BC34A</color>
+    <color name="colorTextIconGreen">#FFFFFF</color>
+    <color name="textPrimaryGreen">#212121</color>
+    <color name="textSecondaryGreen">#757575</color>
+    <color name="colorDividerGreen">#BDBDBD</color>
+    <color name="colorDividerLightGreen">#80BDBDBD</color>
+    <color name="colorButtonDisabledGreen">#804CAF50</color>
+    <color name="colorPrimarySelectedGreen">#754CAF50</color>
+
+    <!--red theme-->
+    <color name="colorPrimaryRed">#F44336</color>
+    <color name="colorPrimaryDarkRed">#D32F2F</color>
+    <color name="colorAccentRed">#FF4081</color>
+    <color name="colorTextIconRed">#FFFFFF</color>
+    <color name="textPrimaryRed">#212121</color>
+    <color name="textSecondaryRed">#757575</color>
+    <color name="colorDividerRed">#BDBDBD</color>
+    <color name="colorDividerLightRed">#80BDBDBD</color>
+    <color name="colorButtonDisabledRed">#80F44336</color>
+    <color name="colorPrimarySelectedRed">#75F44336</color>
+
+    <!--purple theme-->
+    <color name="colorPrimaryPurple">#673AB7</color>
+    <color name="colorPrimaryDarkPurple">#512DA8</color>
+    <color name="colorAccentPurple">#536DFE</color>
+    <color name="colorTextIconPurple">#FFFFFF</color>
+    <color name="textPrimaryPurple">#212121</color>
+    <color name="textSecondaryPurple">#757575</color>
+    <color name="colorDividerPurple">#BDBDBD</color>
+    <color name="colorDividerLightPurple">#80BDBDBD</color>
+    <color name="colorButtonDisabledPurple">#80673AB7</color>
+    <color name="colorPrimarySelectedPurple">#75673AB7</color>
+
+    <!--grey theme-->
+    <color name="colorPrimaryGrey">#607D8B</color>
+    <color name="colorPrimaryDarkGrey">#455A64</color>
+    <color name="colorAccentGrey">#03A9F4</color>
+    <color name="colorTextIconGrey">#FFFFFF</color>
+    <color name="textPrimaryGrey">#212121</color>
+    <color name="textSecondaryGrey">#757575</color>
+    <color name="colorDividerGrey">#BDBDBD</color>
+    <color name="colorDividerLightGrey">#80BDBDBD</color>
+    <color name="colorButtonDisabledGrey">#80607D8B</color>
+    <color name="colorPrimarySelectedGrey">#75607D8B</color>
+
+    <!--pink theme-->
+    <color name="colorPrimaryPink">#E91E63</color>
+    <color name="colorPrimaryDarkPink">#C2185B</color>
+    <color name="colorAccentPink">#FF5252</color>
+    <color name="colorTextIconPink">#FFFFFF</color>
+    <color name="textPrimaryPink">#212121</color>
+    <color name="textSecondaryPink">#757575</color>
+    <color name="colorDividerPink">#BDBDBD</color>
+    <color name="colorDividerLightPink">#80BDBDBD</color>
+    <color name="colorButtonDisabledPink">#80E91E63</color>
+    <color name="colorPrimarySelectedPink">#75E91E63</color>
+
+    <!--orange theme-->
+    <color name="colorPrimaryOrange">#FF5722</color>
+    <color name="colorPrimaryDarkOrange">#E64A19</color>
+    <color name="colorAccentOrange">#FF9800</color>
+    <color name="colorTextIconOrange">#FFFFFF</color>
+    <color name="textPrimaryOrange">#212121</color>
+    <color name="textSecondaryOrange">#757575</color>
+    <color name="colorDividerOrange">#BDBDBD</color>
+    <color name="colorDividerLightOrange">#80BDBDBD</color>
+    <color name="colorButtonDisabledOrange">#80FF5722</color>
+    <color name="colorPrimarySelectedOrange">#75FF5722</color>
+
+    <!--indigo theme-->
+    <color name="colorPrimaryIndigo">#3F51B5</color>
+    <color name="colorPrimaryDarkIndigo">#303F9F</color>
+    <color name="colorAccentIndigo">#448AFF</color>
+    <color name="colorTextIconIndigo">#FFFFFF</color>
+    <color name="textPrimaryIndigo">#212121</color>
+    <color name="textSecondaryIndigo">#757575</color>
+    <color name="colorDividerIndigo">#BDBDBD</color>
+    <color name="colorDividerLightIndigo">#80BDBDBD</color>
+    <color name="colorButtonDisabledIndigo">#803F51B5</color>
+    <color name="colorPrimarySelectedIndigo">#753F51B5</color>
+
+    <!--colors used by all themes-->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="progressbarNeutral">#ff5a5d5a</color>
+    <color name="progressbarFail">#FF0000</color>
+    <color name="progressbarPass">#00cf00</color>
+    <color name="colorNotPractice">#ebebeb</color>
 
 </resources>

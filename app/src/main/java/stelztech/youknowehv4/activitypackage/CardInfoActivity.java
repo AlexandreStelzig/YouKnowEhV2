@@ -41,6 +41,7 @@ import stelztech.youknowehv4.manager.CardInfoToolbarManager;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.deck.Deck;
 import stelztech.youknowehv4.database.profile.Profile;
+import stelztech.youknowehv4.manager.ThemeManager;
 
 /**
  * Created by alex on 2017-04-04.
@@ -108,6 +109,8 @@ public class CardInfoActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setTheme(ThemeManager.getInstance().getCurrentAppThemeValue());
 
         overridePendingTransition(R.anim.enter, R.anim.exit);
 

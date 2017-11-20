@@ -48,7 +48,7 @@
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:text="create another card"
-                        android:textColor="@color/textPrimary" />
+                        android:textColor="?textPrimary" />
 
 
                 </LinearLayout>
@@ -66,7 +66,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="#"
-                        android:textColor="@color/textPrimary"
+                        android:textColor="?textPrimary"
                         android:textSize="@dimen/text_info" />
 
                     <TextView
@@ -74,7 +74,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=" Deck(s)"
-                        android:textColor="@color/textPrimary"
+                        android:textColor="?textPrimary"
                         android:textSize="@dimen/text_info" />
 
                     <Button
@@ -91,7 +91,7 @@
                         android:paddingRight="15dp"
                         android:paddingTop="10dp"
                         android:text="EDIT"
-                        android:textColor="@color/colorTextIcon" />
+                        android:textColor="?colorTextIcon" />
 
 
                 </LinearLayout>
@@ -120,7 +120,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
                         android:text="Question"
-                        android:textColor="@color/textPrimary"
+                        android:textColor="?textPrimary"
                         android:textSize="@dimen/word_info_header" />
 
                     <EditText
@@ -129,7 +129,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="textCapSentences|textAutoCorrect"
                         android:maxLines="1"
-                        android:textColor="@color/textPrimary"
+                        android:textColor="?textPrimary"
                         android:hint="(mandatory)"
                         android:textSize="@dimen/text_info" />
 
@@ -141,7 +141,7 @@
                         android:maxLines="3"
                         android:minLines="1"
                         android:scrollbars="vertical"
-                        android:textColor="@color/textPrimary"
+                        android:textColor="?textPrimary"
                         android:textSize="@dimen/text_info" />
 
                 </LinearLayout>
@@ -152,7 +152,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="1dp"
                     android:layout_margin="10dp"
-                    android:background="@color/colorPrimary" />
+                    android:background="?colorPrimary" />
 
 
                 <LinearLayout
@@ -174,7 +174,7 @@
                             android:layout_gravity="left"
                             android:layout_weight="75"
                             android:text="Answer"
-                            android:textColor="@color/textPrimary"
+                            android:textColor="?textPrimary"
                             android:textSize="@dimen/word_info_header" />
 
                         <LinearLayout
@@ -206,7 +206,7 @@
                         android:imeOptions="actionDone"
                         android:inputType="textCapSentences|textAutoCorrect"
                         android:maxLines="1"
-                        android:textColor="@color/textPrimary"
+                        android:textColor="?textPrimary"
                         android:textSize="@dimen/text_info" />
 
                     <TextView
@@ -218,7 +218,7 @@
                         android:maxLines="3"
                         android:minLines="1"
                         android:scrollbars="vertical"
-                        android:textColor="@color/textPrimary"
+                        android:textColor="?textPrimary"
                         android:textSize="@dimen/text_info" />
 
 
@@ -229,21 +229,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="1dp"
                     android:layout_margin="10dp"
-                    android:background="@color/colorPrimary" />
+                    android:background="?colorPrimary" />
 
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:textColor="@color/textPrimary">
+                    android:textColor="?textPrimary">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
                         android:text="Note"
-                        android:textColor="@color/textPrimary"
+                        android:textColor="?textPrimary"
                         android:textSize="@dimen/word_info_header" />
 
                     <EditText
@@ -256,7 +256,7 @@
                         android:hint="(optional)"
                         android:minLines="8"
                         android:scrollbars="vertical"
-                        android:textColor="@color/textPrimary"
+                        android:textColor="?textPrimary"
                         android:textSize="@dimen/text_info" />
 
 
@@ -269,7 +269,7 @@
                         android:maxLines="8"
                         android:minLines="8"
                         android:scrollbars="vertical"
-                        android:textColor="@color/textPrimary"
+                        android:textColor="?textPrimary"
                         android:textSize="@dimen/text_info" />
                 </LinearLayout>
 
@@ -285,9 +285,9 @@
         <!--android:layout_height="wrap_content"-->
         <!--android:layout_gravity="bottom|end"-->
         <!--android:layout_margin="@dimen/fab_margin"-->
-        <!--android:tint="@color/colorTextIcon"-->
-        <!--app:rippleColor="@color/white"-->
-        <!--app:backgroundTint="@color/colorPrimary"-->
+        <!--android:tint="?colorTextIcon"-->
+        <!--app:rippleColor="?white"-->
+        <!--app:backgroundTint="?colorPrimary"-->
         <!--app:srcCompat="@android:drawable/ic_menu_edit" />-->
 
     </ScrollView>

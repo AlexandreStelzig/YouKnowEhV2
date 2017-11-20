@@ -32,6 +32,7 @@ import stelztech.youknowehv4.manager.CardInfoToolbarManager;
 import stelztech.youknowehv4.manager.CardToolbarManager;
 import stelztech.youknowehv4.manager.ExportImportManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
+import stelztech.youknowehv4.manager.ThemeManager;
 
 public class MainActivityManager extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -76,6 +77,9 @@ public class MainActivityManager extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setTheme(ThemeManager.getInstance().getCurrentAppThemeNoActionBarValue());
+
         setContentView(R.layout.activity_main_menu);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main_menu);
         setSupportActionBar(toolbar);
@@ -126,8 +130,16 @@ public class MainActivityManager extends AppCompatActivity
         mQuizFragment = new QuizFragment();
         mQuizHistoryFragment = new QuizHistoryFragment();
 
-        // default page
-        displayFragment(R.id.review);
+        Intent intent = getIntent();
+        boolean loadProfilePage = intent.getBooleanExtra("ColorChanged", false);
+
+        if(loadProfilePage){
+            displayFragment(R.id.profile);
+        }else{
+            // default page
+            displayFragment(R.id.review);
+        }
+
 
 
     }

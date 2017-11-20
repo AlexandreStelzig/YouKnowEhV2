@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/colorPrimaryDark">
+    android:background="?colorPrimaryDark">
 
 
     <TextView
@@ -11,7 +11,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:text="You Know Eh?"
-        android:textColor="@color/colorTextIcon"
+        android:textColor="?colorTextIcon"
         android:textSize="30dp"
         android:textStyle="bold" />
 

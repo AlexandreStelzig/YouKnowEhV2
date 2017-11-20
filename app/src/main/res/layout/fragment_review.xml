@@ -98,7 +98,7 @@
                     android:drawableLeft="@drawable/ic_info_outline_white_24dp"
                     android:padding="5dp"
                     android:text="VIEW"
-                    android:textColor="@color/colorTextIcon" />
+                    android:textColor="?colorTextIcon" />
 
 
             </LinearLayout>
@@ -128,7 +128,7 @@
                 android:maxLines="4"
                 android:scrollbars="vertical"
                 android:text="Question"
-                android:textColor="@color/textPrimary"
+                android:textColor="?textPrimary"
                 android:textSize="32dp" />
 
 
@@ -156,7 +156,7 @@
                     android:layout_marginRight="10dp"
                     android:layout_marginTop="5dp"
                     android:layout_weight="75"
-                    android:background="@color/colorDivider" />
+                    android:background="?colorDivider" />
 
 
                 <LinearLayout
@@ -189,7 +189,7 @@
                 android:maxLines="4"
                 android:scrollbars="vertical"
                 android:text="Answer"
-                android:textColor="@color/textPrimary"
+                android:textColor="?textPrimary"
                 android:textSize="30dp" />
 
         </LinearLayout>
@@ -214,7 +214,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/button_drawable_selector"
                 android:text="Show"
-                android:textColor="@color/colorTextIcon" />
+                android:textColor="?colorTextIcon" />
 
             <View
                 android:layout_width="10dp"
@@ -229,7 +229,7 @@
                 android:background="@drawable/button_drawable_selector"
                 android:drawablePadding="0dp"
                 android:text="Next"
-                android:textColor="@color/colorTextIcon" />
+                android:textColor="?colorTextIcon" />
 
 
         </LinearLayout>

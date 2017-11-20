@@ -39,7 +39,7 @@
             android:background="@drawable/button_drawable_selector"
             android:enabled="false"
             android:text="CONTINUE"
-            android:textColor="@color/colorTextIcon" />
+            android:textColor="?colorTextIcon" />
 
         <View
             android:layout_width="0dp"
@@ -54,7 +54,7 @@
             android:layout_marginStart="40dp"
             android:background="@drawable/button_drawable_selector"
             android:text="NEW QUIZ"
-            android:textColor="@color/colorTextIcon" />
+            android:textColor="?colorTextIcon" />
     </LinearLayout>
 
 </LinearLayout>

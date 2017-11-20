@@ -27,7 +27,7 @@
             android:clickable="true"
             android:drawableLeft="@drawable/ic_add_black_24dp"
             android:text="Create Deck"
-            android:textColor="@color/textPrimary"
+            android:textColor="?textPrimary"
             android:textSize="16sp" />
 
     </LinearLayout>

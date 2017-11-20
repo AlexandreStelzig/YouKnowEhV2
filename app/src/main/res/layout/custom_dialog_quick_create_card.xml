@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Deck: "
-            android:textColor="@color/colorPrimary"
+            android:textColor="?colorPrimary"
             android:textStyle="bold" />
 
         <TextView
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:maxLines="2"
             android:text="DeckPlaceHolder"
-            android:textColor="@color/textPrimary" />
+            android:textColor="?textPrimary" />
 
 
     </LinearLayout>

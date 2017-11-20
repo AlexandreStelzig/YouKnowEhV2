@@ -2,6 +2,7 @@ package stelztech.youknowehv4.fragmentpackage.otherfragments;
 
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,6 +36,7 @@ import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
+import stelztech.youknowehv4.manager.ThemeManager;
 
 /**
  * Created by alex on 2017-04-03.
@@ -135,10 +137,96 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-
+        setupColorChangeButtons();
         populateInformation();
 
+
         return view;
+    }
+
+    private void setupColorChangeButtons() {
+
+        Button blueColorButton = (Button) view.findViewById(R.id.profile_change_color_blue_button);
+        blueColorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeColorAndReloadActivity(ThemeManager.THEME_COLORS.BLUE);
+            }
+        });
+
+        Button greenColorButton = (Button) view.findViewById(R.id.profile_change_color_green_button);
+        greenColorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeColorAndReloadActivity(ThemeManager.THEME_COLORS.GREEN);
+            }
+        });
+
+        Button redColorButton = (Button) view.findViewById(R.id.profile_change_color_red_button);
+        redColorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeColorAndReloadActivity(ThemeManager.THEME_COLORS.RED);
+            }
+        });
+
+        Button purpleColorButton = (Button) view.findViewById(R.id.profile_change_color_purple_button);
+        purpleColorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeColorAndReloadActivity(ThemeManager.THEME_COLORS.PURPLE);
+            }
+        });
+
+        Button greyColorButton = (Button) view.findViewById(R.id.profile_change_color_grey_button);
+        greyColorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeColorAndReloadActivity(ThemeManager.THEME_COLORS.GREY);
+            }
+        });
+
+        Button pinkColorButton = (Button) view.findViewById(R.id.profile_change_color_pink_button);
+        pinkColorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeColorAndReloadActivity(ThemeManager.THEME_COLORS.PINK);
+            }
+        });
+
+        Button orangeColorButton = (Button) view.findViewById(R.id.profile_change_color_orange_button);
+        orangeColorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeColorAndReloadActivity(ThemeManager.THEME_COLORS.ORANGE);
+            }
+        });
+
+        Button indigoColorButton = (Button) view.findViewById(R.id.profile_change_color_indigo_button);
+        indigoColorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeColorAndReloadActivity(ThemeManager.THEME_COLORS.INDIGO);
+            }
+        });
+    }
+
+    private void changeColorAndReloadActivity(ThemeManager.THEME_COLORS color){
+
+        ThemeManager themeManager = ThemeManager.getInstance();
+
+        if(themeManager.getCurrentTheme() != color){
+            Database.mProfileDao.changeProfileColor(Database.mUserDao.fetchActiveProfile().getProfileId(), color);
+            themeManager.changeTheme(color);
+            getActivity().setTheme(ThemeManager.getInstance().getCurrentAppThemeValue());
+            getActivity().finish();
+            Intent intent = getActivity().getIntent();
+            intent.putExtra("ColorChanged", true);
+            startActivity(intent);
+        }
+
+
+
     }
 
     private void setLabelText() {
@@ -226,6 +314,7 @@ public class ProfileFragment extends Fragment {
 
     private void changeProfile(Profile profile) {
         Database.mUserDao.setActiveProfile(profile.getProfileId());
+        changeColorAndReloadActivity(profile.getProfileColor());
     }
 
 
