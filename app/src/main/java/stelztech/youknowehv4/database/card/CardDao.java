@@ -152,6 +152,9 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
             for (int counter = 0; counter < decks.size(); counter++) {
                 Database.mCardDeckDao.deleteCardDeck(cardId, decks.get(counter).getDeckId());
             }
+
+            Log.d("database", "delete cardId " + cardId );
+
             return super.delete(CARD_TABLE, COLUMN_CARD_ID + "=" + cardId, null) > 0;
         } catch (SQLiteConstraintException ex) {
             Log.w("Database", ex.getMessage());

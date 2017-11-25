@@ -1,6 +1,7 @@
 package stelztech.youknowehv4.fragmentpackage.quiz;
 
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -9,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
@@ -28,6 +30,36 @@ public class QuizHistoryFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_quiz_history, container, false);
+        ((Button) view.findViewById(R.id.test)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final ProgressDialog progress = ProgressDialog.show(getContext(), "dialog title",
+                        "dialog message", true);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run()
+                    {
+                        // do the thing that takes a long time
+
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run()
+                            {
+                                progress.dismiss();
+                            }
+                        });
+                    }
+                }).start();
+            }
+        });
         return view;
     }
 

@@ -36,7 +36,8 @@
 
         <activity
             android:name=".firsttimeopening.FirstTimeOpeningActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeBlue.NoActionBar" />
 
         <activity
             android:name=".activitypackage.MainActivityManager"

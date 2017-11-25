@@ -91,6 +91,9 @@ public class DeckDao extends DbContentProvider implements IDeckDao, IDeckSchema 
                 }
             }
 
+
+            Log.d("database", "delete deckId " + deckId );
+
             return super.delete(DECK_TABLE, COLUMN_DECK_ID + "=" + deckId, null) > 0;
         } catch (SQLiteConstraintException ex) {
             Log.w("Database", ex.getMessage());

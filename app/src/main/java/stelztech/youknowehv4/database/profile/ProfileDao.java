@@ -10,7 +10,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.DbContentProvider;
+import stelztech.youknowehv4.database.card.Card;
+import stelztech.youknowehv4.database.deck.Deck;
 import stelztech.youknowehv4.helper.DateHelper;
 import stelztech.youknowehv4.manager.ThemeManager;
 
@@ -61,6 +64,18 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
 
     @Override
     public boolean deleteProfile(int profileId) {
+        List<Card> cardList = Database.mCardDao.fetchAllCards();
+
+        for(Card card: cardList){
+            Database.mCardDao.deleteCard(card.getCardId());
+        }
+
+        List<Deck> deckList = Database.mDeckDao.fetchAllDecks();
+
+        for(Deck deck: deckList){
+            Database.mDeckDao.deleteDeck(deck.getDeckId());
+        }
+
         return super.delete(PROFILE_TABLE, COLUMN_PROFILE_ID
                 + "=" + profileId, null) > 0;
     }

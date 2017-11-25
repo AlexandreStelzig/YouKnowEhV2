@@ -254,7 +254,7 @@ public class SortingStateManager {
             Card card = cardList.get(counter);
             CardDeck cardDeck = Database.mCardDeckDao.fetchCardDeckById(card.getCardId(), deckId);
 
-            if (cardDeck.isPractice())
+            if (cardDeck.isReview())
                 practiceCards.add(card);
             else
                 nonPracticeCards.add(card);

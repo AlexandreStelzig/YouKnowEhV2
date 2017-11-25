@@ -26,6 +26,7 @@ import stelztech.youknowehv4.fragmentpackage.quiz.QuizHistoryFragment;
 import stelztech.youknowehv4.fragmentpackage.review.ReviewFragment;
 import stelztech.youknowehv4.fragmentpackage.otherfragments.ProfileFragment;
 import stelztech.youknowehv4.fragmentpackage.otherfragments.SettingsFragment;
+import stelztech.youknowehv4.helper.CardHelper;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.CardInfoToolbarManager;
@@ -350,21 +351,6 @@ public class MainActivityManager extends AppCompatActivity
                     android.R.anim.fade_out);
         }
 
-//        int positionPrevious = 0;
-//        int positionCurrent = 0;
-//        for(int i = 0; i < fragmentList.size(); i++){
-//            if(fragmentList.get(i).equals(fragment))
-//                positionCurrent = i;
-//            else if(fragmentList.get(i).equals(previousFragment))
-//                positionPrevious = i;
-//        }
-//
-//        if(positionCurrent < positionPrevious)
-//            transaction.setCustomAnimations(R.anim.slide_in_down, R.anim.slide_out_down);
-//        else
-//            transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up);
-
-
         transaction.replace(R.id.content_frame, fragment, tag);
         transaction.commit();
     }
@@ -438,8 +424,6 @@ public class MainActivityManager extends AppCompatActivity
             if (resultCode == RESULT_OK) {
                 Uri uri = data.getData();
                 ExportImportManager.readAllCSV(MainActivityManager.this, uri);
-
-
             }
         }
 

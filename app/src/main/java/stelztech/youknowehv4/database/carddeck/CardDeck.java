@@ -21,7 +21,7 @@ public class CardDeck {
         this.practiceToggleDate = practiceToggleDate;
     }
 
-    public String getPracticeToggleDate() {
+    public String getReviewToggleDate() {
         return practiceToggleDate;
     }
 
@@ -37,7 +37,7 @@ public class CardDeck {
         this.deckId = deckId;
     }
 
-    public boolean isPractice() {
+    public boolean isReview() {
         return isPractice;
     }
 

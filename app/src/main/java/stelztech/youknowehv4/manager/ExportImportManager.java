@@ -2,6 +2,7 @@ package stelztech.youknowehv4.manager;
 
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -34,8 +35,7 @@ import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.carddeck.CardDeck;
 import stelztech.youknowehv4.database.deck.Deck;
 import stelztech.youknowehv4.database.profile.Profile;
-
-import static stelztech.youknowehv4.database.carddeck.CardDeck.REVIEW_TOGGLE_ID;
+import stelztech.youknowehv4.helper.DateHelper;
 
 /**
  * Created by alex on 2017-05-02.
@@ -86,9 +86,12 @@ public final class ExportImportManager {
                 data[0] = cardTemp.getQuestion();
                 data[1] = cardTemp.getAnswer();
                 data[2] = cardTemp.getMoreInfo();
-                data[3] = "" + cardDeck.isPractice();
-                data[4] = "" + cardTemp.getDateCreated();
-                data[5] = "" + cardTemp.getDateModified();
+                if(!cardDeck.isReview() && !DateHelper.isValidDate(cardDeck.getReviewToggleDate()))
+                    data[3] = "" + CardDeck.REVIEW_TOGGLE_ID;
+                else
+                    data[3] = cardDeck.getReviewToggleDate();
+                data[4] = cardTemp.getDateCreated();
+                data[5] = cardTemp.getDateModified();
 
                 writer.writeNext(data);
 
@@ -107,7 +110,7 @@ public final class ExportImportManager {
                 if (null != os)
                     os.close();
 
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
             }
         }
 
@@ -152,7 +155,7 @@ public final class ExportImportManager {
                     String question = "";
                     String answer = "";
                     String note = "";
-                    String isPractice = "";
+                    String reviewToggle = "";
                     String dateCreated = "";
                     String dateModified = "";
                     int rowCounter = 0;
@@ -164,7 +167,7 @@ public final class ExportImportManager {
                         } else if (rowCounter == 2) {
                             note = nextLine[2];
                         } else if (rowCounter == 3) {
-                            isPractice = nextLine[3];
+                            reviewToggle = nextLine[3];
                         } else if (rowCounter == 4) {
                             dateCreated = nextLine[4];
                         } else if (rowCounter == 5) {
@@ -177,7 +180,7 @@ public final class ExportImportManager {
                         Toast.makeText(context, "Invalid file format - two first column cannot be empty", Toast.LENGTH_SHORT).show();
                         return false;
                     } else {
-                        cardHolderList.add(new CardHolder(question, answer, note, isPractice, dateCreated, dateModified));
+                        cardHolderList.add(new CardHolder(question, answer, note, reviewToggle, dateCreated, dateModified));
                     }
 
                 }
@@ -201,12 +204,21 @@ public final class ExportImportManager {
             int cardId = Database.mCardDao.createCard(question, answer, note, dateCreated, dateModified);
             Database.mCardDeckDao.createCardDeck(cardId, deckId);
 
-            if (cardHolderList.get(i).getIsPractice().trim().toLowerCase().equals("false") ||
-                    cardHolderList.get(i).getIsPractice().equals("0")) {
-                Database.mCardDeckDao.changeCardReviewTime(cardId, deckId, REVIEW_TOGGLE_ID);
+            String date = cardHolderList.get(i).getReviewToggleDate();
+            if (!date.isEmpty()) {
+                boolean isValidDate = DateHelper.isValidDate(date);
+
+                if (isValidDate)
+                    Database.mCardDeckDao.setReviewToggleDate(cardId, deckId, date);
+                else if(date.equals("" + CardDeck.REVIEW_TOGGLE_ID) || date.toLowerCase().trim().equals("false")){
+                    Database.mCardDeckDao.changeCardReviewTime(cardId, deckId, CardDeck.REVIEW_TOGGLE_ID);
+                }
             }
 
         }
+
+
+        Database.mCardDeckDao.revalidateReviewCards();
 
         Toast.makeText(context, "Deck \"" + fileName + "\" imported", Toast.LENGTH_SHORT).show();
         return true;
@@ -239,7 +251,7 @@ public final class ExportImportManager {
         try {
 
             String zipFile = sdCard.getAbsolutePath() + storingFolder + "/"
-                    + Database.mUserDao.fetchActiveProfile().getProfileName()+ "_YKHExport.zip";
+                    + Database.mUserDao.fetchActiveProfile().getProfileName() + "_YKHExport.zip";
 
             // create byte buffer
             byte[] buffer = new byte[1024];
@@ -366,7 +378,7 @@ public final class ExportImportManager {
 
         File sdCard = Environment.getExternalStorageDirectory();
         String zipFile = sdCard.getAbsolutePath() + storingFolder + "/"
-                + Database.mUserDao.fetchActiveProfile().getProfileName()+ "_YKHExport.zip";
+                + Database.mUserDao.fetchActiveProfile().getProfileName() + "_YKHExport.zip";
         File dir = new File(zipFile);
 
         Uri U = Uri.fromFile(dir);
@@ -379,7 +391,7 @@ public final class ExportImportManager {
 
     }
 
-    public static void exportAllProfilesToEmail(Context context){
+    public static void exportAllProfilesToEmail(Context context) {
 
         int currentProfileId = Database.mUserDao.fetchActiveProfile().getProfileId();
 
@@ -387,14 +399,14 @@ public final class ExportImportManager {
 
         ArrayList<Uri> uris = new ArrayList<Uri>();
 
-        for (Profile profile: profileList) {
+        for (Profile profile : profileList) {
             Database.mUserDao.setActiveProfile(profile.getProfileId());
 
             exportAllFiles(context);
 
             File sdCard = Environment.getExternalStorageDirectory();
             String zipFile = sdCard.getAbsolutePath() + storingFolder + "/"
-                    + Database.mUserDao.fetchActiveProfile().getProfileName()+ "_YKHExport.zip";
+                    + Database.mUserDao.fetchActiveProfile().getProfileName() + "_YKHExport.zip";
             File dir = new File(zipFile);
 
             uris.add(Uri.fromFile(dir));
@@ -491,15 +503,15 @@ public final class ExportImportManager {
         private String question;
         private String answer;
         private String note;
-        private String isPractice;
+        private String reviewToggleDate;
         private String dateCreated;
         private String dateModified;
 
-        public CardHolder(String question, String answer, String note, String isPractice, String dateCreated, String dateModified) {
+        public CardHolder(String question, String answer, String note, String reviewToggleDate, String dateCreated, String dateModified) {
             this.question = question;
             this.answer = answer;
             this.note = note;
-            this.isPractice = isPractice;
+            this.reviewToggleDate = reviewToggleDate;
             this.dateCreated = dateCreated;
             this.dateModified = dateModified;
         }
@@ -520,12 +532,12 @@ public final class ExportImportManager {
             this.dateModified = dateModified;
         }
 
-        public String getIsPractice() {
-            return isPractice;
+        public String getReviewToggleDate() {
+            return reviewToggleDate;
         }
 
-        public void setIsPractice(String isPractice) {
-            this.isPractice = isPractice;
+        public void setReviewToggleDate(String reviewToggleDate) {
+            this.reviewToggleDate = reviewToggleDate;
         }
 
         public String getQuestion() {

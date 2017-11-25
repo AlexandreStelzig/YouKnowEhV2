@@ -27,6 +27,7 @@ import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.ArchivedActivity;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.Database;
+import stelztech.youknowehv4.helper.CardHelper;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.ExportImportManager;
@@ -264,7 +265,9 @@ public class SettingsFragment extends Fragment{
 
                 switch (position) {
                     case 0:
-                        mergeDuplicates();
+                        CardHelper.mergeDuplicates();
+                        Toast.makeText(getContext(), "Merge completed", Toast.LENGTH_SHORT).show();
+
                         break;
                 }
 
@@ -382,60 +385,7 @@ public class SettingsFragment extends Fragment{
     }
 
 
-    private void mergeDuplicates() {
 
-        List<Card> allCards = Database.mCardDao.fetchAllCards();
-
-        for (int counterOne = 0; counterOne < allCards.size(); counterOne++) {
-
-            Card cardOne = allCards.get(counterOne);
-            List<Integer> removedCardsIndex = new ArrayList<>();
-
-            int counterTwo = counterOne + 1;
-            while (counterTwo < allCards.size()) {
-
-                Card cardTwo = allCards.get(counterTwo);
-
-                if (Objects.equals(cardOne.getQuestion(), cardTwo.getQuestion()) &&
-                        Objects.equals(cardOne.getAnswer(), cardTwo.getAnswer()) &&
-                        Objects.equals(cardOne.getMoreInfo(), cardTwo.getMoreInfo())) {
-
-                    List<Deck> cardOneDecks = Database.mCardDeckDao.fetchDecksByCardId(cardOne.getCardId());
-                    List<Deck> cardTwoDecks = Database.mCardDeckDao.fetchDecksByCardId(cardTwo.getCardId());
-
-                    boolean isInSameDeck = false;
-
-                    for (int cardOneCounter = 0; cardOneCounter < cardOneDecks.size(); cardOneCounter++) {
-                        for (int cardTwoDecksCounter = 0; cardTwoDecksCounter < cardTwoDecks.size(); cardTwoDecksCounter++) {
-                            if (cardOneDecks.get(cardOneCounter).getDeckId() == (cardTwoDecks.get(cardTwoDecksCounter).getDeckId())) {
-                                isInSameDeck = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (!isInSameDeck) {
-                        for (int i = 0; i < cardTwoDecks.size(); i++) {
-                            Database.mCardDeckDao.createCardDeck(cardOne.getCardId(), cardTwoDecks.get(i).getDeckId());
-                        }
-                    }
-
-                    Database.mCardDao.deleteCard(cardTwo.getCardId());
-                    allCards.remove(counterTwo);
-                } else {
-                    counterTwo++;
-                }
-
-
-            }
-
-
-        }
-
-        Toast.makeText(getContext(), "Merge completed", Toast.LENGTH_SHORT).show();
-
-
-    }
 
 
 }

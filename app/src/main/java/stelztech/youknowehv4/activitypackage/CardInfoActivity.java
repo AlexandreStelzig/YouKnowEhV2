@@ -6,12 +6,17 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -903,8 +908,13 @@ public class CardInfoActivity extends AppCompatActivity {
             answerTextView.setTextIsSelectable(true);
             questionTextView.setTextIsSelectable(true);
 
-            separator1.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
-            separator2.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+            TypedValue typedValue = new TypedValue();
+            TypedArray a = this.obtainStyledAttributes(typedValue.data, new int[] { R.attr.colorPrimary });
+            int color = a.getColor(0, 0);
+            a.recycle();
+
+            separator1.setBackgroundColor(color);
+            separator2.setBackgroundColor(color);
 
         } else {
             noteEditTextView.setVisibility(View.VISIBLE);

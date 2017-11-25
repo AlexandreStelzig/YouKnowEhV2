@@ -21,5 +21,6 @@ public interface ICardDeckDao {
     boolean changeCardReviewTime(int cardId, int deckId, int hours);
     int fetchNumberCardsFromDeckId(int deckId);
     int fetchNumberDecksFromCardId(int cardId);
+    boolean setReviewToggleDate(int cardId, int deckId, String date);
 
 }

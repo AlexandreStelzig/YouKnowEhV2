@@ -791,7 +791,15 @@ public class CardListFragment extends Fragment {
                 displayConfirmationDialog();
                 return true;
             case R.id.info_card:
-                CardHelper.showQuickInfoCard(getContext(), getActivity(), cardList.get(indexSelected));
+
+                Deck deckAssociated;
+                int currentDeckId = getCurrentDeckIdSelected();
+                if(currentDeckId == ALL_DECKS_ITEM)
+                    deckAssociated = null;
+                else
+                    deckAssociated = Database.mDeckDao.fetchDeckById(currentDeckId);
+
+                CardHelper.showQuickInfoCard(getActivity(), cardList.get(indexSelected), deckAssociated);
 
                 return true;
             case R.id.toggle_practice:

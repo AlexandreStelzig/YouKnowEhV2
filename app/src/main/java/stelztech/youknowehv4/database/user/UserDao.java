@@ -195,7 +195,7 @@ public class UserDao extends DbContentProvider implements IUserDao, IUserSchema 
             boolean currentDisplay = user.isDisplayNbDecksSpecificCards();
             boolean nextDisplay = !currentDisplay;
 
-            values.put(COLUMN_DISPLAY_ALL_CARDS, nextDisplay);
+            values.put(COLUMN_DISPLAY_SPECIFIC_DECK, nextDisplay);
 
             return super.update(USER_TABLE, values, COLUMN_USER_ID + "=" + user.getUserId(), null) > 0;
         } catch (SQLiteConstraintException ex) {

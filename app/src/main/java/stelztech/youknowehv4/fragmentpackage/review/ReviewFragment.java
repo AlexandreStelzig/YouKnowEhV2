@@ -38,12 +38,12 @@ import java.util.Random;
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
 import stelztech.youknowehv4.database.Database;
-import stelztech.youknowehv4.helper.CardHelper;
-import stelztech.youknowehv4.helper.Helper;
-import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.deck.Deck;
 import stelztech.youknowehv4.database.profile.Profile;
+import stelztech.youknowehv4.helper.CardHelper;
+import stelztech.youknowehv4.helper.Helper;
+import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 
 /**
  * Created by alex on 2017-04-03.
@@ -80,7 +80,7 @@ public class ReviewFragment extends Fragment {
     private LinearLayout reverseLayout;
     private Button reverseButton;
     private TextView orientationTextView;
-    private TextView praticeNbCards;
+    private TextView reviewNbCards;
 
     // question answers
     private List<String> questionList = new ArrayList<>();
@@ -112,7 +112,6 @@ public class ReviewFragment extends Fragment {
     private String answerLabel;
 
     // show previous
-    private boolean showPreviousIsOkay = false;
     private boolean showingPrevious = false;
     private Card previousCard;
 
@@ -146,7 +145,7 @@ public class ReviewFragment extends Fragment {
         showButton = (Button) view.findViewById(R.id.practice_show_button);
         nextButton = (Button) view.findViewById(R.id.practice_next_button);
         infoButton = (Button) view.findViewById(R.id.practice_info);
-        praticeNbCards = (TextView) view.findViewById(R.id.practice_nb_cards);
+        reviewNbCards = (TextView) view.findViewById(R.id.practice_nb_cards);
         reverseLayout = (LinearLayout) view.findViewById(R.id.practice_reverse_layout);
         reverseButton = (Button) view.findViewById(R.id.practice_reverse_button);
         orientationTextView = (TextView) view.findViewById(R.id.practice_orientation);
@@ -277,8 +276,13 @@ public class ReviewFragment extends Fragment {
                     setShowButtonEnable();
                     return true;
                 case R.id.action_previous:
-                    if (showPreviousIsOkay) {
-                        showPreviousIsOkay = false;
+
+
+                    if (currentQuestion != 0) {
+                        currentQuestion--;
+                        setQuestionAnswerText();
+                        setNbPracticeCards();
+                    } else if (previousCard != null && !showingPrevious) {
                         showingPrevious = true;
                         setQuestionAnswerText();
                         setNbPracticeCards();
@@ -318,10 +322,17 @@ public class ReviewFragment extends Fragment {
                 case R.id.action_quick_info:
 
                     if (!(isSelectedDeckAll() && !(Database.mUserDao.fetchUser().isAllowPracticeAll()))) {
-                        if (showingPrevious)
-                            CardHelper.showQuickInfoCard(getContext(), getActivity(), previousCard);
+
+                        Deck deckAssociated;
+                        if (!isSelectedDeckAll())
+                            deckAssociated = deckList.get(selectedSpinnerPosition - 1);
                         else
-                            CardHelper.showQuickInfoCard(getContext(), getActivity(), mCardList.get(questionOrder.get(currentQuestion)));
+                            deckAssociated = null;
+
+                        if (showingPrevious)
+                            CardHelper.showQuickInfoCard(getActivity(), previousCard, deckAssociated);
+                        else
+                            CardHelper.showQuickInfoCard(getActivity(), mCardList.get(questionOrder.get(currentQuestion)), deckAssociated);
                     }
                     return true;
 
@@ -335,7 +346,9 @@ public class ReviewFragment extends Fragment {
 
         }
 
-        return super.onOptionsItemSelected(item);
+        return super.
+
+                onOptionsItemSelected(item);
     }
 
     private int findCardIndex(Card card) {
@@ -369,7 +382,7 @@ public class ReviewFragment extends Fragment {
         else
             nbCardsString += "Review Cards";
 
-        praticeNbCards.setText(nbCardsString);
+        reviewNbCards.setText(nbCardsString);
     }
 
     private void initSpinner() {
@@ -502,7 +515,7 @@ public class ReviewFragment extends Fragment {
 
             questionTextView.setText("Select Deck");
             answerTextView.setText("");
-            praticeNbCards.setText("0 Review Cards");
+            reviewNbCards.setText("0 Review Cards");
             progressBar.setVisibility(View.GONE);
 
         } else {
@@ -510,10 +523,9 @@ public class ReviewFragment extends Fragment {
                 progressBar.setVisibility(View.VISIBLE);
                 questionTextView.setVisibility(View.GONE);
                 answerTextView.setText("");
-                praticeNbCards.setVisibility(View.GONE);
+                reviewNbCards.setVisibility(View.GONE);
                 ((MainActivityManager) getActivity()).enableDrawerSwipe(false);
 
-                showPreviousIsOkay = false;
                 previousCard = null;
                 showingPrevious = false;
 
@@ -550,14 +562,10 @@ public class ReviewFragment extends Fragment {
         } else {
 
             if (showingPrevious) {
-                showPreviousIsOkay = true;
                 showingPrevious = false;
                 setQuestionAnswerText();
             } else {
-                showPreviousIsOkay = true;
                 showingPrevious = false;
-                previousCard = mCardList.get(questionOrder.get(currentQuestion));
-
                 answerTextView.scrollTo(0, 0);
                 questionTextView.scrollTo(0, 0);
 
@@ -566,6 +574,7 @@ public class ReviewFragment extends Fragment {
                     setQuestionAnswerText();
                 } else {
                     // reset
+                    previousCard = mCardList.get(questionOrder.get(currentQuestion));
                     randomizeQuestionOrder();
                     setQuestionAnswerText();
                     Toast.makeText(getContext(), "Order reset", Toast.LENGTH_SHORT).show();
@@ -775,7 +784,6 @@ public class ReviewFragment extends Fragment {
         if (showingPrevious) {
             int deckPosition = selectedSpinnerPosition - 1;
 
-            showPreviousIsOkay = false;
             showingPrevious = false;
 
 
@@ -800,6 +808,8 @@ public class ReviewFragment extends Fragment {
 
             if (previousCardOrderIndex < currentQuestion)
                 currentQuestion--;
+
+            previousCard = null;
 
         } else {
 
@@ -843,8 +853,6 @@ public class ReviewFragment extends Fragment {
         setNbPracticeCards();
         resetShowButtonLabel();
         setButtonsEnable();
-
-        showPreviousIsOkay = false;
 
         String lengthMessage = "";
         if (hours == TOGGLE_FOREVER)
@@ -1013,9 +1021,10 @@ public class ReviewFragment extends Fragment {
             progressBar.setVisibility(View.GONE);
             questionTextView.setVisibility(View.VISIBLE);
             answerTextView.setVisibility(View.VISIBLE);
-            praticeNbCards.setVisibility(View.VISIBLE);
+            reviewNbCards.setVisibility(View.VISIBLE);
 
         }
+
     }
 
     public boolean isLoading() {

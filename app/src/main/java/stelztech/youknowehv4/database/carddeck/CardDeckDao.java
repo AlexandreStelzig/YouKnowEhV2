@@ -128,7 +128,7 @@ public class CardDeckDao extends DbContentProvider implements ICardDeckDao, ICar
 
         List<CardDeck> cardDecksNotPractice = new ArrayList<>();
         for (int i = 0; i < cardDecks.size(); i++) {
-            if (!cardDecks.get(i).isPractice())
+            if (!cardDecks.get(i).isReview())
                 cardDecksNotPractice.add(cardDecks.get(i));
         }
 
@@ -140,7 +140,7 @@ public class CardDeckDao extends DbContentProvider implements ICardDeckDao, ICar
         for (int counter = 0; counter < cardDecksNotPractice.size(); counter++) {
 
             CardDeck temp = cardDecksNotPractice.get(counter);
-            String dateToggle = temp.getPracticeToggleDate();
+            String dateToggle = temp.getReviewToggleDate();
 
             if (!dateToggle.equals("")) {
 
@@ -175,10 +175,10 @@ public class CardDeckDao extends DbContentProvider implements ICardDeckDao, ICar
             }
         }
 
-        // get all cards isPractice
+        // get all cards isReview
         List<Card> cards = new ArrayList<>();
         for (int i = 0; i < cardDecks.size(); i++) {
-            if (cardDecks.get(i).isPractice())
+            if (cardDecks.get(i).isReview())
                 cards.add(Database.mCardDao.fetchCardById(cardDecks.get(i).getCardId()));
         }
 
@@ -232,11 +232,30 @@ public class CardDeckDao extends DbContentProvider implements ICardDeckDao, ICar
         try {
             Log.d("Database", "Toggle practice: " + dateToToggle);
 
-            boolean isPracticeCurrent = cardDeck.isPractice();
+            boolean isPracticeCurrent = cardDeck.isReview();
             boolean newIsPractice = !isPracticeCurrent;
 
             values.put(COLUMN_IS_REVIEW, newIsPractice);
             values.put(COLUMN_DATE_TOGGLE_REVIEW, dateToToggle);
+
+            return super.update(CARD_DECK_TABLE, values, COLUMN_CARD_ID + "=" + cardId + " AND " + COLUMN_DECK_ID + "=" + deckId, null) > 0;
+        } catch (SQLiteConstraintException ex) {
+            Log.w("Database", ex.getMessage());
+            return false;
+        }
+    }
+
+    public boolean setReviewToggleDate(int cardId, int deckId, String date){
+        ContentValues values = new ContentValues();
+
+
+        try {
+            Log.d("Database", "Toggle practice: " + date);
+
+            boolean newIsPractice = false;
+
+            values.put(COLUMN_IS_REVIEW, newIsPractice);
+            values.put(COLUMN_DATE_TOGGLE_REVIEW, date);
 
             return super.update(CARD_DECK_TABLE, values, COLUMN_CARD_ID + "=" + cardId + " AND " + COLUMN_DECK_ID + "=" + deckId, null) > 0;
         } catch (SQLiteConstraintException ex) {

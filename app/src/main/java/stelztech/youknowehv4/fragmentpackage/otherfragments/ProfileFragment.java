@@ -51,6 +51,14 @@ public class ProfileFragment extends Fragment {
         UPDATE_ANSWER
     }
 
+    Button blueColorButton;
+    Button greenColorButton;
+    Button redColorButton;
+    Button purpleColorButton;
+    Button greyColorButton;
+    Button pinkColorButton;
+    Button orangeColorButton;
+    Button indigoColorButton;
 
     private View view;
 
@@ -146,7 +154,7 @@ public class ProfileFragment extends Fragment {
 
     private void setupColorChangeButtons() {
 
-        Button blueColorButton = (Button) view.findViewById(R.id.profile_change_color_blue_button);
+        blueColorButton = (Button) view.findViewById(R.id.profile_change_color_blue_button);
         blueColorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -154,7 +162,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        Button greenColorButton = (Button) view.findViewById(R.id.profile_change_color_green_button);
+        greenColorButton = (Button) view.findViewById(R.id.profile_change_color_green_button);
         greenColorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -162,7 +170,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        Button redColorButton = (Button) view.findViewById(R.id.profile_change_color_red_button);
+        redColorButton = (Button) view.findViewById(R.id.profile_change_color_red_button);
         redColorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -170,7 +178,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        Button purpleColorButton = (Button) view.findViewById(R.id.profile_change_color_purple_button);
+        purpleColorButton = (Button) view.findViewById(R.id.profile_change_color_purple_button);
         purpleColorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -178,7 +186,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        Button greyColorButton = (Button) view.findViewById(R.id.profile_change_color_grey_button);
+        greyColorButton = (Button) view.findViewById(R.id.profile_change_color_grey_button);
         greyColorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -186,7 +194,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        Button pinkColorButton = (Button) view.findViewById(R.id.profile_change_color_pink_button);
+        pinkColorButton = (Button) view.findViewById(R.id.profile_change_color_pink_button);
         pinkColorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -194,7 +202,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        Button orangeColorButton = (Button) view.findViewById(R.id.profile_change_color_orange_button);
+        orangeColorButton = (Button) view.findViewById(R.id.profile_change_color_orange_button);
         orangeColorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -202,13 +210,17 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        Button indigoColorButton = (Button) view.findViewById(R.id.profile_change_color_indigo_button);
+        indigoColorButton = (Button) view.findViewById(R.id.profile_change_color_indigo_button);
         indigoColorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 changeColorAndReloadActivity(ThemeManager.THEME_COLORS.INDIGO);
             }
         });
+    }
+
+    private void resetColorButtonSize(){
+
     }
 
     private void changeColorAndReloadActivity(ThemeManager.THEME_COLORS color){
@@ -315,6 +327,7 @@ public class ProfileFragment extends Fragment {
     private void changeProfile(Profile profile) {
         Database.mUserDao.setActiveProfile(profile.getProfileId());
         changeColorAndReloadActivity(profile.getProfileColor());
+        ((MainActivityManager) getActivity()).resetFragmentPractice();
     }
 
 
@@ -488,9 +501,9 @@ public class ProfileFragment extends Fragment {
 
     private AlertDialog.Builder deleteConfirmationDialog(final Profile profileToDelete) {
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
-        alertDialog.setMessage("Are you sure you want to delete:\n \"" +
-                profileToDelete.getProfileName() + "\"?\nALL PROFILE INFORMATION WILL BE LOST FOREVER");
-        alertDialog.setTitle("Delete Profile");
+        alertDialog.setMessage("Are you sure you want to permanently delete Profile:\n \"" +
+                profileToDelete.getProfileName() + "\"?\nAll cards and decks will be lost forever.");
+        alertDialog.setTitle("!!! Permanently delete Profile !!!");
 
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
