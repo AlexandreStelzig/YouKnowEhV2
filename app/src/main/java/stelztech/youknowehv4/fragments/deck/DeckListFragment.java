@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.fragmentpackage.deck;
+package stelztech.youknowehv4.fragments.deck;
 
 
 import android.content.Context;

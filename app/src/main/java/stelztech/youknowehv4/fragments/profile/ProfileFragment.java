@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.fragmentpackage.otherfragments;
+package stelztech.youknowehv4.fragments.profile;
 
 
 import android.content.DialogInterface;
@@ -451,6 +451,11 @@ public class ProfileFragment extends Fragment {
                                     populateInformation();
                                     break;
                                 case UPDATE_PROFILE:
+                                    if(profileNameExists(dialogTextHolder)){
+                                        Toast.makeText(getContext(), "Invalid name: profile name already exists", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    }
+
                                     Database.mProfileDao.updateProfile(profileList.get(
                                             getCurrentlySelectedProfilePosition()).getProfileId(), dialogTextHolder);
                                     populateInformation();

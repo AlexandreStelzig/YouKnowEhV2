@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.fragmentpackage.quiz;
+package stelztech.youknowehv4.fragments.quiz;
 
 
 import android.app.AlertDialog;

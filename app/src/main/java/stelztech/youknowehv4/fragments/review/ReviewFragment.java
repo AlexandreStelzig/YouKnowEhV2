@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.fragmentpackage.review;
+package stelztech.youknowehv4.fragments.review;
 
 
 import android.animation.ObjectAnimator;
@@ -816,11 +816,13 @@ public class ReviewFragment extends Fragment {
             int deckPosition = selectedSpinnerPosition - 1;
             int indexRemoved = questionOrder.get(currentQuestion);
 
-            Database.mCardDeckDao.changeCardReviewTime(mCardList.get(indexRemoved).getCardId(),
+            Card removeCard = mCardList.get(indexRemoved);
+
+            Database.mCardDeckDao.changeCardReviewTime(removeCard.getCardId(),
                     deckList.get(deckPosition).getDeckId(), hours);
 
 
-            cardInfo = "\'" + mCardList.get(indexRemoved).getQuestion() + "/" + mCardList.get(indexRemoved).getAnswer() + "\'";
+            cardInfo = "\'" + removeCard.getQuestion() + "/" + removeCard.getAnswer() + "\'";
 
 
             mCardList.remove(indexRemoved);
@@ -834,6 +836,9 @@ public class ReviewFragment extends Fragment {
                 if (questionOrder.get(i) > indexRemoved)
                     questionOrder.set(i, temp - 1);
             }
+
+            if(previousCard != null && removeCard.getCardId() == previousCard.getCardId())
+                previousCard = null;
         }
 
         if (questionOrder.size() == 0) {
@@ -849,6 +854,7 @@ public class ReviewFragment extends Fragment {
         }
 
         nbCards = mCardList.size();
+
 
         setNbPracticeCards();
         resetShowButtonLabel();

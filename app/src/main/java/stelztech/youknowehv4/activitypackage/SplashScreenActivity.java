@@ -27,22 +27,9 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_splash_screen);
 
-
-        Database.open(this);
         Database.mCardDeckDao.revalidateReviewCards();
 
-
-        if (Database.mUserDao.fetchUser() == null) {
-            Database.mUserDao.createUser();
-        }
-        if (Database.mProfileDao.fetchAllProfiles().isEmpty()) {
-            Intent i = new Intent(SplashScreenActivity.this, FirstTimeOpeningActivity.class);
-            startActivity(i);
-            finish();
-        } else {
-            ThemeManager.getInstance().changeTheme(Database.mUserDao.fetchActiveProfile().getProfileColor());
-            transitionThread().start();
-        }
+        transitionThread().start();
 
     }
 

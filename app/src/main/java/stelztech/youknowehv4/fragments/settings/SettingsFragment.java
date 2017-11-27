@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.fragmentpackage.otherfragments;
+package stelztech.youknowehv4.fragments.settings;
 
 
 import android.app.AlertDialog;
@@ -19,10 +19,6 @@ import android.widget.NumberPicker;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activitypackage.ArchivedActivity;
 import stelztech.youknowehv4.activitypackage.MainActivityManager;
@@ -32,8 +28,6 @@ import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.ExportImportManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
-import stelztech.youknowehv4.database.card.Card;
-import stelztech.youknowehv4.database.deck.Deck;
 import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.database.user.User;
 

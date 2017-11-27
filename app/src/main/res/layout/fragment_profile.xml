@@ -105,7 +105,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="0.30"
-                    android:text="Question: "
+                    android:text="Front: "
 
                     android:textColor="?textPrimary"
                     android:textSize="16sp" />
@@ -152,7 +152,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="0.30"
-                    android:text="Answer: "
+                    android:text="Back: "
                     android:textColor="?textPrimary"
                     android:textSize="16sp" />
 
@@ -278,12 +278,16 @@
                     android:layout_margin="5dp"
                     android:background="@color/colorPrimaryOrange" />
 
-
-
-
             </LinearLayout>
 
         </LinearLayout>
+
+        <Button
+            android:padding="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Change Profile"
+            android:id="@+id/test"/>
 
 
     </LinearLayout>

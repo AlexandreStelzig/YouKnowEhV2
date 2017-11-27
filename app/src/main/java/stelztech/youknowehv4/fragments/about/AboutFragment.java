@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.fragmentpackage.otherfragments;
+package stelztech.youknowehv4.fragments.about;
 
 
 import android.content.Intent;

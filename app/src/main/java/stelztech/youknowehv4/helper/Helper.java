@@ -13,15 +13,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import stelztech.youknowehv4.fragmentpackage.review.ReviewFragment;
-import stelztech.youknowehv4.database.deck.Deck;
+import stelztech.youknowehv4.fragments.review.ReviewFragment;
 
 /**
  * Created by alex on 2017-04-10.

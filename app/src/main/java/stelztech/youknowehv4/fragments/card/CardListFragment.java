@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.fragmentpackage.card;
+package stelztech.youknowehv4.fragments.card;
 
 
 import android.app.AlertDialog;
