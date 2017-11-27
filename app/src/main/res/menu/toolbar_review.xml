@@ -32,6 +32,12 @@
                 app:showAsAction="never" />
 
             <item
+                android:id="@+id/undo_toggle_review"
+                android:icon="@drawable/ic_undo_black_24dp"
+                android:title="Undo Toggle Review"
+                app:showAsAction="never" />
+
+            <item
                 android:id="@+id/action_modify_card_decks"
                 android:icon="@drawable/ic_folder_black_24dp"
                 android:title="Modify Card Decks"

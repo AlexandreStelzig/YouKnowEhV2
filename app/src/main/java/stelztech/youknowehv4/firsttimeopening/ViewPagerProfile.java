@@ -11,7 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.activitypackage.MainActivityManager;
+import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.database.Database;
 
 /**

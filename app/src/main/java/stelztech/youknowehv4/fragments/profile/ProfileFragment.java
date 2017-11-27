@@ -31,7 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.activitypackage.MainActivityManager;
+import stelztech.youknowehv4.activities.MainActivityManager;
+import stelztech.youknowehv4.activities.ProfilePickerActivity;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.helper.Helper;
@@ -147,6 +148,15 @@ public class ProfileFragment extends Fragment {
 
         setupColorChangeButtons();
         populateInformation();
+
+        ((Button) view.findViewById(R.id.profile_change_profile_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), ProfilePickerActivity.class);
+                startActivity(i);
+                getActivity().finish();
+            }
+        });
 
 
         return view;

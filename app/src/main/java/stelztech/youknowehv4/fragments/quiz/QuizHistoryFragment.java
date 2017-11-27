@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.activitypackage.MainActivityManager;
+import stelztech.youknowehv4.activities.MainActivityManager;
 
 /**
  * Created by alex on 2017-04-03.

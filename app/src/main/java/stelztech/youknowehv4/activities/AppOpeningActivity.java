@@ -1,13 +1,10 @@
-package stelztech.youknowehv4.activitypackage;
+package stelztech.youknowehv4.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
-import android.view.WindowManager;
 
-import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.firsttimeopening.FirstTimeOpeningActivity;
 import stelztech.youknowehv4.manager.ThemeManager;

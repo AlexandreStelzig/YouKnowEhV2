@@ -6,7 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.activitypackage.MainActivityManager;
+import stelztech.youknowehv4.activities.MainActivityManager;
 
 /**
  * Created by alex on 2017-04-04.

@@ -51,7 +51,6 @@ public class ThemeManager {
         currentTheme = theme;
     }
 
-
     public int getCurrentAppThemeNoActionBarValue(){
 
         int theme = R.style.AppThemeBlue_NoActionBar;

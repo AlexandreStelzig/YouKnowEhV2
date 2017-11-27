@@ -20,8 +20,8 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.activitypackage.ArchivedActivity;
-import stelztech.youknowehv4.activitypackage.MainActivityManager;
+import stelztech.youknowehv4.activities.ArchivedActivity;
+import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.helper.CardHelper;
 import stelztech.youknowehv4.helper.Helper;

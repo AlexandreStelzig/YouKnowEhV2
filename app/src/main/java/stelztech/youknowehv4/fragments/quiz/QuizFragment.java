@@ -23,8 +23,8 @@ import android.widget.Toast;
 import java.util.List;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.activitypackage.MainActivityManager;
-import stelztech.youknowehv4.activitypackage.QuizActivity;
+import stelztech.youknowehv4.activities.MainActivityManager;
+import stelztech.youknowehv4.activities.QuizActivity;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.database.deck.Deck;

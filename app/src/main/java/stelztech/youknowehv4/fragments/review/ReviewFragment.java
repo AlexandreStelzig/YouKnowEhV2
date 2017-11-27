@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Random;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.activitypackage.MainActivityManager;
+import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.deck.Deck;
@@ -44,6 +44,8 @@ import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.helper.CardHelper;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
+
+import static stelztech.youknowehv4.database.carddeck.CardDeck.REVIEW_TOGGLE_ID;
 
 /**
  * Created by alex on 2017-04-03.
@@ -115,11 +117,14 @@ public class ReviewFragment extends Fragment {
     private boolean showingPrevious = false;
     private Card previousCard;
 
+    // show undo
+    private boolean showingUndo = false;
+    private Card undoCard;
+
     private boolean loading = false;
 
     private int selectedSpinnerPosition = 0;
 
-    private int nbCards;
     private boolean firstTimeOpening;
     private boolean loadNewData = false;
 
@@ -248,6 +253,23 @@ public class ReviewFragment extends Fragment {
         actionBar.setDisplayShowTitleEnabled(true);
         getActivity().findViewById(R.id.spinner_nav_layout).setVisibility(View.GONE);
 
+        final MenuItem previousMenuItem = menu.findItem(R.id.action_previous);
+        if(showingPrevious || previousCard == null && currentQuestion == 0 || showingUndo){
+            previousMenuItem.setEnabled(false);
+            previousMenuItem.getIcon().setAlpha(50);
+        }else{
+            previousMenuItem.setEnabled(true);
+            previousMenuItem.getIcon().setAlpha(255);
+        }
+
+        final MenuItem undoMenuItem = menu.findItem(R.id.undo_toggle_review);
+        if(showingUndo || undoCard == null){
+            undoMenuItem.setEnabled(false);
+            undoMenuItem.getIcon().setAlpha(50);
+        }else{
+            undoMenuItem.setEnabled(true);
+            undoMenuItem.getIcon().setAlpha(255);
+        }
 
         final MenuItem alwaysShowAnswerItem = menu.findItem(R.id.action_always_show_answer);
         if (alwaysShowAnswer)
@@ -277,18 +299,19 @@ public class ReviewFragment extends Fragment {
                     return true;
                 case R.id.action_previous:
 
-
                     if (currentQuestion != 0) {
                         currentQuestion--;
                         setQuestionAnswerText();
                         setNbPracticeCards();
-                    } else if (previousCard != null && !showingPrevious) {
+                    } else if (previousCard != null && !showingPrevious && !showingUndo) {
                         showingPrevious = true;
+                        getActivity().invalidateOptionsMenu();
                         setQuestionAnswerText();
                         setNbPracticeCards();
                     } else {
                         Toast.makeText(getContext(), "Cannot show previous card", Toast.LENGTH_SHORT).show();
                     }
+                    getActivity().invalidateOptionsMenu();
                     return true;
 
                 case R.id.action_remove_practice:
@@ -301,7 +324,7 @@ public class ReviewFragment extends Fragment {
 
                 case R.id.action_quick_remove_practice:
                     if (mCardList != null && !mCardList.isEmpty() && !isSelectedDeckAll()) {
-                        toggleFromPractice(Database.mUserDao.fetchUser().getQuickToggleHours());
+                        toggleFromReview(Database.mUserDao.fetchUser().getQuickToggleHours());
                     } else {
                         Toast.makeText(getContext(), "Cannot toggle from review", Toast.LENGTH_SHORT).show();
                     }
@@ -309,7 +332,9 @@ public class ReviewFragment extends Fragment {
 
                 case R.id.action_modify_card_decks:
                     if (mCardList != null && !mCardList.isEmpty()) {
-                        if (showingPrevious) {
+                        if (showingUndo) {
+                            showModifyCardDecksDialog(undoCard);
+                        } else if (showingPrevious) {
                             showModifyCardDecksDialog(previousCard);
                         } else {
                             showModifyCardDecksDialog(mCardList.get(questionOrder.get(currentQuestion)));
@@ -329,7 +354,9 @@ public class ReviewFragment extends Fragment {
                         else
                             deckAssociated = null;
 
-                        if (showingPrevious)
+                        if (showingUndo)
+                            CardHelper.showQuickInfoCard(getActivity(), undoCard, deckAssociated);
+                        else if (showingPrevious)
                             CardHelper.showQuickInfoCard(getActivity(), previousCard, deckAssociated);
                         else
                             CardHelper.showQuickInfoCard(getActivity(), mCardList.get(questionOrder.get(currentQuestion)), deckAssociated);
@@ -337,9 +364,19 @@ public class ReviewFragment extends Fragment {
                     return true;
 
                 case R.id.action_shuffle:
-
+                    previousCard = undoCard = null;
+                    showingUndo = showingPrevious = false;
+                    getActivity().invalidateOptionsMenu();
                     loadNewData = true;
                     switchPracticeCards();
+
+                    return true;
+                case R.id.undo_toggle_review:
+                    if (undoCard != null && !showingUndo) {
+                        undoLastToggledClicked();
+                    } else {
+                        Toast.makeText(getContext(), "Cannot undo toggle review", Toast.LENGTH_SHORT).show();
+                    }
 
                     return true;
             }
@@ -349,6 +386,23 @@ public class ReviewFragment extends Fragment {
         return super.
 
                 onOptionsItemSelected(item);
+    }
+
+    private void undoLastToggledClicked() {
+        int deckPosition = selectedSpinnerPosition - 1;
+        Database.mCardDeckDao.changeCardReviewTime(undoCard.getCardId(),
+                deckList.get(deckPosition).getDeckId(), REVIEW_TOGGLE_ID);
+        mCardList.add(undoCard);
+        questionList.add(undoCard.getQuestion());
+        answerList.add(undoCard.getAnswer());
+        questionOrder.add(findCardIndex(undoCard));
+        showingPrevious = false;
+        showingUndo = true;
+        getActivity().invalidateOptionsMenu();
+        setQuestionAnswerText();
+        setNbPracticeCards();
+        String cardInfo = "\'" + undoCard.getQuestion() + "/" + undoCard.getAnswer() + "\'";
+        Toast.makeText(getContext(), cardInfo + " added back to review", Toast.LENGTH_SHORT).show();
     }
 
     private int findCardIndex(Card card) {
@@ -371,13 +425,15 @@ public class ReviewFragment extends Fragment {
 
     private void setNbPracticeCards() {
         String nbCardsString = "";
-        if (showingPrevious)
+        if (showingUndo)
+            nbCardsString = "Undo / ";
+        else if (showingPrevious)
             nbCardsString = "Previous / ";
-        else if (nbCards != 0)
+        else if (mCardList.size() != 0)
             nbCardsString = (currentQuestion + 1) + " / ";
-        nbCardsString += nbCards + " ";
+        nbCardsString += mCardList.size() + " ";
 
-        if (nbCards == 1)
+        if (mCardList.size() == 1)
             nbCardsString += "Review Card";
         else
             nbCardsString += "Review Cards";
@@ -527,7 +583,8 @@ public class ReviewFragment extends Fragment {
                 ((MainActivityManager) getActivity()).enableDrawerSwipe(false);
 
                 previousCard = null;
-                showingPrevious = false;
+                showingUndo = showingPrevious = false;
+                getActivity().invalidateOptionsMenu();
 
                 int selectedDeck = selectedSpinnerPosition;
                 spinner.setEnabled(false);
@@ -537,7 +594,6 @@ public class ReviewFragment extends Fragment {
             } else {
                 progressBar.setVisibility(View.GONE);
 
-                nbCards = mCardList.size();
                 setNbPracticeCards();
                 setQuestionAnswerText();
             }
@@ -551,7 +607,7 @@ public class ReviewFragment extends Fragment {
     // helpers
     private void nextButtonClicked() {
 
-        if (questionOrder.size() < 2) {
+        if (questionOrder.size() < 2 && !showingUndo && !showingPrevious) {
             String message = "";
             if (questionOrder.size() == 0) {
                 message = "No Review Cards";
@@ -561,11 +617,15 @@ public class ReviewFragment extends Fragment {
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         } else {
 
-            if (showingPrevious) {
-                showingPrevious = false;
+            if (showingPrevious || showingUndo) {
+                if(showingUndo)
+                    undoCard = null;
+                showingUndo = showingPrevious = false;
+                getActivity().invalidateOptionsMenu();
                 setQuestionAnswerText();
             } else {
-                showingPrevious = false;
+                showingUndo = showingPrevious = false;
+                getActivity().invalidateOptionsMenu();
                 answerTextView.scrollTo(0, 0);
                 questionTextView.scrollTo(0, 0);
 
@@ -575,6 +635,7 @@ public class ReviewFragment extends Fragment {
                 } else {
                     // reset
                     previousCard = mCardList.get(questionOrder.get(currentQuestion));
+
                     randomizeQuestionOrder();
                     setQuestionAnswerText();
                     Toast.makeText(getContext(), "Order reset", Toast.LENGTH_SHORT).show();
@@ -594,7 +655,13 @@ public class ReviewFragment extends Fragment {
         } else {
 
             if (answerHidden) {
-                if (showingPrevious) {
+
+                if (showingUndo) {
+                    if (isReverseOrder)
+                        answerTextView.setText(undoCard.getQuestion());
+                    else
+                        answerTextView.setText(undoCard.getAnswer());
+                } else if (showingPrevious) {
                     if (isReverseOrder)
                         answerTextView.setText(previousCard.getQuestion());
                     else
@@ -610,6 +677,9 @@ public class ReviewFragment extends Fragment {
                 if (!alwaysShowAnswer)
                     answerTextView.setText(answerHiddenString);
                 else {
+                    if (showingUndo) {
+                        answerTextView.setText(undoCard.getAnswer());
+                    }
                     if (showingPrevious) {
                         answerTextView.setText(previousCard.getAnswer());
                     } else {
@@ -645,6 +715,25 @@ public class ReviewFragment extends Fragment {
 
         answerTextView.scrollTo(0, 0);
         questionTextView.scrollTo(0, 0);
+
+
+        if (showingUndo) {
+            if (isReverseOrder) {
+                questionTextView.setText(undoCard.getAnswer());
+                if (!alwaysShowAnswer)
+                    answerTextView.setText(answerHiddenString);
+                else
+                    answerTextView.setText(undoCard.getQuestion());
+            } else {
+                questionTextView.setText(undoCard.getQuestion());
+                if (!alwaysShowAnswer)
+                    answerTextView.setText(answerHiddenString);
+                else
+                    answerTextView.setText(undoCard.getAnswer());
+            }
+            return;
+        }
+
 
         if (questionOrder.size() == 0) {
             questionTextView.setText("No Review Cards");
@@ -721,7 +810,9 @@ public class ReviewFragment extends Fragment {
             setQuestionAnswerText();
 
             if (!temp) {
-                if (showingPrevious)
+                if (showingUndo)
+                    answerTextView.setText(undoCard.getAnswer());
+                else if (showingPrevious)
                     answerTextView.setText(previousCard.getAnswer());
 
                 answerTextView.setText(answerList.get(questionOrder.get(currentQuestion)));
@@ -751,25 +842,25 @@ public class ReviewFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0:
-                                toggleFromPractice(TOGGLE_FOREVER);
+                                toggleFromReview(TOGGLE_FOREVER);
                                 break;
                             case 1:
-                                toggleFromPractice(3);
+                                toggleFromReview(3);
                                 break;
                             case 2:
-                                toggleFromPractice(12);
+                                toggleFromReview(12);
                                 break;
                             case 3:
-                                toggleFromPractice(24);
+                                toggleFromReview(24);
                                 break;
                             case 4:
-                                toggleFromPractice(48);
+                                toggleFromReview(48);
                                 break;
                             case 5:
-                                toggleFromPractice(72);
+                                toggleFromReview(72);
                                 break;
                             case 6:
-                                toggleFromPractice(120);
+                                toggleFromReview(120);
                                 break;
 
                         }
@@ -778,13 +869,45 @@ public class ReviewFragment extends Fragment {
         builder.create().show();
     }
 
-    private void toggleFromPractice(int hours) {
+    private void toggleFromReview(int hours) {
         String cardInfo = "";
 
-        if (showingPrevious) {
+        if (showingUndo) {
+            int deckPosition = selectedSpinnerPosition - 1;
+
+            showingUndo = false;
+
+            Database.mCardDeckDao.changeCardReviewTime(undoCard.getCardId(),
+                    deckList.get(deckPosition).getDeckId(), hours);
+
+            cardInfo = "\'" + undoCard.getQuestion() + "/" + undoCard.getAnswer() + "\'";
+
+            int undoCardIndex = findCardIndex(undoCard);
+
+            if(undoCardIndex != -1) {
+                int previousCardOrderIndex = findQuestionIndex(undoCardIndex);
+                mCardList.remove(undoCardIndex);
+                questionList.remove(undoCardIndex);
+                answerList.remove(undoCardIndex);
+                questionOrder.remove(previousCardOrderIndex);
+
+                for (int i = 0; i < questionOrder.size(); i++) {
+                    int temp = questionOrder.get(i);
+                    if (questionOrder.get(i) > undoCardIndex)
+                        questionOrder.set(i, temp - 1);
+                }
+
+                if (previousCardOrderIndex < currentQuestion)
+                    currentQuestion--;
+            }
+        } else if (showingPrevious) {
+
+            undoCard = previousCard;
+
             int deckPosition = selectedSpinnerPosition - 1;
 
             showingPrevious = false;
+            getActivity().invalidateOptionsMenu();
 
 
             Database.mCardDeckDao.changeCardReviewTime(previousCard.getCardId(),
@@ -818,6 +941,8 @@ public class ReviewFragment extends Fragment {
 
             Card removeCard = mCardList.get(indexRemoved);
 
+            undoCard = removeCard;
+
             Database.mCardDeckDao.changeCardReviewTime(removeCard.getCardId(),
                     deckList.get(deckPosition).getDeckId(), hours);
 
@@ -837,8 +962,10 @@ public class ReviewFragment extends Fragment {
                     questionOrder.set(i, temp - 1);
             }
 
-            if(previousCard != null && removeCard.getCardId() == previousCard.getCardId())
+            if (previousCard != null && removeCard.getCardId() == previousCard.getCardId()) {
                 previousCard = null;
+                getActivity().invalidateOptionsMenu();
+            }
         }
 
         if (questionOrder.size() == 0) {
@@ -853,12 +980,10 @@ public class ReviewFragment extends Fragment {
             setQuestionAnswerText();
         }
 
-        nbCards = mCardList.size();
-
-
         setNbPracticeCards();
         resetShowButtonLabel();
         setButtonsEnable();
+        getActivity().invalidateOptionsMenu();
 
         String lengthMessage = "";
         if (hours == TOGGLE_FOREVER)
@@ -928,7 +1053,7 @@ public class ReviewFragment extends Fragment {
 
                                 if (i == deckPosition) {
                                     // put the card in a temp position, not reviewing
-                                    toggleFromPractice(TOGGLE_REMOVE);
+                                    toggleFromReview(TOGGLE_REMOVE);
                                 }
 
                                 Database.mCardDeckDao.deleteCardDeck(card.getCardId(), deckList.get(i).getDeckId());
@@ -1008,8 +1133,6 @@ public class ReviewFragment extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-
-            nbCards = mCardList.size();
             setNbPracticeCards();
             setQuestionAnswerText();
             setButtonsEnable();

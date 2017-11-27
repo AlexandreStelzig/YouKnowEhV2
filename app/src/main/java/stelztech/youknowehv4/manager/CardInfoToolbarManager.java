@@ -1,15 +1,12 @@
 package stelztech.youknowehv4.manager;
 
 
-import android.app.Activity;
 import android.content.Context;
-import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.activitypackage.CardInfoActivity;
+import stelztech.youknowehv4.activities.CardInfoActivity;
 
 /**
  * Created by alex on 4/14/2017.

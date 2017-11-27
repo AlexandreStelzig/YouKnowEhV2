@@ -1,21 +1,7 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppThemeLaunch" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/black</item>
-        <item name="colorPrimaryDark">@color/black</item>
-        <item name="colorAccent">@color/black</item>
-        <item name="colorTextIcon">@color/colorTextIcon</item>
-        <item name="textPrimary">@color/textPrimary</item>
-        <item name="textSecondary">@color/textSecondary</item>
-        <item name="colorDivider">@color/colorDivider</item>
-        <item name="colorDividerLight">@color/colorDividerLight</item>
-        <item name="colorButtonDisabled">@color/black</item>
-        <item name="colorPrimarySelected">@color/black</item>
-    </style>
 
-    <style name="AppThemeLaunch.NoActionBar">
+    <style name="AppThemeBlue.NoActionBar.BlackStatusBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">@color/black</item>

@@ -7,7 +7,7 @@ import android.view.Menu;
 import android.view.View;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.activitypackage.MainActivityManager;
+import stelztech.youknowehv4.activities.MainActivityManager;
 
 /**
  * Created by alex on 2017-04-06.

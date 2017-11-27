@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.activitypackage;
+package stelztech.youknowehv4.activities;
 
 import android.content.Intent;
 import android.net.Uri;

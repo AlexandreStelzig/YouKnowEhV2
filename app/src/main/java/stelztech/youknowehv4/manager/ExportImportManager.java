@@ -2,7 +2,6 @@ package stelztech.youknowehv4.manager;
 
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -29,7 +28,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import stelztech.youknowehv4.activitypackage.MainActivityManager;
+import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.carddeck.CardDeck;
@@ -48,6 +47,8 @@ public final class ExportImportManager {
     public final static String TAG = "ExportImportManager";
 
     private final static String storingFolder = "/YouKnowEh/Export";
+
+    private final static String EXPORT_TAG = "_YKHExport";
 
 
     private static File saveCSVFile(Context context, String location, Deck deckToExport, List<Card> cardList) {
@@ -251,7 +252,7 @@ public final class ExportImportManager {
         try {
 
             String zipFile = sdCard.getAbsolutePath() + storingFolder + "/"
-                    + Database.mUserDao.fetchActiveProfile().getProfileName() + "_YKHExport.zip";
+                    + Database.mUserDao.fetchActiveProfile().getProfileName() + EXPORT_TAG + ".zip";
 
             // create byte buffer
             byte[] buffer = new byte[1024];
@@ -378,7 +379,7 @@ public final class ExportImportManager {
 
         File sdCard = Environment.getExternalStorageDirectory();
         String zipFile = sdCard.getAbsolutePath() + storingFolder + "/"
-                + Database.mUserDao.fetchActiveProfile().getProfileName() + "_YKHExport.zip";
+                + Database.mUserDao.fetchActiveProfile().getProfileName() + EXPORT_TAG + ".zip";
         File dir = new File(zipFile);
 
         Uri U = Uri.fromFile(dir);
@@ -406,7 +407,7 @@ public final class ExportImportManager {
 
             File sdCard = Environment.getExternalStorageDirectory();
             String zipFile = sdCard.getAbsolutePath() + storingFolder + "/"
-                    + Database.mUserDao.fetchActiveProfile().getProfileName() + "_YKHExport.zip";
+                    + Database.mUserDao.fetchActiveProfile().getProfileName() + EXPORT_TAG + ".zip";
             File dir = new File(zipFile);
 
             uris.add(Uri.fromFile(dir));

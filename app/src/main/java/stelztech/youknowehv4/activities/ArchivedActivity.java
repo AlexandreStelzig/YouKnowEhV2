@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.activitypackage;
+package stelztech.youknowehv4.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
