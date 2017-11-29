@@ -82,28 +82,6 @@ public class Helper {
     }
 
 
-
-    public ReviewFragment.ReviewToggle convertStringToPracticeToggle(String practiceToggleString){
-
-        switch (practiceToggleString){
-            case "HOURS_3":
-                return ReviewFragment.ReviewToggle.HOURS_3;
-            case "HOURS_12":
-                return ReviewFragment.ReviewToggle.HOURS_12;
-            case "HOURS_24":
-                return ReviewFragment.ReviewToggle.HOURS_24;
-            case "HOURS_48":
-                return ReviewFragment.ReviewToggle.HOURS_48;
-            case "DAYS_3":
-                return ReviewFragment.ReviewToggle.DAYS_3;
-            case "DAYS_5":
-                return ReviewFragment.ReviewToggle.DAYS_5;
-            case "Forever":
-                return ReviewFragment.ReviewToggle.ALWAYS;
-        }
-        return ReviewFragment.ReviewToggle.HOURS_12;
-    }
-
     public String convertPracticeToggleToString(ReviewFragment.ReviewToggle reviewToggle){
 
         switch (reviewToggle){
@@ -121,7 +99,7 @@ public class Helper {
             case DAYS_5:
                 return "5 days";
             case ALWAYS:
-                return "Forever";
+                return "Until Manually Toggled";
         }
         return "";
     }

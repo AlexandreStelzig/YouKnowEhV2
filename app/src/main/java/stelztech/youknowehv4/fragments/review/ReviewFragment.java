@@ -100,7 +100,7 @@ public class ReviewFragment extends Fragment {
     private boolean isReverseOrder = false;
 
     private List<Card> mCardList = new ArrayList<>();
-    ;
+
 
     private final int SELECT_ALL_CARDS = 0;
     private final int SPINNER_OFFSET = 1;
@@ -271,6 +271,25 @@ public class ReviewFragment extends Fragment {
             undoMenuItem.getIcon().setAlpha(255);
         }
 
+        final MenuItem cardDecksMenuItem = menu.findItem(R.id.action_modify_card_decks);
+        final MenuItem cardQuickInfoMenuItem = menu.findItem(R.id.action_quick_info);
+        final MenuItem shuffleOrderMenuItem = menu.findItem(R.id.action_shuffle);
+        if(mCardList == null || mCardList.isEmpty()){
+            cardDecksMenuItem.setEnabled(false);
+            cardDecksMenuItem.getIcon().setAlpha(50);
+            cardQuickInfoMenuItem.setEnabled(false);
+            cardQuickInfoMenuItem.getIcon().setAlpha(50);
+            shuffleOrderMenuItem.setEnabled(false);
+            shuffleOrderMenuItem.getIcon().setAlpha(50);
+        }else{
+            cardDecksMenuItem.setEnabled(true);
+            cardDecksMenuItem.getIcon().setAlpha(255);
+            cardQuickInfoMenuItem.setEnabled(true);
+            cardQuickInfoMenuItem.getIcon().setAlpha(255);
+            shuffleOrderMenuItem.setEnabled(true);
+            shuffleOrderMenuItem.getIcon().setAlpha(255);
+        }
+
         final MenuItem alwaysShowAnswerItem = menu.findItem(R.id.action_always_show_answer);
         if (alwaysShowAnswer)
             alwaysShowAnswerItem.setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_check_box_black_24dp));
@@ -345,21 +364,22 @@ public class ReviewFragment extends Fragment {
 
                     return true;
                 case R.id.action_quick_info:
+                    if (mCardList != null && !mCardList.isEmpty()) {
+                        if (!(isSelectedDeckAll() && !(Database.mUserDao.fetchUser().isAllowPracticeAll()))) {
 
-                    if (!(isSelectedDeckAll() && !(Database.mUserDao.fetchUser().isAllowPracticeAll()))) {
+                            Deck deckAssociated;
+                            if (!isSelectedDeckAll())
+                                deckAssociated = deckList.get(selectedSpinnerPosition - 1);
+                            else
+                                deckAssociated = null;
 
-                        Deck deckAssociated;
-                        if (!isSelectedDeckAll())
-                            deckAssociated = deckList.get(selectedSpinnerPosition - 1);
-                        else
-                            deckAssociated = null;
-
-                        if (showingUndo)
-                            CardHelper.showQuickInfoCard(getActivity(), undoCard, deckAssociated);
-                        else if (showingPrevious)
-                            CardHelper.showQuickInfoCard(getActivity(), previousCard, deckAssociated);
-                        else
-                            CardHelper.showQuickInfoCard(getActivity(), mCardList.get(questionOrder.get(currentQuestion)), deckAssociated);
+                            if (showingUndo)
+                                CardHelper.showQuickInfoCard(getActivity(), undoCard, deckAssociated);
+                            else if (showingPrevious)
+                                CardHelper.showQuickInfoCard(getActivity(), previousCard, deckAssociated);
+                            else
+                                CardHelper.showQuickInfoCard(getActivity(), mCardList.get(questionOrder.get(currentQuestion)), deckAssociated);
+                        }
                     }
                     return true;
 
@@ -403,6 +423,7 @@ public class ReviewFragment extends Fragment {
         setNbPracticeCards();
         String cardInfo = "\'" + undoCard.getQuestion() + "/" + undoCard.getAnswer() + "\'";
         Toast.makeText(getContext(), cardInfo + " added back to review", Toast.LENGTH_SHORT).show();
+        setButtonsEnable();
     }
 
     private int findCardIndex(Card card) {
@@ -538,7 +559,7 @@ public class ReviewFragment extends Fragment {
 
     }
 
-    public class SpinnerInteractionListener implements AdapterView.OnItemSelectedListener, View.OnTouchListener {
+    private class SpinnerInteractionListener implements AdapterView.OnItemSelectedListener, View.OnTouchListener {
 
         boolean userSelect = false;
 
@@ -1146,6 +1167,11 @@ public class ReviewFragment extends Fragment {
             spinner.setEnabled(true);
 
             resetShowButtonLabel();
+
+
+            undoCard = previousCard = null;
+            showingPrevious = showingUndo = false;
+            getActivity().invalidateOptionsMenu();
 
             progressBar.setVisibility(View.GONE);
             questionTextView.setVisibility(View.VISIBLE);

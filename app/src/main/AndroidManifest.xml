@@ -52,9 +52,9 @@
             android:theme="@style/AppThemeBlue.NoActionBar" />
 
         <activity
-            android:name=".activities.ProfilePickerActivity"
+            android:name=".activities.profilepicker.ProfilePickerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeBlue.NoActionBar.BlackStatusBar" />
+            android:theme="@style/AppThemeBlue.NoActionBar.TransparentStatusBar" />
 
     </application>
 
