@@ -103,5 +103,6 @@
     <color name="progressbarFail">#FF0000</color>
     <color name="progressbarPass">#00cf00</color>
     <color name="colorNotPractice">#ebebeb</color>
+    <color name="transparent">#00FFFFFF</color>
 
 </resources>

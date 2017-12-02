@@ -1,9 +1,13 @@
 package stelztech.youknowehv4.activities.profilepicker;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ImageView;
 
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.Orientation;
@@ -13,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import stelztech.youknowehv4.R;
+import stelztech.youknowehv4.helper.BlurBuilder;
 
 /**
  * Created by alex on 2017-11-27.
@@ -23,33 +28,39 @@ public class ProfilePickerActivity extends AppCompatActivity implements Discrete
 
     private int currentCardIndex = 0;
 
-    private List<ProfilePickerCardModel>  profilePickerCardModelList = new ArrayList<>();
+    private List<ProfilePickerCardModel> profilePickerCardModelList;
 
-    private DiscreteScrollView scrollView;
+    // others
+    private BlurBuilder blurBuilder;
 
     // scrollview data
     private static final int TRANSITION_TIME_MILLIS = 200;
     private static final float SCROLLVIEW_TRANSFORM_SCALE = 0.8f;
     private static final int FLING_THRESHOLD = 2000;
 
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_profile_picker);
 
-        scrollView = (DiscreteScrollView) findViewById(R.id.profile_picker_profiles_scrollview);
 
 
-        if (profilePickerCardModelList.isEmpty()) {
-            profilePickerCardModelList.add(new ProfilePickerCardModel(R.drawable.city));
-            profilePickerCardModelList.add(new ProfilePickerCardModel(R.drawable.city));
-            profilePickerCardModelList.add(new ProfilePickerCardModel(R.drawable.city));
-            profilePickerCardModelList.add(new ProfilePickerCardModel(R.drawable.city));
-            profilePickerCardModelList.add(new ProfilePickerCardModel(R.drawable.city));
-            profilePickerCardModelList.add(new ProfilePickerCardModel(R.drawable.city));
+        // init blurBuilder with default values
+        if (blurBuilder == null)
+            blurBuilder = new BlurBuilder();
 
-        }
+        profilePickerCardModelList = new ArrayList<>();
 
+        profilePickerCardModelList.add(new ProfilePickerCardModel(0, R.drawable.city, "Korean", 1000, 15, 3, ContextCompat.getColor(this, R.color.colorPrimary)));
+        profilePickerCardModelList.add(new ProfilePickerCardModel(0, R.drawable.city3, "Korean", 1000, 15, 3, ContextCompat.getColor(this, R.color.colorPrimaryRed)));
+        profilePickerCardModelList.add(new ProfilePickerCardModel(0, R.drawable.city, "Korean", 1000, 15, 3, ContextCompat.getColor(this, R.color.colorPrimaryGreen)));
+        profilePickerCardModelList.add(new ProfilePickerCardModel(0, R.drawable.city3, "Korean", 1000, 15, 3, ContextCompat.getColor(this, R.color.colorPrimaryIndigo)));
+        profilePickerCardModelList.add(new ProfilePickerCardModel(0, R.drawable.city, "Korean", 1000, 15, 3, ContextCompat.getColor(this, R.color.colorPrimaryOrange)));
+        profilePickerCardModelList.add(new ProfilePickerCardModel(0, R.drawable.city3, "Korean", 1000, 15, 3, ContextCompat.getColor(this, R.color.colorPrimaryDarkGrey)));
+
+
+        DiscreteScrollView scrollView = (DiscreteScrollView) findViewById(R.id.profile_picker_profiles_scrollview);
 
         scrollView.setOrientation(Orientation.HORIZONTAL);
         scrollView.addOnItemChangedListener(this);
@@ -67,25 +78,21 @@ public class ProfilePickerActivity extends AppCompatActivity implements Discrete
     }
 
 
+    public void setLayoutBackground(int image) {
 
-//    public void setLayoutBackground(int image) {
-//
-//        // blur the image
-//        Bitmap bitmap = blurBuilder.blur(getContext(), BitmapFactory.decodeResource(getContext().getResources(),
-//                image));
-//        // change the background image
-//        ((ImageView) view.findViewById(R.id.fragment_travels_background)).setImageBitmap(bitmap);
-//
-//        backgroundImageCache = bitmap;
-//    }
+        // blur the image
+        Bitmap bitmap = blurBuilder.blur(this, BitmapFactory.decodeResource(getResources(), image));
+        // change the background image
+        ((ImageView) findViewById(R.id.profile_picker_background)).setImageBitmap(bitmap);
+    }
 
     @Override
     public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
         currentCardIndex = adapterPosition;
-//        setLayoutBackground(data.get(adapterPosition).getThumbnailImage());
+        setLayoutBackground(profilePickerCardModelList.get(adapterPosition).getThumbnailImage());
     }
 
-    public List<ProfilePickerCardModel> getProfileCards(){
+    public List<ProfilePickerCardModel> getProfileCards() {
         return profilePickerCardModelList;
     }
 
@@ -93,4 +100,5 @@ public class ProfilePickerActivity extends AppCompatActivity implements Discrete
     public int getCurrentCardIndex() {
         return currentCardIndex;
     }
+
 }

@@ -1,16 +1,21 @@
 package stelztech.youknowehv4.activities.profilepicker;
 
+import android.content.Intent;
 import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
 import stelztech.youknowehv4.R;
+import stelztech.youknowehv4.activities.MainActivityManager;
+import stelztech.youknowehv4.activities.SplashScreenActivity;
 
 /**
  * Created by alex on 2017-11-28.
@@ -55,9 +60,15 @@ public class ProfilePickerCardAdapter extends RecyclerView.Adapter<ProfilePicker
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        ProfilePickerCardModel profilePickerCardModel = profilePickerActivity.getProfileCards().get(position);
         Glide.with(holder.itemView.getContext())
-                .load(profilePickerActivity.getProfileCards().get(position).getThumbnailImage())
+                .load(profilePickerCardModel.getThumbnailImage())
                 .into(holder.image);
+        holder.cardContainer.setBackgroundColor(profilePickerCardModel.getProfileColor());
+        holder.nbCardTextView.setText(profilePickerCardModel.getNbCards() + "");
+        holder.nbDeckTextView.setText(profilePickerCardModel.getNbDecks() + "");
+        holder.profileNameTextView.setText(profilePickerCardModel.getName());
+        holder.lastOpenedTextView.setText("Last time opened: " + profilePickerCardModel.getNbHoursLastOpened() + " Hours");
     }
 
     @Override
@@ -65,46 +76,56 @@ public class ProfilePickerCardAdapter extends RecyclerView.Adapter<ProfilePicker
         return profilePickerActivity.getProfileCards().size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView image;
+        private RelativeLayout cardContainer;
+        private TextView nbCardTextView;
+        private TextView nbDeckTextView;
+        private TextView profileNameTextView;
+        private TextView lastOpenedTextView;
 
         ViewHolder(View itemView) {
             super(itemView);
             image = (ImageView) itemView.findViewById(R.id.profile_picker_card_thumbnail);
-//
-//
-            itemView.findViewById(R.id.profile_picker_card_container).setOnClickListener(this);
-//            itemView.findViewById(R.id.custom_travel_card_layout_settings).setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    int itemClickedPosition = getAdapterPosition();
-//
-//                    if(itemClickedPosition == fragmentTravels.getCurrentItem()){
-//                        Toast.makeText(fragmentTravels.getContext(), "SETTINGS " + itemClickedPosition, Toast.LENGTH_SHORT).show();
-//                    }else{
-//                        parentRecycler.smoothScrollToPosition(getAdapterPosition());
-//                    }
-//                }
-//            });
+            cardContainer = (RelativeLayout) itemView.findViewById(R.id.profile_picker_card_container);
+            nbCardTextView = (TextView) itemView.findViewById(R.id.profile_picker_nb_card_textview);
+            nbDeckTextView = (TextView) itemView.findViewById(R.id.profile_picker_nb_deck_textview);
+            profileNameTextView = (TextView) itemView.findViewById(R.id.profile_picker_profile_card_name_textview);
+            lastOpenedTextView = (TextView) itemView.findViewById(R.id.profile_picker_card_last_opened_textview);
 
-        }
+            // on click listener for the container itself
+            itemView.findViewById(R.id.profile_picker_card_container).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int itemClickedPosition = getAdapterPosition();
 
-        @Override
-        public void onClick(View view) {
+                    if (itemClickedPosition == profilePickerActivity.getCurrentCardIndex()) {
+                        Intent i = new Intent(profilePickerActivity, MainActivityManager.class);
+                        profilePickerActivity.startActivity(i);
+                        profilePickerActivity.finish();
+                    } else {
+                        parentRecycler.smoothScrollToPosition(getAdapterPosition());
+                    }
+                }
+            });
 
-            int itemClickedPosition = getAdapterPosition();
+            // on click listener for the settings butter
+            itemView.findViewById(R.id.profile_picker_card_settings).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int itemClickedPosition = getAdapterPosition();
 
-            if(itemClickedPosition == profilePickerActivity.getCurrentCardIndex()){
-                Toast.makeText(profilePickerActivity, "OPEN " + itemClickedPosition, Toast.LENGTH_SHORT).show();
-            }else{
-                parentRecycler.smoothScrollToPosition(getAdapterPosition());
-            }
-
+                    if (itemClickedPosition == profilePickerActivity.getCurrentCardIndex()) {
+                        Toast.makeText(profilePickerActivity, "SETTINGS " + itemClickedPosition, Toast.LENGTH_SHORT).show();
+                    } else {
+                        parentRecycler.smoothScrollToPosition(getAdapterPosition());
+                    }
+                }
+            });
 
         }
 
     }
-
 
 }

@@ -1,14 +1,118 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/black"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:diagonal="http://schemas.android.com/apk/res-auto"
     android:id="@+id/profile_picker_card_container"
-    android:elevation="8dp">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorDivider"
+    android:elevation="6dp">
 
-    <ImageView
-        android:layout_width="wrap_content"
+    <com.github.florent37.diagonallayout.DiagonalLayout
+        android:id="@+id/profile_picker_card_diagonal_view"
+        android:layout_width="match_parent"
+        android:layout_height="325dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        diagonal:diagonal_angle="17"
+        diagonal:diagonal_direction="left"
+        diagonal:diagonal_position="bottom">
+
+        <ImageView
+            android:id="@+id/profile_picker_card_thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/profile_picker_card_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:padding="10dp"
+            android:src="@drawable/ic_settings_blue_grey_300_24dp" />
+
+    </com.github.florent37.diagonallayout.DiagonalLayout>
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_picker_card_type_image"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="260dp"
+        android:background="@drawable/circle"
+        android:elevation="15dp" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/profile_picker_card_thumbnail"/>
+        android:layout_marginStart="150dp"
+        android:layout_marginTop="280dp"
+        android:elevation="15dp"
+        android:layout_marginEnd="15dp"
+        android:orientation="vertical">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/profile_picker_nb_deck_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|right"
+            android:text="00"
+            android:drawableEnd="@drawable/ic_folder_white_24dp"
+            android:textColor="@color/colorTextIcon"
+            android:textSize="16sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="2dp" />
+
+        <TextView
+            android:id="@+id/profile_picker_nb_card_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|right"
+            android:text="0000"
+            android:drawableEnd="@drawable/ic_list_white_24dp"
+            android:textColor="@color/colorTextIcon"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/profile_picker_card_diagonal_view"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/profile_picker_profile_card_name_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:text="TITLE PLACE HOLDER"
+            android:textColor="@color/colorTextIcon"
+            android:textSize="18sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="5dp" />
+
+
+        <TextView
+            android:id="@+id/profile_picker_card_last_opened_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Last time opened: 5 days"
+            android:textColor="@color/colorTextIcon"
+            android:textSize="14sp" />
+
+
+    </LinearLayout>
+
+</RelativeLayout>

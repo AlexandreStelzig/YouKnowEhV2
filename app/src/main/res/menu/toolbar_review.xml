@@ -39,7 +39,7 @@
 
             <item
                 android:id="@+id/action_modify_card_decks"
-                android:icon="@drawable/ic_folder_black_24dp"
+                android:icon="@drawable/ic_folder_review_black_24dp"
                 android:title="Modify Card Decks"
                 app:showAsAction="never" />
 
