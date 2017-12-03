@@ -8,6 +8,7 @@ import stelztech.youknowehv4.manager.ThemeManager;
 
 public class Profile {
 
+    public static final int NO_PROFILES = -1;
 
     private int profileId;
     private String profileName;
@@ -16,8 +17,10 @@ public class Profile {
     private String answerLabel;
     private int activeQuizId;
     private ThemeManager.THEME_COLORS profileColor;
+    private String lastTimeOpened;
+    private int profileImage;
 
-    public Profile(int profileId, String profileName, String dateCreated, String questionLabel, String answerLabel, int activeQuizId, ThemeManager.THEME_COLORS profileColor) {
+    public Profile(int profileId, String profileName, String dateCreated, String questionLabel, String answerLabel, int activeQuizId, ThemeManager.THEME_COLORS profileColor, String lastTimeOpened, int profileImage) {
         this.profileId = profileId;
         this.profileName = profileName;
         this.dateCreated = dateCreated;
@@ -25,6 +28,24 @@ public class Profile {
         this.answerLabel = answerLabel;
         this.activeQuizId = activeQuizId;
         this.profileColor = profileColor;
+        this.lastTimeOpened = lastTimeOpened;
+        this.profileImage = profileImage;
+    }
+
+    public String getLastTimeOpened() {
+        return lastTimeOpened;
+    }
+
+    public void setLastTimeOpened(String lastTimeOpened) {
+        this.lastTimeOpened = lastTimeOpened;
+    }
+
+    public int getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(int profileImage) {
+        this.profileImage = profileImage;
     }
 
     public ThemeManager.THEME_COLORS getProfileColor() {

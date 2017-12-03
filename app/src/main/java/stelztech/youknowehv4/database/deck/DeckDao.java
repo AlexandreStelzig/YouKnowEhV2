@@ -2,6 +2,7 @@ package stelztech.youknowehv4.database.deck;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -193,6 +194,12 @@ public class DeckDao extends DbContentProvider implements IDeckDao, IDeckSchema 
             Log.w("Database", ex.getMessage());
             return false;
         }
+    }
+
+    @Override
+    public int fetchNumberOfDecksByProfileId(int profileId) {
+        return (int) DatabaseUtils.longForQuery(mDb, "SELECT COUNT(*) FROM " + DECK_TABLE + " WHERE "
+                + COLUMN_PROFILE_ID + "=" + profileId, null);
     }
 
 

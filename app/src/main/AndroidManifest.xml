@@ -37,7 +37,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".activities.QuizActivity"
+            android:name=".activities.quiz.QuizReading"
             android:screenOrientation="portrait" />
 
         <activity

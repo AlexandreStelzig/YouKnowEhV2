@@ -11,8 +11,8 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="colorAccent">@color/transparent</item>
     </style>
-
 
     <!-- Base application theme. -->
     <style name="AppThemeBlue" parent="Theme.AppCompat.Light.DarkActionBar">

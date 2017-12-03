@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import stelztech.youknowehv4.R;
+import stelztech.youknowehv4.database.Database;
+import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.helper.BlurBuilder;
 
 /**
@@ -45,19 +47,17 @@ public class ProfilePickerActivity extends AppCompatActivity implements Discrete
         setContentView(R.layout.activity_profile_picker);
 
 
-
         // init blurBuilder with default values
         if (blurBuilder == null)
             blurBuilder = new BlurBuilder();
 
+        List<Profile> profiles = Database.mProfileDao.fetchAllProfiles();
         profilePickerCardModelList = new ArrayList<>();
 
-        profilePickerCardModelList.add(new ProfilePickerCardModel(0, R.drawable.city, "Korean", 1000, 15, 3, ContextCompat.getColor(this, R.color.colorPrimary)));
-        profilePickerCardModelList.add(new ProfilePickerCardModel(0, R.drawable.city3, "Korean", 1000, 15, 3, ContextCompat.getColor(this, R.color.colorPrimaryRed)));
-        profilePickerCardModelList.add(new ProfilePickerCardModel(0, R.drawable.city, "Korean", 1000, 15, 3, ContextCompat.getColor(this, R.color.colorPrimaryGreen)));
-        profilePickerCardModelList.add(new ProfilePickerCardModel(0, R.drawable.city3, "Korean", 1000, 15, 3, ContextCompat.getColor(this, R.color.colorPrimaryIndigo)));
-        profilePickerCardModelList.add(new ProfilePickerCardModel(0, R.drawable.city, "Korean", 1000, 15, 3, ContextCompat.getColor(this, R.color.colorPrimaryOrange)));
-        profilePickerCardModelList.add(new ProfilePickerCardModel(0, R.drawable.city3, "Korean", 1000, 15, 3, ContextCompat.getColor(this, R.color.colorPrimaryDarkGrey)));
+
+        for (Profile profile : profiles) {
+            profilePickerCardModelList.add(new ProfilePickerCardModel(profile, this));
+        }
 
 
         DiscreteScrollView scrollView = (DiscreteScrollView) findViewById(R.id.profile_picker_profiles_scrollview);
@@ -74,6 +74,7 @@ public class ProfilePickerActivity extends AppCompatActivity implements Discrete
                 .build());
         scrollView.setSlideOnFling(true);
         scrollView.setSlideOnFlingThreshold(FLING_THRESHOLD);
+
 
     }
 

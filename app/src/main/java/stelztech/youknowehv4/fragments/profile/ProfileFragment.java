@@ -35,6 +35,7 @@ import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.activities.profilepicker.ProfilePickerActivity;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.profile.Profile;
+import stelztech.youknowehv4.helper.DateHelper;
 import stelztech.youknowehv4.helper.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.ThemeManager;
@@ -65,7 +66,6 @@ public class ProfileFragment extends Fragment {
 
     private final int NO_PROFILES = -1;
 
-    private Spinner profileSpinner;
     private Button deleteButton;
     private Button editButton;
     private Button newButton;
@@ -76,10 +76,6 @@ public class ProfileFragment extends Fragment {
     private EditText answerLabel;
 
     private String dialogTextHolder;
-
-    // spinner
-    private List<Profile> profileList;
-    private ArrayAdapter arrayAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -93,7 +89,6 @@ public class ProfileFragment extends Fragment {
         dialogTextHolder = "";
 
         // init
-        profileSpinner = (Spinner) view.findViewById(R.id.profile_spinner);
         deleteButton = (Button) view.findViewById(R.id.profile_delete);
         editButton = (Button) view.findViewById(R.id.profile_edit);
         newButton = (Button) view.findViewById(R.id.profile_new);
@@ -106,7 +101,7 @@ public class ProfileFragment extends Fragment {
         questionLabelEditLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Profile profile = profileList.get(getCurrentlySelectedProfilePosition());
+                Profile profile = Database.mUserDao.fetchActiveProfile();
                 createDialog(ProfileDialogOptions.UPDATE_QUESTION, profile.getQuestionLabel()).show();
             }
         });
@@ -114,7 +109,7 @@ public class ProfileFragment extends Fragment {
         answerLabelEditLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Profile profile = profileList.get(getCurrentlySelectedProfilePosition());
+                Profile profile = Database.mUserDao.fetchActiveProfile();
                 createDialog(ProfileDialogOptions.UPDATE_ANSWER, profile.getAnswerLabel()).show();
             }
         });
@@ -147,11 +142,15 @@ public class ProfileFragment extends Fragment {
         });
 
         setupColorChangeButtons();
-        populateInformation();
+        setLabelText();
 
         ((Button) view.findViewById(R.id.profile_change_profile_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Database.mProfileDao.updateLastTimeOpened(Database.mUserDao.fetchActiveProfile().getProfileId(), DateHelper.getDateNowString());
+                Database.mUserDao.setActiveProfile(Profile.NO_PROFILES);
+
                 Intent i = new Intent(getActivity(), ProfilePickerActivity.class);
                 startActivity(i);
                 getActivity().finish();
@@ -229,9 +228,6 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void resetColorButtonSize(){
-
-    }
 
     private void changeColorAndReloadActivity(ThemeManager.THEME_COLORS color){
 
@@ -265,76 +261,14 @@ public class ProfileFragment extends Fragment {
 
     private void populateInformation() {
 
-        if (arrayAdapter != null)
-            arrayAdapter.clear();
 
-        profileList = Database.mProfileDao.fetchAllProfiles();
-
-        List<String> profileNameArray = new ArrayList<>();
-        int activeProfilePosition = 1;
-
-        for (int i = 0; i < profileList.size(); i++) {
-            profileNameArray.add(profileList.get(i).getProfileName());
-            long activeProfileId = Database.mUserDao.fetchUser().getActiveProfileId();
-            if (profileList.get(i).getProfileId() == (activeProfileId))
-                activeProfilePosition = i;
-        }
-
-        if (profileList.isEmpty()) {
-            profileNameArray.add("- No Profiles -");
-        }
-
-        arrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.custom_spinner_item, profileNameArray) {
-
-            @NonNull
-            @Override
-            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
-                View mView = super.getDropDownView(position, convertView, parent);
-                TextView mTextView = (TextView) mView;
-
-                mTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-
-                if (position == profileSpinner.getSelectedItemPosition())
-                    mView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_grey));
-                else
-                    mView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_normal));
-
-
-                return mTextView;
-            }
-        };
-
-//        arrayAdapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
-
-
-        profileSpinner.setAdapter(arrayAdapter);
-
-        profileSpinner.setSelection(activeProfilePosition);
-
-        profileSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (!profileList.isEmpty()) {
-                    changeProfile(profileList.get(position));
-                    setLabelText();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-
-        setLabelText();
 
 
     }
 
 
     private void changeProfile(Profile profile) {
+
         Database.mUserDao.setActiveProfile(profile.getProfileId());
         changeColorAndReloadActivity(profile.getProfileColor());
         ((MainActivityManager) getActivity()).resetFragmentPractice();
@@ -347,24 +281,18 @@ public class ProfileFragment extends Fragment {
     }
 
     private void editProfile() {
-        if (getCurrentlySelectedProfilePosition() == NO_PROFILES) {
-            Toast.makeText(getContext(), R.string.profileFragment_noProfiles, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        AlertDialog alertDialog = createDialog(ProfileDialogOptions.UPDATE_PROFILE, profileList.get(
-                getCurrentlySelectedProfilePosition()).getProfileName());
+        AlertDialog alertDialog = createDialog(ProfileDialogOptions.UPDATE_PROFILE, Database.mUserDao.fetchActiveProfile().getProfileName());
         alertDialog.show();
     }
 
     private void deleteProfile() {
-        if (profileList.size() <= 1) {
+        if (Database.mProfileDao.fetchAllProfiles().size() <= 1) {
             Toast.makeText(getContext(), R.string.profileFragment_deleteError,
                     Toast.LENGTH_LONG).show();
             return;
         } else {
 
-            deleteConfirmationDialog(profileList.get(
-                    getCurrentlySelectedProfilePosition())).show();
+            deleteConfirmationDialog(Database.mUserDao.fetchActiveProfile()).show();
 
         }
     }
@@ -466,18 +394,17 @@ public class ProfileFragment extends Fragment {
                                         break;
                                     }
 
-                                    Database.mProfileDao.updateProfile(profileList.get(
-                                            getCurrentlySelectedProfilePosition()).getProfileId(), dialogTextHolder);
+                                    Database.mProfileDao.updateProfile(Database.mUserDao.fetchActiveProfile().getProfileId(), dialogTextHolder);
                                     populateInformation();
                                     break;
                                 case UPDATE_QUESTION:
-                                    Database.mProfileDao.updateProfileQuestionLabel(profileList.get(
-                                            getCurrentlySelectedProfilePosition()).getProfileId(), dialogTextHolder);
+
+                                    Database.mProfileDao.updateProfile(Database.mUserDao.fetchActiveProfile().getProfileId(), dialogTextHolder);
                                     populateInformation();
                                     break;
                                 case UPDATE_ANSWER:
-                                    Database.mProfileDao.updateProfileAnswerLabel(profileList.get(
-                                            getCurrentlySelectedProfilePosition()).getProfileId(), dialogTextHolder);
+
+                                    Database.mProfileDao.updateProfile(Database.mUserDao.fetchActiveProfile().getProfileId(), dialogTextHolder);
                                     populateInformation();
                                     break;
                             }
@@ -522,14 +449,9 @@ public class ProfileFragment extends Fragment {
 
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                for (int i = 0; i < profileList.size(); i++) {
-                    if (profileList.get(i).getProfileId() == (profileToDelete.getProfileId())) {
-                        profileList.remove(i);
-                        break;
-                    }
-                }
+
                 Database.mProfileDao.deleteProfile(profileToDelete.getProfileId());
-                Database.mUserDao.setActiveProfile(profileList.get(0).getProfileId());
+                Database.mUserDao.setActiveProfile(Profile.NO_PROFILES);
                 populateInformation();
             }
         });
@@ -545,14 +467,6 @@ public class ProfileFragment extends Fragment {
         return alertDialog;
     }
 
-
-    public int getCurrentlySelectedProfilePosition() {
-
-        if (profileList.isEmpty())
-            return NO_PROFILES;
-        else
-            return profileSpinner.getSelectedItemPosition();
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import stelztech.youknowehv4.R;
+import stelztech.youknowehv4.activities.profilepicker.ProfilePickerActivity;
 import stelztech.youknowehv4.database.Database;
+import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.manager.ThemeManager;
 
 /**
@@ -43,9 +45,18 @@ public class SplashScreenActivity extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
-                    Intent i = new Intent(SplashScreenActivity.this, MainActivityManager.class);
-                    startActivity(i);
-                    finish();
+
+                    if (Database.mUserDao.fetchUser().getActiveProfileId() == Profile.NO_PROFILES) {
+                        Intent i = new Intent(SplashScreenActivity.this, ProfilePickerActivity.class);
+                        startActivity(i);
+                        finish();
+                    }else{
+
+                        Intent i = new Intent(SplashScreenActivity.this, MainActivityManager.class);
+                        startActivity(i);
+                        finish();
+                    }
+
                 }
             }
         };

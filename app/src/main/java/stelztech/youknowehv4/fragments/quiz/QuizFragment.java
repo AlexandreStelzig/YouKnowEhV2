@@ -4,6 +4,8 @@ package stelztech.youknowehv4.fragments.quiz;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -24,8 +27,10 @@ import java.util.List;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.MainActivityManager;
-import stelztech.youknowehv4.activities.QuizActivity;
+import stelztech.youknowehv4.activities.quiz.QuizActivity;
+import stelztech.youknowehv4.activities.quiz.QuizReading;
 import stelztech.youknowehv4.database.Database;
+import stelztech.youknowehv4.helper.BlurBuilder;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.database.deck.Deck;
 
@@ -48,9 +53,11 @@ public class QuizFragment extends Fragment {
     private boolean[] deckSelectedArray;
     private CharSequence[] deckListDisplayName;
 
+    private BlurBuilder blurBuilder;
+
 
     // new quiz
-    final String[] QUIZ_CHOICES = new String[]{"Reading", "Writing"};
+    final String[] QUIZ_CHOICES = new String[]{"Reading", "Writing", "Multiple Choice"};
     private ListView quizOptionsListview;
     private ListView quizDecksListview;
     private QuizCreationPhase quizCreationPhase;
@@ -66,6 +73,7 @@ public class QuizFragment extends Fragment {
 
 
         Button newQuizButton = (Button) view.findViewById(R.id.quiz_new_button);
+        Button continueQuizButton = (Button) view.findViewById(R.id.quiz_continue_button);
 
         FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
         setHasOptionsMenu(true);
@@ -74,6 +82,13 @@ public class QuizFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 newQuizButtonClicked();
+            }
+        });
+
+        continueQuizButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                continueQuizButtonClicked();
             }
         });
 
@@ -87,7 +102,21 @@ public class QuizFragment extends Fragment {
             deckListDisplayName[i] = deckList.get(i).getDeckName();
         }
 
+        if (blurBuilder == null)
+            blurBuilder = new BlurBuilder();
+
+        ImageView imageView = (ImageView) view.findViewById(R.id.quiz_intro_background);
+
+        Bitmap bitmap = blurBuilder.blur(getContext(), ((BitmapDrawable)imageView.getDrawable()).getBitmap());
+        // change the background image
+        imageView.setImageBitmap(bitmap);
+
         return view;
+    }
+
+    private void continueQuizButtonClicked() {
+        Intent intent = new Intent(getActivity(), QuizReading.class);
+        getActivity().startActivityForResult(intent, MainActivityManager.RESULT_ANIMATION_RIGHT_TO_LEFT);
     }
 
     private boolean isAllDecksEmpty() {
@@ -210,7 +239,7 @@ public class QuizFragment extends Fragment {
                         } else {
                             // TODO validation and init info
                             dialog.dismiss();
-                            Intent intent = new Intent(getActivity(), QuizActivity.class);
+                            Intent intent = new Intent(getActivity(), QuizReading.class);
                             getActivity().startActivityForResult(intent, MainActivityManager.RESULT_ANIMATION_RIGHT_TO_LEFT);
                         }
 

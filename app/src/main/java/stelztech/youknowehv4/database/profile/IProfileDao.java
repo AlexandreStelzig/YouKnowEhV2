@@ -1,5 +1,6 @@
 package stelztech.youknowehv4.database.profile;
 
+import java.util.Date;
 import java.util.List;
 
 import stelztech.youknowehv4.manager.ThemeManager;
@@ -18,5 +19,7 @@ public interface IProfileDao {
     boolean updateProfileQuestionLabel(int profileId, String questionLabel);
     boolean updateProfileAnswerLabel(int profileId, String answerLabel);
     boolean changeProfileColor(int profileId, ThemeManager.THEME_COLORS themeColor);
+    boolean updateLastTimeOpened(int profileId, String lastTimeOpenedDate);
+    boolean updateProfileImage(int profileId, int picture);
 
 }

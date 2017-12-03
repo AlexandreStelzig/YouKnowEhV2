@@ -1,6 +1,8 @@
 package stelztech.youknowehv4.manager;
 
+import android.content.Context;
 import android.content.res.Resources;
+import android.support.v4.content.ContextCompat;
 
 import stelztech.youknowehv4.R;
 
@@ -20,7 +22,7 @@ public class ThemeManager {
      */
 
 
-    public enum THEME_COLORS{
+    public enum THEME_COLORS {
         BLUE,
         GREEN,
         RED,
@@ -36,88 +38,129 @@ public class ThemeManager {
     private static ThemeManager instance;
 
 
-    private ThemeManager(){
+    private ThemeManager() {
         currentTheme = THEME_COLORS.BLUE;
     }
 
-    public static ThemeManager getInstance(){
-        if(instance == null){
+    public static ThemeManager getInstance() {
+        if (instance == null) {
             instance = new ThemeManager();
         }
         return instance;
     }
 
-    public void changeTheme(THEME_COLORS theme){
+    public void changeTheme(THEME_COLORS theme) {
         currentTheme = theme;
     }
 
-    public int getCurrentAppThemeNoActionBarValue(){
+    public int getCurrentAppThemeNoActionBarValue() {
+        return getAppThemeNoActionBarValue(currentTheme);
+    }
 
-        int theme = R.style.AppThemeBlue_NoActionBar;
-        switch (currentTheme){
+    public int getAppThemeNoActionBarValue(THEME_COLORS theme) {
+
+        int themeValue = R.style.AppThemeBlue_NoActionBar;
+        switch (theme) {
             case BLUE:
-                theme = R.style.AppThemeBlue_NoActionBar;
+                themeValue = R.style.AppThemeBlue_NoActionBar;
                 break;
             case GREEN:
-                theme = R.style.AppThemeGreen_NoActionBar;
+                themeValue = R.style.AppThemeGreen_NoActionBar;
                 break;
             case RED:
-                theme = R.style.AppThemeRed_NoActionBar;
+                themeValue = R.style.AppThemeRed_NoActionBar;
                 break;
             case PURPLE:
-                theme = R.style.AppThemePurple_NoActionBar;
+                themeValue = R.style.AppThemePurple_NoActionBar;
                 break;
             case GREY:
-                theme = R.style.AppThemeGrey_NoActionBar;
+                themeValue = R.style.AppThemeGrey_NoActionBar;
                 break;
             case PINK:
-                theme = R.style.AppThemePink_NoActionBar;
+                themeValue = R.style.AppThemePink_NoActionBar;
                 break;
             case ORANGE:
-                theme = R.style.AppThemeOrange_NoActionBar;
+                themeValue = R.style.AppThemeOrange_NoActionBar;
                 break;
             case INDIGO:
-                theme = R.style.AppThemeIndigo_NoActionBar;
+                themeValue = R.style.AppThemeIndigo_NoActionBar;
                 break;
         }
 
-        return theme;
+        return themeValue;
     }
 
-    public int getCurrentAppThemeValue(){
+    public int getCurrentAppThemeValue() {
+        return getAppThemeValue(currentTheme);
+    }
 
-        int theme = R.style.AppThemeBlue;
-        switch (currentTheme){
+    public int getAppThemeValue(THEME_COLORS theme) {
+
+        int themeValue = R.style.AppThemeBlue;
+        switch (theme) {
             case BLUE:
-                theme = R.style.AppThemeBlue;
+                themeValue = R.style.AppThemeBlue;
                 break;
             case GREEN:
-                theme = R.style.AppThemeGreen;
+                themeValue = R.style.AppThemeGreen;
                 break;
             case RED:
-                theme = R.style.AppThemeRed;
+                themeValue = R.style.AppThemeRed;
                 break;
             case PURPLE:
-                theme = R.style.AppThemePurple;
+                themeValue = R.style.AppThemePurple;
                 break;
             case GREY:
-                theme = R.style.AppThemeGrey;
+                themeValue = R.style.AppThemeGrey;
                 break;
             case PINK:
-                theme = R.style.AppThemePink;
+                themeValue = R.style.AppThemePink;
                 break;
             case ORANGE:
-                theme = R.style.AppThemeOrange;
+                themeValue = R.style.AppThemeOrange;
                 break;
             case INDIGO:
-                theme = R.style.AppThemeIndigo;
+                themeValue = R.style.AppThemeIndigo;
                 break;
         }
 
-        return theme;
+        return themeValue;
     }
 
-    public THEME_COLORS getCurrentTheme(){
+    public int getThemePrimaryColor(Context context, THEME_COLORS theme) {
+
+        int color = ContextCompat.getColor(context, R.color.colorPrimary);
+        switch (theme) {
+            case BLUE:
+                color =  ContextCompat.getColor(context, R.color.colorPrimary);
+                break;
+            case GREEN:
+                color =  ContextCompat.getColor(context, R.color.colorPrimaryGreen);
+                break;
+            case RED:
+                color =  ContextCompat.getColor(context, R.color.colorPrimaryRed);
+                break;
+            case PURPLE:
+                color =  ContextCompat.getColor(context, R.color.colorPrimaryPurple);
+                break;
+            case GREY:
+                color =  ContextCompat.getColor(context, R.color.colorPrimaryGrey);
+                break;
+            case PINK:
+                color =  ContextCompat.getColor(context, R.color.colorPrimaryPink);
+                break;
+            case ORANGE:
+                color =  ContextCompat.getColor(context, R.color.colorPrimaryOrange);
+                break;
+            case INDIGO:
+                color =  ContextCompat.getColor(context, R.color.colorPrimaryIndigo);
+                break;
+        }
+
+        return color;
+    }
+
+    public THEME_COLORS getCurrentTheme() {
         return currentTheme;
     }
 

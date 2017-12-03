@@ -32,8 +32,4 @@ public interface IDeckSchema {
     // ON DELETE
     String SQL_DELETE_TABLE_DECK = "DROP TABLE IF EXISTS " + DECK_TABLE;
 
-    // COLUMNS
-    String[] DECK_COLUMNS = new String[] { COLUMN_DECK_ID,
-            COLUMN_DECK_NAME, COLUMN_DATE_CREATED, COLUMN_DATE_MODIFIED, COLUMN_PROFILE_ID,
-            COLUMN_POSITION};
 }

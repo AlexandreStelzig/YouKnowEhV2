@@ -418,14 +418,14 @@ class DiscreteScrollLayoutManager extends RecyclerView.LayoutManager {
 
     public void onFling(int velocityX, int velocityY) {
         int velocity = orientationHelper.getFlingVelocity(velocityX, velocityY);
-        int throttleValue = shouldSlideOnFling ? Math.abs(velocityX/flingThreshold) : 1;
+        int throttleValue = shouldSlideOnFling ? Math.abs(velocityX / flingThreshold) : 1;
         int newPosition = currentPosition + Direction.fromDelta(velocity).applyTo(throttleValue);
         if (currentPosition != 0 && newPosition < 0)
             newPosition = 0;
-        else if (currentPosition != getItemCount() -1 && newPosition >= getItemCount())
+        else if (currentPosition != getItemCount() - 1 && newPosition >= getItemCount())
             newPosition = getItemCount() - 1;
         boolean isInScrollDirection = velocity * scrolled >= 0;
-        boolean canFling = isInScrollDirection && newPosition >= 0 && newPosition < getItemCount();
+        boolean canFling = isInScrollDirection && newPosition >= 0 && newPosition < getItemCount() && currentPosition != newPosition;
         if (canFling) {
             pendingScroll = getHowMuchIsLeftToScroll(velocity);
             if (pendingScroll != 0) {
@@ -436,11 +436,11 @@ class DiscreteScrollLayoutManager extends RecyclerView.LayoutManager {
         }
     }
 
-    public void setShouldSlideOnFling(Boolean result){
+    public void setShouldSlideOnFling(Boolean result) {
         this.shouldSlideOnFling = result;
     }
 
-    public void setSlideOnFlingThreshold(int threshold){
+    public void setSlideOnFlingThreshold(int threshold) {
         this.flingThreshold = threshold;
     }
 
@@ -482,7 +482,7 @@ class DiscreteScrollLayoutManager extends RecyclerView.LayoutManager {
         startSmoothScroll(scroller);
     }
 
-    private void startSmoothPendingScroll(int position){
+    private void startSmoothPendingScroll(int position) {
         if (currentPosition == position) return;
         pendingScroll = -scrolled;
         Direction direction = Direction.fromDelta(position - currentPosition);

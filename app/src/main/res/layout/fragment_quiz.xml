@@ -1,60 +1,81 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="5dp">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorDivider"
+    android:clickable="true">
+
+    <ImageView
+        android:id="@+id/quiz_intro_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="false"
+        android:contentDescription="background"
+        android:src="@drawable/city"
+        android:scaleType="centerCrop"/>
 
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="fill_parent"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="5dp">
 
 
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center"
-            android:src="@mipmap/quiz" />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="QUIZ"
+                android:textColor="?colorPrimary"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/quiz_continue_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginEnd="40dp"
+                android:layout_marginStart="40dp"
+                android:background="@drawable/button_drawable_selector"
+                android:text="CONTINUE"
+                android:textColor="?colorTextIcon" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="10dp" />
+
+            <Button
+                android:id="@+id/quiz_new_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginEnd="40dp"
+                android:layout_marginStart="40dp"
+                android:background="@drawable/button_drawable_selector"
+                android:text="NEW QUIZ"
+                android:textColor="?colorTextIcon" />
+        </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/quiz_continue_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginEnd="40dp"
-            android:layout_marginStart="40dp"
-            android:background="@drawable/button_drawable_selector"
-            android:enabled="false"
-            android:text="CONTINUE"
-            android:textColor="?colorTextIcon" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="10dp" />
-
-        <Button
-            android:id="@+id/quiz_new_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginEnd="40dp"
-            android:layout_marginStart="40dp"
-            android:background="@drawable/button_drawable_selector"
-            android:text="NEW QUIZ"
-            android:textColor="?colorTextIcon" />
-    </LinearLayout>
-
-</LinearLayout>
+</FrameLayout>

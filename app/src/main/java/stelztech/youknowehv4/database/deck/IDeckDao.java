@@ -15,4 +15,5 @@ public interface IDeckDao {
     boolean updateDeck(int deckId, String newDeckName);
     boolean swapDeckPosition(Deck deck1, Deck deck2);
     boolean changeDeckPosition(int newPosition, Deck deck);
+    int fetchNumberOfDecksByProfileId(int profileId);
 }

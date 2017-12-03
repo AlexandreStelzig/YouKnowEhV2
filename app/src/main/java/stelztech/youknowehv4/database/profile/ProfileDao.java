@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.DbContentProvider;
 import stelztech.youknowehv4.database.card.Card;
@@ -93,6 +94,8 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
         values.put(COLUMN_ANSWER_LABEL, "Answer");
         values.put(COLUMN_ACTIVE_QUIZ_ID, "");
         values.put(COLUMN_PROFILE_COLOR, String.valueOf(ThemeManager.THEME_COLORS.BLUE));
+        values.put(COLUMN_PROFILE_LAST_TIME_OPENED, date);
+        values.put(COLUMN_PROFILE_IMAGE, R.drawable.city);
 
         try {
             return super.insert(PROFILE_TABLE, values);
@@ -171,6 +174,37 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
     }
 
     @Override
+    public boolean updateLastTimeOpened(int profileId, String lastTimeOpenedDate) {
+        ContentValues values = new ContentValues();
+
+        try {
+            values.put(COLUMN_PROFILE_LAST_TIME_OPENED, lastTimeOpenedDate);
+
+            return super.update(PROFILE_TABLE, values, COLUMN_PROFILE_ID + "=" + profileId, null) > 0;
+        } catch (SQLiteConstraintException ex) {
+            Log.w("Database", ex.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateProfileImage(int profileId, int picture) {
+        ContentValues values = new ContentValues();
+
+        try {
+            String date = DateHelper.getDateNowString();
+
+            values.put(COLUMN_PROFILE_IMAGE, picture);
+            values.put(COLUMN_DATE_MODIFIED, date);
+
+            return super.update(PROFILE_TABLE, values, COLUMN_PROFILE_ID + "=" + profileId, null) > 0;
+        } catch (SQLiteConstraintException ex) {
+            Log.w("Database", ex.getMessage());
+            return false;
+        }
+    }
+
+    @Override
     protected Profile cursorToEntity(Cursor cursor) {
 
         int profileId = cursor.getInt(cursor.getColumnIndex(COLUMN_PROFILE_ID));
@@ -180,10 +214,12 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
         String answerLabel = cursor.getString(cursor.getColumnIndex(COLUMN_ANSWER_LABEL));
         int activeQuizId = cursor.getInt(cursor.getColumnIndex(COLUMN_ACTIVE_QUIZ_ID));
         String profileColor = cursor.getString(cursor.getColumnIndex(COLUMN_PROFILE_COLOR));
+        String lastTimeOpened = cursor.getString(cursor.getColumnIndex(COLUMN_PROFILE_LAST_TIME_OPENED));
+        int profileImage = cursor.getInt(cursor.getColumnIndex(COLUMN_PROFILE_IMAGE));
 
         ThemeManager.THEME_COLORS profileThemeColor = ThemeManager.THEME_COLORS.valueOf(profileColor);
 
-        return new Profile(profileId, profileName, dateAdded, questionLabel, answerLabel, activeQuizId, profileThemeColor);
+        return new Profile(profileId, profileName, dateAdded, questionLabel, answerLabel, activeQuizId, profileThemeColor, lastTimeOpened, profileImage);
     }
 
 }

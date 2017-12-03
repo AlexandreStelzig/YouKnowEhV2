@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 
+import stelztech.youknowehv4.activities.profilepicker.ProfilePickerActivity;
 import stelztech.youknowehv4.database.Database;
+import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.firsttimeopening.FirstTimeOpeningActivity;
 import stelztech.youknowehv4.manager.ThemeManager;
 
@@ -37,8 +39,9 @@ public class AppOpeningActivity extends AppCompatActivity {
             startActivity(i);
             finish();
         } else {
+            if (Database.mUserDao.fetchUser().getActiveProfileId() != Profile.NO_PROFILES)
+                ThemeManager.getInstance().changeTheme(Database.mUserDao.fetchActiveProfile().getProfileColor());
 
-            ThemeManager.getInstance().changeTheme(Database.mUserDao.fetchActiveProfile().getProfileColor());
             Intent i = new Intent(AppOpeningActivity.this, SplashScreenActivity.class);
             startActivity(i);
             finish();

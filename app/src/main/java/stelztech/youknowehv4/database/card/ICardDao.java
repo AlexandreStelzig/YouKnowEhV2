@@ -16,4 +16,5 @@ public interface ICardDao {
     boolean deleteCard(int cardId);
     boolean toggleArchiveCard(int cardId);
     List<Card> fetchArchivedCards(); // for current profile
+    int fetchNumberOfCardsByProfileId(int profileId);
 }

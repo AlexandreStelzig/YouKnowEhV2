@@ -1,18 +1,27 @@
-package stelztech.youknowehv4.activities;
+package stelztech.youknowehv4.activities.quiz;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.components.DoubleProgressBar;
+import stelztech.youknowehv4.database.card.Card;
+import stelztech.youknowehv4.database.quizcard.QuizCard;
+import stelztech.youknowehv4.helper.BlurBuilder;
 import stelztech.youknowehv4.manager.ThemeManager;
 
 /**
@@ -27,17 +36,14 @@ public class QuizActivity extends AppCompatActivity {
     private TextView passText;
     private TextView failText;
     private TextView remainingText;
-    int numPassed;
-    int numFailed;
-    int totalPassedFailed;
-    int maximumNumQuestion;
+    protected int numPassed;
+    protected int numFailed;
+    protected int totalPassedFailed;
+    protected int maximumNumQuestion;
 
-    // flow
-    private Button showButton;
-    private Button passButton;
-    private Button failButton;
-    private LinearLayout showLayout;
-    private LinearLayout passFailLayout;
+    // questions
+    protected List<QuizCard> quizCardList = new ArrayList<>();
+    protected int currentCardPosition;
 
 
     public QuizActivity(){
@@ -47,30 +53,28 @@ public class QuizActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setTheme(ThemeManager.getInstance().getCurrentAppThemeValue());
 
         // intro animation
         overridePendingTransition(R.anim.enter, R.anim.exit);
 
-        setContentView(R.layout.activity_quiz);
-
-        getSupportActionBar().setTitle("Quiz");
         // set back button instead of drawer
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         // init components
-        showButton = (Button) findViewById(R.id.quiz_show_button);
-        passButton = (Button) findViewById(R.id.quiz_pass_button);
-        failButton = (Button) findViewById(R.id.quiz_fail_button);
-        showLayout = (LinearLayout) findViewById(R.id.quiz_show_layout);
-        passFailLayout = (LinearLayout) findViewById(R.id.quiz_pass_fail_layout);
         passText = (TextView) findViewById(R.id.quiz_progress_bar_pass_text);
         failText = (TextView) findViewById(R.id.quiz_progress_bar_fail_text);
         remainingText = (TextView) findViewById(R.id.quiz_progress_bar_remaining_text);
 
+        ImageView imageView = (ImageView) findViewById(R.id.quiz_background);
+        Bitmap bitmap = new BlurBuilder().blur(this, ((BitmapDrawable)imageView.getDrawable()).getBitmap());
+        // change the background image
+        imageView.setImageBitmap(bitmap);
+
+
+        currentCardPosition = 0;
+
         initProgressBar();
-        initButtons();
     }
 
 
@@ -82,39 +86,14 @@ public class QuizActivity extends AppCompatActivity {
     }
 
 
-    private void initButtons() {
-        showButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setShowLayoutVisible(false);
-            }
-        });
-        passButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                numPassed++;
-                setShowLayoutVisible(true);
-                updateProgressBar();
-            }
-        });
 
-        failButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                numFailed++;
-                setShowLayoutVisible(true);
-                updateProgressBar();
-            }
-        });
-
-    }
 
     private void resetProgressBar() {
         totalPassedFailed = numPassed = numFailed = 0;
         updateProgressBar();
     }
 
-    private void updateProgressBar() {
+    protected void updateProgressBar() {
 
         totalPassedFailed = numPassed + numFailed;
 
@@ -143,16 +122,6 @@ public class QuizActivity extends AppCompatActivity {
     }
 
 
-    private void setShowLayoutVisible(boolean visible) {
-        if (visible) {
-            passFailLayout.setVisibility(View.GONE);
-            showLayout.setVisibility(View.VISIBLE);
-        } else {
-            showLayout.setVisibility(View.GONE);
-            passFailLayout.setVisibility(View.VISIBLE);
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -176,5 +145,9 @@ public class QuizActivity extends AppCompatActivity {
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public List<QuizCard> getQuizCardList() {
+        return quizCardList;
     }
 }

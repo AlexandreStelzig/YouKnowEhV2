@@ -1,5 +1,17 @@
 package stelztech.youknowehv4.activities.profilepicker;
 
+import android.content.Context;
+import android.util.TypedValue;
+
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
+import stelztech.youknowehv4.R;
+import stelztech.youknowehv4.database.Database;
+import stelztech.youknowehv4.database.profile.Profile;
+import stelztech.youknowehv4.helper.DateHelper;
+import stelztech.youknowehv4.manager.ThemeManager;
+
 /**
  * Created by alex on 2017-11-28.
  */
@@ -15,14 +27,22 @@ public class ProfilePickerCardModel {
     private int nbHoursLastOpened;
     private int profileColor;
 
-    public ProfilePickerCardModel(int profileId, int thumbnailImage, String name, int nbCards, int nbDecks, int nbHoursLastOpened, int profileColor) {
-        this.profileId = profileId;
-        this.thumbnailImage = thumbnailImage;
-        this.name = name;
-        this.nbCards = nbCards;
-        this.nbDecks = nbDecks;
-        this.nbHoursLastOpened = nbHoursLastOpened;
-        this.profileColor = profileColor;
+    public ProfilePickerCardModel(Profile profile, Context context) {
+        this.profileId = profile.getProfileId();
+        this.thumbnailImage = profile.getProfileImage();
+        this.name = profile.getProfileName();
+        this.nbCards = Database.mCardDao.fetchNumberOfCardsByProfileId(profile.getProfileId());
+        this.nbDecks = Database.mDeckDao.fetchNumberOfDecksByProfileId(profile.getProfileId());
+
+        Date lastTimeOpened = DateHelper.stringToDate(profile.getLastTimeOpened());
+        Date dateNow = DateHelper.getDateNow();
+
+        long diff = dateNow.getTime() - lastTimeOpened.getTime();
+
+        long hours = TimeUnit.MILLISECONDS.toHours(diff);
+
+        this.nbHoursLastOpened = (int) hours;
+        this.profileColor = ThemeManager.getInstance().getThemePrimaryColor(context, profile.getProfileColor());
     }
 
     public int getProfileId() {

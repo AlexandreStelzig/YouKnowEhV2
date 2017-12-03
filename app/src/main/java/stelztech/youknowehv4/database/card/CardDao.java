@@ -2,6 +2,7 @@ package stelztech.youknowehv4.database.card;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -211,6 +212,12 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
         cardList = SortingStateManager.getInstance().sortCardList(cardList);
 
         return cardList;
+    }
+
+    @Override
+    public int fetchNumberOfCardsByProfileId(int profileId) {
+        return (int) DatabaseUtils.longForQuery(mDb, "SELECT COUNT(*) FROM " + CARD_TABLE + " WHERE "
+                + COLUMN_PROFILE_ID + "=" + profileId, null);
     }
 
 
