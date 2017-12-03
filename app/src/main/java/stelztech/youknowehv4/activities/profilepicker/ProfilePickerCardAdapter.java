@@ -132,20 +132,7 @@ public class ProfilePickerCardAdapter extends RecyclerView.Adapter<ProfilePicker
                     int itemClickedPosition = getAdapterPosition();
 
                     if (itemClickedPosition == profilePickerActivity.getCurrentCardIndex()) {
-
-                        int profileId = profilePickerActivity.getProfileCards().get(itemClickedPosition).getProfileId();
-                        Database.mUserDao.setActiveProfile(profileId);
-                        Profile profile = Database.mProfileDao.fetchProfileById(profileId);
-                        ThemeManager themeManager = ThemeManager.getInstance();
-                        ThemeManager.THEME_COLORS color = profile.getProfileColor();
-
-                        Database.mProfileDao.changeProfileColor(Database.mUserDao.fetchActiveProfile().getProfileId(), color);
-                        themeManager.changeTheme(color);
-                        profilePickerActivity.setTheme(ThemeManager.getInstance().getCurrentAppThemeValue());
-
-                        Intent i = new Intent(profilePickerActivity, MainActivityManager.class);
-                        profilePickerActivity.startActivity(i);
-                        profilePickerActivity.finish();
+                        profilePickerActivity.selectProfile(itemClickedPosition);
 
                     } else {
                         parentRecycler.smoothScrollToPosition(getAdapterPosition());

@@ -24,6 +24,6 @@ public class QuizCardDao extends DbContentProvider implements IQuizCardDao, IQui
         boolean passed = cursor.getInt(cursor.getColumnIndex(COLUMN_PASSED)) > 0;
         int position = cursor.getInt(cursor.getColumnIndex(COLUMN_POSITION));
 
-        return new QuizCard(quizId, cardId, passed, numFailed, position);
+        return new QuizCard(quizId, "","", passed, numFailed, position);
     }
 }

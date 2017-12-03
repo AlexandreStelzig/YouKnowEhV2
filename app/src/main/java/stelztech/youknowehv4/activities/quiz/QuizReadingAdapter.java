@@ -1,26 +1,20 @@
 package stelztech.youknowehv4.activities.quiz;
 
-import android.content.Intent;
 import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.activities.profilepicker.ProfilePickerActivity;
 
 /**
  * Created by alex on 12/2/2017.
  */
 
-public class QuizReadingAdapter extends RecyclerView.Adapter<QuizReadingAdapter.ViewHolder>  {
+public class QuizReadingAdapter extends RecyclerView.Adapter<QuizReadingAdapter.ViewHolder> {
 
     private RecyclerView parentRecycler;
     private int itemHeight;
@@ -28,10 +22,10 @@ public class QuizReadingAdapter extends RecyclerView.Adapter<QuizReadingAdapter.
 
     private QuizReading quizReading;
 
-    private final static float CARD_WIDTH_SCALE = 0.75f;
+    private final static float CARD_WIDTH_SCALE = 0.9f;
     private final static float CARD_HEIGHT_SCALE = 0.55f;
 
-    public QuizReadingAdapter(QuizReading quizReading ) {
+    public QuizReadingAdapter(QuizReading quizReading) {
         this.quizReading = quizReading;
 
         Point windowDimensions = new Point();
@@ -49,7 +43,7 @@ public class QuizReadingAdapter extends RecyclerView.Adapter<QuizReadingAdapter.
     @Override
     public QuizReadingAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View v = inflater.inflate(R.layout.custom_quiz_reading_card, parent, false);
+        View v = inflater.inflate(R.layout.custom_quiz_reading_card_container, parent, false);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
                 itemWidth,
                 itemHeight);
@@ -59,7 +53,7 @@ public class QuizReadingAdapter extends RecyclerView.Adapter<QuizReadingAdapter.
 
     @Override
     public void onBindViewHolder(QuizReadingAdapter.ViewHolder holder, int position) {
-
+        holder.questionTextView.setText(quizReading.quizCardList.get(position).getQuestion());
     }
 
     @Override
@@ -69,11 +63,18 @@ public class QuizReadingAdapter extends RecyclerView.Adapter<QuizReadingAdapter.
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
+        TextView questionTextView;
 
         ViewHolder(View itemView) {
             super(itemView);
 
+            questionTextView = (TextView) itemView.findViewById(R.id.quiz_reading_card_front);
         }
-
     }
+
+    public RecyclerView getRecyclerView(){
+        return parentRecycler;
+    }
+
+
 }

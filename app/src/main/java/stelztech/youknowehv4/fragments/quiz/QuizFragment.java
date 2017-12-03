@@ -133,7 +133,7 @@ public class QuizFragment extends Fragment {
 
     private void newQuizButtonClicked() {
         if (isQuizActive) {
-
+            // todo delete active quiz
         } else {
 
             if (!deckList.isEmpty() && !allDecksEmpty) {
@@ -238,6 +238,9 @@ public class QuizFragment extends Fragment {
                             titleTextView.setText("Quiz Decks");
                         } else {
                             // TODO validation and init info
+
+
+
                             dialog.dismiss();
                             Intent intent = new Intent(getActivity(), QuizReading.class);
                             getActivity().startActivityForResult(intent, MainActivityManager.RESULT_ANIMATION_RIGHT_TO_LEFT);
@@ -280,8 +283,6 @@ public class QuizFragment extends Fragment {
                 });
             }
         });
-
-        // LISTVIEW 2
 
 
         quizDecksListview = (ListView) dialogView.findViewById(R.id.custom_dialog_create_quiz_listview_2);

@@ -7,7 +7,8 @@ public class Quiz {
 
     public enum MODE {
         READING,
-        WRITING
+        WRITING,
+        MULTIPLE_CHOICE
     }
 
 

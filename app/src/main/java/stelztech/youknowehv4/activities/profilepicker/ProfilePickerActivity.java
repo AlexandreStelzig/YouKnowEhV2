@@ -1,5 +1,6 @@
 package stelztech.youknowehv4.activities.profilepicker;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -17,9 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import stelztech.youknowehv4.R;
+import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.helper.BlurBuilder;
+import stelztech.youknowehv4.manager.ThemeManager;
 
 /**
  * Created by alex on 2017-11-27.
@@ -78,7 +81,6 @@ public class ProfilePickerActivity extends AppCompatActivity implements Discrete
 
     }
 
-
     public void setLayoutBackground(int image) {
 
         // blur the image
@@ -100,6 +102,22 @@ public class ProfilePickerActivity extends AppCompatActivity implements Discrete
 
     public int getCurrentCardIndex() {
         return currentCardIndex;
+    }
+
+    protected void selectProfile(int position){
+        int profileId = getProfileCards().get(position).getProfileId();
+        Database.mUserDao.setActiveProfile(profileId);
+        Profile profile = Database.mProfileDao.fetchProfileById(profileId);
+        ThemeManager themeManager = ThemeManager.getInstance();
+        ThemeManager.THEME_COLORS color = profile.getProfileColor();
+
+        Database.mProfileDao.changeProfileColor(Database.mUserDao.fetchActiveProfile().getProfileId(), color);
+        themeManager.changeTheme(color);
+        setTheme(ThemeManager.getInstance().getCurrentAppThemeValue());
+
+        Intent i = new Intent(this, MainActivityManager.class);
+        startActivity(i);
+        finish();
     }
 
 }

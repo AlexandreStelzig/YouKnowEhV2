@@ -8,10 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,7 +16,6 @@ import java.util.List;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.components.DoubleProgressBar;
-import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.quizcard.QuizCard;
 import stelztech.youknowehv4.helper.BlurBuilder;
 import stelztech.youknowehv4.manager.ThemeManager;
@@ -28,7 +24,7 @@ import stelztech.youknowehv4.manager.ThemeManager;
  * Created by alex on 2017-05-09.
  */
 
-public class QuizActivity extends AppCompatActivity {
+public abstract class QuizActivity extends AppCompatActivity {
 
 
     // progress
@@ -42,17 +38,22 @@ public class QuizActivity extends AppCompatActivity {
     protected int maximumNumQuestion;
 
     // questions
-    protected List<QuizCard> quizCardList = new ArrayList<>();
+    protected List<QuizCard> quizCardList;
     protected int currentCardPosition;
 
+    // quiz variables
+    protected boolean isRepeatWrongAnswers;
+    protected boolean isReviewCardsOnly;
 
-    public QuizActivity(){
-        maximumNumQuestion = 10;
-    }
+
+    protected boolean isFinished;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+        setTheme(ThemeManager.getInstance().getCurrentAppThemeValue());
+        setContentView(R.layout.activity_quiz);
 
         // intro animation
         overridePendingTransition(R.anim.enter, R.anim.exit);
@@ -71,10 +72,41 @@ public class QuizActivity extends AppCompatActivity {
         // change the background image
         imageView.setImageBitmap(bitmap);
 
+        isFinished = false;
+        initializeQuizVariables();
+        initializeQuizCardData();
+        initProgressBar();
+    }
+
+    private void initializeQuizVariables() {
+        isRepeatWrongAnswers = false;
+        isReviewCardsOnly = false;
+    }
+
+    private void initializeQuizCardData(){
+
+        quizCardList = new ArrayList<>();
+        quizCardList.add(new QuizCard(0,"question 1","answer 1",false,0,0));
+        quizCardList.add(new QuizCard(0,"question 2","answer 2",false,0,0));
+        quizCardList.add(new QuizCard(0,"question 3","answer 3",false,0,0));
+        quizCardList.add(new QuizCard(0,"question 4","answer 4",false,0,0));
+        quizCardList.add(new QuizCard(0,"question 5","answer 5",false,0,0));
+        quizCardList.add(new QuizCard(0,"question 6","answer 6",false,0,0));
+        quizCardList.add(new QuizCard(0,"question 7","answer 7",false,0,0));
+
 
         currentCardPosition = 0;
+        maximumNumQuestion = quizCardList.size();
+    }
 
-        initProgressBar();
+    private void repopulateQuizCardListWithWrongAnswers(){
+
+        quizCardList = new ArrayList<>();
+        quizCardList.add(new QuizCard(0,"question 1","answer 1",false,0,0));
+        quizCardList.add(new QuizCard(0,"question 2","answer 2",false,0,0));
+        quizCardList.add(new QuizCard(0,"question 3","answer 3",false,0,0));
+
+        maximumNumQuestion = quizCardList.size();
     }
 
 
@@ -85,11 +117,49 @@ public class QuizActivity extends AppCompatActivity {
         updateProgressBar();
     }
 
+    protected void cardPassed(){
+        numPassed++;
+        updateProgressBar();
+        showNextCard();
+    }
+
+    protected void cardFailed(){
+        numFailed++;
+        updateProgressBar();
+        showNextCard();
+    }
+
+    protected void showNextCard(){
+        currentCardPosition++;
+
+        if(currentCardPosition >= maximumNumQuestion){
+            loopCompleted();
+        }else{
+            showNextCardContainer();
+        }
+
+    }
 
 
+    private void loopCompleted() {
+
+        if(isRepeatWrongAnswers){
+            repopulateQuizCardListWithWrongAnswers();
+            resetQuiz();
+        }else{
+            isFinished = true;
+        }
+    }
+
+    protected void resetQuiz(){
+        currentCardPosition = 0;
+        resetProgressBar();
+        resetContainer();
+    }
 
     private void resetProgressBar() {
         totalPassedFailed = numPassed = numFailed = 0;
+        progressBar.setMax(maximumNumQuestion);
         updateProgressBar();
     }
 
@@ -97,16 +167,8 @@ public class QuizActivity extends AppCompatActivity {
 
         totalPassedFailed = numPassed + numFailed;
 
-
         progressBar.setProgress(numPassed);
         progressBar.setSecondaryProgress(totalPassedFailed);
-
-
-        if (totalPassedFailed == maximumNumQuestion) {
-
-        } else if (totalPassedFailed == 0) {
-            // reset
-        }
 
         updateProgressBarText();
     }
@@ -150,4 +212,8 @@ public class QuizActivity extends AppCompatActivity {
     public List<QuizCard> getQuizCardList() {
         return quizCardList;
     }
+
+    protected abstract void showNextCardContainer();
+    protected abstract void resetContainer();
+
 }
