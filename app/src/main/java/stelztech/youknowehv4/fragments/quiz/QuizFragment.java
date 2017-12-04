@@ -282,13 +282,13 @@ public class QuizFragment extends Fragment {
                         } else {
                             // TODO validation and init info
 
-                            if(quizDecksListview.getCount() != 0){
+                            if(quizDecksListview.getCheckedItemPositions().size() != 0){
                                 fetchQuizCreationInformation();
                                 dialog.dismiss();
                                 setIntentExtraAndStartQuiz();
 
                             }else{
-                                Toast.makeText(getContext(), "You need to select at least 1 deck", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "At least 1 deck must be selected", Toast.LENGTH_SHORT).show();
 
                             }
 
