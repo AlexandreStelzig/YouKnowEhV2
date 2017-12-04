@@ -15,9 +15,12 @@ public interface IQuizSchema {
     String COLUMN_DATE_FINISHED = "date_finished";
     String COLUMN_REPEAT = "quiz_failed_repeat";
     String COLUMN_REVERSE = "quiz_orientation_reverse";
+    String COLUMN_REVIEW_ONLY = "review_cards_only";
     String COLUMN_MODE = "quiz_mode";
     String COLUMN_PROFILE_ID = "profile_id";
-    String COLUMN_REVIEW_ONLY = "review_cards_only";
+    String COLUMN_NUM_PASSED = "quiz_num_passed";
+    String COLUMN_NUM_FAILED = "quiz_num_failed";
+    String COLUMN_NUM_SKIPPED = "quiz_num_skip";
 
     // ON CREATE
     String SQL_CREATE_TABLE_QUIZ = "CREATE TABLE "

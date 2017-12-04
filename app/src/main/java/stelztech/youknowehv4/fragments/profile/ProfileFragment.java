@@ -259,14 +259,6 @@ public class ProfileFragment extends Fragment {
     }
 
 
-    private void populateInformation() {
-
-
-
-
-    }
-
-
     private void changeProfile(Profile profile) {
 
         Database.mUserDao.setActiveProfile(profile.getProfileId());
@@ -386,7 +378,6 @@ public class ProfileFragment extends Fragment {
                                     int profileId = Database.mProfileDao.createProfile(dialogTextHolder);
                                     // set newly created profile to active
                                     Database.mUserDao.setActiveProfile(profileId);
-                                    populateInformation();
                                     break;
                                 case UPDATE_PROFILE:
                                     if(profileNameExists(dialogTextHolder)){
@@ -395,17 +386,17 @@ public class ProfileFragment extends Fragment {
                                     }
 
                                     Database.mProfileDao.updateProfile(Database.mUserDao.fetchActiveProfile().getProfileId(), dialogTextHolder);
-                                    populateInformation();
+
                                     break;
                                 case UPDATE_QUESTION:
 
-                                    Database.mProfileDao.updateProfile(Database.mUserDao.fetchActiveProfile().getProfileId(), dialogTextHolder);
-                                    populateInformation();
+                                    Database.mProfileDao.updateProfileQuestionLabel(Database.mUserDao.fetchActiveProfile().getProfileId(), dialogTextHolder);
+                                    setLabelText();
                                     break;
                                 case UPDATE_ANSWER:
 
-                                    Database.mProfileDao.updateProfile(Database.mUserDao.fetchActiveProfile().getProfileId(), dialogTextHolder);
-                                    populateInformation();
+                                    Database.mProfileDao.updateProfileAnswerLabel(Database.mUserDao.fetchActiveProfile().getProfileId(), dialogTextHolder);
+                                    setLabelText();
                                     break;
                             }
                             Helper.getInstance().hideKeyboard(getActivity());
@@ -452,7 +443,7 @@ public class ProfileFragment extends Fragment {
 
                 Database.mProfileDao.deleteProfile(profileToDelete.getProfileId());
                 Database.mUserDao.setActiveProfile(Profile.NO_PROFILES);
-                populateInformation();
+                setLabelText();
             }
         });
 

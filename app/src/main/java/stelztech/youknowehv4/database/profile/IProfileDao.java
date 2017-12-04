@@ -21,5 +21,5 @@ public interface IProfileDao {
     boolean changeProfileColor(int profileId, ThemeManager.THEME_COLORS themeColor);
     boolean updateLastTimeOpened(int profileId, String lastTimeOpenedDate);
     boolean updateProfileImage(int profileId, int picture);
-
+    int fetchActiveQuizId();
 }

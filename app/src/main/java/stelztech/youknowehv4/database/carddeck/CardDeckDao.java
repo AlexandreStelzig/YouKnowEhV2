@@ -193,7 +193,7 @@ public class CardDeckDao extends DbContentProvider implements ICardDeckDao, ICar
     }
 
     @Override
-    public long createCardDeck(int cardId, int deckId) {
+    public int createCardDeck(int cardId, int deckId) {
         ContentValues values = new ContentValues();
 
 

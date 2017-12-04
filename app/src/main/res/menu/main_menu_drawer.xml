@@ -28,9 +28,9 @@
             android:icon="@drawable/ic_quiz_black"
             android:title="Quiz" />
         <item
-            android:id="@+id/quiz_history"
-            android:icon="@drawable/ic_history_black_24dp"
-            android:title="Quiz history" />
+            android:id="@+id/statistics"
+            android:icon="@drawable/ic_show_chart_black_24dp"
+            android:title="Statistics" />
 
     </group>
 

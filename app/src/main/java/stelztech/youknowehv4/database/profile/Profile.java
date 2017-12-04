@@ -9,6 +9,7 @@ import stelztech.youknowehv4.manager.ThemeManager;
 public class Profile {
 
     public static final int NO_PROFILES = -1;
+    public static final int NO_QUIZ = -1;
 
     private int profileId;
     private String profileName;

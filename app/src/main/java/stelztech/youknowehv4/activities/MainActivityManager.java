@@ -22,7 +22,7 @@ import stelztech.youknowehv4.fragments.about.AboutFragment;
 import stelztech.youknowehv4.fragments.card.CardListFragment;
 import stelztech.youknowehv4.fragments.deck.DeckListFragment;
 import stelztech.youknowehv4.fragments.quiz.QuizFragment;
-import stelztech.youknowehv4.fragments.quiz.QuizHistoryFragment;
+import stelztech.youknowehv4.fragments.statistics.StatisticsFragment;
 import stelztech.youknowehv4.fragments.review.ReviewFragment;
 import stelztech.youknowehv4.fragments.profile.ProfileFragment;
 import stelztech.youknowehv4.fragments.settings.SettingsFragment;
@@ -46,7 +46,7 @@ public class MainActivityManager extends AppCompatActivity
     private AboutFragment mAboutFragment;
     private ProfileFragment mProfileFragment;
     private QuizFragment mQuizFragment;
-    private QuizHistoryFragment mQuizHistoryFragment;
+    private StatisticsFragment mStatisticsFragment;
     private boolean mViewIsAtHome;
 
     private Fragment previousFragment;
@@ -128,7 +128,7 @@ public class MainActivityManager extends AppCompatActivity
         mAboutFragment = new AboutFragment();
         mProfileFragment = new ProfileFragment();
         mQuizFragment = new QuizFragment();
-        mQuizHistoryFragment = new QuizHistoryFragment();
+        mStatisticsFragment = new StatisticsFragment();
 
         Intent intent = getIntent();
         boolean loadProfilePage = intent.getBooleanExtra("ColorChanged", false);
@@ -225,9 +225,9 @@ public class MainActivityManager extends AppCompatActivity
                 title = "Quiz";
                 subtitle = Database.mUserDao.fetchActiveProfile().getProfileName();
                 break;
-            case R.id.quiz_history:
-                currentFragment = mQuizHistoryFragment;
-                title = "Quiz History";
+            case R.id.statistics:
+                currentFragment = mStatisticsFragment;
+                title = "Statistics";
                 subtitle = Database.mUserDao.fetchActiveProfile().getProfileName();
                 break;
         }

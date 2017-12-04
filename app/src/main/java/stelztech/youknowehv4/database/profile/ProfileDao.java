@@ -18,6 +18,8 @@ import stelztech.youknowehv4.database.deck.Deck;
 import stelztech.youknowehv4.helper.DateHelper;
 import stelztech.youknowehv4.manager.ThemeManager;
 
+import static stelztech.youknowehv4.database.profile.Profile.NO_QUIZ;
+
 /**
  * Created by alex on 10/14/2017.
  */
@@ -92,7 +94,7 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
         values.put(COLUMN_DATE_MODIFIED, date);
         values.put(COLUMN_QUESTION_LABEL, "Question");
         values.put(COLUMN_ANSWER_LABEL, "Answer");
-        values.put(COLUMN_ACTIVE_QUIZ_ID, "");
+        values.put(COLUMN_ACTIVE_QUIZ_ID, NO_QUIZ);
         values.put(COLUMN_PROFILE_COLOR, String.valueOf(ThemeManager.THEME_COLORS.BLUE));
         values.put(COLUMN_PROFILE_LAST_TIME_OPENED, date);
         values.put(COLUMN_PROFILE_IMAGE, R.drawable.city);
@@ -202,6 +204,11 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
             Log.w("Database", ex.getMessage());
             return false;
         }
+    }
+
+    @Override
+    public int fetchActiveQuizId() {
+        return Database.mUserDao.fetchActiveProfile().getActiveQuizId();
     }
 
     @Override

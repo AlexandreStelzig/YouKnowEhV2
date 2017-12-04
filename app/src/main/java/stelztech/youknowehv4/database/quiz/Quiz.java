@@ -11,6 +11,15 @@ public class Quiz {
         MULTIPLE_CHOICE
     }
 
+    public static MODE getModeFromPosition(int position){
+        if(position == 0){
+            return Quiz.MODE.READING;
+        }else if(position == 1){
+            return Quiz.MODE.WRITING;
+        }else{
+            return Quiz.MODE.MULTIPLE_CHOICE;
+        }
+    }
 
     private int quizId;
     private String dateCreated;
@@ -20,8 +29,11 @@ public class Quiz {
     private boolean repeat;
     private boolean reviewOnly;
     private int profileId;
+    private int totalPassed;
+    private int totalFailed;
+    private int totalSkipped;
 
-    public Quiz(int quizId, String dateCreated, String dateFinished, MODE mode, boolean reverse, boolean repeat, boolean reviewOnly, int profileId) {
+    public Quiz(int quizId, String dateCreated, String dateFinished, MODE mode, boolean reverse, boolean repeat, boolean reviewOnly, int profileId, int totalPassed, int totalFailed, int totalSkipped) {
         this.quizId = quizId;
         this.dateCreated = dateCreated;
         this.dateFinished = dateFinished;
@@ -30,6 +42,9 @@ public class Quiz {
         this.repeat = repeat;
         this.reviewOnly = reviewOnly;
         this.profileId = profileId;
+        this.totalPassed = totalPassed;
+        this.totalFailed = totalFailed;
+        this.totalSkipped = totalSkipped;
     }
 
     public int getProfileId() {
@@ -94,5 +109,29 @@ public class Quiz {
 
     public void setRepeat(boolean repeat) {
         this.repeat = repeat;
+    }
+
+    public int getTotalPassed() {
+        return totalPassed;
+    }
+
+    public void setTotalPassed(int totalPassed) {
+        this.totalPassed = totalPassed;
+    }
+
+    public int getTotalFailed() {
+        return totalFailed;
+    }
+
+    public void setTotalFailed(int totalFailed) {
+        this.totalFailed = totalFailed;
+    }
+
+    public int getTotalSkipped() {
+        return totalSkipped;
+    }
+
+    public void setTotalSkipped(int totalSkipped) {
+        this.totalSkipped = totalSkipped;
     }
 }

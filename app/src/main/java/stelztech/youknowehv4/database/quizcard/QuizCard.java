@@ -6,14 +6,16 @@ package stelztech.youknowehv4.database.quizcard;
 public class QuizCard {
 
     private int quizId;
+    private int cardId;
     private String question;
     private String answer;
     private boolean passed;
     private int numFailed;
     private int position;
 
-    public QuizCard(int quizId, String question, String answer, boolean passed, int numFailed, int position) {
+    public QuizCard(int quizId, int cardId, String question, String answer, boolean passed, int numFailed, int position) {
         this.quizId = quizId;
+        this.cardId = cardId;
         this.question = question;
         this.answer = answer;
         this.passed = passed;
@@ -27,6 +29,14 @@ public class QuizCard {
 
     public void setQuizId(int quizId) {
         this.quizId = quizId;
+    }
+
+    public int getCardId() {
+        return cardId;
+    }
+
+    public void setCardId(int cardId) {
+        this.cardId = cardId;
     }
 
     public String getQuestion() {
