@@ -69,7 +69,6 @@ public class QuizFragment extends Fragment {
 
     private int activeQuizId;
 
-    private boolean isRepeat = false;
     private boolean isReviewOnly = false;
     private boolean isOrientationReversed = false;
     private Quiz.MODE quizMode = Quiz.MODE.READING;
@@ -79,7 +78,6 @@ public class QuizFragment extends Fragment {
     private ListView quizOptionsListview;
     private ListView quizDecksListview;
     private Switch reviewOnlySwitch;
-    private Switch repeatSwitch;
 
 
     @Override
@@ -188,7 +186,6 @@ public class QuizFragment extends Fragment {
 
         orientationRadioGroup = (RadioGroup) dialogView.findViewById(R.id.custom_dialog_create_quiz_radio_group);
         reviewOnlySwitch = (Switch) dialogView.findViewById(R.id.custom_dialog_create_quiz_review_only_switch);
-        repeatSwitch = (Switch) dialogView.findViewById(R.id.custom_dialog_create_quiz_repeat_switch);
 
 
         String questionLabel = Database.mUserDao.fetchActiveProfile().getQuestionLabel();
@@ -365,7 +362,6 @@ public class QuizFragment extends Fragment {
 
         intent.putExtra(QuizActivity.EXTRA_INTENT_CONTINUE, false);
         intent.putExtra(QuizActivity.EXTRA_INTENT_TYPE, quizMode.toString());
-        intent.putExtra(QuizActivity.EXTRA_INTENT_REPEAT, isRepeat);
         intent.putExtra(QuizActivity.EXTRA_INTENT_REVIEW_ONLY, isReviewOnly);
         intent.putExtra(QuizActivity.EXTRA_INTENT_REVERSE, isOrientationReversed);
         intent.putIntegerArrayListExtra(QuizActivity.EXTRA_INTENT_DECKS, selectedDeckIdList);
@@ -380,7 +376,6 @@ public class QuizFragment extends Fragment {
 
         isOrientationReversed = orientationId != R.id.custom_dialog_create_quiz_orientation_normal;
 
-        isRepeat = repeatSwitch.isChecked();
         isReviewOnly = reviewOnlySwitch.isChecked();
 
         int quizOptionsCheckPosition = quizOptionsListview.getCheckedItemPosition();

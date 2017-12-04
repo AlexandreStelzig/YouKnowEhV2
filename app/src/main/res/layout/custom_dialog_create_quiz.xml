@@ -54,14 +54,6 @@
             android:layout_height="10dp" />
 
         <Switch
-            android:id="@+id/custom_dialog_create_quiz_repeat_switch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="Repeat wrong answers"
-            android:textSize="16sp" />
-
-        <Switch
             android:id="@+id/custom_dialog_create_quiz_review_only_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

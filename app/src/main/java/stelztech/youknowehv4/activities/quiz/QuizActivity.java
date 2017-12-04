@@ -43,7 +43,6 @@ public abstract class QuizActivity extends AppCompatActivity {
     protected int currentCardPosition;
 
     // quiz variables
-    protected boolean isRepeatWrongAnswers;
     protected boolean isReviewCardsOnly;
     protected boolean isOrientationReversed;
     protected ArrayList<Integer> deckIdList = new ArrayList<>();
@@ -54,7 +53,6 @@ public abstract class QuizActivity extends AppCompatActivity {
 
     public static final String EXTRA_INTENT_CONTINUE = "quiz_continue";
     public static final String EXTRA_INTENT_TYPE = "quiz_type";
-    public static final String EXTRA_INTENT_REPEAT = "quiz_is_repeat";
     public static final String EXTRA_INTENT_REVIEW_ONLY = "quiz_is_review_only";
     public static final String EXTRA_INTENT_REVERSE = "quiz_is_reverse";
     public static final String EXTRA_INTENT_DECKS = "quiz_decks";
@@ -97,7 +95,6 @@ public abstract class QuizActivity extends AppCompatActivity {
 
         } else {
 
-            isRepeatWrongAnswers = getIntent().getBooleanExtra(EXTRA_INTENT_REPEAT, false);
             isReviewCardsOnly = getIntent().getBooleanExtra(EXTRA_INTENT_REVIEW_ONLY, false);
             isOrientationReversed = getIntent().getBooleanExtra(EXTRA_INTENT_REVERSE, false);
 
@@ -116,7 +113,6 @@ public abstract class QuizActivity extends AppCompatActivity {
 
     private void initializeQuizVariables() {
         // todo fetch real data
-        isRepeatWrongAnswers = true;
         isReviewCardsOnly = false;
     }
 
@@ -182,13 +178,13 @@ public abstract class QuizActivity extends AppCompatActivity {
 
     private void loopCompleted() {
 
-        if (isRepeatWrongAnswers) {
-            repopulateQuizCardListWithWrongAnswers();
-            resetQuiz();
-        } else {
-            // todo finished state
-            isFinished = true;
-        }
+
+//            repopulateQuizCardListWithWrongAnswers();
+//            resetQuiz();
+
+        // todo finished state
+        isFinished = true;
+
     }
 
     protected void resetQuiz() {

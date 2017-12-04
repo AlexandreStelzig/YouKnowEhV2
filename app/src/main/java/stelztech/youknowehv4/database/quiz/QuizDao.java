@@ -68,14 +68,13 @@ public class QuizDao extends DbContentProvider implements IQuizDao, IQuizSchema 
     }
 
     @Override
-    public int createQuiz(Quiz.MODE mode, boolean reverse, boolean repeat, boolean reviewOnly) {
+    public int createQuiz(Quiz.MODE mode, boolean reverse, boolean reviewOnly) {
         ContentValues values = new ContentValues();
 
         String date = DateHelper.getDateNowString();
 
         values.put(COLUMN_DATE_CREATED, date);
         values.put(COLUMN_DATE_FINISHED, "");
-        values.put(COLUMN_REPEAT, repeat);
         values.put(COLUMN_REVERSE, reverse);
         values.put(COLUMN_REVIEW_ONLY, reviewOnly);
         values.put(COLUMN_MODE, String.valueOf(mode));
@@ -129,7 +128,6 @@ public class QuizDao extends DbContentProvider implements IQuizDao, IQuizSchema 
         int quizId = cursor.getInt(cursor.getColumnIndex(COLUMN_QUIZ_ID));
         String dateCreated = cursor.getString(cursor.getColumnIndex(COLUMN_DATE_CREATED));
         String dateFinished = cursor.getString(cursor.getColumnIndex(COLUMN_DATE_FINISHED));
-        boolean repeat = cursor.getInt(cursor.getColumnIndex(COLUMN_REPEAT)) > 0;
         boolean reverse = cursor.getInt(cursor.getColumnIndex(COLUMN_REVERSE)) > 0;
         String mode = cursor.getString(cursor.getColumnIndex(COLUMN_MODE));
         int profileId = cursor.getInt(cursor.getColumnIndex(COLUMN_PROFILE_ID));
@@ -139,7 +137,7 @@ public class QuizDao extends DbContentProvider implements IQuizDao, IQuizSchema 
         int skipped = cursor.getInt(cursor.getColumnIndex(COLUMN_NUM_SKIPPED));
 
 
-        return new Quiz(quizId, dateCreated, dateFinished, Quiz.MODE.valueOf(mode), reverse, repeat, reviewOnly, profileId, passed, failed, skipped);
+        return new Quiz(quizId, dateCreated, dateFinished, Quiz.MODE.valueOf(mode), reverse, reviewOnly, profileId, passed, failed, skipped);
     }
 }
 

@@ -13,7 +13,6 @@ public interface IQuizSchema {
     String COLUMN_QUIZ_ID = "quiz_id";
     String COLUMN_DATE_CREATED = "date_created";
     String COLUMN_DATE_FINISHED = "date_finished";
-    String COLUMN_REPEAT = "quiz_failed_repeat";
     String COLUMN_REVERSE = "quiz_orientation_reverse";
     String COLUMN_REVIEW_ONLY = "review_cards_only";
     String COLUMN_MODE = "quiz_mode";
@@ -29,7 +28,6 @@ public interface IQuizSchema {
             + COLUMN_DATE_CREATED + " TEXT,"
             + COLUMN_DATE_FINISHED + " TEXT,"
             + COLUMN_MODE + " TEXT,"
-            + COLUMN_REPEAT + " BOOLEAN,"
             + COLUMN_PROFILE_ID + " INTEGER,"
             + COLUMN_REVIEW_ONLY + " BOOLEAN,"
             + COLUMN_REVERSE + " BOOLEAN,"

@@ -12,7 +12,7 @@ public interface IQuizDao {
     List<Quiz> fetchAllQuizzes();
     Quiz fetchQuizById(int quizId);
     boolean deleteQuiz(int quizId);
-    int createQuiz( Quiz.MODE mode, boolean reverse, boolean repeat, boolean reviewOnly);
+    int createQuiz( Quiz.MODE mode, boolean reverse, boolean reviewOnly);
     boolean updateDateFinished(int quizId, String date);
     boolean updateTotalQuizStats(int quizId, int totalPassed, int totalFailed, int totalSkipped);
 

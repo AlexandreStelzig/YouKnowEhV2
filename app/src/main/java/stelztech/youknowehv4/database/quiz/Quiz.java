@@ -26,20 +26,18 @@ public class Quiz {
     private String dateFinished;
     private MODE mode;
     private boolean reverse;
-    private boolean repeat;
     private boolean reviewOnly;
     private int profileId;
     private int totalPassed;
     private int totalFailed;
     private int totalSkipped;
 
-    public Quiz(int quizId, String dateCreated, String dateFinished, MODE mode, boolean reverse, boolean repeat, boolean reviewOnly, int profileId, int totalPassed, int totalFailed, int totalSkipped) {
+    public Quiz(int quizId, String dateCreated, String dateFinished, MODE mode, boolean reverse, boolean reviewOnly, int profileId, int totalPassed, int totalFailed, int totalSkipped) {
         this.quizId = quizId;
         this.dateCreated = dateCreated;
         this.dateFinished = dateFinished;
         this.mode = mode;
         this.reverse = reverse;
-        this.repeat = repeat;
         this.reviewOnly = reviewOnly;
         this.profileId = profileId;
         this.totalPassed = totalPassed;
@@ -101,14 +99,6 @@ public class Quiz {
 
     public void setReverse(boolean reverse) {
         this.reverse = reverse;
-    }
-
-    public boolean isRepeat() {
-        return repeat;
-    }
-
-    public void setRepeat(boolean repeat) {
-        this.repeat = repeat;
     }
 
     public int getTotalPassed() {
