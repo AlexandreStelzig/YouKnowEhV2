@@ -30,7 +30,7 @@ import java.util.List;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.database.Database;
-import stelztech.youknowehv4.helper.Helper;
+import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.profile.Profile;

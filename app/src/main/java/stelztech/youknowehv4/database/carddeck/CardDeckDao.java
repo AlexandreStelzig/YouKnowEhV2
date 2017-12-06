@@ -19,7 +19,7 @@ import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.DbContentProvider;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.deck.Deck;
-import stelztech.youknowehv4.helper.DateHelper;
+import stelztech.youknowehv4.utilities.DateUtilities;
 import stelztech.youknowehv4.manager.SortingStateManager;
 
 import static stelztech.youknowehv4.database.carddeck.CardDeck.REVIEW_TOGGLE_ID;
@@ -134,7 +134,7 @@ public class CardDeckDao extends DbContentProvider implements ICardDeckDao, ICar
 
         cardDecks.clear();
 
-        Date dateNow = DateHelper.getDateNow();
+        Date dateNow = DateUtilities.getDateNow();
 
 
         for (int counter = 0; counter < cardDecksNotPractice.size(); counter++) {
@@ -144,7 +144,7 @@ public class CardDeckDao extends DbContentProvider implements ICardDeckDao, ICar
 
             if (!dateToggle.equals("")) {
 
-                Date date = DateHelper.stringToDate(dateToggle);
+                Date date = DateUtilities.stringToDate(dateToggle);
                 boolean readyToToggle = dateNow.after(date);
 
                 if (readyToToggle) {
@@ -197,7 +197,7 @@ public class CardDeckDao extends DbContentProvider implements ICardDeckDao, ICar
         ContentValues values = new ContentValues();
 
 
-        String date = DateHelper.getDateNowString();
+        String date = DateUtilities.getDateNowString();
 
         values.put(COLUMN_DECK_ID, deckId);
         values.put(COLUMN_CARD_ID, cardId);
@@ -222,8 +222,8 @@ public class CardDeckDao extends DbContentProvider implements ICardDeckDao, ICar
         String dateToToggle = "";
         if (nbHoursToBeToggled != REVIEW_TOGGLE_ID) {
             // todo change to date helper
-            DateFormat df = new SimpleDateFormat(DateHelper.DEFAULT_DATE_FORMAT);
-            Date now = DateHelper.getDateNow();
+            DateFormat df = new SimpleDateFormat(DateUtilities.DEFAULT_DATE_FORMAT);
+            Date now = DateUtilities.getDateNow();
 
             Date newDate = DateUtils.addHours(now, nbHoursToBeToggled);
             dateToToggle = df.format(newDate);
@@ -274,6 +274,12 @@ public class CardDeckDao extends DbContentProvider implements ICardDeckDao, ICar
     public int fetchNumberDecksFromCardId(int cardId) {
         return (int) DatabaseUtils.longForQuery(mDb, "SELECT COUNT(*) FROM " + CARD_DECK_TABLE + " WHERE "
                 + COLUMN_CARD_ID + "=" + cardId, null);
+    }
+
+    @Override
+    public int fetchNumberReviewCardsFromDeck(int deckId) {
+        return (int) DatabaseUtils.longForQuery(mDb, "SELECT COUNT(*) FROM " + CARD_DECK_TABLE + " WHERE "
+                + COLUMN_DECK_ID + "=" + deckId + " AND " + COLUMN_IS_REVIEW + "=" + 1, null);
     }
 
     @Override

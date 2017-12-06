@@ -23,8 +23,8 @@ import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.ArchivedActivity;
 import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.database.Database;
-import stelztech.youknowehv4.helper.CardHelper;
-import stelztech.youknowehv4.helper.Helper;
+import stelztech.youknowehv4.utilities.CardUtilities;
+import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.ExportImportManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
@@ -259,7 +259,7 @@ public class SettingsFragment extends Fragment{
 
                 switch (position) {
                     case 0:
-                        CardHelper.mergeDuplicates();
+                        CardUtilities.mergeDuplicates();
                         Toast.makeText(getContext(), "Merge completed", Toast.LENGTH_SHORT).show();
 
                         break;

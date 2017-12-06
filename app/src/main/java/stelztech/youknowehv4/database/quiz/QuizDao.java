@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import stelztech.youknowehv4.database.DbContentProvider;
-import stelztech.youknowehv4.helper.DateHelper;
+import stelztech.youknowehv4.utilities.DateUtilities;
 
 /**
  * Created by alex on 10/14/2017.
@@ -71,7 +71,7 @@ public class QuizDao extends DbContentProvider implements IQuizDao, IQuizSchema 
     public int createQuiz(Quiz.MODE mode, boolean reverse, boolean reviewOnly) {
         ContentValues values = new ContentValues();
 
-        String date = DateHelper.getDateNowString();
+        String date = DateUtilities.getDateNowString();
 
         values.put(COLUMN_DATE_CREATED, date);
         values.put(COLUMN_DATE_FINISHED, "");

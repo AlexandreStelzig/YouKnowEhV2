@@ -6,12 +6,10 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import java.util.Date;
-
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.DbContentProvider;
 import stelztech.youknowehv4.database.profile.Profile;
-import stelztech.youknowehv4.helper.DateHelper;
+import stelztech.youknowehv4.utilities.DateUtilities;
 
 /**
  * Created by alex on 10/14/2017.
@@ -46,7 +44,7 @@ public class UserDao extends DbContentProvider implements IUserDao, IUserSchema 
         if (fetchUser() == null) {
             ContentValues values = new ContentValues();
 
-            String date = DateHelper.getDateNowString();
+            String date = DateUtilities.getDateNowString();
 
 
             // TODO move default values to config file

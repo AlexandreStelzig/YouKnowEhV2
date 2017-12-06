@@ -8,17 +8,22 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.components.DoubleProgressBar;
+import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.quiz.Quiz;
 import stelztech.youknowehv4.database.quizcard.QuizCard;
-import stelztech.youknowehv4.helper.BlurBuilder;
+import stelztech.youknowehv4.utilities.BlurBuilder;
 import stelztech.youknowehv4.manager.ThemeManager;
 
 /**
@@ -43,19 +48,18 @@ public abstract class QuizActivity extends AppCompatActivity {
     protected int currentCardPosition;
 
     // quiz variables
-    protected boolean isReviewCardsOnly;
     protected boolean isOrientationReversed;
-    protected ArrayList<Integer> deckIdList = new ArrayList<>();
     protected Quiz.MODE quizMode;
+    boolean intentContinue;
 
     protected boolean isFinished;
+
+    protected int quizId;
 
 
     public static final String EXTRA_INTENT_CONTINUE = "quiz_continue";
     public static final String EXTRA_INTENT_TYPE = "quiz_type";
-    public static final String EXTRA_INTENT_REVIEW_ONLY = "quiz_is_review_only";
     public static final String EXTRA_INTENT_REVERSE = "quiz_is_reverse";
-    public static final String EXTRA_INTENT_DECKS = "quiz_decks";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,50 +87,38 @@ public abstract class QuizActivity extends AppCompatActivity {
         imageView.setImageBitmap(bitmap);
 
         isFinished = false;
-        initializeQuizVariables();
         initializeQuizCardData();
         initProgressBar();
     }
 
     protected void fetchExtraIntentInformation() {
-        boolean intentContinue = getIntent().getBooleanExtra(EXTRA_INTENT_CONTINUE, false);
+        intentContinue = getIntent().getBooleanExtra(EXTRA_INTENT_CONTINUE, false);
 
         if (intentContinue) {
+            quizId = Database.mProfileDao.fetchActiveQuizId();
+            Quiz quiz = Database.mQuizDao.fetchQuizById(quizId);
+
+            isOrientationReversed = quiz.isReverse();
+            quizMode = quiz.getMode();
+
 
         } else {
 
-            isReviewCardsOnly = getIntent().getBooleanExtra(EXTRA_INTENT_REVIEW_ONLY, false);
             isOrientationReversed = getIntent().getBooleanExtra(EXTRA_INTENT_REVERSE, false);
-
-            deckIdList = getIntent().getIntegerArrayListExtra(EXTRA_INTENT_DECKS);
-
             quizMode = Quiz.MODE.valueOf(getIntent().getStringExtra(EXTRA_INTENT_TYPE));
 
-            createNewQuizCard();
+            quizId = Database.mProfileDao.fetchActiveQuizId();
         }
 
-    }
-
-    private void createNewQuizCard() {
 
     }
 
-    private void initializeQuizVariables() {
-        // todo fetch real data
-        isReviewCardsOnly = false;
-    }
 
     private void initializeQuizCardData() {
         // todo fetch real data
 
         quizCardList.clear();
-        quizCardList.add(new QuizCard(0, 0, "question 1", "answer 1", false, 0, 0));
-        quizCardList.add(new QuizCard(0, 0, "question 2", "answer 2", false, 0, 0));
-        quizCardList.add(new QuizCard(0, 0, "question 3", "answer 3", false, 0, 0));
-        quizCardList.add(new QuizCard(0, 0, "question 4", "answer 4", false, 0, 0));
-        quizCardList.add(new QuizCard(0, 0, "question 5", "answer 5", false, 0, 0));
-        quizCardList.add(new QuizCard(0, 0, "question 6", "answer 6", false, 0, 0));
-        quizCardList.add(new QuizCard(0, 0, "question 7", "answer 7", false, 0, 0));
+        quizCardList = Database.mQuizCardDao.fetchQuizCardsByQuizId(quizId);
 
 
         currentCardPosition = 0;
@@ -134,13 +126,16 @@ public abstract class QuizActivity extends AppCompatActivity {
     }
 
     private void repopulateQuizCardListWithWrongAnswers() {
-        // todo fetch real data
+        List<QuizCard> temp = new ArrayList<>();
 
-        quizCardList.clear();
-        quizCardList.add(new QuizCard(0, 0, "question 1", "answer 1", false, 0, 0));
-        quizCardList.add(new QuizCard(0, 0, "question 2", "answer 2", false, 0, 0));
-        quizCardList.add(new QuizCard(0, 0, "question 3", "answer 3", false, 0, 0));
+        for (int counter = 0; counter < quizCardList.size(); counter++) {
+            QuizCard quizCard = quizCardList.get(counter);
+            if (!quizCard.isPassed()) {
+                temp.add(quizCard);
+            }
+        }
 
+        quizCardList = temp;
         maximumNumQuestion = quizCardList.size();
     }
 
@@ -154,12 +149,17 @@ public abstract class QuizActivity extends AppCompatActivity {
 
     protected void cardPassed() {
         numPassed++;
+        quizCardList.get(currentCardPosition).setPassed(true);
+        // todo database change
         updateProgressBar();
         showNextCard();
     }
 
     protected void cardFailed() {
         numFailed++;
+        QuizCard quizCard = quizCardList.get(currentCardPosition);
+        quizCard.setNumFailed(quizCard.getNumFailed() + 1);
+        // todo database change
         updateProgressBar();
         showNextCard();
     }
@@ -178,12 +178,7 @@ public abstract class QuizActivity extends AppCompatActivity {
 
     private void loopCompleted() {
 
-
-//            repopulateQuizCardListWithWrongAnswers();
-//            resetQuiz();
-
-        // todo finished state
-        isFinished = true;
+        replaceContainerWithLayout(R.layout.quiz_finished_container);
 
     }
 
@@ -245,6 +240,27 @@ public abstract class QuizActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    protected void replaceContainerWithLayout(int layout){
+        FrameLayout rl = (FrameLayout) findViewById(R.id.quiz_type_container);
+        rl.removeAllViews();
+        rl.addView(View.inflate(this, layout, null));
+    }
+
+    protected void replaceContainerWithQuizType(){
+        switch (quizMode){
+            case READING:
+                replaceContainerWithLayout(R.layout.quiz_reading_container);
+                break;
+            case WRITING:
+                replaceContainerWithLayout(R.layout.quiz_writing_container);
+                break;
+            case MULTIPLE_CHOICE:
+                replaceContainerWithLayout(R.layout.quiz_multiple_choice_container);
+                break;
+        }
+        initView();
+    }
+
     public List<QuizCard> getQuizCardList() {
         return quizCardList;
     }
@@ -253,4 +269,23 @@ public abstract class QuizActivity extends AppCompatActivity {
 
     protected abstract void resetContainer();
 
+    protected abstract void initView();
+
+    public void repeatFailedCardsOnClick(View view) {
+        repopulateQuizCardListWithWrongAnswers();
+        if(quizCardList.isEmpty()){
+            Toast.makeText(this, "No failed cards", Toast.LENGTH_SHORT).show();
+        }else{
+            replaceContainerWithQuizType();
+            resetQuiz();
+        }
+    }
+
+    public void exportFailedCardsToDeckOnClick(View view) {
+
+    }
+
+    public void finishOnClick(View view) {
+
+    }
 }

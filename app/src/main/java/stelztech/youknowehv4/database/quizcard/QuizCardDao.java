@@ -2,6 +2,7 @@ package stelztech.youknowehv4.database.quizcard;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.DbContentProvider;
 
 /**
@@ -49,6 +51,27 @@ public class QuizCardDao extends DbContentProvider implements IQuizCardDao, IQui
     public List<QuizCard> fetchQuizCardsByQuizId(int quizId) {
         cursor = super.rawQuery("SELECT * FROM " + QUIZ_CARD_TABLE +
                 " WHERE " + COLUMN_QUIZ_ID + "=" + quizId, null);
+
+        // get all card-deck
+        List<QuizCard> quizCards = new ArrayList<>();
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    quizCards.add(cursorToEntity(cursor));
+                    cursor.moveToNext();
+                }
+            }
+            cursor.close();
+        }
+
+        return quizCards;
+    }
+
+    @Override
+    public List<QuizCard> fetchPassedQuizCardsByQuizId(int quizId) {
+        cursor = super.rawQuery("SELECT * FROM " + QUIZ_CARD_TABLE +
+                " WHERE " + COLUMN_QUIZ_ID + "=" + quizId +
+                " AND " + COLUMN_PASSED + "=" + true, null);
 
         // get all card-deck
         List<QuizCard> quizCards = new ArrayList<>();
@@ -122,6 +145,13 @@ public class QuizCardDao extends DbContentProvider implements IQuizCardDao, IQui
             Log.w("Database", ex.getMessage());
             return false;
         }
+    }
+
+
+    @Override
+    public int fetchNumberQuizCardFromQuizId(int quizId) {
+        return (int) DatabaseUtils.longForQuery(mDb, "SELECT COUNT(*) FROM " + QUIZ_CARD_TABLE + " WHERE "
+                + COLUMN_QUIZ_ID + "=" + quizId, null);
     }
 
     @Override

@@ -4,10 +4,7 @@ package stelztech.youknowehv4.fragments.profile;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -17,17 +14,12 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import stelztech.youknowehv4.R;
@@ -35,8 +27,8 @@ import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.activities.profilepicker.ProfilePickerActivity;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.profile.Profile;
-import stelztech.youknowehv4.helper.DateHelper;
-import stelztech.youknowehv4.helper.Helper;
+import stelztech.youknowehv4.utilities.DateUtilities;
+import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.ThemeManager;
 
@@ -148,7 +140,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                Database.mProfileDao.updateLastTimeOpened(Database.mUserDao.fetchActiveProfile().getProfileId(), DateHelper.getDateNowString());
+                Database.mProfileDao.updateLastTimeOpened(Database.mUserDao.fetchActiveProfile().getProfileId(), DateUtilities.getDateNowString());
                 Database.mUserDao.setActiveProfile(Profile.NO_PROFILES);
 
                 Intent i = new Intent(getActivity(), ProfilePickerActivity.class);

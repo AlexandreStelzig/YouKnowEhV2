@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.helper;
+package stelztech.youknowehv4.utilities;
 
 import android.app.Activity;
 import android.content.Context;

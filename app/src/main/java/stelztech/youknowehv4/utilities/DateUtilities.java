@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.helper;
+package stelztech.youknowehv4.utilities;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -10,7 +10,7 @@ import java.util.Date;
  * Created by alex on 2017-10-25.
  */
 
-public class DateHelper {
+public class DateUtilities {
 
     public final static String DEFAULT_DATE_FORMAT = "MM/dd/yyyy HH:mm:ss";
 

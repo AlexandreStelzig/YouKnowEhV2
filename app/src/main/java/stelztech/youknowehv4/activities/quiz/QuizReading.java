@@ -1,7 +1,6 @@
 package stelztech.youknowehv4.activities.quiz;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,7 +31,7 @@ public class QuizReading extends QuizActivity {
     RecyclerView.Adapter adapter;
 
     private static final float SCROLLVIEW_TRANSFORM_SCALE = 0.8f;
-    private static final int TRANSITION_TIME_MILLIS = 100;
+    private static final int TRANSITION_TIME_MILLIS = 50;
 
     private boolean isShowingBackCard;
 
@@ -42,25 +41,14 @@ public class QuizReading extends QuizActivity {
         super.onCreate(savedInstanceState);
 
         isAnimating = isShowingBackCard = false;
-        FrameLayout rl = (FrameLayout) findViewById(R.id.quiz_type_container);
-        rl.removeAllViews();
-        rl.addView(View.inflate(this, R.layout.quiz_reading_container, null));
 
+        replaceContainerWithQuizType();
 
         getSupportActionBar().setTitle("Reading Quiz");
 
-        showButton = (Button) findViewById(R.id.quiz_show_button);
-        passButton = (Button) findViewById(R.id.quiz_pass_button);
-        failButton = (Button) findViewById(R.id.quiz_fail_button);
-        scrollView = (DiscreteScrollView) findViewById(R.id.quiz_reading_scrollview);
-
-
-        initScrollView();
-        initButtons();
-
     }
 
-    private void initScrollView(){
+    private void initScrollView() {
 
         scrollView.setOrientation(Orientation.HORIZONTAL);
 
@@ -158,10 +146,16 @@ public class QuizReading extends QuizActivity {
             public void onAnimationEnd(Animation animation) {
                 if (isShowingBackCard) {
                     isShowingBackCard = false;
-                    ((TextView) view.findViewById(R.id.quiz_reading_card_front)).setText(quizCardList.get(currentCardPosition).getQuestion());
+                    if (isOrientationReversed)
+                        ((TextView) view.findViewById(R.id.quiz_reading_card_front)).setText(quizCardList.get(currentCardPosition).getAnswer());
+                    else
+                        ((TextView) view.findViewById(R.id.quiz_reading_card_front)).setText(quizCardList.get(currentCardPosition).getQuestion());
                 } else {
                     isShowingBackCard = true;
-                    ((TextView) view.findViewById(R.id.quiz_reading_card_front)).setText(quizCardList.get(currentCardPosition).getAnswer());
+                    if (isOrientationReversed)
+                        ((TextView) view.findViewById(R.id.quiz_reading_card_front)).setText(quizCardList.get(currentCardPosition).getQuestion());
+                    else
+                        ((TextView) view.findViewById(R.id.quiz_reading_card_front)).setText(quizCardList.get(currentCardPosition).getAnswer());
                 }
                 view.startAnimation(animationIn);
             }
@@ -185,11 +179,23 @@ public class QuizReading extends QuizActivity {
     protected void resetContainer() {
         isShowingBackCard = false;
         adapter.notifyDataSetChanged();
-        scrollView.post( new Runnable() {
+        scrollView.post(new Runnable() {
             @Override
             public void run() {
                 scrollView.smoothScrollToPosition(0);
             }
         });
+    }
+
+    @Override
+    protected void initView() {
+        showButton = (Button) findViewById(R.id.quiz_show_button);
+        passButton = (Button) findViewById(R.id.quiz_pass_button);
+        failButton = (Button) findViewById(R.id.quiz_fail_button);
+        scrollView = (DiscreteScrollView) findViewById(R.id.quiz_reading_scrollview);
+
+
+        initScrollView();
+        initButtons();
     }
 }

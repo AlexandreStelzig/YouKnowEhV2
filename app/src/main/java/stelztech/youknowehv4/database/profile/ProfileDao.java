@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import stelztech.youknowehv4.R;
@@ -15,7 +14,7 @@ import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.DbContentProvider;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.deck.Deck;
-import stelztech.youknowehv4.helper.DateHelper;
+import stelztech.youknowehv4.utilities.DateUtilities;
 import stelztech.youknowehv4.manager.ThemeManager;
 
 import static stelztech.youknowehv4.database.profile.Profile.NO_QUIZ;
@@ -87,7 +86,7 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
     public int createProfile(String name) {
         ContentValues values = new ContentValues();
 
-        String date = DateHelper.getDateNowString();
+        String date = DateUtilities.getDateNowString();
 
         values.put(COLUMN_PROFILE_NAME, name);
         values.put(COLUMN_DATE_CREATED, date);
@@ -112,7 +111,7 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
         ContentValues values = new ContentValues();
 
         try {
-            String date = DateHelper.getDateNowString();
+            String date = DateUtilities.getDateNowString();
 
             values.put(COLUMN_PROFILE_NAME, name);
             values.put(COLUMN_DATE_MODIFIED, date);
@@ -129,7 +128,7 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
         ContentValues values = new ContentValues();
 
         try {
-            String date = DateHelper.getDateNowString();
+            String date = DateUtilities.getDateNowString();
 
             values.put(COLUMN_QUESTION_LABEL, questionLabel);
             values.put(COLUMN_DATE_MODIFIED, date);
@@ -146,7 +145,7 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
         ContentValues values = new ContentValues();
 
         try {
-            String date = DateHelper.getDateNowString();
+            String date = DateUtilities.getDateNowString();
 
             values.put(COLUMN_ANSWER_LABEL, answerLabel);
             values.put(COLUMN_DATE_MODIFIED, date);
@@ -163,7 +162,7 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
         ContentValues values = new ContentValues();
 
         try {
-            String date = DateHelper.getDateNowString();
+            String date = DateUtilities.getDateNowString();
 
             values.put(COLUMN_PROFILE_COLOR, String.valueOf(themeColor));
             values.put(COLUMN_DATE_MODIFIED, date);
@@ -194,7 +193,7 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
         ContentValues values = new ContentValues();
 
         try {
-            String date = DateHelper.getDateNowString();
+            String date = DateUtilities.getDateNowString();
 
             values.put(COLUMN_PROFILE_IMAGE, picture);
             values.put(COLUMN_DATE_MODIFIED, date);
@@ -209,6 +208,20 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
     @Override
     public int fetchActiveQuizId() {
         return Database.mUserDao.fetchActiveProfile().getActiveQuizId();
+    }
+
+    @Override
+    public boolean setActiveQuizId(int profileId, int quizId) {
+        ContentValues values = new ContentValues();
+
+        try {
+            values.put(COLUMN_ACTIVE_QUIZ_ID, quizId);
+
+            return super.update(PROFILE_TABLE, values, COLUMN_PROFILE_ID + "=" + profileId, null) > 0;
+        } catch (SQLiteConstraintException ex) {
+            Log.w("Database", ex.getMessage());
+            return false;
+        }
     }
 
     @Override

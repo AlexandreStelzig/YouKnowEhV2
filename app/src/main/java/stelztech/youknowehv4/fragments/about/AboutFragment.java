@@ -17,7 +17,7 @@ import android.widget.ListView;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.MainActivityManager;
-import stelztech.youknowehv4.helper.Helper;
+import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 
 /**

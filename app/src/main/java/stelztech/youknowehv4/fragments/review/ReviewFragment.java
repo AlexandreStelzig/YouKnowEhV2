@@ -41,8 +41,8 @@ import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.deck.Deck;
 import stelztech.youknowehv4.database.profile.Profile;
-import stelztech.youknowehv4.helper.CardHelper;
-import stelztech.youknowehv4.helper.Helper;
+import stelztech.youknowehv4.utilities.CardUtilities;
+import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 
 import static stelztech.youknowehv4.database.carddeck.CardDeck.REVIEW_TOGGLE_ID;
@@ -374,11 +374,11 @@ public class ReviewFragment extends Fragment {
                                 deckAssociated = null;
 
                             if (showingUndo)
-                                CardHelper.showQuickInfoCard(getActivity(), undoCard, deckAssociated);
+                                CardUtilities.showQuickInfoCard(getActivity(), undoCard, deckAssociated);
                             else if (showingPrevious)
-                                CardHelper.showQuickInfoCard(getActivity(), previousCard, deckAssociated);
+                                CardUtilities.showQuickInfoCard(getActivity(), previousCard, deckAssociated);
                             else
-                                CardHelper.showQuickInfoCard(getActivity(), mCardList.get(questionOrder.get(currentQuestion)), deckAssociated);
+                                CardUtilities.showQuickInfoCard(getActivity(), mCardList.get(questionOrder.get(currentQuestion)), deckAssociated);
                         }
                     }
                     return true;

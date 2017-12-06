@@ -30,8 +30,6 @@ public interface IQuizCardSchema {
             + COLUMN_NUMBER_FAILED + " INTEGER,"
             + COLUMN_POSITION + " INTEGER,"
             + COLUMN_PASSED + " BOOLEAN,"
-            + " FOREIGN KEY " + "(" + COLUMN_CARD_ID + ")"
-            + " REFERENCES " + ICardSchema.CARD_TABLE + "(" + ICardSchema.COLUMN_CARD_ID + "),"
             + " FOREIGN KEY " + "(" + COLUMN_QUIZ_ID + ")"
             + " REFERENCES " + IQuizSchema.QUIZ_TABLE + "(" + IQuizSchema.COLUMN_QUIZ_ID + ")"
             + " PRIMARY KEY (" + COLUMN_CARD_ID + ", " + COLUMN_QUIZ_ID + ") " + ");";

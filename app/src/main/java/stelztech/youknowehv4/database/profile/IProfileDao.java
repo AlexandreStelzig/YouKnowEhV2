@@ -22,4 +22,5 @@ public interface IProfileDao {
     boolean updateLastTimeOpened(int profileId, String lastTimeOpenedDate);
     boolean updateProfileImage(int profileId, int picture);
     int fetchActiveQuizId();
+    boolean setActiveQuizId(int profileId, int quizId);
 }

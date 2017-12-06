@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.helper;
+package stelztech.youknowehv4.utilities;
 
 import android.app.Activity;
 import android.text.Html;
@@ -18,7 +18,7 @@ import stelztech.youknowehv4.database.profile.Profile;
  * Created by alex on 10/1/2017.
  */
 
-public class CardHelper {
+public class CardUtilities {
 
 
 
@@ -51,11 +51,11 @@ public class CardHelper {
 
         if(cardDeck != null && !cardDeck.isReview()){
             String practiceToggleText = "<b>Card Review Toggle: </b>";
-            if(!DateHelper.isValidDate(cardDeck.getReviewToggleDate())){
+            if(!DateUtilities.isValidDate(cardDeck.getReviewToggleDate())){
                 practiceToggleText = practiceToggleText + "Until Toggled Manually";
             }else {
-                Date dateNow = DateHelper.getDateNow();
-                Date dateToggle = DateHelper.stringToDate(cardDeck.getReviewToggleDate());
+                Date dateNow = DateUtilities.getDateNow();
+                Date dateToggle = DateUtilities.stringToDate(cardDeck.getReviewToggleDate());
 
                 long timeDiff = dateToggle.getTime() - dateNow.getTime();
 

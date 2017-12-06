@@ -1,0 +1,58 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="100dp"/>
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="5dp"
+        android:background="@drawable/button_drawable_selector"
+        android:drawableStart="@drawable/ic_repeat_white_24dp"
+        android:paddingEnd="20dp"
+        android:paddingStart="20dp"
+        android:text="Repeat Failed Cards"
+        android:textColor="?colorTextIcon"
+        android:onClick="repeatFailedCardsOnClick"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="5dp"
+        android:background="@drawable/button_drawable_selector"
+        android:drawableStart="@drawable/ic_arrow_upward_white_24dp"
+        android:paddingEnd="20dp"
+        android:paddingStart="20dp"
+        android:text="Export Failed Cards to Deck"
+        android:textColor="?colorTextIcon"
+        android:onClick="exportFailedCardsToDeckOnClick" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="75dp"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="5dp"
+        android:background="@drawable/button_drawable_selector"
+        android:drawableStart="@drawable/ic_done_white_24dp"
+        android:paddingEnd="20dp"
+        android:paddingStart="20dp"
+        android:text="Finish"
+        android:textColor="?colorTextIcon"
+        android:onClick="finishOnClick" />
+
+
+</LinearLayout>

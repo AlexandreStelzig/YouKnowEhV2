@@ -41,6 +41,14 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".activities.quiz.QuizWriting"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activities.quiz.QuizMultipleChoice"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".firsttimeopening.FirstTimeOpeningActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeBlue.NoActionBar" />

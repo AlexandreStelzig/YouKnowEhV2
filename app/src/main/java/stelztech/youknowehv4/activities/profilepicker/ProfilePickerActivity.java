@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
@@ -21,7 +20,7 @@ import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.profile.Profile;
-import stelztech.youknowehv4.helper.BlurBuilder;
+import stelztech.youknowehv4.utilities.BlurBuilder;
 import stelztech.youknowehv4.manager.ThemeManager;
 
 /**

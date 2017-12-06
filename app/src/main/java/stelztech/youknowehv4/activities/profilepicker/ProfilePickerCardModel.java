@@ -1,15 +1,13 @@
 package stelztech.youknowehv4.activities.profilepicker;
 
 import android.content.Context;
-import android.util.TypedValue;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.profile.Profile;
-import stelztech.youknowehv4.helper.DateHelper;
+import stelztech.youknowehv4.utilities.DateUtilities;
 import stelztech.youknowehv4.manager.ThemeManager;
 
 /**
@@ -34,8 +32,8 @@ public class ProfilePickerCardModel {
         this.nbCards = Database.mCardDao.fetchNumberOfCardsByProfileId(profile.getProfileId());
         this.nbDecks = Database.mDeckDao.fetchNumberOfDecksByProfileId(profile.getProfileId());
 
-        Date lastTimeOpened = DateHelper.stringToDate(profile.getLastTimeOpened());
-        Date dateNow = DateHelper.getDateNow();
+        Date lastTimeOpened = DateUtilities.stringToDate(profile.getLastTimeOpened());
+        Date dateNow = DateUtilities.getDateNow();
 
         long diff = dateNow.getTime() - lastTimeOpened.getTime();
 

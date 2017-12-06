@@ -26,7 +26,7 @@ import stelztech.youknowehv4.fragments.statistics.StatisticsFragment;
 import stelztech.youknowehv4.fragments.review.ReviewFragment;
 import stelztech.youknowehv4.fragments.profile.ProfileFragment;
 import stelztech.youknowehv4.fragments.settings.SettingsFragment;
-import stelztech.youknowehv4.helper.Helper;
+import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.CardInfoToolbarManager;
 import stelztech.youknowehv4.manager.CardToolbarManager;

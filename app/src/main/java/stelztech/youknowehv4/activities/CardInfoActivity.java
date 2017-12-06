@@ -37,8 +37,8 @@ import java.util.List;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.database.Database;
-import stelztech.youknowehv4.helper.DateHelper;
-import stelztech.youknowehv4.helper.Helper;
+import stelztech.youknowehv4.utilities.DateUtilities;
+import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.CardInfoToolbarManager;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.deck.Deck;
@@ -888,8 +888,8 @@ public class CardInfoActivity extends AppCompatActivity {
         }
 
 
-        dateCreatedTV.setText(DateHelper.dateToString(card.getDateCreated()));
-        dateModifiedTV.setText(DateHelper.dateToString(card.getDateModified()));
+        dateCreatedTV.setText(DateUtilities.dateToString(card.getDateCreated()));
+        dateModifiedTV.setText(DateUtilities.dateToString(card.getDateModified()));
     }
 
     private void setEditTextEditable(boolean isEditable) {

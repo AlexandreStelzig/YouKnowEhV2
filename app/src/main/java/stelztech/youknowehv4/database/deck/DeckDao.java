@@ -8,13 +8,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.DbContentProvider;
 import stelztech.youknowehv4.database.card.Card;
-import stelztech.youknowehv4.helper.DateHelper;
+import stelztech.youknowehv4.utilities.DateUtilities;
 import stelztech.youknowehv4.manager.SortingStateManager;
 
 /**
@@ -106,7 +105,7 @@ public class DeckDao extends DbContentProvider implements IDeckDao, IDeckSchema 
     public int createDeck(String deckName) {
         ContentValues values = new ContentValues();
 
-        String date = DateHelper.getDateNowString();
+        String date = DateUtilities.getDateNowString();
 
         long activeProfileId = Database.mUserDao.fetchActiveProfile().getProfileId();
         int position = fetchAllDecks().size() + 1; // TODO create SQL method to fetch deck.size()
@@ -131,7 +130,7 @@ public class DeckDao extends DbContentProvider implements IDeckDao, IDeckSchema 
 
         try {
 
-            String date = DateHelper.getDateNowString();
+            String date = DateUtilities.getDateNowString();
 
             values.put(COLUMN_DECK_NAME, newDeckName);
             values.put(COLUMN_DATE_MODIFIED, date);

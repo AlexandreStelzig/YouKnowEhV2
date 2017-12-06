@@ -28,17 +28,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.activities.quiz.QuizActivity;
+import stelztech.youknowehv4.activities.quiz.QuizMultipleChoice;
 import stelztech.youknowehv4.activities.quiz.QuizReading;
+import stelztech.youknowehv4.activities.quiz.QuizWriting;
 import stelztech.youknowehv4.database.Database;
+import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.deck.Deck;
 import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.database.quiz.Quiz;
-import stelztech.youknowehv4.helper.BlurBuilder;
+import stelztech.youknowehv4.database.quizcard.QuizCard;
+import stelztech.youknowehv4.utilities.BlurBuilder;
+import stelztech.youknowehv4.components.CustomProgressDialog;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 
 /**
@@ -116,7 +123,6 @@ public class QuizFragment extends Fragment {
     private void initButtons() {
 
         Button newQuizButton = (Button) view.findViewById(R.id.quiz_new_button);
-        Button continueQuizButton = (Button) view.findViewById(R.id.quiz_continue_button);
 
         FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
         setHasOptionsMenu(true);
@@ -128,9 +134,16 @@ public class QuizFragment extends Fragment {
             }
         });
 
+        updateContinueButton();
+    }
+
+    private void updateContinueButton() {
+
+        Button continueQuizButton = (Button) view.findViewById(R.id.quiz_continue_button);
         if (activeQuizId == Profile.NO_QUIZ) {
             continueQuizButton.setEnabled(false);
         } else {
+            continueQuizButton.setEnabled(true);
             continueQuizButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -142,7 +155,9 @@ public class QuizFragment extends Fragment {
     }
 
     private void continueQuizButtonClicked() {
-        Intent intent = new Intent(getActivity(), QuizReading.class);
+
+        Intent intent = fetchIntentFromQuizMode(Database.mQuizDao.fetchQuizById(activeQuizId).getMode());
+        intent.putExtra(QuizActivity.EXTRA_INTENT_CONTINUE, true);
         getActivity().startActivityForResult(intent, MainActivityManager.RESULT_ANIMATION_RIGHT_TO_LEFT);
     }
 
@@ -160,7 +175,56 @@ public class QuizFragment extends Fragment {
 
     private void newQuizButtonClicked() {
         if (activeQuizId != Profile.NO_QUIZ) {
-            // todo delete active quiz
+
+
+            int numberOfCards = Database.mQuizCardDao.fetchNumberQuizCardFromQuizId(activeQuizId);
+
+
+            CustomProgressDialog customProgressDialog = new CustomProgressDialog("Removing Previous Quiz",
+                    numberOfCards, getContext(), getActivity()) {
+
+                @Override
+                public void loadInformation() {
+                    List<QuizCard> quizCardList = Database.mQuizCardDao.
+                            fetchQuizCardsByQuizId(Database.mProfileDao.fetchActiveQuizId());
+
+                    int position = 0;
+                    for (QuizCard quizCard : quizCardList) {
+                        Database.mQuizCardDao.deleteQuizCard(quizCard.getCardId(), quizCard.getQuizId());
+                        position++;
+                        setDialogProgress(position);
+                    }
+
+                    Database.mProfileDao.setActiveQuizId(Database.mUserDao.fetchActiveProfile().getProfileId(),
+                            Profile.NO_QUIZ);
+
+                }
+
+                @Override
+                public void informationLoaded() {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            activeQuizId = Profile.NO_QUIZ;
+                            dismiss();
+                            updateContinueButton();
+
+                            // todo move this
+                            if (!deckList.isEmpty() && !allDecksEmpty) {
+                                quizCreationPhase = QuizCreationPhase.PHASE_1;
+                                openNewQuizDialog();
+                            } else {
+                                Toast.makeText(getContext(), "You need at least 1 non-empty deck to create a Quiz", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
+                }
+            };
+
+            customProgressDialog.startDialog();
+
+
         } else {
 
             if (!deckList.isEmpty() && !allDecksEmpty) {
@@ -192,9 +256,9 @@ public class QuizFragment extends Fragment {
         String answerLabel = Database.mUserDao.fetchActiveProfile().getAnswerLabel();
 
         ((RadioButton) dialogView.findViewById(R.id.custom_dialog_create_quiz_orientation_normal))
-                .setText(questionLabel+ "\nto\n" + answerLabel);
+                .setText(questionLabel + "\nto\n" + answerLabel);
         ((RadioButton) dialogView.findViewById(R.id.custom_dialog_create_quiz_orientation_reverse))
-                .setText(answerLabel+ "\nto\n" + questionLabel);
+                .setText(answerLabel + "\nto\n" + questionLabel);
 
 
         // LISTVIEW 1
@@ -279,12 +343,12 @@ public class QuizFragment extends Fragment {
                         } else {
                             // TODO validation and init info
 
-                            if(quizDecksListview.getCheckedItemPositions().size() != 0){
+                            if (quizDecksListview.getCheckedItemPositions().size() != 0) {
                                 fetchQuizCreationInformation();
                                 dialog.dismiss();
-                                setIntentExtraAndStartQuiz();
+                                createQuiz();
 
-                            }else{
+                            } else {
                                 Toast.makeText(getContext(), "At least 1 deck must be selected", Toast.LENGTH_SHORT).show();
 
                             }
@@ -355,20 +419,98 @@ public class QuizFragment extends Fragment {
         dialog.show();
     }
 
+    private void createQuiz() {
+
+        int numberOfCards = 0;
+        for (int deckId : selectedDeckIdList) {
+            if (isReviewOnly)
+                numberOfCards += Database.mCardDeckDao.fetchNumberReviewCardsFromDeck(deckId);
+            else
+                numberOfCards += Database.mCardDeckDao.fetchNumberCardsFromDeckId(deckId);
+        }
+
+        CustomProgressDialog customProgressDialog = new CustomProgressDialog("Creating Quiz",
+                numberOfCards, getContext(), getActivity()) {
+
+            @Override
+            public void loadInformation() {
+                final int quizId = Database.mQuizDao.createQuiz(quizMode, isOrientationReversed, isReviewOnly);
+                Database.mProfileDao.setActiveQuizId(Database.mUserDao.fetchActiveProfile().getProfileId(), quizId);
+                activeQuizId = quizId;
+
+                int position = 0;
+                List<Card> cardList = new ArrayList<>();
+                for (int deckId : selectedDeckIdList) {
+                    if (isReviewOnly)
+                        cardList.addAll(Database.mCardDeckDao.fetchReviewCardsByDeckId(deckId));
+                    else
+                        cardList.addAll(Database.mCardDeckDao.fetchCardsByDeckId(deckId));
+                }
+
+                // todo randomize for position
+                long seed = System.nanoTime();
+                Collections.shuffle(cardList, new Random(seed));
+
+                for (int counter = 0; counter < cardList.size(); counter++) {
+                    Card card = cardList.get(counter);
+                    Database.mQuizCardDao.createQuizCard(card.getCardId(), quizId, card.getQuestion(),
+                            card.getAnswer(), position);
+                    position++;
+
+                    setDialogProgress(position);
+
+
+                }
+
+            }
+
+            @Override
+            public void informationLoaded() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dismiss();
+                        updateContinueButton();
+                        setIntentExtraAndStartQuiz();
+                    }
+                });
+            }
+        };
+
+        customProgressDialog.startDialog();
+
+    }
+
     private void setIntentExtraAndStartQuiz() {
 
-        Intent intent = new Intent(getActivity(), QuizReading.class);
 
+        Intent intent = fetchIntentFromQuizMode(quizMode);
 
         intent.putExtra(QuizActivity.EXTRA_INTENT_CONTINUE, false);
         intent.putExtra(QuizActivity.EXTRA_INTENT_TYPE, quizMode.toString());
-        intent.putExtra(QuizActivity.EXTRA_INTENT_REVIEW_ONLY, isReviewOnly);
         intent.putExtra(QuizActivity.EXTRA_INTENT_REVERSE, isOrientationReversed);
-        intent.putIntegerArrayListExtra(QuizActivity.EXTRA_INTENT_DECKS, selectedDeckIdList);
 
 
         getActivity().startActivityForResult(intent, MainActivityManager.RESULT_ANIMATION_RIGHT_TO_LEFT);
 
+    }
+
+
+    private Intent fetchIntentFromQuizMode(Quiz.MODE quizMode) {
+        Intent intent = null;
+        switch (quizMode) {
+
+            case READING:
+                intent = new Intent(getActivity(), QuizReading.class);
+                break;
+            case WRITING:
+                intent = new Intent(getActivity(), QuizWriting.class);
+                break;
+            case MULTIPLE_CHOICE:
+                intent = new Intent(getActivity(), QuizMultipleChoice.class);
+                break;
+        }
+        return intent;
     }
 
     private void fetchQuizCreationInformation() {

@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true"
+    android:clickable="false"
     android:orientation="vertical">
 
 
@@ -9,13 +9,15 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="6.5"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:clickable="false">
 
 
         <com.yarolegovich.discretescrollview.DiscreteScrollView
             android:id="@+id/quiz_reading_scrollview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:clickable="false"/>
 
 
     </LinearLayout>

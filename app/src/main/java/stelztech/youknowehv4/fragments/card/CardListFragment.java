@@ -45,8 +45,8 @@ import java.util.List;
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.database.Database;
-import stelztech.youknowehv4.helper.CardHelper;
-import stelztech.youknowehv4.helper.Helper;
+import stelztech.youknowehv4.utilities.CardUtilities;
+import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.CardToolbarManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
@@ -799,7 +799,7 @@ public class CardListFragment extends Fragment {
                 else
                     deckAssociated = Database.mDeckDao.fetchDeckById(currentDeckId);
 
-                CardHelper.showQuickInfoCard(getActivity(), cardList.get(indexSelected), deckAssociated);
+                CardUtilities.showQuickInfoCard(getActivity(), cardList.get(indexSelected), deckAssociated);
 
                 return true;
             case R.id.toggle_practice:

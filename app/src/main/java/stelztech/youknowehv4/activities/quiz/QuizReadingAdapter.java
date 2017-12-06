@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import stelztech.youknowehv4.R;
@@ -53,7 +52,12 @@ public class QuizReadingAdapter extends RecyclerView.Adapter<QuizReadingAdapter.
 
     @Override
     public void onBindViewHolder(QuizReadingAdapter.ViewHolder holder, int position) {
-        holder.questionTextView.setText(quizReading.quizCardList.get(position).getQuestion());
+        if (quizReading.isOrientationReversed) {
+            holder.questionTextView.setText(quizReading.quizCardList.get(position).getAnswer());
+        } else {
+            holder.questionTextView.setText(quizReading.quizCardList.get(position).getQuestion());
+
+        }
     }
 
     @Override
@@ -72,7 +76,7 @@ public class QuizReadingAdapter extends RecyclerView.Adapter<QuizReadingAdapter.
         }
     }
 
-    public RecyclerView getRecyclerView(){
+    public RecyclerView getRecyclerView() {
         return parentRecycler;
     }
 

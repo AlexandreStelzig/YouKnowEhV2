@@ -34,7 +34,7 @@ import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.carddeck.CardDeck;
 import stelztech.youknowehv4.database.deck.Deck;
 import stelztech.youknowehv4.database.profile.Profile;
-import stelztech.youknowehv4.helper.DateHelper;
+import stelztech.youknowehv4.utilities.DateUtilities;
 
 /**
  * Created by alex on 2017-05-02.
@@ -87,7 +87,7 @@ public final class ExportImportManager {
                 data[0] = cardTemp.getQuestion();
                 data[1] = cardTemp.getAnswer();
                 data[2] = cardTemp.getMoreInfo();
-                if(!cardDeck.isReview() && !DateHelper.isValidDate(cardDeck.getReviewToggleDate()))
+                if(!cardDeck.isReview() && !DateUtilities.isValidDate(cardDeck.getReviewToggleDate()))
                     data[3] = "" + CardDeck.REVIEW_TOGGLE_ID;
                 else
                     data[3] = cardDeck.getReviewToggleDate();
@@ -207,7 +207,7 @@ public final class ExportImportManager {
 
             String date = cardHolderList.get(i).getReviewToggleDate();
             if (!date.isEmpty()) {
-                boolean isValidDate = DateHelper.isValidDate(date);
+                boolean isValidDate = DateUtilities.isValidDate(date);
 
                 if (isValidDate)
                     Database.mCardDeckDao.setReviewToggleDate(cardId, deckId, date);
