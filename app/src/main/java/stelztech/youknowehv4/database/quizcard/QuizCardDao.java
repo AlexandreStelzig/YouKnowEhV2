@@ -10,7 +10,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.DbContentProvider;
 
 /**
@@ -29,7 +28,6 @@ public class QuizCardDao extends DbContentProvider implements IQuizCardDao, IQui
 
     @Override
     public QuizCard fetchQuizCardById(int cardId, int quizId) {
-
         cursor = super.rawQuery("SELECT * FROM " + QUIZ_CARD_TABLE + " WHERE " +
                 COLUMN_CARD_ID + "=" + cardId + " AND " + COLUMN_QUIZ_ID + "=" + quizId, null);
 
@@ -49,8 +47,10 @@ public class QuizCardDao extends DbContentProvider implements IQuizCardDao, IQui
 
     @Override
     public List<QuizCard> fetchQuizCardsByQuizId(int quizId) {
+        // todo ORDER BY
         cursor = super.rawQuery("SELECT * FROM " + QUIZ_CARD_TABLE +
-                " WHERE " + COLUMN_QUIZ_ID + "=" + quizId, null);
+                " WHERE " + COLUMN_QUIZ_ID + "=" + quizId
+                + " ORDER BY " + COLUMN_POSITION + " DESC", null);
 
         // get all card-deck
         List<QuizCard> quizCards = new ArrayList<>();
@@ -71,7 +71,52 @@ public class QuizCardDao extends DbContentProvider implements IQuizCardDao, IQui
     public List<QuizCard> fetchPassedQuizCardsByQuizId(int quizId) {
         cursor = super.rawQuery("SELECT * FROM " + QUIZ_CARD_TABLE +
                 " WHERE " + COLUMN_QUIZ_ID + "=" + quizId +
-                " AND " + COLUMN_PASSED + "=" + true, null);
+                " AND " + COLUMN_CARD_STATE + "='" + QuizCard.QUIZ_CARD_STATE.PASSED.toString() + "'"
+                +" ORDER BY " + COLUMN_POSITION + " DESC", null);
+
+        // get all card-deck
+        List<QuizCard> quizCards = new ArrayList<>();
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    quizCards.add(cursorToEntity(cursor));
+                    cursor.moveToNext();
+                }
+            }
+            cursor.close();
+        }
+
+        return quizCards;
+    }
+
+    @Override
+    public List<QuizCard> fetchUnansweredQuizCardsByQuizId(int quizId) {
+        cursor = super.rawQuery("SELECT * FROM " + QUIZ_CARD_TABLE +
+                " WHERE " + COLUMN_QUIZ_ID + "=" + quizId +
+                " AND " + COLUMN_CARD_STATE + "='" + QuizCard.QUIZ_CARD_STATE.UNANSWERED.toString() + "'"
+                +" ORDER BY " + COLUMN_POSITION + " DESC", null);
+
+        // get all card-deck
+        List<QuizCard> quizCards = new ArrayList<>();
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    quizCards.add(cursorToEntity(cursor));
+                    cursor.moveToNext();
+                }
+            }
+            cursor.close();
+        }
+
+        return quizCards;
+    }
+
+    @Override
+    public List<QuizCard> fetchFailedQuizCardsByQuizId(int quizId) {
+        cursor = super.rawQuery("SELECT * FROM " + QUIZ_CARD_TABLE +
+                " WHERE " + COLUMN_QUIZ_ID + "=" + quizId +
+                " AND " + COLUMN_CARD_STATE + "='" + QuizCard.QUIZ_CARD_STATE.FAILED.toString() + "'"
+                +" ORDER BY " + COLUMN_POSITION + " DESC", null);
 
         // get all card-deck
         List<QuizCard> quizCards = new ArrayList<>();
@@ -103,7 +148,7 @@ public class QuizCardDao extends DbContentProvider implements IQuizCardDao, IQui
         values.put(COLUMN_CARD_QUESTION, question);
         values.put(COLUMN_CARD_ANSWER, answer);
         values.put(COLUMN_NUMBER_FAILED, 0);
-        values.put(COLUMN_PASSED, false);
+        values.put(COLUMN_CARD_STATE, QuizCard.QUIZ_CARD_STATE.UNANSWERED.toString());
         values.put(COLUMN_POSITION, position);
 
         try {
@@ -137,7 +182,54 @@ public class QuizCardDao extends DbContentProvider implements IQuizCardDao, IQui
 
         try {
 
-            values.put(COLUMN_PASSED, true);
+            values.put(COLUMN_CARD_STATE, QuizCard.QUIZ_CARD_STATE.PASSED.toString());
+
+            return super.update(QUIZ_CARD_TABLE, values, COLUMN_CARD_ID + "="
+                    + cardId + " AND " + COLUMN_QUIZ_ID + "=" + quizId, null) > 0;
+        } catch (SQLiteConstraintException ex) {
+            Log.w("Database", ex.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean markCardAsFailed(int cardId, int quizId) {
+        ContentValues values = new ContentValues();
+
+        try {
+
+            values.put(COLUMN_CARD_STATE, QuizCard.QUIZ_CARD_STATE.FAILED.toString());
+
+            return super.update(QUIZ_CARD_TABLE, values, COLUMN_CARD_ID + "="
+                    + cardId + " AND " + COLUMN_QUIZ_ID + "=" + quizId, null) > 0;
+        } catch (SQLiteConstraintException ex) {
+            Log.w("Database", ex.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean markCardAsUnanswered(int cardId, int quizId) {
+        ContentValues values = new ContentValues();
+
+        try {
+
+            values.put(COLUMN_CARD_STATE, QuizCard.QUIZ_CARD_STATE.UNANSWERED.toString());
+
+            return super.update(QUIZ_CARD_TABLE, values, COLUMN_CARD_ID + "="
+                    + cardId + " AND " + COLUMN_QUIZ_ID + "=" + quizId, null) > 0;
+        } catch (SQLiteConstraintException ex) {
+            Log.w("Database", ex.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateQuizCardPosition(int cardId, int quizId, int position) {
+        ContentValues values = new ContentValues();
+
+        try {
+            values.put(COLUMN_POSITION, position);
 
             return super.update(QUIZ_CARD_TABLE, values, COLUMN_CARD_ID + "="
                     + cardId + " AND " + COLUMN_QUIZ_ID + "=" + quizId, null) > 0;
@@ -155,16 +247,32 @@ public class QuizCardDao extends DbContentProvider implements IQuizCardDao, IQui
     }
 
     @Override
+    public int fetchNumberPassedQuizCardFromQuizId(int quizId) {
+
+        return (int) DatabaseUtils.longForQuery(mDb, "SELECT COUNT(*) FROM " + QUIZ_CARD_TABLE + " WHERE "
+                + COLUMN_QUIZ_ID + "=" + quizId + " AND " + COLUMN_CARD_STATE + "='" +
+                QuizCard.QUIZ_CARD_STATE.PASSED.toString() + "'", null);
+    }
+
+    @Override
+    public int fetchNumberFailedQuizCardFromQuizId(int quizId) {
+
+        return (int) DatabaseUtils.longForQuery(mDb, "SELECT COUNT(*) FROM " + QUIZ_CARD_TABLE + " WHERE "
+                + COLUMN_QUIZ_ID + "=" + quizId + " AND " + COLUMN_CARD_STATE + "='" +
+                QuizCard.QUIZ_CARD_STATE.FAILED.toString() + "'", null);
+    }
+
+    @Override
     protected QuizCard cursorToEntity(Cursor cursor) {
 
         int quizId = cursor.getInt(cursor.getColumnIndex(COLUMN_QUIZ_ID));
         int cardId = cursor.getInt(cursor.getColumnIndex(COLUMN_CARD_ID));
         int numFailed = cursor.getInt(cursor.getColumnIndex(COLUMN_NUMBER_FAILED));
-        boolean passed = cursor.getInt(cursor.getColumnIndex(COLUMN_PASSED)) > 0;
+        QuizCard.QUIZ_CARD_STATE state = QuizCard.QUIZ_CARD_STATE.valueOf(cursor.getString(cursor.getColumnIndex(COLUMN_CARD_STATE)));
         int position = cursor.getInt(cursor.getColumnIndex(COLUMN_POSITION));
         String question = cursor.getString(cursor.getColumnIndex(COLUMN_CARD_QUESTION));
         String answer = cursor.getString(cursor.getColumnIndex(COLUMN_CARD_ANSWER));
 
-        return new QuizCard(quizId, cardId, question, answer, passed, numFailed, position);
+        return new QuizCard(quizId, cardId, question, answer, state, numFailed, position);
     }
 }

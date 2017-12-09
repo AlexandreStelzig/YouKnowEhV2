@@ -5,20 +5,26 @@ package stelztech.youknowehv4.database.quizcard;
  */
 public class QuizCard {
 
+    public enum QUIZ_CARD_STATE{
+        PASSED,
+        FAILED,
+        UNANSWERED
+    }
+
     private int quizId;
     private int cardId;
     private String question;
     private String answer;
-    private boolean passed;
+    private QUIZ_CARD_STATE quizCardState;
     private int numFailed;
     private int position;
 
-    public QuizCard(int quizId, int cardId, String question, String answer, boolean passed, int numFailed, int position) {
+    public QuizCard(int quizId, int cardId, String question, String answer, QUIZ_CARD_STATE quizCardState, int numFailed, int position) {
         this.quizId = quizId;
         this.cardId = cardId;
         this.question = question;
         this.answer = answer;
-        this.passed = passed;
+        this.quizCardState = quizCardState;
         this.numFailed = numFailed;
         this.position = position;
     }
@@ -55,12 +61,12 @@ public class QuizCard {
         this.answer = answer;
     }
 
-    public boolean isPassed() {
-        return passed;
+    public QUIZ_CARD_STATE getQuizCardState() {
+        return quizCardState;
     }
 
-    public void setPassed(boolean passed) {
-        this.passed = passed;
+    public void setQuizCardState(QUIZ_CARD_STATE quizCardState) {
+        this.quizCardState = quizCardState;
     }
 
     public int getNumFailed() {

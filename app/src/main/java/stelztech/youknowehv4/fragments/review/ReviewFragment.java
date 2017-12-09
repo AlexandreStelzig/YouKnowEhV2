@@ -1130,10 +1130,12 @@ public class ReviewFragment extends Fragment {
 
             int selectedDeck = params[0];
 
+
             if (isSelectedDeckAll()) {
                 mCardList = Database.mCardDao.fetchAllCards();
             } else {
                 int deckId = deckList.get(selectedDeck - SPINNER_OFFSET).getDeckId();
+                Database.mCardDeckDao.revalidateReviewCardsByDeckId(deckId);
                 mCardList = Database.mCardDeckDao.fetchReviewCardsByDeckId(deckId);
             }
 

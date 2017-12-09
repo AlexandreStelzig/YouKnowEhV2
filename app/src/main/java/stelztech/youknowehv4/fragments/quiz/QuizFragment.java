@@ -38,6 +38,7 @@ import stelztech.youknowehv4.activities.quiz.QuizActivity;
 import stelztech.youknowehv4.activities.quiz.QuizMultipleChoice;
 import stelztech.youknowehv4.activities.quiz.QuizReading;
 import stelztech.youknowehv4.activities.quiz.QuizWriting;
+import stelztech.youknowehv4.components.CustomYesNoDialog;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.deck.Deck;
@@ -177,52 +178,19 @@ public class QuizFragment extends Fragment {
         if (activeQuizId != Profile.NO_QUIZ) {
 
 
-            int numberOfCards = Database.mQuizCardDao.fetchNumberQuizCardFromQuizId(activeQuizId);
-
-
-            CustomProgressDialog customProgressDialog = new CustomProgressDialog("Removing Previous Quiz",
-                    numberOfCards, getContext(), getActivity()) {
-
+            final CustomYesNoDialog customYesNoDialog = new CustomYesNoDialog(getContext(),
+                    "Override Previous Quiz", "A quiz already exists.\nAre you sure you want to override the previous quiz?") {
                 @Override
-                public void loadInformation() {
-                    List<QuizCard> quizCardList = Database.mQuizCardDao.
-                            fetchQuizCardsByQuizId(Database.mProfileDao.fetchActiveQuizId());
-
-                    int position = 0;
-                    for (QuizCard quizCard : quizCardList) {
-                        Database.mQuizCardDao.deleteQuizCard(quizCard.getCardId(), quizCard.getQuizId());
-                        position++;
-                        setDialogProgress(position);
-                    }
-
-                    Database.mProfileDao.setActiveQuizId(Database.mUserDao.fetchActiveProfile().getProfileId(),
-                            Profile.NO_QUIZ);
+                protected void onNegativeButtonClick() {
 
                 }
 
                 @Override
-                public void informationLoaded() {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            activeQuizId = Profile.NO_QUIZ;
-                            dismiss();
-                            updateContinueButton();
-
-                            // todo move this
-                            if (!deckList.isEmpty() && !allDecksEmpty) {
-                                quizCreationPhase = QuizCreationPhase.PHASE_1;
-                                openNewQuizDialog();
-                            } else {
-                                Toast.makeText(getContext(), "You need at least 1 non-empty deck to create a Quiz", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-
+                protected void onPositiveButtonClick() {
+                    removePreviousQuiz();
                 }
             };
-
-            customProgressDialog.startDialog();
+            customYesNoDialog.show();
 
 
         } else {
@@ -235,6 +203,56 @@ public class QuizFragment extends Fragment {
             }
 
         }
+    }
+
+    private void removePreviousQuiz() {
+        int numberOfCards = Database.mQuizCardDao.fetchNumberQuizCardFromQuizId(activeQuizId);
+
+
+        CustomProgressDialog customProgressDialog = new CustomProgressDialog("Removing Previous Quiz",
+                numberOfCards, getContext(), getActivity()) {
+
+            @Override
+            public void loadInformation() {
+                List<QuizCard> quizCardList = Database.mQuizCardDao.
+                        fetchQuizCardsByQuizId(Database.mProfileDao.fetchActiveQuizId());
+
+                int position = 0;
+                for (QuizCard quizCard : quizCardList) {
+                    Database.mQuizCardDao.deleteQuizCard(quizCard.getCardId(), quizCard.getQuizId());
+                    position++;
+                    setDialogProgress(position);
+                }
+
+                Database.mProfileDao.setActiveQuizId(Database.mUserDao.fetchActiveProfile().getProfileId(),
+                        Profile.NO_QUIZ);
+
+            }
+
+            @Override
+            public void informationLoaded() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        activeQuizId = Profile.NO_QUIZ;
+                        dismiss();
+                        updateContinueButton();
+
+                        // todo move this
+                        if (!deckList.isEmpty() && !allDecksEmpty) {
+                            quizCreationPhase = QuizCreationPhase.PHASE_1;
+                            openNewQuizDialog();
+                        } else {
+                            Toast.makeText(getContext(), "You need at least 1 non-empty deck to create a Quiz", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+            }
+        };
+
+        customProgressDialog.startDialog();
+
     }
 
     private void openNewQuizDialog() {
@@ -348,6 +366,7 @@ public class QuizFragment extends Fragment {
                                 dialog.dismiss();
                                 createQuiz();
 
+
                             } else {
                                 Toast.makeText(getContext(), "At least 1 deck must be selected", Toast.LENGTH_SHORT).show();
 
@@ -447,7 +466,6 @@ public class QuizFragment extends Fragment {
                         cardList.addAll(Database.mCardDeckDao.fetchCardsByDeckId(deckId));
                 }
 
-                // todo randomize for position
                 long seed = System.nanoTime();
                 Collections.shuffle(cardList, new Random(seed));
 
@@ -491,7 +509,7 @@ public class QuizFragment extends Fragment {
         intent.putExtra(QuizActivity.EXTRA_INTENT_REVERSE, isOrientationReversed);
 
 
-        getActivity().startActivityForResult(intent, MainActivityManager.RESULT_ANIMATION_RIGHT_TO_LEFT);
+        getActivity().startActivityForResult(intent, MainActivityManager.RESULT_QUIZ_END);
 
     }
 
@@ -542,5 +560,10 @@ public class QuizFragment extends Fragment {
         actionBar.setDisplayShowTitleEnabled(true);
         getActivity().findViewById(R.id.spinner_nav_layout).setVisibility(View.GONE);
 
+    }
+
+    public void onQuizFinishResult(){
+        activeQuizId = Database.mProfileDao.fetchActiveQuizId();
+        updateContinueButton();
     }
 }

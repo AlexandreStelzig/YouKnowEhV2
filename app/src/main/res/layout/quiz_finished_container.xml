@@ -12,6 +12,7 @@
 
 
     <Button
+        android:id="@+id/quiz_repeat_failed_cards"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

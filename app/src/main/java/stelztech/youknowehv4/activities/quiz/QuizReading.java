@@ -15,6 +15,7 @@ import com.yarolegovich.discretescrollview.Orientation;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
 import stelztech.youknowehv4.R;
+import stelztech.youknowehv4.database.Database;
 
 /**
  * Created by alex on 2017-05-09.
@@ -42,7 +43,12 @@ public class QuizReading extends QuizActivity {
 
         isAnimating = isShowingBackCard = false;
 
-        replaceContainerWithQuizType();
+        if(Database.mQuizCardDao.fetchUnansweredQuizCardsByQuizId(quizId).isEmpty()){
+            replaceContainerWithFinishedLayout();
+        }else{
+            replaceContainerWithQuizType();
+
+        }
 
         getSupportActionBar().setTitle("Reading Quiz");
 
@@ -85,6 +91,8 @@ public class QuizReading extends QuizActivity {
                 }
             }
         });
+
+        scrollView.scrollToPosition(currentCardPosition);
     }
 
     private void initButtons() {

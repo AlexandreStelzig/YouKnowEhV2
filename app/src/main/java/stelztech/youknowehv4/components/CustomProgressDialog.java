@@ -23,6 +23,19 @@ public abstract class CustomProgressDialog extends ProgressDialog {
         setProgress(0);
     }
 
+
+    public CustomProgressDialog(String title, String message, int numToLoad, Context context, Activity activity) {
+        super(context);
+        this.activity = activity;
+        setTitle(title);
+        setMessage(message);
+        setMax(numToLoad);
+        setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        setIndeterminate(false);
+        setCancelable(false);
+        setProgress(0);
+    }
+
     public void startDialog() {
         show();
         new Thread(new Runnable() {
@@ -45,6 +58,27 @@ public abstract class CustomProgressDialog extends ProgressDialog {
             @Override
             public void run() {
                 setProgress(progressValue);
+            }
+        });
+    }
+
+    public void setDialogTitle(final String message) {
+
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setTitle(message);
+            }
+        });
+    }
+
+    public void setDialogMax(final int max) {
+
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                setMax(max);
             }
         });
     }

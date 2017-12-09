@@ -113,9 +113,21 @@ public class CardDeckDao extends DbContentProvider implements ICardDeckDao, ICar
 
     @Override
     public boolean revalidateReviewCards() {
-        // todo only fetch those that are not review
-        cursor = super.rawQuery("SELECT * FROM " + CARD_DECK_TABLE, null);
+        cursor = super.rawQuery("SELECT * FROM " + CARD_DECK_TABLE
+                + " WHERE " + COLUMN_IS_REVIEW + "=" + 0, null);
 
+        return revalidateReviewForCardList(cursor);
+    }
+
+    public boolean revalidateReviewCardsByDeckId(int deckId) {
+        cursor = super.rawQuery("SELECT * FROM " + CARD_DECK_TABLE
+                + " WHERE " + COLUMN_IS_REVIEW + "=" + 0
+                + " AND " + COLUMN_DECK_ID + "=" + deckId, null);
+
+        return revalidateReviewForCardList(cursor);
+    }
+
+    private boolean revalidateReviewForCardList(Cursor cursor){
 
         List<CardDeck> cardDecks = new ArrayList<>();
 
@@ -126,20 +138,12 @@ public class CardDeckDao extends DbContentProvider implements ICardDeckDao, ICar
             }
         }
 
-        List<CardDeck> cardDecksNotPractice = new ArrayList<>();
-        for (int i = 0; i < cardDecks.size(); i++) {
-            if (!cardDecks.get(i).isReview())
-                cardDecksNotPractice.add(cardDecks.get(i));
-        }
-
-        cardDecks.clear();
-
         Date dateNow = DateUtilities.getDateNow();
 
 
-        for (int counter = 0; counter < cardDecksNotPractice.size(); counter++) {
+        for (int counter = 0; counter < cardDecks.size(); counter++) {
 
-            CardDeck temp = cardDecksNotPractice.get(counter);
+            CardDeck temp = cardDecks.get(counter);
             String dateToggle = temp.getReviewToggleDate();
 
             if (!dateToggle.equals("")) {
@@ -156,7 +160,6 @@ public class CardDeckDao extends DbContentProvider implements ICardDeckDao, ICar
 
             }
         }
-
         return true;
     }
 

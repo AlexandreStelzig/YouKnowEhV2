@@ -69,6 +69,7 @@ public class MainActivityManager extends AppCompatActivity
     public final static int EXPORT_RESULT = 2;
     public final static int RESULT_ANIMATION_RIGHT_TO_LEFT = 3;
     public final static int EXPORT_RESULT_ALL = 4;
+    public final static int RESULT_QUIZ_END = 5;
 
     // set fragment after drawer close
     private int mFragmentToSet = INT_NULL;
@@ -424,6 +425,10 @@ public class MainActivityManager extends AppCompatActivity
                 Uri uri = data.getData();
                 ExportImportManager.readAllCSV(MainActivityManager.this, uri);
             }
+        } else if(requestCode == RESULT_QUIZ_END){
+            overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
+            mQuizFragment.onQuizFinishResult();
+
         }
 
     }

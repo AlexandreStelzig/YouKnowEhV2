@@ -1,6 +1,5 @@
 package stelztech.youknowehv4.database.quizcard;
 
-import stelztech.youknowehv4.database.card.ICardSchema;
 import stelztech.youknowehv4.database.quiz.IQuizSchema;
 
 /**
@@ -16,7 +15,7 @@ public interface IQuizCardSchema {
     String COLUMN_CARD_QUESTION = "quiz_card_question";
     String COLUMN_CARD_ANSWER = "quiz_card_answer";
     String COLUMN_NUMBER_FAILED = "quiz_card_num_fail";
-    String COLUMN_PASSED = "quiz_card_passed";
+    String COLUMN_CARD_STATE = "quiz_card_state";
     String COLUMN_POSITION = "quiz_card_position";
 
 
@@ -29,7 +28,7 @@ public interface IQuizCardSchema {
             + COLUMN_CARD_ANSWER + " TEXT NOT NULL,"
             + COLUMN_NUMBER_FAILED + " INTEGER,"
             + COLUMN_POSITION + " INTEGER,"
-            + COLUMN_PASSED + " BOOLEAN,"
+            + COLUMN_CARD_STATE + " TEXT,"
             + " FOREIGN KEY " + "(" + COLUMN_QUIZ_ID + ")"
             + " REFERENCES " + IQuizSchema.QUIZ_TABLE + "(" + IQuizSchema.COLUMN_QUIZ_ID + ")"
             + " PRIMARY KEY (" + COLUMN_CARD_ID + ", " + COLUMN_QUIZ_ID + ") " + ");";

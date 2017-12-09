@@ -16,15 +16,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import stelztech.youknowehv4.R;
+import stelztech.youknowehv4.components.CustomProgressDialog;
 import stelztech.youknowehv4.components.DoubleProgressBar;
 import stelztech.youknowehv4.database.Database;
+import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.database.quiz.Quiz;
 import stelztech.youknowehv4.database.quizcard.QuizCard;
-import stelztech.youknowehv4.utilities.BlurBuilder;
+import stelztech.youknowehv4.fragments.quiz.QuizFragment;
 import stelztech.youknowehv4.manager.ThemeManager;
+import stelztech.youknowehv4.utilities.BlurBuilder;
 
 /**
  * Created by alex on 2017-05-09.
@@ -40,7 +45,6 @@ public abstract class QuizActivity extends AppCompatActivity {
     private TextView remainingText;
     protected int numPassed;
     protected int numFailed;
-    protected int totalPassedFailed;
     protected int maximumNumQuestion;
 
     // questions
@@ -97,7 +101,6 @@ public abstract class QuizActivity extends AppCompatActivity {
         if (intentContinue) {
             quizId = Database.mProfileDao.fetchActiveQuizId();
             Quiz quiz = Database.mQuizDao.fetchQuizById(quizId);
-
             isOrientationReversed = quiz.isReverse();
             quizMode = quiz.getMode();
 
@@ -115,33 +118,33 @@ public abstract class QuizActivity extends AppCompatActivity {
 
 
     private void initializeQuizCardData() {
-        // todo fetch real data
-
         quizCardList.clear();
-        quizCardList = Database.mQuizCardDao.fetchQuizCardsByQuizId(quizId);
+        if (intentContinue) {
+            quizCardList = Database.mQuizCardDao.fetchQuizCardsByQuizId(quizId);
+            numPassed = Database.mQuizCardDao.fetchNumberPassedQuizCardFromQuizId(quizId);
+            numFailed = Database.mQuizCardDao.fetchNumberFailedQuizCardFromQuizId(quizId);
+            currentCardPosition = numPassed + numFailed;
 
+        } else {
+            quizCardList = Database.mQuizCardDao.fetchQuizCardsByQuizId(quizId);
+            currentCardPosition = 0;
+            numPassed = numFailed = 0;
+        }
 
-        currentCardPosition = 0;
         maximumNumQuestion = quizCardList.size();
     }
 
     private void repopulateQuizCardListWithWrongAnswers() {
-        List<QuizCard> temp = new ArrayList<>();
+        quizCardList.clear();
+        quizCardList = Database.mQuizCardDao.fetchQuizCardsByQuizId(quizId);
 
-        for (int counter = 0; counter < quizCardList.size(); counter++) {
-            QuizCard quizCard = quizCardList.get(counter);
-            if (!quizCard.isPassed()) {
-                temp.add(quizCard);
-            }
-        }
+        numPassed = numFailed = 0;
 
-        quizCardList = temp;
         maximumNumQuestion = quizCardList.size();
     }
 
 
     private void initProgressBar() {
-        totalPassedFailed = numPassed = numFailed = 0;
         progressBar = (DoubleProgressBar) findViewById(R.id.quiz_progress_bar);
         progressBar.setMax(maximumNumQuestion);
         updateProgressBar();
@@ -149,7 +152,9 @@ public abstract class QuizActivity extends AppCompatActivity {
 
     protected void cardPassed() {
         numPassed++;
-        quizCardList.get(currentCardPosition).setPassed(true);
+        QuizCard quizCard = quizCardList.get(currentCardPosition);
+        Database.mQuizCardDao.markCardAsPassed(quizCard.getCardId(), quizCard.getQuizId());
+        quizCardList.get(currentCardPosition).setQuizCardState(QuizCard.QUIZ_CARD_STATE.PASSED);
         // todo database change
         updateProgressBar();
         showNextCard();
@@ -158,13 +163,15 @@ public abstract class QuizActivity extends AppCompatActivity {
     protected void cardFailed() {
         numFailed++;
         QuizCard quizCard = quizCardList.get(currentCardPosition);
-        quizCard.setNumFailed(quizCard.getNumFailed() + 1);
+        Database.mQuizCardDao.incrementNumberFailed(quizCard.getCardId(), quizCard.getQuizId());
+        Database.mQuizCardDao.markCardAsFailed(quizCard.getCardId(), quizCard.getQuizId());
         // todo database change
         updateProgressBar();
         showNextCard();
     }
 
     protected void showNextCard() {
+
         currentCardPosition++;
 
         if (currentCardPosition >= maximumNumQuestion) {
@@ -178,7 +185,12 @@ public abstract class QuizActivity extends AppCompatActivity {
 
     private void loopCompleted() {
 
-        replaceContainerWithLayout(R.layout.quiz_finished_container);
+        replaceContainerWithFinishedLayout();
+
+        Button repeatButton = ((Button) findViewById(R.id.quiz_repeat_failed_cards));
+
+        repeatButton.setEnabled(Database.mQuizCardDao.fetchNumberFailedQuizCardFromQuizId(quizId) != 0);
+
 
     }
 
@@ -189,14 +201,14 @@ public abstract class QuizActivity extends AppCompatActivity {
     }
 
     private void resetProgressBar() {
-        totalPassedFailed = numPassed = numFailed = 0;
+        numPassed = numFailed = 0;
         progressBar.setMax(maximumNumQuestion);
         updateProgressBar();
     }
 
     protected void updateProgressBar() {
 
-        totalPassedFailed = numPassed + numFailed;
+        int totalPassedFailed = numPassed + numFailed;
 
         progressBar.setProgress(numPassed);
         progressBar.setSecondaryProgress(totalPassedFailed);
@@ -240,14 +252,20 @@ public abstract class QuizActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    protected void replaceContainerWithLayout(int layout){
+    protected void replaceContainerWithLayout(int layout) {
         FrameLayout rl = (FrameLayout) findViewById(R.id.quiz_type_container);
         rl.removeAllViews();
         rl.addView(View.inflate(this, layout, null));
     }
 
-    protected void replaceContainerWithQuizType(){
-        switch (quizMode){
+    protected void replaceContainerWithFinishedLayout() {
+        replaceContainerWithLayout(R.layout.quiz_finished_container);
+    }
+
+    protected void replaceContainerWithQuizType() {
+
+
+        switch (quizMode) {
             case READING:
                 replaceContainerWithLayout(R.layout.quiz_reading_container);
                 break;
@@ -272,20 +290,119 @@ public abstract class QuizActivity extends AppCompatActivity {
     protected abstract void initView();
 
     public void repeatFailedCardsOnClick(View view) {
-        repopulateQuizCardListWithWrongAnswers();
-        if(quizCardList.isEmpty()){
+        if (Database.mQuizCardDao.fetchNumberFailedQuizCardFromQuizId(quizId) == 0) {
             Toast.makeText(this, "No failed cards", Toast.LENGTH_SHORT).show();
-        }else{
-            replaceContainerWithQuizType();
-            resetQuiz();
+        } else {
+            resetQuizCardListAndReset();
         }
     }
 
-    public void exportFailedCardsToDeckOnClick(View view) {
+    private void resetQuizCardListAndReset() {
 
+        int numberPassedCards = Database.mQuizCardDao.
+                fetchNumberPassedQuizCardFromQuizId(quizId);
+
+        CustomProgressDialog customProgressDialog = new CustomProgressDialog("Removing Passed Cards",
+                numberPassedCards, QuizActivity.this, this) {
+
+            @Override
+            public void loadInformation() {
+                // passed cards
+                List<QuizCard> passedQuizCardList = Database.mQuizCardDao.
+                        fetchPassedQuizCardsByQuizId(Database.mProfileDao.fetchActiveQuizId());
+
+                int position = 0;
+                for (QuizCard quizCard : passedQuizCardList) {
+                    Database.mQuizCardDao.deleteQuizCard(quizCard.getCardId(), quizCard.getQuizId());
+                    position++;
+                    setDialogProgress(position);
+                }
+
+
+                // failed cards
+                setDialogTitle("Preparing Failed Cards");
+
+                List<QuizCard> failedQuizCardList = Database.mQuizCardDao.
+                        fetchFailedQuizCardsByQuizId(Database.mProfileDao.fetchActiveQuizId());
+
+                setDialogMax(failedQuizCardList.size());
+                setDialogProgress(0);
+                long seed = System.nanoTime();
+                Collections.shuffle(failedQuizCardList, new Random(seed));
+
+                position = 0;
+                // todo add tracker for dialog, randomize order
+                for (QuizCard quizCard : failedQuizCardList) {
+                    Database.mQuizCardDao.markCardAsUnanswered(quizCard.getCardId(), quizCard.getQuizId());
+                    Database.mQuizCardDao.updateQuizCardPosition(quizCard.getCardId(), quizCard.getQuizId(), position);
+                    position++;
+                    setDialogProgress(position);
+                }
+
+
+                repopulateQuizCardListWithWrongAnswers();
+            }
+
+            @Override
+            public void informationLoaded() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        dismiss();
+                        replaceContainerWithQuizType();
+                        resetQuiz();
+                    }
+                });
+
+            }
+        };
+
+        customProgressDialog.startDialog();
+    }
+
+    public void exportFailedCardsToDeckOnClick(View view) {
+        // todo implement this
+        Toast.makeText(this, "Not implemented yet", Toast.LENGTH_SHORT).show();
     }
 
     public void finishOnClick(View view) {
+        int numberOfCards = Database.mQuizCardDao.fetchNumberQuizCardFromQuizId(quizId);
 
+
+        CustomProgressDialog customProgressDialog = new CustomProgressDialog("Removing Quiz",
+                numberOfCards, QuizActivity.this, this) {
+
+            @Override
+            public void loadInformation() {
+                List<QuizCard> quizCardList = Database.mQuizCardDao.
+                        fetchQuizCardsByQuizId(Database.mProfileDao.fetchActiveQuizId());
+
+                int position = 0;
+                for (QuizCard quizCard : quizCardList) {
+                    Database.mQuizCardDao.deleteQuizCard(quizCard.getCardId(), quizCard.getQuizId());
+                    position++;
+                    setDialogProgress(position);
+                }
+
+                Database.mProfileDao.setActiveQuizId(Database.mUserDao.fetchActiveProfile().getProfileId(),
+                        Profile.NO_QUIZ);
+
+            }
+
+            @Override
+            public void informationLoaded() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dismiss();
+                        finish();
+                    }
+                });
+
+            }
+        };
+
+        customProgressDialog.startDialog();
     }
 }
