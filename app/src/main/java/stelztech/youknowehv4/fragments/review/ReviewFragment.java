@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -41,6 +40,7 @@ import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.deck.Deck;
 import stelztech.youknowehv4.database.profile.Profile;
+import stelztech.youknowehv4.fragments.FragmentCommon;
 import stelztech.youknowehv4.utilities.CardUtilities;
 import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
@@ -51,9 +51,13 @@ import static stelztech.youknowehv4.database.carddeck.CardDeck.REVIEW_TOGGLE_ID;
  * Created by alex on 2017-04-03.
  */
 
-public class ReviewFragment extends Fragment {
+public class ReviewFragment extends FragmentCommon {
 
     View view;
+
+    public ReviewFragment(int animationLayoutPosition, boolean animationFade) {
+        super(animationLayoutPosition, animationFade);
+    }
 
     public enum ReviewToggle {
         HOURS_3,

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -45,6 +44,7 @@ import stelztech.youknowehv4.database.deck.Deck;
 import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.database.quiz.Quiz;
 import stelztech.youknowehv4.database.quizcard.QuizCard;
+import stelztech.youknowehv4.fragments.FragmentCommon;
 import stelztech.youknowehv4.utilities.BlurBuilder;
 import stelztech.youknowehv4.components.CustomProgressDialog;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
@@ -53,7 +53,11 @@ import stelztech.youknowehv4.manager.FloatingActionButtonManager;
  * Created by alex on 2017-04-03.
  */
 
-public class QuizFragment extends Fragment {
+public class QuizFragment extends FragmentCommon {
+
+    public QuizFragment(int animationLayoutPosition, boolean animationFade) {
+        super(animationLayoutPosition, animationFade);
+    }
 
     private enum QuizCreationPhase {
         PHASE_1,
@@ -157,9 +161,13 @@ public class QuizFragment extends Fragment {
 
     private void continueQuizButtonClicked() {
 
-        Intent intent = fetchIntentFromQuizMode(Database.mQuizDao.fetchQuizById(activeQuizId).getMode());
-        intent.putExtra(QuizActivity.EXTRA_INTENT_CONTINUE, true);
-        getActivity().startActivityForResult(intent, MainActivityManager.RESULT_ANIMATION_RIGHT_TO_LEFT);
+        if(Database.mProfileDao.fetchActiveQuizId() != Profile.NO_PROFILES){
+            Intent intent = fetchIntentFromQuizMode(Database.mQuizDao.fetchQuizById(activeQuizId).getMode());
+            intent.putExtra(QuizActivity.EXTRA_INTENT_CONTINUE, true);
+            getActivity().startActivityForResult(intent, MainActivityManager.RESULT_ANIMATION_RIGHT_TO_LEFT);
+        }else{
+            Toast.makeText(getContext(), "No active quiz", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private boolean isAllDecksEmpty() {
@@ -207,7 +215,7 @@ public class QuizFragment extends Fragment {
 
     private void removePreviousQuiz() {
         int numberOfCards = Database.mQuizCardDao.fetchNumberQuizCardFromQuizId(activeQuizId);
-
+        Database.mQuizDao.markQuizAsQuizFinished(activeQuizId);
 
         CustomProgressDialog customProgressDialog = new CustomProgressDialog("Removing Previous Quiz",
                 numberOfCards, getContext(), getActivity()) {
@@ -235,7 +243,6 @@ public class QuizFragment extends Fragment {
                     @Override
                     public void run() {
                         activeQuizId = Profile.NO_QUIZ;
-                        dismiss();
                         updateContinueButton();
 
                         // todo move this
@@ -487,7 +494,6 @@ public class QuizFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        dismiss();
                         updateContinueButton();
                         setIntentExtraAndStartQuiz();
                     }

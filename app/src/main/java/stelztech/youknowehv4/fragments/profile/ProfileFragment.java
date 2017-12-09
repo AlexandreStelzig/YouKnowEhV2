@@ -4,7 +4,6 @@ package stelztech.youknowehv4.fragments.profile;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -27,6 +26,7 @@ import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.activities.profilepicker.ProfilePickerActivity;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.profile.Profile;
+import stelztech.youknowehv4.fragments.FragmentCommon;
 import stelztech.youknowehv4.utilities.DateUtilities;
 import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
@@ -36,7 +36,11 @@ import stelztech.youknowehv4.manager.ThemeManager;
  * Created by alex on 2017-04-03.
  */
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends FragmentCommon {
+
+    public ProfileFragment(int animationLayoutPosition, boolean animationFade) {
+        super(animationLayoutPosition, animationFade);
+    }
 
     public enum ProfileDialogOptions {
         CREATE_PROFILE,

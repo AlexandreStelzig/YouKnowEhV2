@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import stelztech.youknowehv4.database.DbContentProvider;
+import stelztech.youknowehv4.database.quizcard.QuizCard;
 import stelztech.youknowehv4.utilities.DateUtilities;
 
 /**
@@ -82,6 +83,7 @@ public class QuizDao extends DbContentProvider implements IQuizDao, IQuizSchema 
         values.put(COLUMN_NUM_PASSED, 0);
         values.put(COLUMN_NUM_FAILED, 0);
         values.put(COLUMN_NUM_SKIPPED, 0);
+        values.put(COLUMN_STATE, String.valueOf(Quiz.STATE.ACTIVE));
 
         try {
             return super.insert(QUIZ_TABLE, values);
@@ -92,12 +94,43 @@ public class QuizDao extends DbContentProvider implements IQuizDao, IQuizSchema 
     }
 
     @Override
-    public boolean updateDateFinished(int quizId, String date) {
+    public boolean markQuizAsQuizFinished(int quizId) {
         ContentValues values = new ContentValues();
 
         try {
 
-            values.put(COLUMN_DATE_FINISHED, date);
+            String now = DateUtilities.getDateNowString();
+
+            values.put(COLUMN_DATE_FINISHED, now);
+            values.put(COLUMN_STATE, String.valueOf(Quiz.STATE.FINISHED_QUIZ));
+
+            return super.update(QUIZ_TABLE, values, COLUMN_QUIZ_ID + "=" + quizId, null) > 0;
+        } catch (SQLiteConstraintException ex) {
+            Log.w("Database", ex.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean markQuizAsRoundFinished(int quizId) {
+        ContentValues values = new ContentValues();
+
+        try {
+            values.put(COLUMN_STATE, String.valueOf(Quiz.STATE.FINISHED_ROUND));
+
+            return super.update(QUIZ_TABLE, values, COLUMN_QUIZ_ID + "=" + quizId, null) > 0;
+        } catch (SQLiteConstraintException ex) {
+            Log.w("Database", ex.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean markQuizAsActive(int quizId) {
+        ContentValues values = new ContentValues();
+
+        try {
+            values.put(COLUMN_STATE, String.valueOf(Quiz.STATE.ACTIVE));
 
             return super.update(QUIZ_TABLE, values, COLUMN_QUIZ_ID + "=" + quizId, null) > 0;
         } catch (SQLiteConstraintException ex) {
@@ -123,6 +156,7 @@ public class QuizDao extends DbContentProvider implements IQuizDao, IQuizSchema 
         }
     }
 
+
     @Override
     protected Quiz cursorToEntity(Cursor cursor) {
         int quizId = cursor.getInt(cursor.getColumnIndex(COLUMN_QUIZ_ID));
@@ -130,6 +164,7 @@ public class QuizDao extends DbContentProvider implements IQuizDao, IQuizSchema 
         String dateFinished = cursor.getString(cursor.getColumnIndex(COLUMN_DATE_FINISHED));
         boolean reverse = cursor.getInt(cursor.getColumnIndex(COLUMN_REVERSE)) > 0;
         String mode = cursor.getString(cursor.getColumnIndex(COLUMN_MODE));
+        String state = cursor.getString(cursor.getColumnIndex(COLUMN_STATE));
         int profileId = cursor.getInt(cursor.getColumnIndex(COLUMN_PROFILE_ID));
         boolean reviewOnly = cursor.getInt(cursor.getColumnIndex(COLUMN_REVIEW_ONLY)) > 0;
         int passed = cursor.getInt(cursor.getColumnIndex(COLUMN_NUM_PASSED));
@@ -137,7 +172,7 @@ public class QuizDao extends DbContentProvider implements IQuizDao, IQuizSchema 
         int skipped = cursor.getInt(cursor.getColumnIndex(COLUMN_NUM_SKIPPED));
 
 
-        return new Quiz(quizId, dateCreated, dateFinished, Quiz.MODE.valueOf(mode), reverse, reviewOnly, profileId, passed, failed, skipped);
+        return new Quiz(quizId, dateCreated, dateFinished, Quiz.STATE.valueOf(state), Quiz.MODE.valueOf(mode), reverse, reviewOnly, profileId, passed, failed, skipped);
     }
 }
 

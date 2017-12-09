@@ -4,7 +4,6 @@ package stelztech.youknowehv4.fragments.about;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,6 +16,7 @@ import android.widget.ListView;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.MainActivityManager;
+import stelztech.youknowehv4.fragments.FragmentCommon;
 import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 
@@ -24,13 +24,17 @@ import stelztech.youknowehv4.manager.FloatingActionButtonManager;
  * Created by alex on 2017-04-03.
  */
 
-public class AboutFragment extends Fragment {
+public class AboutFragment extends FragmentCommon {
 
 
     private ListView contactListView;
 
 
     View view;
+
+    public AboutFragment(int animationLayoutPosition, boolean animationFade) {
+        super(animationLayoutPosition, animationFade);
+    }
 
 
     @Override

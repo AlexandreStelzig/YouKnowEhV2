@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,7 +21,9 @@ import android.widget.Toast;
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.ArchivedActivity;
 import stelztech.youknowehv4.activities.MainActivityManager;
+import stelztech.youknowehv4.components.CustomProgressDialog;
 import stelztech.youknowehv4.database.Database;
+import stelztech.youknowehv4.fragments.FragmentCommon;
 import stelztech.youknowehv4.utilities.CardUtilities;
 import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
@@ -35,7 +36,7 @@ import stelztech.youknowehv4.database.user.User;
  * Created by alex on 2017-04-03.
  */
 
-public class SettingsFragment extends Fragment{
+public class SettingsFragment extends FragmentCommon {
 
     View view;
 
@@ -54,6 +55,10 @@ public class SettingsFragment extends Fragment{
     private String[] sortChoices;
     private ArrayAdapter sortAdapter;
     private String[] sortingOptions;
+
+    public SettingsFragment(int animationLayoutPosition, boolean animationFade) {
+        super(animationLayoutPosition, animationFade);
+    }
 
 
     @Override
@@ -259,9 +264,19 @@ public class SettingsFragment extends Fragment{
 
                 switch (position) {
                     case 0:
-                        CardUtilities.mergeDuplicates();
-                        Toast.makeText(getContext(), "Merge completed", Toast.LENGTH_SHORT).show();
 
+                        final CustomProgressDialog customProgressDialog = new CustomProgressDialog("Merging Duplicates", 100, getContext(), getActivity()) {
+                            @Override
+                            public void loadInformation() {
+                                CardUtilities.mergeDuplicates(this);
+                            }
+
+                            @Override
+                            public void informationLoaded() {
+
+                            }
+                        };
+                        customProgressDialog.startDialog();
                         break;
                 }
 
@@ -377,9 +392,6 @@ public class SettingsFragment extends Fragment{
         AlertDialog dialog = db.show();
 
     }
-
-
-
 
 
 }

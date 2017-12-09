@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
+    <item
+        android:id="@+id/action_quiz_done"
+        android:actionMenuTextColor="@color/colorTextIcon"
+        android:icon="@drawable/ic_done_white_24dp"
+        android:orderInCategory="2"
+        android:title="Done"
+        app:showAsAction="always" />
 
 </menu>

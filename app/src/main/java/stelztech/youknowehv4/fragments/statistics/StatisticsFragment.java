@@ -1,28 +1,29 @@
 package stelztech.youknowehv4.fragments.statistics;
 
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.MainActivityManager;
+import stelztech.youknowehv4.fragments.FragmentCommon;
 
 /**
  * Created by alex on 2017-04-03.
  */
 
-public class StatisticsFragment extends Fragment {
+public class StatisticsFragment extends FragmentCommon {
 
     View view;
 
+    public StatisticsFragment(int animationLayoutPosition, boolean animationFade) {
+        super(animationLayoutPosition, animationFade);
+    }
 
 
     @Override

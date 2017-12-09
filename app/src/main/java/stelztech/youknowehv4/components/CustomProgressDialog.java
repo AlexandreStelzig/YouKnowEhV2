@@ -43,6 +43,7 @@ public abstract class CustomProgressDialog extends ProgressDialog {
             public void run() {
                 // todo dialog
                 loadInformation();
+                dismiss();
                 informationLoaded();
             }
         }).start();

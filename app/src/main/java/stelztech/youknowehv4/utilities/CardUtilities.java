@@ -2,12 +2,14 @@ package stelztech.youknowehv4.utilities;
 
 import android.app.Activity;
 import android.text.Html;
+import android.util.Log;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import stelztech.youknowehv4.components.CustomProgressDialog;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.carddeck.CardDeck;
@@ -87,9 +89,17 @@ public class CardUtilities {
     }
 
 
-    public static void mergeDuplicates() {
+    public static void mergeDuplicates(CustomProgressDialog customProgressDialog) {
+        if(customProgressDialog != null) {
+            customProgressDialog.setDialogTitle("Merging Duplicates");
+        }
 
         List<Card> allCards = Database.mCardDao.fetchAllCards();
+
+        if(customProgressDialog != null){
+            customProgressDialog.setDialogMax(allCards.size());
+            customProgressDialog.setDialogProgress(0);
+        }
 
         for (int counterOne = 0; counterOne < allCards.size(); counterOne++) {
 
@@ -126,11 +136,17 @@ public class CardUtilities {
 
                     Database.mCardDao.deleteCard(cardTwo.getCardId());
                     allCards.remove(counterTwo);
+
                 } else {
                     counterTwo++;
                 }
 
 
+            }
+
+            if(customProgressDialog != null){
+                customProgressDialog.setDialogMax(allCards.size());
+                customProgressDialog.setDialogProgress(counterOne);
             }
 
 

@@ -1,5 +1,6 @@
 package stelztech.youknowehv4.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,7 +18,9 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import stelztech.youknowehv4.R;
+import stelztech.youknowehv4.components.CustomProgressDialog;
 import stelztech.youknowehv4.database.Database;
+import stelztech.youknowehv4.fragments.FragmentCommon;
 import stelztech.youknowehv4.fragments.about.AboutFragment;
 import stelztech.youknowehv4.fragments.card.CardListFragment;
 import stelztech.youknowehv4.fragments.deck.DeckListFragment;
@@ -26,6 +29,7 @@ import stelztech.youknowehv4.fragments.statistics.StatisticsFragment;
 import stelztech.youknowehv4.fragments.review.ReviewFragment;
 import stelztech.youknowehv4.fragments.profile.ProfileFragment;
 import stelztech.youknowehv4.fragments.settings.SettingsFragment;
+import stelztech.youknowehv4.utilities.CardUtilities;
 import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.CardInfoToolbarManager;
@@ -33,6 +37,8 @@ import stelztech.youknowehv4.manager.CardToolbarManager;
 import stelztech.youknowehv4.manager.ExportImportManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.manager.ThemeManager;
+
+import static stelztech.youknowehv4.fragments.FragmentCommon.FADE_ANIMATION;
 
 public class MainActivityManager extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -49,8 +55,8 @@ public class MainActivityManager extends AppCompatActivity
     private StatisticsFragment mStatisticsFragment;
     private boolean mViewIsAtHome;
 
-    private Fragment previousFragment;
-    private Fragment currentFragment;
+    private FragmentCommon previousFragment;
+    private FragmentCommon currentFragment;
 
     private boolean goBackToDecks;
 
@@ -122,25 +128,24 @@ public class MainActivityManager extends AppCompatActivity
 
 
         // init fragments
-        mDeckListFragment = new DeckListFragment();
-        mCardListFragment = new CardListFragment();
-        mReviewFragment = new ReviewFragment();
-        mSettingsFragment = new SettingsFragment();
-        mAboutFragment = new AboutFragment();
-        mProfileFragment = new ProfileFragment();
-        mQuizFragment = new QuizFragment();
-        mStatisticsFragment = new StatisticsFragment();
+        mReviewFragment = new ReviewFragment(1, false);
+        mCardListFragment = new CardListFragment(2, false);
+        mDeckListFragment = new DeckListFragment(3, false);
+        mQuizFragment = new QuizFragment(4, false);
+        mStatisticsFragment = new StatisticsFragment(5, false);
+        mProfileFragment = new ProfileFragment(6, true);
+        mSettingsFragment = new SettingsFragment(7, true);
+        mAboutFragment = new AboutFragment(8, true);
 
         Intent intent = getIntent();
         boolean loadProfilePage = intent.getBooleanExtra("ColorChanged", false);
 
-        if(loadProfilePage){
+        if (loadProfilePage) {
             displayFragment(R.id.profile);
-        }else{
+        } else {
             // default page
             displayFragment(R.id.review);
         }
-
 
 
     }
@@ -327,26 +332,21 @@ public class MainActivityManager extends AppCompatActivity
     }
 
     // transition animation logic
-    public void replaceFragmentWithAnimation(Fragment fragment, String tag) {
+    public void replaceFragmentWithAnimation(FragmentCommon fragment, String tag) {
 
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        if (fragment.equals(mReviewFragment) && previousFragment != null) {
-            transaction.setCustomAnimations(R.anim.slide_in_down, R.anim.slide_out_down);
-        } else if (fragment.equals(mCardListFragment)) {
-            if (previousFragment != null && previousFragment.equals(mDeckListFragment))
-                transaction.setCustomAnimations(R.anim.slide_in_down, R.anim.slide_out_down);
-            else
+        if (previousFragment != null) {
+            if (fragment.isAnimationFade()) {
+                transaction.setCustomAnimations(android.R.anim.fade_in,
+                        android.R.anim.fade_out);
+            } else if (previousFragment.getAnimationLayoutPosition() < fragment.getAnimationLayoutPosition()) {
                 transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up);
-        } else if (fragment.equals(mDeckListFragment)) {
-            if (previousFragment != null && previousFragment.equals(mReviewFragment)
-                    || previousFragment.equals(mCardListFragment))
-                transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up);
-            else
+            } else {
                 transaction.setCustomAnimations(R.anim.slide_in_down, R.anim.slide_out_down);
+            }
         } else {
-            // only the three first fragments have a sliding animation
             transaction.setCustomAnimations(android.R.anim.fade_in,
                     android.R.anim.fade_out);
         }
@@ -389,7 +389,7 @@ public class MainActivityManager extends AppCompatActivity
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         //TODO add if statements
 
         if (requestCode == CARD_RESULT) {
@@ -416,22 +416,36 @@ public class MainActivityManager extends AppCompatActivity
         } else if (requestCode == EXPORT_RESULT) {
             if (resultCode == RESULT_OK) {
                 Uri selectedDocument = data.getData();
-                ExportImportManager.readCSV(this, selectedDocument);
+                ExportImportManager.readCSV(this, selectedDocument, null);
             }
         } else if (requestCode == RESULT_ANIMATION_RIGHT_TO_LEFT) {
             overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
         } else if (requestCode == EXPORT_RESULT_ALL) {
             if (resultCode == RESULT_OK) {
-                Uri uri = data.getData();
-                ExportImportManager.readAllCSV(MainActivityManager.this, uri);
+
+                final CustomProgressDialog customProgressDialog = new CustomProgressDialog("Importing Decks", 100, MainActivityManager.this, MainActivityManager.this) {
+                    @Override
+                    public void loadInformation() {
+                        Uri uri = data.getData();
+                        ExportImportManager.readAllCSV(MainActivityManager.this, uri, this);
+                        CardUtilities.mergeDuplicates(this);
+                    }
+
+                    @Override
+                    public void informationLoaded() {
+
+                    }
+                };
+                customProgressDialog.startDialog();
+
             }
-        } else if(requestCode == RESULT_QUIZ_END){
+        } else if (requestCode == RESULT_QUIZ_END) {
             overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
             mQuizFragment.onQuizFinishResult();
 
         }
-
     }
+
 
     public void enableDrawerSwipe(boolean isSwippable) {
         if (isSwippable) {

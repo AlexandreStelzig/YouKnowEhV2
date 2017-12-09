@@ -16,6 +16,7 @@ import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.database.Database;
+import stelztech.youknowehv4.database.quiz.Quiz;
 
 /**
  * Created by alex on 2017-05-09.
@@ -43,11 +44,13 @@ public class QuizReading extends QuizActivity {
 
         isAnimating = isShowingBackCard = false;
 
-        if(Database.mQuizCardDao.fetchUnansweredQuizCardsByQuizId(quizId).isEmpty()){
+        Quiz.STATE quizState = Database.mQuizDao.fetchQuizById(quizId).getState();
+
+        if(quizState == Quiz.STATE.FINISHED_ROUND ||
+                Database.mQuizCardDao.fetchUnansweredQuizCardsByQuizId(quizId).isEmpty()){
             replaceContainerWithFinishedLayout();
         }else{
             replaceContainerWithQuizType();
-
         }
 
         getSupportActionBar().setTitle("Reading Quiz");

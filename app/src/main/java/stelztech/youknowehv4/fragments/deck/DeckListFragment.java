@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -36,6 +35,7 @@ import java.util.List;
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.database.Database;
+import stelztech.youknowehv4.fragments.FragmentCommon;
 import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.DeckToolbarManager;
@@ -47,10 +47,14 @@ import stelztech.youknowehv4.database.deck.Deck;
  * Created by alex on 2017-04-03.
  */
 
-public class DeckListFragment extends Fragment {
+public class DeckListFragment extends FragmentCommon {
 
 
     private TextView nbDeck;
+
+    public DeckListFragment(int animationLayoutPosition, boolean animationFade) {
+        super(animationLayoutPosition, animationFade);
+    }
 
     public enum DeckDialogOption {
         NEW,

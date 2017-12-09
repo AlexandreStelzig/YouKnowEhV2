@@ -20,6 +20,7 @@ public interface IQuizSchema {
     String COLUMN_NUM_PASSED = "quiz_num_passed";
     String COLUMN_NUM_FAILED = "quiz_num_failed";
     String COLUMN_NUM_SKIPPED = "quiz_num_skip";
+    String COLUMN_STATE = "quiz_state";
 
     // ON CREATE
     String SQL_CREATE_TABLE_QUIZ = "CREATE TABLE "
@@ -28,6 +29,7 @@ public interface IQuizSchema {
             + COLUMN_DATE_CREATED + " TEXT,"
             + COLUMN_DATE_FINISHED + " TEXT,"
             + COLUMN_MODE + " TEXT,"
+            + COLUMN_STATE + " TEXT,"
             + COLUMN_PROFILE_ID + " INTEGER,"
             + COLUMN_NUM_PASSED + " INTEGER,"
             + COLUMN_NUM_FAILED + " INTEGER,"

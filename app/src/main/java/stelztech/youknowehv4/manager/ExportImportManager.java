@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.OpenableColumns;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.opencsv.CSVReader;
@@ -22,6 +25,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -29,6 +33,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import stelztech.youknowehv4.activities.MainActivityManager;
+import stelztech.youknowehv4.components.CustomProgressDialog;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.carddeck.CardDeck;
@@ -120,10 +125,10 @@ public final class ExportImportManager {
     }
 
 
-    public static boolean readCSV(Context context, Uri uri) {
+    public static boolean readCSV(Context context, Uri uri, CustomProgressDialog customProgressDialog) {
 
         if (!isExternalStorageAvailable() || isExternalStorageReadOnly()) {
-            Toast.makeText(context, "Storage not available or read only", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Storage not available or read only", Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -137,9 +142,13 @@ public final class ExportImportManager {
             if (fileName.contains(".")) {
                 int index = fileName.indexOf(".");
                 fileName = fileName.substring(0, index);
+
+
+                if(customProgressDialog != null)
+                    customProgressDialog.setDialogTitle("Importing '" + fileName + "'");
             }
 
-            Toast.makeText(context, fileName, Toast.LENGTH_SHORT);
+           // Toast.makeText(context, fileName, Toast.LENGTH_SHORT);
 
             InputStream myInput = context.getContentResolver().openInputStream(uri);
             CSVReader reader = new CSVReader(new InputStreamReader(myInput));
@@ -150,7 +159,7 @@ public final class ExportImportManager {
 //                System.out.println(nextLine[0] + nextLine[1] + "etc...");
 
                 if (nextLine.length > 6) {
-                    Toast.makeText(context, "Invalid file format", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "Invalid file format", Toast.LENGTH_SHORT).show();
                     return false;
                 } else {
                     String question = "";
@@ -178,7 +187,7 @@ public final class ExportImportManager {
                     }
 
                     if (question.isEmpty() || answer.isEmpty()) {
-                        Toast.makeText(context, "Invalid file format - two first column cannot be empty", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "Invalid file format - two first column cannot be empty", Toast.LENGTH_SHORT).show();
                         return false;
                     } else {
                         cardHolderList.add(new CardHolder(question, answer, note, reviewToggle, dateCreated, dateModified));
@@ -190,7 +199,8 @@ public final class ExportImportManager {
             }
 
         } catch (Exception e) {
-            Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+            Log.e("ExportImportManager", e.toString());
             return false;
         }
 
@@ -221,7 +231,7 @@ public final class ExportImportManager {
 
         Database.mCardDeckDao.revalidateReviewCards();
 
-        Toast.makeText(context, "Deck \"" + fileName + "\" imported", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "Deck \"" + fileName + "\" imported", Toast.LENGTH_SHORT).show();
         return true;
     }
 
@@ -288,7 +298,7 @@ public final class ExportImportManager {
         return true;
     }
 
-    public static void readAllCSV(Context context, Uri uri) {
+    public static void readAllCSV(Context context, Uri uri, CustomProgressDialog customProgressDialog) {
 
         try {
 
@@ -303,9 +313,9 @@ public final class ExportImportManager {
             List<File> files = new ArrayList<>();
 
             while (zipentry != null) {
+
                 //for each entry to be extracted
                 String entryName = zipentry.getName();
-//                System.out.println("entryname " + entryName);
 
                 String extension = "";
 
@@ -343,13 +353,18 @@ public final class ExportImportManager {
                 zipinputstream.closeEntry();
                 zipentry = zipinputstream.getNextEntry();
 
-            }//while
+            }
 
             zipinputstream.close();
 
+            if(customProgressDialog != null)
+                customProgressDialog.setMax(files.size());
 
             for (int i = 0; i < files.size(); i++) {
-                readCSV(context, Uri.fromFile(files.get(i)));
+                readCSV(context, Uri.fromFile(files.get(i)), customProgressDialog);
+
+                if(customProgressDialog != null)
+                    customProgressDialog.setProgress(i + 1);
             }
 
         } catch (IOException e) {
@@ -420,6 +435,16 @@ public final class ExportImportManager {
         emailIntent.setType("text/plain");
         emailIntent.putExtra(Intent.EXTRA_STREAM, uris);
 
+
+        if(Build.VERSION.SDK_INT>=24){
+            try{
+                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                m.invoke(null);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+
         context.startActivity(emailIntent);
 
     }
@@ -444,7 +469,7 @@ public final class ExportImportManager {
 
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("application/zip");   //xlxs only
+        intent.setType("application/zip");   //zipa only
 //        intent.addCategory(Intent.CATEGORY_OPENABLE);
 
         try {

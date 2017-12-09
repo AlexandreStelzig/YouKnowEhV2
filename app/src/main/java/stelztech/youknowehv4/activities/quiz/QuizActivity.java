@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,7 +28,6 @@ import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.database.quiz.Quiz;
 import stelztech.youknowehv4.database.quizcard.QuizCard;
-import stelztech.youknowehv4.fragments.quiz.QuizFragment;
 import stelztech.youknowehv4.manager.ThemeManager;
 import stelztech.youknowehv4.utilities.BlurBuilder;
 
@@ -93,6 +93,45 @@ public abstract class QuizActivity extends AppCompatActivity {
         isFinished = false;
         initializeQuizCardData();
         initProgressBar();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.toolbar_quiz, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+
+        int id = item.getItemId();
+
+        switch (id) {
+
+            // back button
+            case android.R.id.home:
+                Intent returnIntent = new Intent();
+                setResult(Activity.RESULT_CANCELED, returnIntent);
+                finish();
+                return true;
+            case R.id.action_quiz_done:
+                Database.mQuizDao.markQuizAsRoundFinished(quizId);
+                replaceContainerWithFinishedLayout();
+                return true;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        final MenuItem quizDone = menu.findItem(R.id.action_quiz_done);
+        quizDone.setVisible(Database.mQuizDao.fetchQuizById(quizId).getState() == Quiz.STATE.ACTIVE);
+
+        return super.onPrepareOptionsMenu(menu);
     }
 
     protected void fetchExtraIntentInformation() {
@@ -185,12 +224,8 @@ public abstract class QuizActivity extends AppCompatActivity {
 
     private void loopCompleted() {
 
+        Database.mQuizDao.markQuizAsRoundFinished(quizId);
         replaceContainerWithFinishedLayout();
-
-        Button repeatButton = ((Button) findViewById(R.id.quiz_repeat_failed_cards));
-
-        repeatButton.setEnabled(Database.mQuizCardDao.fetchNumberFailedQuizCardFromQuizId(quizId) != 0);
-
 
     }
 
@@ -227,30 +262,6 @@ public abstract class QuizActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        getMenuInflater().inflate(R.menu.toolbar_quiz, menu);
-        return true;
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-
-        int id = item.getItemId();
-
-        switch (id) {
-
-            // back button
-            case android.R.id.home:
-                Intent returnIntent = new Intent();
-                setResult(Activity.RESULT_CANCELED, returnIntent);
-                finish();
-                return true;
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     protected void replaceContainerWithLayout(int layout) {
         FrameLayout rl = (FrameLayout) findViewById(R.id.quiz_type_container);
@@ -260,6 +271,29 @@ public abstract class QuizActivity extends AppCompatActivity {
 
     protected void replaceContainerWithFinishedLayout() {
         replaceContainerWithLayout(R.layout.quiz_finished_container);
+
+
+        Button repeatButton = ((Button) findViewById(R.id.quiz_repeat_failed_cards));
+
+        if(Database.mQuizCardDao.fetchUnansweredQuizCardsByQuizId(quizId).isEmpty()){
+            repeatButton.setText("Repeat Failed Cards");
+            repeatButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_repeat_white_24dp, 0, 0, 0);
+        }else{
+            repeatButton.setText("Continue");
+            repeatButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_forward_white_24dp, 0, 0, 0);
+        }
+
+        int remaining = maximumNumQuestion - numFailed - numPassed;
+
+
+        repeatButton.setEnabled(numFailed != 0 || remaining != 0 && Database.mQuizDao.fetchQuizById(quizId).getState() == Quiz.STATE.FINISHED_ROUND );
+
+        Button exportButton = ((Button) findViewById(R.id.quiz_export_failed_cards));
+
+        exportButton.setEnabled(numFailed != 0);
+
+
+        invalidateOptionsMenu();
     }
 
     protected void replaceContainerWithQuizType() {
@@ -276,6 +310,8 @@ public abstract class QuizActivity extends AppCompatActivity {
                 replaceContainerWithLayout(R.layout.quiz_multiple_choice_container);
                 break;
         }
+
+        invalidateOptionsMenu();
         initView();
     }
 
@@ -290,10 +326,17 @@ public abstract class QuizActivity extends AppCompatActivity {
     protected abstract void initView();
 
     public void repeatFailedCardsOnClick(View view) {
-        if (Database.mQuizCardDao.fetchNumberFailedQuizCardFromQuizId(quizId) == 0) {
-            Toast.makeText(this, "No failed cards", Toast.LENGTH_SHORT).show();
-        } else {
-            resetQuizCardListAndReset();
+
+        if(Database.mQuizCardDao.fetchUnansweredQuizCardsByQuizId(quizId).isEmpty()) {
+            if (Database.mQuizCardDao.fetchNumberFailedQuizCardFromQuizId(quizId) == 0) {
+                Toast.makeText(this, "No failed cards", Toast.LENGTH_SHORT).show();
+            } else {
+                resetQuizCardListAndReset();
+                Database.mQuizDao.markQuizAsActive(quizId);
+            }
+        }else{
+            replaceContainerWithQuizType();
+            Database.mQuizDao.markQuizAsActive(quizId);
         }
     }
 
@@ -348,8 +391,6 @@ public abstract class QuizActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
-                        dismiss();
                         replaceContainerWithQuizType();
                         resetQuiz();
                     }
@@ -368,7 +409,7 @@ public abstract class QuizActivity extends AppCompatActivity {
 
     public void finishOnClick(View view) {
         int numberOfCards = Database.mQuizCardDao.fetchNumberQuizCardFromQuizId(quizId);
-
+        Database.mQuizDao.markQuizAsQuizFinished(quizId);
 
         CustomProgressDialog customProgressDialog = new CustomProgressDialog("Removing Quiz",
                 numberOfCards, QuizActivity.this, this) {
@@ -395,7 +436,6 @@ public abstract class QuizActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        dismiss();
                         finish();
                     }
                 });

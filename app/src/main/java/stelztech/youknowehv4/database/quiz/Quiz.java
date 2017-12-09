@@ -11,12 +11,19 @@ public class Quiz {
         MULTIPLE_CHOICE
     }
 
-    public static MODE getModeFromPosition(int position){
-        if(position == 0){
+    public enum STATE {
+        FINISHED_ROUND,
+        FINISHED_QUIZ,
+        ACTIVE
+    }
+
+
+    public static MODE getModeFromPosition(int position) {
+        if (position == 0) {
             return Quiz.MODE.READING;
-        }else if(position == 1){
+        } else if (position == 1) {
             return Quiz.MODE.WRITING;
-        }else{
+        } else {
             return Quiz.MODE.MULTIPLE_CHOICE;
         }
     }
@@ -25,6 +32,7 @@ public class Quiz {
     private String dateCreated;
     private String dateFinished;
     private MODE mode;
+    private STATE state;
     private boolean reverse;
     private boolean reviewOnly;
     private int profileId;
@@ -32,7 +40,7 @@ public class Quiz {
     private int totalFailed;
     private int totalSkipped;
 
-    public Quiz(int quizId, String dateCreated, String dateFinished, MODE mode, boolean reverse, boolean reviewOnly, int profileId, int totalPassed, int totalFailed, int totalSkipped) {
+    public Quiz(int quizId, String dateCreated, String dateFinished, STATE state, MODE mode, boolean reverse, boolean reviewOnly, int profileId, int totalPassed, int totalFailed, int totalSkipped) {
         this.quizId = quizId;
         this.dateCreated = dateCreated;
         this.dateFinished = dateFinished;
@@ -43,6 +51,15 @@ public class Quiz {
         this.totalPassed = totalPassed;
         this.totalFailed = totalFailed;
         this.totalSkipped = totalSkipped;
+        this.state = state;
+    }
+
+    public STATE getState() {
+        return state;
+    }
+
+    public void setState(STATE state) {
+        this.state = state;
     }
 
     public int getProfileId() {

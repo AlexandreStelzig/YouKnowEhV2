@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
@@ -45,6 +44,7 @@ import java.util.List;
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.database.Database;
+import stelztech.youknowehv4.fragments.FragmentCommon;
 import stelztech.youknowehv4.utilities.CardUtilities;
 import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
@@ -61,8 +61,12 @@ import static stelztech.youknowehv4.database.carddeck.CardDeck.REVIEW_TOGGLE_ID;
  * Created by alex on 2017-04-03.
  */
 
-public class CardListFragment extends Fragment {
+public class CardListFragment extends FragmentCommon {
 
+
+    public CardListFragment(int animationLayoutPosition, boolean animationFade) {
+        super(animationLayoutPosition, animationFade);
+    }
 
     public void setScrollToTop(boolean scrollToTop) {
         this.scrollToTop = scrollToTop;
