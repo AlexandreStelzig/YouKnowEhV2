@@ -1021,19 +1021,10 @@ public class ReviewFragment extends FragmentCommon {
     }
 
     private void showModifyCardDecksDialog(final Card card) {
-
-        LayoutInflater inflater = LayoutInflater.from(getContext());
-        final View dialogView = inflater.inflate(R.layout.custom_scrollable_dialog_list, null, false);
-
-        dialogView.findViewById(R.id.card_info_dialog_add_deck).setVisibility(View.GONE);
-
-        android.app.AlertDialog.Builder deckListAlertDialog = new android.app.AlertDialog.Builder(getContext());
-
-        deckListAlertDialog.setTitle("Modify " + card.getQuestion() + "/" + card.getAnswer() + " decks");
-
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+        builder.setTitle("Modify " + card.getQuestion() + "/" + card.getAnswer() + " decks");
 
         List<Deck> cardSpecificDeck = Database.mCardDeckDao.fetchDecksByCardId(card.getCardId());
-
 
         isPartOfDeckList = new boolean[deckList.size()];
         for (int counter = 0; counter < isPartOfDeckList.length; counter++) {
@@ -1044,9 +1035,7 @@ public class ReviewFragment extends FragmentCommon {
         }
         tempPartOfDeckList = isPartOfDeckList.clone();
 
-
         CharSequence[] deckListDisplayName = new CharSequence[deckList.size()];
-
         for (int i = 0; i < deckList.size(); i++) {
             deckListDisplayName[i] = deckList.get(i).getDeckName();
         }
@@ -1055,7 +1044,7 @@ public class ReviewFragment extends FragmentCommon {
         final int deckPosition = selectedSpinnerPosition - 1;
 
         // display a checkbox list
-        deckListAlertDialog.setMultiChoiceItems(deckListDisplayName, isPartOfDeckList, new DialogInterface.OnMultiChoiceClickListener() {
+        builder.setMultiChoiceItems(deckListDisplayName, isPartOfDeckList, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int indexSelected, boolean isChecked) {
 
@@ -1064,7 +1053,7 @@ public class ReviewFragment extends FragmentCommon {
 
         });
 
-        deckListAlertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -1095,22 +1084,20 @@ public class ReviewFragment extends FragmentCommon {
 
             }
         });
-
-        deckListAlertDialog.setView(dialogView);
-        deckListAlertDialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
             }
         });
-        deckListAlertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
 
             }
         });
 
-        final android.app.AlertDialog alert = deckListAlertDialog.create();
+        final android.app.AlertDialog alert = builder.create();
 
         alert.show();
     }

@@ -8,10 +8,10 @@
         android:toYScale="1.0"
         android:fillAfter="false"
         android:startOffset="200"
-        android:duration="200" />
+        android:duration="@integer/card_flip_animation_time" />
     <translate
         android:fromYDelta="50%"
         android:toYDelta="0"
         android:startOffset="200"
-        android:duration="200"/>
+        android:duration="@integer/card_flip_animation_time"/>
 </set>

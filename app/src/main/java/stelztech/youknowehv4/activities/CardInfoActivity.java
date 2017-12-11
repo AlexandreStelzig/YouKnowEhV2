@@ -497,12 +497,6 @@ public class CardInfoActivity extends AppCompatActivity {
 
     public void deckInfoButtonClicked() {
 
-        LayoutInflater inflater = LayoutInflater.from(this);
-        final View dialogView = inflater.inflate(R.layout.custom_scrollable_dialog_list, null, false);
-
-        TextView createDeckTV = (TextView) dialogView.findViewById(R.id.card_info_dialog_add_deck);
-
-
         deckListAlertDialog = new AlertDialog.Builder(this);
 
 
@@ -514,8 +508,6 @@ public class CardInfoActivity extends AppCompatActivity {
             setupDialogView();
         }
 
-
-        deckListAlertDialog.setView(dialogView);
         deckListAlertDialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -534,24 +526,19 @@ public class CardInfoActivity extends AppCompatActivity {
             }
         });
 
-        final AlertDialog alert = deckListAlertDialog.create();
-        Helper.getInstance().hideKeyboard(this);
-
         if (currentState == CardInfoState.NEW || currentState == CardInfoState.EDIT) {
-            createDeckTV.setVisibility(View.VISIBLE);
-            createDeckTV.setOnClickListener(new View.OnClickListener() {
+
+            deckListAlertDialog.setNeutralButton("+ Create", new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    alert.dismiss();
+                public void onClick(DialogInterface dialogInterface, int i) {
                     createUpdateDeckDialog().show();
-
-
                 }
             });
-        } else {
-            createDeckTV.setVisibility(View.GONE);
         }
 
+        final AlertDialog alert = deckListAlertDialog.create();
+
+        Helper.getInstance().hideKeyboard(this);
         alert.show();
 
     }

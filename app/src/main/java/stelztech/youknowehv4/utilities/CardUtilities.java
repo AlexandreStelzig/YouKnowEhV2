@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.text.Html;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -23,11 +24,10 @@ import stelztech.youknowehv4.database.profile.Profile;
 public class CardUtilities {
 
 
-
     public static void showQuickInfoCard(Activity activity, Card cardToDisplay, Deck deckAssociated) {
 
         CardDeck cardDeck = null;
-        if(deckAssociated != null)
+        if (deckAssociated != null)
             cardDeck = Database.mCardDeckDao.fetchCardDeckById(cardToDisplay.getCardId(), deckAssociated.getDeckId());
 
         Profile profile = Database.mUserDao.fetchActiveProfile();
@@ -36,8 +36,8 @@ public class CardUtilities {
         String answerLabel = profile.getAnswerLabel();
 
 
-        String cardQuestion = "<b>"+ questionLabel + ": </b>" + cardToDisplay.getQuestion();
-        String cardAnswer = "<b>"+answerLabel + ": </b>" + cardToDisplay.getAnswer();
+        String cardQuestion = "<b>" + questionLabel + ": </b>" + cardToDisplay.getQuestion();
+        String cardAnswer = "<b>" + answerLabel + ": </b>" + cardToDisplay.getAnswer();
         String cardComments = cardToDisplay.getMoreInfo();
 
         List<Deck> decks = Database.mCardDeckDao.fetchDecksByCardId(cardToDisplay.getCardId());
@@ -51,11 +51,11 @@ public class CardUtilities {
         String message = cardQuestion + "<br>" + cardAnswer + "<br>" + numberOfDecks + "<br>"
                 + cardDateCreated + "<br>" + cardDateModified;
 
-        if(cardDeck != null && !cardDeck.isReview()){
+        if (cardDeck != null && !cardDeck.isReview()) {
             String practiceToggleText = "<b>Card Review Toggle: </b>";
-            if(!DateUtilities.isValidDate(cardDeck.getReviewToggleDate())){
+            if (!DateUtilities.isValidDate(cardDeck.getReviewToggleDate())) {
                 practiceToggleText = practiceToggleText + "Until Toggled Manually";
-            }else {
+            } else {
                 Date dateNow = DateUtilities.getDateNow();
                 Date dateToggle = DateUtilities.stringToDate(cardDeck.getReviewToggleDate());
 
@@ -82,22 +82,30 @@ public class CardUtilities {
         }
 
 
-
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(activity);
         builder.setTitle("Quick Info");
         builder.setMessage(Html.fromHtml(message)).setPositiveButton("done", null).show();
     }
 
 
-    public static void mergeDuplicates(CustomProgressDialog customProgressDialog) {
-        if(customProgressDialog != null) {
+    public static void mergeDuplicates(CustomProgressDialog customProgressDialog, int deckId) {
+        if (customProgressDialog != null) {
             customProgressDialog.setDialogTitle("Merging Duplicates");
         }
 
-        List<Card> allCards = Database.mCardDao.fetchAllCards();
+        List<Card> allCards;
+        if (deckId == -1) {
+            if (customProgressDialog != null)
+                customProgressDialog.setDialogMax(Database.mCardDao.fetchNumberOfCardsByProfileId(Database.mUserDao.fetchActiveProfile().getProfileId()));
+            allCards = Database.mCardDao.fetchAllCards();
 
-        if(customProgressDialog != null){
-            customProgressDialog.setDialogMax(allCards.size());
+        } else {
+            if (customProgressDialog != null)
+                customProgressDialog.setDialogMax(Database.mCardDeckDao.fetchNumberCardsFromDeckId(deckId));
+            allCards = Database.mCardDeckDao.fetchCardsByDeckId(deckId);
+        }
+
+        if (customProgressDialog != null) {
             customProgressDialog.setDialogProgress(0);
         }
 
@@ -144,7 +152,7 @@ public class CardUtilities {
 
             }
 
-            if(customProgressDialog != null){
+            if (customProgressDialog != null) {
                 customProgressDialog.setDialogMax(allCards.size());
                 customProgressDialog.setDialogProgress(counterOne);
             }

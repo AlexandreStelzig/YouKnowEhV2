@@ -268,7 +268,7 @@ public class SettingsFragment extends FragmentCommon {
                         final CustomProgressDialog customProgressDialog = new CustomProgressDialog("Merging Duplicates", 100, getContext(), getActivity()) {
                             @Override
                             public void loadInformation() {
-                                CardUtilities.mergeDuplicates(this);
+                                CardUtilities.mergeDuplicates(this, -1);
                             }
 
                             @Override

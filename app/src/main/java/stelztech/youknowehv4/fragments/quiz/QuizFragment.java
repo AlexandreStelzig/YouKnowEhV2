@@ -48,6 +48,7 @@ import stelztech.youknowehv4.fragments.FragmentCommon;
 import stelztech.youknowehv4.utilities.BlurBuilder;
 import stelztech.youknowehv4.components.CustomProgressDialog;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
+import stelztech.youknowehv4.utilities.QuizCardsUtilities;
 
 /**
  * Created by alex on 2017-04-03.
@@ -215,6 +216,7 @@ public class QuizFragment extends FragmentCommon {
 
     private void removePreviousQuiz() {
         int numberOfCards = Database.mQuizCardDao.fetchNumberQuizCardFromQuizId(activeQuizId);
+        QuizCardsUtilities.setQuizStats(activeQuizId);
         Database.mQuizDao.markQuizAsQuizFinished(activeQuizId);
 
         CustomProgressDialog customProgressDialog = new CustomProgressDialog("Removing Previous Quiz",
@@ -569,7 +571,7 @@ public class QuizFragment extends FragmentCommon {
     }
 
     public void onQuizFinishResult(){
-        activeQuizId = Database.mProfileDao.fetchActiveQuizId();
+        activeQuizId = Profile.NO_QUIZ;
         updateContinueButton();
     }
 }

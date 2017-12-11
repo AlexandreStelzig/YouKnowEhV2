@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,7 +21,10 @@ import java.util.List;
 import java.util.Random;
 
 import stelztech.youknowehv4.R;
+import stelztech.youknowehv4.activities.quiz.export.QuizFailedCardsExportOptionsDialog;
+import stelztech.youknowehv4.activities.quiz.export.QuizFailedQuizCardsDialog;
 import stelztech.youknowehv4.components.CustomProgressDialog;
+import stelztech.youknowehv4.components.CustomYesNoDialog;
 import stelztech.youknowehv4.components.DoubleProgressBar;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.profile.Profile;
@@ -30,6 +32,8 @@ import stelztech.youknowehv4.database.quiz.Quiz;
 import stelztech.youknowehv4.database.quizcard.QuizCard;
 import stelztech.youknowehv4.manager.ThemeManager;
 import stelztech.youknowehv4.utilities.BlurBuilder;
+import stelztech.youknowehv4.utilities.CardUtilities;
+import stelztech.youknowehv4.utilities.QuizCardsUtilities;
 
 /**
  * Created by alex on 2017-05-09.
@@ -225,6 +229,7 @@ public abstract class QuizActivity extends AppCompatActivity {
     private void loopCompleted() {
 
         Database.mQuizDao.markQuizAsRoundFinished(quizId);
+        QuizCardsUtilities.setQuizStats(quizId);
         replaceContainerWithFinishedLayout();
 
     }
@@ -262,7 +267,6 @@ public abstract class QuizActivity extends AppCompatActivity {
     }
 
 
-
     protected void replaceContainerWithLayout(int layout) {
         FrameLayout rl = (FrameLayout) findViewById(R.id.quiz_type_container);
         rl.removeAllViews();
@@ -275,10 +279,10 @@ public abstract class QuizActivity extends AppCompatActivity {
 
         Button repeatButton = ((Button) findViewById(R.id.quiz_repeat_failed_cards));
 
-        if(Database.mQuizCardDao.fetchUnansweredQuizCardsByQuizId(quizId).isEmpty()){
+        if (Database.mQuizCardDao.fetchUnansweredQuizCardsByQuizId(quizId).isEmpty()) {
             repeatButton.setText("Repeat Failed Cards");
             repeatButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_repeat_white_24dp, 0, 0, 0);
-        }else{
+        } else {
             repeatButton.setText("Continue");
             repeatButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_forward_white_24dp, 0, 0, 0);
         }
@@ -286,7 +290,7 @@ public abstract class QuizActivity extends AppCompatActivity {
         int remaining = maximumNumQuestion - numFailed - numPassed;
 
 
-        repeatButton.setEnabled(numFailed != 0 || remaining != 0 && Database.mQuizDao.fetchQuizById(quizId).getState() == Quiz.STATE.FINISHED_ROUND );
+        repeatButton.setEnabled(numFailed != 0 || remaining != 0 && Database.mQuizDao.fetchQuizById(quizId).getState() == Quiz.STATE.FINISHED_ROUND);
 
         Button exportButton = ((Button) findViewById(R.id.quiz_export_failed_cards));
 
@@ -325,16 +329,16 @@ public abstract class QuizActivity extends AppCompatActivity {
 
     protected abstract void initView();
 
-    public void repeatFailedCardsOnClick(View view) {
+    public void onRepeatFailedCardsButtonClick(View view) {
 
-        if(Database.mQuizCardDao.fetchUnansweredQuizCardsByQuizId(quizId).isEmpty()) {
+        if (Database.mQuizCardDao.fetchUnansweredQuizCardsByQuizId(quizId).isEmpty()) {
             if (Database.mQuizCardDao.fetchNumberFailedQuizCardFromQuizId(quizId) == 0) {
                 Toast.makeText(this, "No failed cards", Toast.LENGTH_SHORT).show();
             } else {
                 resetQuizCardListAndReset();
                 Database.mQuizDao.markQuizAsActive(quizId);
             }
-        }else{
+        } else {
             replaceContainerWithQuizType();
             Database.mQuizDao.markQuizAsActive(quizId);
         }
@@ -402,12 +406,64 @@ public abstract class QuizActivity extends AppCompatActivity {
         customProgressDialog.startDialog();
     }
 
-    public void exportFailedCardsToDeckOnClick(View view) {
-        // todo implement this
-        Toast.makeText(this, "Not implemented yet", Toast.LENGTH_SHORT).show();
+    public void onExportFailedCardsToDeckButtonClick(View view) {
+
+
+        final List<QuizCard> failedQuizCardList = Database.mQuizCardDao.fetchFailedQuizCardsByQuizId(quizId);
+
+
+        QuizFailedQuizCardsDialog quizFailedQuizCardsDialog = new QuizFailedQuizCardsDialog(){
+
+            @Override
+            public void onCardsSelected(final boolean[] exportList) {
+                QuizFailedCardsExportOptionsDialog quizFailedCardsExportOptionsDialog = new QuizFailedCardsExportOptionsDialog() {
+                    @Override
+                    public void addFailedQuizCardsToDeck(int deckId) {
+                        int numberCards = 0;
+                        for(int counter = 0; counter < exportList.length; counter++){
+                            if(exportList[counter]){
+                                Database.mCardDeckDao.createCardDeck(failedQuizCardList.get(counter).getCardId(), deckId);
+                                numberCards++;
+                            }
+                        }
+                        String deckName = Database.mDeckDao.fetchDeckById(deckId).getDeckName();
+                        CardUtilities.mergeDuplicates(null, deckId);
+                        Toast.makeText(QuizActivity.this, numberCards + " failed Cards quiz exported to Deck: '" + deckName + "'",Toast.LENGTH_SHORT).show();
+                    }
+                };
+                quizFailedCardsExportOptionsDialog.showExportOptions(QuizActivity.this, QuizActivity.this, failedQuizCardList, exportList, this);
+            }
+        };
+
+
+        boolean[] isExporting = new boolean[failedQuizCardList.size()];
+        for (int counter = 0; counter < isExporting.length; counter++) {
+            isExporting[counter] = true;
+        }
+
+        quizFailedQuizCardsDialog.showFailedQuizCards(failedQuizCardList, isExporting, QuizActivity.this);
     }
 
-    public void finishOnClick(View view) {
+    public void onFinishButtonClick(View view) {
+
+
+
+        final CustomYesNoDialog customYesNoDialog = new CustomYesNoDialog(this,
+                "Finish Quiz", "Are you sure you want to finish the quiz?") {
+            @Override
+            protected void onNegativeButtonClick() {
+
+            }
+
+            @Override
+            protected void onPositiveButtonClick() {
+                finishQuiz();
+            }
+        };
+        customYesNoDialog.show();
+    }
+
+    private void finishQuiz() {
         int numberOfCards = Database.mQuizCardDao.fetchNumberQuizCardFromQuizId(quizId);
         Database.mQuizDao.markQuizAsQuizFinished(quizId);
 
@@ -416,6 +472,9 @@ public abstract class QuizActivity extends AppCompatActivity {
 
             @Override
             public void loadInformation() {
+                QuizCardsUtilities.setQuizStats(quizId);
+                Quiz test = Database.mQuizDao.fetchQuizById(quizId);
+
                 List<QuizCard> quizCardList = Database.mQuizCardDao.
                         fetchQuizCardsByQuizId(Database.mProfileDao.fetchActiveQuizId());
 
@@ -445,4 +504,4 @@ public abstract class QuizActivity extends AppCompatActivity {
 
         customProgressDialog.startDialog();
     }
-}
+  }

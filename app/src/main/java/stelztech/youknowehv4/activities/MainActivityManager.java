@@ -428,7 +428,7 @@ public class MainActivityManager extends AppCompatActivity
                     public void loadInformation() {
                         Uri uri = data.getData();
                         ExportImportManager.readAllCSV(MainActivityManager.this, uri, this);
-                        CardUtilities.mergeDuplicates(this);
+                        CardUtilities.mergeDuplicates(this, -1);
                     }
 
                     @Override
@@ -441,7 +441,9 @@ public class MainActivityManager extends AppCompatActivity
             }
         } else if (requestCode == RESULT_QUIZ_END) {
             overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
+
             mQuizFragment.onQuizFinishResult();
+
 
         }
     }

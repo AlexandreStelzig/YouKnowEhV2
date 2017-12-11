@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
@@ -127,8 +126,8 @@ public class QuizReading extends QuizActivity {
     private void flipCard() {
         final View view = ((QuizReadingAdapter) adapter).getRecyclerView().findViewHolderForAdapterPosition(currentCardPosition).itemView;
 
-        Animation animationOut = AnimationUtils.loadAnimation(this, R.anim.shrink_to_middle);
-        final Animation animationIn = AnimationUtils.loadAnimation(this, R.anim.grow_from_middle);
+        Animation animationOut = AnimationUtils.loadAnimation(this, R.anim.card_shrink_to_middle);
+        final Animation animationIn = AnimationUtils.loadAnimation(this, R.anim.card_grow_from_middle);
 
         animationIn.setAnimationListener(new Animation.AnimationListener() {
             @Override

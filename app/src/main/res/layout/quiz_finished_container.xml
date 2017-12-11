@@ -23,7 +23,7 @@
         android:paddingStart="20dp"
         android:text="Repeat Failed Cards"
         android:textColor="?colorTextIcon"
-        android:onClick="repeatFailedCardsOnClick"/>
+        android:onClick="onRepeatFailedCardsButtonClick"/>
 
     <Button
         android:id="@+id/quiz_export_failed_cards"
@@ -37,7 +37,7 @@
         android:paddingStart="20dp"
         android:text="Export Failed Cards to Deck"
         android:textColor="?colorTextIcon"
-        android:onClick="exportFailedCardsToDeckOnClick" />
+        android:onClick="onExportFailedCardsToDeckButtonClick" />
 
     <View
         android:layout_width="0dp"
@@ -54,7 +54,7 @@
         android:paddingStart="20dp"
         android:text="Finish"
         android:textColor="?colorTextIcon"
-        android:onClick="finishOnClick" />
+        android:onClick="onFinishButtonClick" />
 
 
 </LinearLayout>
