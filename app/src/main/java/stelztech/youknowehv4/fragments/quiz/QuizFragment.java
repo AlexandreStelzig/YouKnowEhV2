@@ -571,7 +571,7 @@ public class QuizFragment extends FragmentCommon {
     }
 
     public void onQuizFinishResult(){
-        activeQuizId = Profile.NO_QUIZ;
+        activeQuizId = Database.mProfileDao.fetchActiveQuizId();
         updateContinueButton();
     }
 }

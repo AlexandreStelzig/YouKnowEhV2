@@ -116,6 +116,7 @@
 
 
     <LinearLayout
+        android:gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/profile_picker_card_diagonal_view"
@@ -135,7 +136,7 @@
 
         <View
             android:layout_width="0dp"
-            android:layout_height="5dp" />
+            android:layout_height="10dp" />
 
 
         <TextView

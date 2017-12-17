@@ -473,7 +473,6 @@ public abstract class QuizActivity extends AppCompatActivity {
             @Override
             public void loadInformation() {
                 QuizCardsUtilities.setQuizStats(quizId);
-                Quiz test = Database.mQuizDao.fetchQuizById(quizId);
 
                 List<QuizCard> quizCardList = Database.mQuizCardDao.
                         fetchQuizCardsByQuizId(Database.mProfileDao.fetchActiveQuizId());
