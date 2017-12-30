@@ -79,23 +79,11 @@ public class ProfilePickerCardAdapter extends RecyclerView.Adapter<ProfilePicker
         } else if (lastTimeOpenedHours >= 24) {
             int lastTimeOpenedDays = lastTimeOpenedHours / 24;
 
-            if (lastTimeOpenedDays > 365) {
-                int lastTimeOpenedYears = lastTimeOpenedDays / 365;
-
-                if (lastTimeOpenedDays == 1) {
-                    holder.lastOpenedTextView.setText("Last time opened: 1 year ago");
-                } else {
-                    holder.lastOpenedTextView.setText("Last time opened: " + lastTimeOpenedYears + " years ago");
-                }
-
+            if (lastTimeOpenedDays == 1) {
+                holder.lastOpenedTextView.setText("Last time opened: 1 day ago");
             } else {
-                if (lastTimeOpenedDays == 1) {
-                    holder.lastOpenedTextView.setText("Last time opened: 1 day ago");
-                } else {
-                    holder.lastOpenedTextView.setText("Last time opened: " + lastTimeOpenedDays + " days ago");
-                }
+                holder.lastOpenedTextView.setText("Last time opened: " + lastTimeOpenedDays + " days ago");
             }
-
 
         } else {
             holder.lastOpenedTextView.setText("Last time opened: " + lastTimeOpenedHours + " hours ago");

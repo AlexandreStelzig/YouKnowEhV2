@@ -32,6 +32,11 @@
         <activity
             android:name=".activities.CardInfoActivity"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activities.ProfileNewEditActivity"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".activities.ArchivedActivity"
             android:screenOrientation="portrait" />

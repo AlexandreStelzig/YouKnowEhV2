@@ -16,8 +16,8 @@ public class ThemeManager {
     to add new colors:
         add the colors in colors.xml
         add the new theme in styles.xml
-        create a button in fragment_profile.xml
-        hookup the button in ProfileFragment.xml
+        create a button in fragment_profile_old_old.xml
+        hookup the button in Old_ProfileFragment.xml
         add a THEME_COLORS and hook it up to the get functions
      */
 

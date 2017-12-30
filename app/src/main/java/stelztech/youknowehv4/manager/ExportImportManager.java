@@ -445,8 +445,12 @@ public final class ExportImportManager {
             }
         }
 
-        context.startActivity(emailIntent);
+        try{
+            context.startActivity(emailIntent);
 
+        } catch (Exception exception){
+            Toast.makeText(context, "Error - couldn't start the email activity", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public static void importDeck(Context context, Activity activity) {

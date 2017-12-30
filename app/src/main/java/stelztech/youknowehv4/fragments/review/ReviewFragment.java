@@ -237,7 +237,11 @@ public class ReviewFragment extends FragmentCommon {
     }
 
     private void setShowButtonEnable() {
-        showButton.setEnabled(!alwaysShowAnswer);
+        if(alwaysShowAnswer){
+            showButton.setEnabled(false);
+        }else{
+            setButtonsEnable();
+        }
         resetShowButtonLabel();
     }
 

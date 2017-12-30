@@ -5,10 +5,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-    <string name="about_email_string"><u>Alexandre.Stelzig@gmail.com</u></string>
-    <string name="facebook_about_string"><u>facebook.com/alexandre.stelzig</u></string>
-    <string name="website_about_string"><u>alexandrestelzig.github.io</u></string>
-    <string name="https_github_com_alexandrestelzig"><u>github.com/AlexandreStelzig</u></string>
     <string name="profileFragment_noProfiles">No profiles</string>
     <string name="profileFragment_deleteError">You need to have at least another profile to delete this profile</string>
 
@@ -25,7 +21,6 @@
         <item>Number of Decks</item>
     </string-array>
 
-
     <string-array name="settings_export_import_options">
         <item>Import deck</item>
         <item>Export all decks</item>
@@ -33,21 +28,23 @@
         <item>Export all profiles</item>
     </string-array>
 
-    <string-array name="settings_deleted_cards_options">
-        <item>View deleted cards</item>
+
+    <string-array name="profile_change_profile_options">
+        <item>Change Profile</item>
     </string-array>
 
-    <string-array name="settings_sorting_options">
-        <item>Default sorting</item>
+    <string-array name="profile_preference_options">
+        <item>Default Sorting:</item>
+        <item>Quick Toggle Time:</item>
     </string-array>
 
-    <string-array name="settings_review_options">
-        <item>Quick Toggle time:</item>
+    <string-array name="profile_more_options_options">
+        <item>Merge Duplicates Cards</item>
+        <item>View Archived Cards</item>
+        <item>Export Profile</item>
+        <item>Export All Profiles</item>
     </string-array>
 
-    <string-array name="settings_other_options">
-        <item>Merge Duplicates (this can take some time)</item>
-    </string-array>
 
     <string-array name="about_contact_options">
         <item>Send Feedback</item>

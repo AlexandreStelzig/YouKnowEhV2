@@ -1,13 +1,11 @@
 package stelztech.youknowehv4.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -24,11 +22,11 @@ import stelztech.youknowehv4.fragments.FragmentCommon;
 import stelztech.youknowehv4.fragments.about.AboutFragment;
 import stelztech.youknowehv4.fragments.card.CardListFragment;
 import stelztech.youknowehv4.fragments.deck.DeckListFragment;
+import stelztech.youknowehv4.fragments.profile.ProfileFragment;
 import stelztech.youknowehv4.fragments.quiz.QuizFragment;
 import stelztech.youknowehv4.fragments.statistics.StatisticsFragment;
 import stelztech.youknowehv4.fragments.review.ReviewFragment;
-import stelztech.youknowehv4.fragments.profile.ProfileFragment;
-import stelztech.youknowehv4.fragments.settings.SettingsFragment;
+import stelztech.youknowehv4.fragments.profile.Old_ProfileFragment;
 import stelztech.youknowehv4.utilities.CardUtilities;
 import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
@@ -38,8 +36,6 @@ import stelztech.youknowehv4.manager.ExportImportManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.manager.ThemeManager;
 
-import static stelztech.youknowehv4.fragments.FragmentCommon.FADE_ANIMATION;
-
 public class MainActivityManager extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -48,7 +44,6 @@ public class MainActivityManager extends AppCompatActivity
     private DeckListFragment mDeckListFragment;
     private CardListFragment mCardListFragment;
     private ReviewFragment mReviewFragment;
-    private SettingsFragment mSettingsFragment;
     private AboutFragment mAboutFragment;
     private ProfileFragment mProfileFragment;
     private QuizFragment mQuizFragment;
@@ -134,8 +129,7 @@ public class MainActivityManager extends AppCompatActivity
         mQuizFragment = new QuizFragment(4, false);
         mStatisticsFragment = new StatisticsFragment(5, false);
         mProfileFragment = new ProfileFragment(6, true);
-        mSettingsFragment = new SettingsFragment(7, true);
-        mAboutFragment = new AboutFragment(8, true);
+        mAboutFragment = new AboutFragment(7, true);
 
         Intent intent = getIntent();
         boolean loadProfilePage = intent.getBooleanExtra("ColorChanged", false);
@@ -213,10 +207,6 @@ public class MainActivityManager extends AppCompatActivity
                 currentFragment = mDeckListFragment;
                 title = "Deck List";
                 subtitle = Database.mUserDao.fetchActiveProfile().getProfileName();
-                break;
-            case R.id.settings:
-                currentFragment = mSettingsFragment;
-                title = "Settings";
                 break;
             case R.id.about:
                 currentFragment = mAboutFragment;

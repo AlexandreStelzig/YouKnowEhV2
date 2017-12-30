@@ -139,7 +139,7 @@ public class SettingsFragment extends FragmentCommon {
         Database.mUserDao.toggleDisplayNumDecksAllCards();
         User user = Database.mUserDao.fetchUser();
         showOnAllSwitch.setChecked(user.isDisplayNbDecksAllCards());
-    }
+}
 
     private void showOnSpecificDeckClicked() {
         Database.mUserDao.toggleDisplayNumDecksSpecificCard();
@@ -155,24 +155,24 @@ public class SettingsFragment extends FragmentCommon {
     }
 
     private void setupDeletedCardsLV() {
-        final String[] deletedCardsChoices = getContext().getResources().getStringArray(R.array.settings_deleted_cards_options);
-        ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, deletedCardsChoices);
-        deletedCardsLV.setAdapter(adapter);
-        deletedCardsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                switch (position) {
-                    // view deleted cards
-                    case 0:
-                        startArchivedActivity();
-                        break;
-                }
-
-            }
-        });
-
-        Helper.getInstance().setListViewHeightBasedOnChildren(deletedCardsLV);
+//        final String[] deletedCardsChoices = getContext().getResources().getStringArray(R.array.settings_deleted_cards_options);
+//        ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, deletedCardsChoices);
+//        deletedCardsLV.setAdapter(adapter);
+//        deletedCardsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                switch (position) {
+//                    // view deleted cards
+//                    case 0:
+//                        startArchivedActivity();
+//                        break;
+//                }
+//
+//            }
+//        });
+//
+//        Helper.getInstance().setListViewHeightBasedOnChildren(deletedCardsLV);
 
     }
 
@@ -217,101 +217,101 @@ public class SettingsFragment extends FragmentCommon {
     }
 
     private void setupSortingLV() {
-
-        // export import listview
-        sortChoices = getContext().getResources().getStringArray(R.array.settings_sorting_options);
-
-
-        Profile currentProfile = Database.mUserDao.fetchActiveProfile();
-        sortingOptions = getResources().getStringArray(R.array.sort_options);
-        sortingOptions[0] = currentProfile.getQuestionLabel() + " (A-Z)";
-        sortingOptions[1] = currentProfile.getQuestionLabel() + " (Z-A)";
-        sortingOptions[2] = currentProfile.getAnswerLabel() + " (A-Z)";
-        sortingOptions[3] = currentProfile.getAnswerLabel() + " (Z-A)";
-
-        sortChoices[0] = "Default sorting: " + sortingOptions[SortingStateManager.getInstance().getDefaultSort()];
-
-
-        sortAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, sortChoices);
-        sortingLV.setAdapter(sortAdapter);
-        sortingLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                switch (position) {
-                    // Default sorting
-                    case 0:
-                        defaultSortDialog().show();
-                        break;
-                }
-
-            }
-        });
-
-        Helper.getInstance().setListViewHeightBasedOnChildren(sortingLV);
+//
+//        // export import listview
+//        sortChoices = getContext().getResources().getStringArray(R.array.settings_sorting_options);
+//
+//
+//        Profile currentProfile = Database.mUserDao.fetchActiveProfile();
+//        sortingOptions = getResources().getStringArray(R.array.sort_options);
+//        sortingOptions[0] = currentProfile.getQuestionLabel() + " (A-Z)";
+//        sortingOptions[1] = currentProfile.getQuestionLabel() + " (Z-A)";
+//        sortingOptions[2] = currentProfile.getAnswerLabel() + " (A-Z)";
+//        sortingOptions[3] = currentProfile.getAnswerLabel() + " (Z-A)";
+//
+//        sortChoices[0] = "Default sorting: " + sortingOptions[SortingStateManager.getInstance().getDefaultSort()];
+//
+//
+//        sortAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, sortChoices);
+//        sortingLV.setAdapter(sortAdapter);
+//        sortingLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                switch (position) {
+//                    // Default sorting
+//                    case 0:
+//                        defaultSortDialog().show();
+//                        break;
+//                }
+//
+//            }
+//        });
+//
+//        Helper.getInstance().setListViewHeightBasedOnChildren(sortingLV);
     }
 
     private void setupOtherLV() {
-
-        // other import listview
-        final String[] otherChoices = getContext().getResources().getStringArray(R.array.settings_other_options);
-
-        ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, otherChoices);
-        otherLV.setAdapter(adapter);
-        otherLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                switch (position) {
-                    case 0:
-
-                        final CustomProgressDialog customProgressDialog = new CustomProgressDialog("Merging Duplicates", 100, getContext(), getActivity()) {
-                            @Override
-                            public void loadInformation() {
-                                CardUtilities.mergeDuplicates(this, -1);
-                            }
-
-                            @Override
-                            public void informationLoaded() {
-
-                            }
-                        };
-                        customProgressDialog.startDialog();
-                        break;
-                }
-
-            }
-        });
-
-        Helper.getInstance().setListViewHeightBasedOnChildren(otherLV);
+//
+//        // other import listview
+//        final String[] otherChoices = getContext().getResources().getStringArray(R.array.settings_other_options);
+//
+//        ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, otherChoices);
+//        otherLV.setAdapter(adapter);
+//        otherLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                switch (position) {
+//                    case 0:
+//
+//                        final CustomProgressDialog customProgressDialog = new CustomProgressDialog("Merging Duplicates", 100, getContext(), getActivity()) {
+//                            @Override
+//                            public void loadInformation() {
+//                                CardUtilities.mergeDuplicates(this, -1);
+//                            }
+//
+//                            @Override
+//                            public void informationLoaded() {
+//
+//                            }
+//                        };
+//                        customProgressDialog.startDialog();
+//                        break;
+//                }
+//
+//            }
+//        });
+//
+//        Helper.getInstance().setListViewHeightBasedOnChildren(otherLV);
 
 
     }
 
     private void setupReviewLV() {
-
-        // export import listview
-        final String[] exportImportChoices = getContext().getResources().getStringArray(R.array.settings_review_options);
-
-        exportImportChoices[0] = exportImportChoices[0] + " " + Database.mUserDao.fetchUser().getQuickToggleHours() + " hours";
-
-        ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, exportImportChoices);
-        reviewLV.setAdapter(adapter);
-        reviewLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                switch (position) {
-                    // Default quick toggle
-                    case 0:
-                        showQuickToggleDialog();
-                        break;
-                }
-
-            }
-        });
-
-        Helper.getInstance().setListViewHeightBasedOnChildren(reviewLV);
+//
+//        // export import listview
+//        final String[] exportImportChoices = getContext().getResources().getStringArray(R.array.settings_review_options);
+//
+//        exportImportChoices[0] = exportImportChoices[0] + " " + Database.mUserDao.fetchUser().getQuickToggleHours() + " hours";
+//
+//        ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, exportImportChoices);
+//        reviewLV.setAdapter(adapter);
+//        reviewLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                switch (position) {
+//                    // Default quick toggle
+//                    case 0:
+//                        showQuickToggleDialog();
+//                        break;
+//                }
+//
+//            }
+//        });
+//
+//        Helper.getInstance().setListViewHeightBasedOnChildren(reviewLV);
 
     }
 

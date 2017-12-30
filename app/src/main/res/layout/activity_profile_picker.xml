@@ -36,19 +36,19 @@
             android:layout_weight="0.75"
             android:orientation="horizontal">
 
-            <Button
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/ic_more_vert_profile_white_24dp"/>
+            <!--<Button-->
+                <!--android:layout_width="50dp"-->
+                <!--android:layout_height="50dp"-->
+                <!--android:background="@drawable/ic_more_vert_profile_white_24dp"/>-->
 
-            <View
-                android:layout_width="5dp"
-                android:layout_height="0dp"/>
+            <!--<View-->
+                <!--android:layout_width="5dp"-->
+                <!--android:layout_height="0dp"/>-->
 
             <Button
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:background="@drawable/ic_add_profile_white_24dp"/>
+                android:text="add"/>
 
         </LinearLayout>
 
