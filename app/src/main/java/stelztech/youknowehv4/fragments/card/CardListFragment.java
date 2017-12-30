@@ -259,7 +259,7 @@ public class CardListFragment extends FragmentCommon {
             public boolean onQueryTextChange(String s) {
 
 
-                if (Database.mUserDao.fetchUser().isAllowOnQueryChanged())
+                if (Database.mUserDao.fetchActiveProfile().isAllowOnQueryChanged())
                     populateSearchListView(s);
 
                 return false;
@@ -1193,10 +1193,10 @@ public class CardListFragment extends FragmentCommon {
             holder.nbDecksLabel = (TextView) rowView.findViewById(R.id.custom_card_item_nb_decks_label);
 
 
-            User user = Database.mUserDao.fetchUser();
+            Profile activeProfile = Database.mUserDao.fetchActiveProfile();
 
-            if ((getCurrentDeckIdSelected() == (ALL_DECKS_ITEM) && user.isDisplayNbDecksAllCards())
-                    || (getCurrentDeckIdSelected() != (ALL_DECKS_ITEM) && user.isDisplayNbDecksSpecificCards())) {
+            if ((getCurrentDeckIdSelected() == (ALL_DECKS_ITEM) && activeProfile.isDisplayNbDecksAllCards())
+                    || (getCurrentDeckIdSelected() != (ALL_DECKS_ITEM) && activeProfile.isDisplayNbDecksSpecificCards())) {
                 holder.nbDecksLayout.setVisibility(View.VISIBLE);
                 int nbDecks = Database.mCardDeckDao.fetchDecksByCardId(cardList.get(position).getCardId()).size();
                 String nbDeckString;

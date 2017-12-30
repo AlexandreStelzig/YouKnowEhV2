@@ -9,65 +9,13 @@ public class User {
     private int userId;
     private String dateCreated;
     private int activeProfileId;
-    private int defaultSortingPosition;
-    private boolean displayNbDecksAllCards;
-    private boolean displayNbDecksSpecificCards;
-    private boolean allowPracticeAll;
-    private boolean allowOnQueryChanged;
-    private int quickToggleHours;
 
-    public User(int userId, String dateCreated, int activeProfileId, int defaultSortingPosition, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards, boolean allowPracticeAll, boolean allowOnQueryChanged, int quickToggleHours) {
+    public User(int userId, String dateCreated, int activeProfileId) {
         this.userId = userId;
         this.dateCreated = dateCreated;
         this.activeProfileId = activeProfileId;
-        this.defaultSortingPosition = defaultSortingPosition;
-        this.displayNbDecksAllCards = displayNbDecksAllCards;
-        this.displayNbDecksSpecificCards = displayNbDecksSpecificCards;
-        this.allowPracticeAll = allowPracticeAll;
-        this.allowOnQueryChanged = allowOnQueryChanged;
-        this.quickToggleHours = quickToggleHours;
     }
 
-
-    public int getQuickToggleHours() {
-        return quickToggleHours;
-    }
-
-    public void setQuickToggleHours(int quickToggleHours) {
-        this.quickToggleHours = quickToggleHours;
-    }
-
-    public boolean isAllowOnQueryChanged() {
-        return allowOnQueryChanged;
-    }
-
-    public void setAllowOnQueryChanged(boolean allowOnQueryChanged) {
-        this.allowOnQueryChanged = allowOnQueryChanged;
-    }
-
-    public boolean isAllowPracticeAll() {
-        return allowPracticeAll;
-    }
-
-    public void setAllowPracticeAll(boolean allowPracticeAll) {
-        this.allowPracticeAll = allowPracticeAll;
-    }
-
-    public boolean isDisplayNbDecksAllCards() {
-        return displayNbDecksAllCards;
-    }
-
-    public void setDisplayNbDecksAllCards(boolean displayNbDecksAllCards) {
-        this.displayNbDecksAllCards = displayNbDecksAllCards;
-    }
-
-    public boolean isDisplayNbDecksSpecificCards() {
-        return displayNbDecksSpecificCards;
-    }
-
-    public void setDisplayNbDecksSpecificCards(boolean displayNbDecksSpecificCards) {
-        this.displayNbDecksSpecificCards = displayNbDecksSpecificCards;
-    }
 
     public int getUserId() {
         return userId;
@@ -91,13 +39,5 @@ public class User {
 
     public void setActiveProfileId(int activeProfileId) {
         this.activeProfileId = activeProfileId;
-    }
-
-    public int getDefaultSortingPosition() {
-        return defaultSortingPosition;
-    }
-
-    public void setDefaultSortingPosition(int defaultSortingPosition) {
-        this.defaultSortingPosition = defaultSortingPosition;
     }
 }

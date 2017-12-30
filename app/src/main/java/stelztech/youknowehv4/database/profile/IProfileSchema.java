@@ -20,6 +20,11 @@ public interface IProfileSchema {
     String COLUMN_PROFILE_COLOR = "profile_color";
     String COLUMN_PROFILE_LAST_TIME_OPENED = "last_time_opened";
     String COLUMN_PROFILE_IMAGE = "profile_image";
+    String COLUMN_DISPLAY_ALL_CARDS = "display_all_cards";
+    String COLUMN_DISPLAY_SPECIFIC_DECK = "display_specific_deck";
+    String COLUMN_ALLOW_SEARCH_ON_QUERY_CHANGED = "allow_search_on_query_change";
+    String COLUMN_DEFAULT_SORTING = "default_sorting";
+    String COLUMN_QUICK_TOGGLE_REVIEW = "quick_toggle_review";
 
     // ON CREATE
     String SQL_CREATE_TABLE_PROFILE = "CREATE TABLE "
@@ -30,6 +35,11 @@ public interface IProfileSchema {
             + COLUMN_ANSWER_LABEL + " TEXT NOT NULL,"
             + COLUMN_ACTIVE_QUIZ_ID + " INTEGER,"
             + COLUMN_PROFILE_IMAGE + " INTEGER,"
+            + COLUMN_DISPLAY_ALL_CARDS + " BOOLEAN,"
+            + COLUMN_DISPLAY_SPECIFIC_DECK + " BOOLEAN,"
+            + COLUMN_ALLOW_SEARCH_ON_QUERY_CHANGED + " BOOLEAN,"
+            + COLUMN_DEFAULT_SORTING + " INTEGER NOT NULL,"
+            + COLUMN_QUICK_TOGGLE_REVIEW + " INTEGER,"
             + COLUMN_DATE_CREATED + " TEXT,"
             + COLUMN_DATE_MODIFIED + " TEXT,"
             + COLUMN_PROFILE_LAST_TIME_OPENED + " TEXT,"

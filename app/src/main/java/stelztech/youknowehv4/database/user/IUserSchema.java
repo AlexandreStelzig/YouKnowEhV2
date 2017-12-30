@@ -12,24 +12,12 @@ public interface IUserSchema {
     String USER_TABLE = "user_table";
     String COLUMN_USER_ID = "user_id";
     String COLUMN_DATE_CREATED = "date_created";
-    String COLUMN_DEFAULT_SORTING = "default_sorting";
     String COLUMN_ACTIVE_PROFILE_ID = "active_profile";
-    String COLUMN_DISPLAY_ALL_CARDS = "display_all_cards";
-    String COLUMN_DISPLAY_SPECIFIC_DECK = "display_specific_deck";
-    String COLUMN_ALLOW_REVIEW_ALL = "all_review_all";
-    String COLUMN_ALLOW_SEARCH_ON_QUERY_CHANGED = "allow_search_on_query_change";
-    String COLUMN_QUICK_TOGGLE_REVIEW = "quick_toggle_review";
 
     // ON CREATE
   String SQL_CREATE_TABLE_USER = "CREATE TABLE "
             + USER_TABLE + " ("
             + COLUMN_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + COLUMN_DEFAULT_SORTING + " INTEGER NOT NULL,"
-            + COLUMN_DISPLAY_ALL_CARDS + " BOOLEAN,"
-            + COLUMN_DISPLAY_SPECIFIC_DECK + " BOOLEAN,"
-            + COLUMN_QUICK_TOGGLE_REVIEW + " INTEGER,"
-            + COLUMN_ALLOW_SEARCH_ON_QUERY_CHANGED + " BOOLEAN,"
-            + COLUMN_ALLOW_REVIEW_ALL + " BOOLEAN,"
             + COLUMN_DATE_CREATED + " TEXT,"
             + COLUMN_ACTIVE_PROFILE_ID + " INTEGER,"
             + " FOREIGN KEY " + "(" + COLUMN_ACTIVE_PROFILE_ID + ")"

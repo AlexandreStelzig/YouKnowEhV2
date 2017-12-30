@@ -20,8 +20,13 @@ public class Profile {
     private ThemeManager.THEME_COLORS profileColor;
     private String lastTimeOpened;
     private int profileImage;
+    private boolean displayNbDecksAllCards;
+    private boolean displayNbDecksSpecificCards;
+    private boolean allowOnQueryChanged;
+    private int defaultSortingPosition;
+    private int quickToggleHours;
 
-    public Profile(int profileId, String profileName, String dateCreated, String questionLabel, String answerLabel, int activeQuizId, ThemeManager.THEME_COLORS profileColor, String lastTimeOpened, int profileImage) {
+    public Profile(int profileId, String profileName, String dateCreated, String questionLabel, String answerLabel, int activeQuizId, ThemeManager.THEME_COLORS profileColor, String lastTimeOpened, int profileImage, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards, boolean allowOnQueryChanged, int defaultSortingPosition, int quickToggleHours) {
         this.profileId = profileId;
         this.profileName = profileName;
         this.dateCreated = dateCreated;
@@ -31,6 +36,11 @@ public class Profile {
         this.profileColor = profileColor;
         this.lastTimeOpened = lastTimeOpened;
         this.profileImage = profileImage;
+        this.displayNbDecksAllCards = displayNbDecksAllCards;
+        this.displayNbDecksSpecificCards = displayNbDecksSpecificCards;
+        this.allowOnQueryChanged = allowOnQueryChanged;
+        this.defaultSortingPosition = defaultSortingPosition;
+        this.quickToggleHours = quickToggleHours;
     }
 
     public String getLastTimeOpened() {
@@ -103,5 +113,46 @@ public class Profile {
 
     public void setActiveQuizId(int activeQuizId) {
         this.activeQuizId = activeQuizId;
+    }
+
+
+    public boolean isDisplayNbDecksAllCards() {
+        return displayNbDecksAllCards;
+    }
+
+    public void setDisplayNbDecksAllCards(boolean displayNbDecksAllCards) {
+        this.displayNbDecksAllCards = displayNbDecksAllCards;
+    }
+
+    public boolean isDisplayNbDecksSpecificCards() {
+        return displayNbDecksSpecificCards;
+    }
+
+    public void setDisplayNbDecksSpecificCards(boolean displayNbDecksSpecificCards) {
+        this.displayNbDecksSpecificCards = displayNbDecksSpecificCards;
+    }
+
+    public boolean isAllowOnQueryChanged() {
+        return allowOnQueryChanged;
+    }
+
+    public void setAllowOnQueryChanged(boolean allowOnQueryChanged) {
+        this.allowOnQueryChanged = allowOnQueryChanged;
+    }
+
+    public int getDefaultSortingPosition() {
+        return defaultSortingPosition;
+    }
+
+    public void setDefaultSortingPosition(int defaultSortingPosition) {
+        this.defaultSortingPosition = defaultSortingPosition;
+    }
+
+    public int getQuickToggleHours() {
+        return quickToggleHours;
+    }
+
+    public void setQuickToggleHours(int quickToggleHours) {
+        this.quickToggleHours = quickToggleHours;
     }
 }

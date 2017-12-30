@@ -328,7 +328,7 @@ public class SortingStateManager {
     }
 
     public int getDefaultSort(){
-        return Database.mUserDao.fetchUser().getDefaultSortingPosition();
+        return Database.mUserDao.fetchActiveProfile().getDefaultSortingPosition();
     }
 
     public void changeStateByPosition(int position) {

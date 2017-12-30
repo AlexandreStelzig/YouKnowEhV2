@@ -95,41 +95,41 @@ public class ProfileFragment extends FragmentCommon {
     }
 
     private void initSwitches() {
-        User user = Database.mUserDao.fetchUser();
+        Profile activeProfile = Database.mUserDao.fetchActiveProfile();
 
         final Switch showOnAllSwitch = (Switch) view.findViewById(R.id.settings_show_on_all_switch);
         final Switch showOnSpecificSwitch = (Switch) view.findViewById(R.id.settings_show_on_specific_switch);
         final Switch allowOnQueryChangedSwitch = (Switch) view.findViewById(R.id.settings_allow_on_query_changed_switch);
 
-        showOnAllSwitch.setChecked(user.isDisplayNbDecksAllCards());
-        showOnSpecificSwitch.setChecked(user.isDisplayNbDecksSpecificCards());
-        allowOnQueryChangedSwitch.setChecked(user.isAllowOnQueryChanged());
+        showOnAllSwitch.setChecked(activeProfile.isDisplayNbDecksAllCards());
+        showOnSpecificSwitch.setChecked(activeProfile.isDisplayNbDecksSpecificCards());
+        allowOnQueryChangedSwitch.setChecked(activeProfile.isAllowOnQueryChanged());
 
         showOnAllSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Database.mUserDao.toggleDisplayNumDecksAllCards();
-                User user = Database.mUserDao.fetchUser();
-                showOnAllSwitch.setChecked(user.isDisplayNbDecksAllCards());
+                Database.mProfileDao.toggleDisplayNumDecksAllCards();
+                Profile profile = Database.mUserDao.fetchActiveProfile();
+                showOnAllSwitch.setChecked(profile.isDisplayNbDecksAllCards());
             }
         });
 
         showOnSpecificSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Database.mUserDao.toggleDisplayNumDecksSpecificCard();
-                User user = Database.mUserDao.fetchUser();
-                showOnSpecificSwitch.setChecked(user.isDisplayNbDecksSpecificCards());
+                Database.mProfileDao.toggleDisplayNumDecksSpecificCard();
+                Profile profile = Database.mUserDao.fetchActiveProfile();
+                showOnSpecificSwitch.setChecked(profile.isDisplayNbDecksSpecificCards());
             }
         });
 
         allowOnQueryChangedSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Database.mUserDao.toggleAllowSearchOnQueryChanged();
-                User user = Database.mUserDao.fetchUser();
-                allowOnQueryChangedSwitch.setChecked(user.isAllowOnQueryChanged());
+                Database.mProfileDao.toggleAllowSearchOnQueryChanged();
+                Profile profile = Database.mUserDao.fetchActiveProfile();
+                allowOnQueryChangedSwitch.setChecked(profile.isAllowOnQueryChanged());
             }
         });
 
@@ -177,8 +177,8 @@ public class ProfileFragment extends FragmentCommon {
         sortingOptions[2] = currentProfile.getAnswerLabel() + " (A-Z)";
         sortingOptions[3] = currentProfile.getAnswerLabel() + " (Z-A)";
 
-        preferenceOptions[0] = preferenceOptions[0] + " " + sortingOptions[Database.mUserDao.fetchUser().getDefaultSortingPosition()];
-        preferenceOptions[1] = preferenceOptions[1] + " " + Database.mUserDao.fetchUser().getQuickToggleHours() + " hours";
+        preferenceOptions[0] = preferenceOptions[0] + " " + sortingOptions[Database.mUserDao.fetchActiveProfile().getDefaultSortingPosition()];
+        preferenceOptions[1] = preferenceOptions[1] + " " + Database.mUserDao.fetchActiveProfile().getQuickToggleHours() + " hours";
 
         int[] drawableIds = {R.drawable.ic_sort_black_24dp, R.mipmap.ic_toggle_review_black};
 
@@ -327,7 +327,7 @@ public class ProfileFragment extends FragmentCommon {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        Database.mUserDao.updateDefaultSortPosition(which);
+                        Database.mProfileDao.updateDefaultSortPosition(which);
                         dialog.dismiss();
                         initPreferenceListView();
                         Toast.makeText(getContext(), "Default sort by: " + sortingOptions[which], Toast.LENGTH_SHORT).show();
@@ -367,12 +367,12 @@ public class ProfileFragment extends FragmentCommon {
             }
         });
 
-        np.setValue(Database.mUserDao.fetchUser().getQuickToggleHours());
+        np.setValue(Database.mUserDao.fetchActiveProfile().getQuickToggleHours());
 
 
         db.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                Database.mUserDao.updateQuickToggleReviewHours(np.getValue());
+                Database.mProfileDao.updateQuickToggleReviewHours(np.getValue());
                 initPreferenceListView();
                 Toast.makeText(getContext(), "Default Quick Review Value changed to " + np.getValue(), Toast.LENGTH_SHORT).show();
             }

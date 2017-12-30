@@ -172,7 +172,7 @@ public class ReviewFragment extends FragmentCommon {
         showButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isSelectedDeckAll() && !(Database.mUserDao.fetchUser().isAllowPracticeAll())) {
+                if (isSelectedDeckAll()) {
                     Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
                 } else {
                     if (!loading)
@@ -189,7 +189,7 @@ public class ReviewFragment extends FragmentCommon {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isSelectedDeckAll() && !(Database.mUserDao.fetchUser().isAllowPracticeAll())) {
+                if (isSelectedDeckAll()) {
                     Toast.makeText(getContext(), "Select a Deck", Toast.LENGTH_SHORT).show();
                 } else {
                     if (!loading)
@@ -237,9 +237,9 @@ public class ReviewFragment extends FragmentCommon {
     }
 
     private void setShowButtonEnable() {
-        if(alwaysShowAnswer){
+        if (alwaysShowAnswer) {
             showButton.setEnabled(false);
-        }else{
+        } else {
             setButtonsEnable();
         }
         resetShowButtonLabel();
@@ -262,19 +262,19 @@ public class ReviewFragment extends FragmentCommon {
         getActivity().findViewById(R.id.spinner_nav_layout).setVisibility(View.GONE);
 
         final MenuItem previousMenuItem = menu.findItem(R.id.action_previous);
-        if(showingPrevious || previousCard == null && currentQuestion == 0 || showingUndo){
+        if (showingPrevious || previousCard == null && currentQuestion == 0 || showingUndo) {
             previousMenuItem.setEnabled(false);
             previousMenuItem.getIcon().setAlpha(50);
-        }else{
+        } else {
             previousMenuItem.setEnabled(true);
             previousMenuItem.getIcon().setAlpha(255);
         }
 
         final MenuItem undoMenuItem = menu.findItem(R.id.undo_toggle_review);
-        if(showingUndo || undoCard == null){
+        if (showingUndo || undoCard == null) {
             undoMenuItem.setEnabled(false);
             undoMenuItem.getIcon().setAlpha(50);
-        }else{
+        } else {
             undoMenuItem.setEnabled(true);
             undoMenuItem.getIcon().setAlpha(255);
         }
@@ -282,14 +282,14 @@ public class ReviewFragment extends FragmentCommon {
         final MenuItem cardDecksMenuItem = menu.findItem(R.id.action_modify_card_decks);
         final MenuItem cardQuickInfoMenuItem = menu.findItem(R.id.action_quick_info);
         final MenuItem shuffleOrderMenuItem = menu.findItem(R.id.action_shuffle);
-        if(mCardList == null || mCardList.isEmpty()){
+        if (mCardList == null || mCardList.isEmpty()) {
             cardDecksMenuItem.setEnabled(false);
             cardDecksMenuItem.getIcon().setAlpha(50);
             cardQuickInfoMenuItem.setEnabled(false);
             cardQuickInfoMenuItem.getIcon().setAlpha(50);
             shuffleOrderMenuItem.setEnabled(false);
             shuffleOrderMenuItem.getIcon().setAlpha(50);
-        }else{
+        } else {
             cardDecksMenuItem.setEnabled(true);
             cardDecksMenuItem.getIcon().setAlpha(255);
             cardQuickInfoMenuItem.setEnabled(true);
@@ -318,7 +318,7 @@ public class ReviewFragment extends FragmentCommon {
                     else
                         item.setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_check_box_outline_blank_black_24dp));
 
-                    if (!isSelectedDeckAll() || (Database.mUserDao.fetchUser().isAllowPracticeAll())) {
+                    if (!isSelectedDeckAll()) {
                         setQuestionAnswerText();
                     }
 
@@ -351,7 +351,7 @@ public class ReviewFragment extends FragmentCommon {
 
                 case R.id.action_quick_remove_practice:
                     if (mCardList != null && !mCardList.isEmpty() && !isSelectedDeckAll()) {
-                        toggleFromReview(Database.mUserDao.fetchUser().getQuickToggleHours());
+                        toggleFromReview(Database.mUserDao.fetchActiveProfile().getQuickToggleHours());
                     } else {
                         Toast.makeText(getContext(), "Cannot toggle from review", Toast.LENGTH_SHORT).show();
                     }
@@ -373,7 +373,7 @@ public class ReviewFragment extends FragmentCommon {
                     return true;
                 case R.id.action_quick_info:
                     if (mCardList != null && !mCardList.isEmpty()) {
-                        if (!(isSelectedDeckAll() && !(Database.mUserDao.fetchUser().isAllowPracticeAll()))) {
+                        if (!(isSelectedDeckAll())) {
 
                             Deck deckAssociated;
                             if (!isSelectedDeckAll())
@@ -479,11 +479,7 @@ public class ReviewFragment extends FragmentCommon {
         deckList = Database.mDeckDao.fetchAllDecks();
         final List<String> deckListString = new ArrayList<>();
 
-
-        if (Database.mUserDao.fetchUser().isAllowPracticeAll())
-            deckListString.add("All Cards");
-        else
-            deckListString.add("- Select Deck -");
+        deckListString.add("- Select Deck -");
         spinner.setEnabled(true);
 
 
@@ -498,11 +494,7 @@ public class ReviewFragment extends FragmentCommon {
             @Override
             public boolean isEnabled(int position) {
 
-                if (position == SELECT_ALL_CARDS && !(Database.mUserDao.fetchUser().isAllowPracticeAll())) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return position != SELECT_ALL_CARDS;
 
             }
 
@@ -517,15 +509,9 @@ public class ReviewFragment extends FragmentCommon {
 
 
                 if (position == SELECT_ALL_CARDS) {
-                    if (!(Database.mUserDao.fetchUser().isAllowPracticeAll())) {
-                        mTextView.setTypeface(null, Typeface.NORMAL);
-                        mTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.colorDivider));
-                        mTextView.setTextColor(Color.GRAY);
-                    } else {
-                        mTextView.setTypeface(null, Typeface.BOLD);
-                        mTextView.setTextColor(Color.BLACK);
-                    }
-
+                    mTextView.setTypeface(null, Typeface.NORMAL);
+                    mTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.colorDivider));
+                    mTextView.setTextColor(Color.GRAY);
 
                 } else {
                     mTextView.setTypeface(null, Typeface.NORMAL);
@@ -548,7 +534,7 @@ public class ReviewFragment extends FragmentCommon {
                 View mView = super.getDropDownView(position, convertView, parent);
                 TextView mTextView = (TextView) mView;
                 mTextView.setTextColor(Color.BLACK);
-                if (position == SELECT_ALL_CARDS && !(Database.mUserDao.fetchUser().isAllowPracticeAll())) {
+                if (position == SELECT_ALL_CARDS) {
                     mTextView.setTextColor(Color.GRAY);
                 } else {
                     mTextView.setTextColor(Color.BLACK);
@@ -596,7 +582,7 @@ public class ReviewFragment extends FragmentCommon {
 
     private void switchPracticeCards() {
 
-        if (isSelectedDeckAll() && !(Database.mUserDao.fetchUser().isAllowPracticeAll())) {
+        if (isSelectedDeckAll()) {
 
             questionTextView.setText("Select Deck");
             answerTextView.setText("");
@@ -647,7 +633,7 @@ public class ReviewFragment extends FragmentCommon {
         } else {
 
             if (showingPrevious || showingUndo) {
-                if(showingUndo)
+                if (showingUndo)
                     undoCard = null;
                 showingUndo = showingPrevious = false;
                 getActivity().invalidateOptionsMenu();
@@ -913,7 +899,7 @@ public class ReviewFragment extends FragmentCommon {
 
             int undoCardIndex = findCardIndex(undoCard);
 
-            if(undoCardIndex != -1) {
+            if (undoCardIndex != -1) {
                 int previousCardOrderIndex = findQuestionIndex(undoCardIndex);
                 mCardList.remove(undoCardIndex);
                 questionList.remove(undoCardIndex);
@@ -1192,7 +1178,7 @@ public class ReviewFragment extends FragmentCommon {
 
     public void setButtonsEnable() {
 
-        if (isSelectedDeckAll() && !(Database.mUserDao.fetchUser().isAllowPracticeAll()) || mCardList.isEmpty()) {
+        if (isSelectedDeckAll() || mCardList.isEmpty()) {
             nextButton.setEnabled(false);
             showButton.setEnabled(false);
         } else {

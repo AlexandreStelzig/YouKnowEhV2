@@ -14,6 +14,7 @@ import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.DbContentProvider;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.deck.Deck;
+import stelztech.youknowehv4.database.user.User;
 import stelztech.youknowehv4.utilities.DateUtilities;
 import stelztech.youknowehv4.manager.ThemeManager;
 
@@ -68,13 +69,13 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
     public boolean deleteProfile(int profileId) {
         List<Card> cardList = Database.mCardDao.fetchAllCards();
 
-        for(Card card: cardList){
+        for (Card card : cardList) {
             Database.mCardDao.deleteCard(card.getCardId());
         }
 
         List<Deck> deckList = Database.mDeckDao.fetchAllDecks();
 
-        for(Deck deck: deckList){
+        for (Deck deck : deckList) {
             Database.mDeckDao.deleteDeck(deck.getDeckId());
         }
 
@@ -97,6 +98,11 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
         values.put(COLUMN_PROFILE_COLOR, String.valueOf(ThemeManager.THEME_COLORS.BLUE));
         values.put(COLUMN_PROFILE_LAST_TIME_OPENED, date);
         values.put(COLUMN_PROFILE_IMAGE, R.drawable.city);
+        values.put(COLUMN_DEFAULT_SORTING, 0);
+        values.put(COLUMN_DISPLAY_ALL_CARDS, 1);
+        values.put(COLUMN_DISPLAY_SPECIFIC_DECK, 1);
+        values.put(COLUMN_ALLOW_SEARCH_ON_QUERY_CHANGED, 0);
+        values.put(COLUMN_QUICK_TOGGLE_REVIEW, 12);
 
         try {
             return super.insert(PROFILE_TABLE, values);
@@ -224,6 +230,100 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
         }
     }
 
+
+    @Override
+    public boolean toggleDisplayNumDecksAllCards() {
+        ContentValues values = new ContentValues();
+
+        try {
+
+            Profile currentProfile = Database.mUserDao.fetchActiveProfile();
+
+            boolean currentDisplay = currentProfile.isDisplayNbDecksAllCards();
+            boolean nextDisplay = !currentDisplay;
+
+            values.put(COLUMN_DISPLAY_ALL_CARDS, nextDisplay);
+
+            return super.update(PROFILE_TABLE, values, COLUMN_PROFILE_ID + "=" + currentProfile.getProfileId(), null) > 0;
+        } catch (SQLiteConstraintException ex) {
+            Log.w("Database", ex.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean toggleDisplayNumDecksSpecificCard() {
+        ContentValues values = new ContentValues();
+
+        try {
+
+            Profile currentProfile = Database.mUserDao.fetchActiveProfile();
+
+            boolean currentDisplay = currentProfile.isDisplayNbDecksSpecificCards();
+            boolean nextDisplay = !currentDisplay;
+
+            values.put(COLUMN_DISPLAY_SPECIFIC_DECK, nextDisplay);
+
+            return super.update(PROFILE_TABLE, values, COLUMN_PROFILE_ID + "=" + currentProfile.getProfileId(), null) > 0;
+        } catch (SQLiteConstraintException ex) {
+            Log.w("Database", ex.getMessage());
+            return false;
+        }
+    }
+
+
+    @Override
+    public boolean toggleAllowSearchOnQueryChanged() {
+        ContentValues values = new ContentValues();
+
+        try {
+            Profile currentProfile = Database.mUserDao.fetchActiveProfile();
+
+            boolean currentAllowOnQueryChange = currentProfile.isAllowOnQueryChanged();
+            boolean nextAllowOnQueryChange = !currentAllowOnQueryChange;
+
+            values.put(COLUMN_ALLOW_SEARCH_ON_QUERY_CHANGED, nextAllowOnQueryChange);
+
+            return super.update(PROFILE_TABLE, values, COLUMN_PROFILE_ID + "=" + currentProfile.getProfileId(), null) > 0;
+        } catch (SQLiteConstraintException ex) {
+            Log.w("Database", ex.getMessage());
+            return false;
+        }
+    }
+
+
+    @Override
+    public boolean updateDefaultSortPosition(int position) {
+        Profile currentProfile = Database.mUserDao.fetchActiveProfile();
+
+        ContentValues values = new ContentValues();
+
+        try {
+            values.put(COLUMN_DEFAULT_SORTING, position);
+
+            return super.update(PROFILE_TABLE, values, COLUMN_PROFILE_ID + "=" + currentProfile.getProfileId(), null) > 0;
+        } catch (SQLiteConstraintException ex) {
+            Log.w("Database", ex.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateQuickToggleReviewHours(int hours) {
+        Profile currentProfile = Database.mUserDao.fetchActiveProfile();
+
+        ContentValues values = new ContentValues();
+
+        try {
+            values.put(COLUMN_QUICK_TOGGLE_REVIEW, hours);
+
+            return super.update(PROFILE_TABLE, values, COLUMN_PROFILE_ID + "=" + currentProfile.getProfileId(), null) > 0;
+        } catch (SQLiteConstraintException ex) {
+            Log.w("Database", ex.getMessage());
+            return false;
+        }
+    }
+
     @Override
     protected Profile cursorToEntity(Cursor cursor) {
 
@@ -236,10 +336,16 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
         String profileColor = cursor.getString(cursor.getColumnIndex(COLUMN_PROFILE_COLOR));
         String lastTimeOpened = cursor.getString(cursor.getColumnIndex(COLUMN_PROFILE_LAST_TIME_OPENED));
         int profileImage = cursor.getInt(cursor.getColumnIndex(COLUMN_PROFILE_IMAGE));
+        int defaultSorting = cursor.getInt(cursor.getColumnIndex(COLUMN_DEFAULT_SORTING));
+        boolean displayAllCards = cursor.getInt(cursor.getColumnIndex(COLUMN_DISPLAY_ALL_CARDS)) > 0;
+        boolean displaySpecificDeck = cursor.getInt(cursor.getColumnIndex(COLUMN_DISPLAY_SPECIFIC_DECK)) > 0;
+        boolean allowOnQueryChanged = cursor.getInt(cursor.getColumnIndex(COLUMN_ALLOW_SEARCH_ON_QUERY_CHANGED)) > 0;
+        int quickToggle = cursor.getInt(cursor.getColumnIndex(COLUMN_QUICK_TOGGLE_REVIEW));
 
         ThemeManager.THEME_COLORS profileThemeColor = ThemeManager.THEME_COLORS.valueOf(profileColor);
 
-        return new Profile(profileId, profileName, dateAdded, questionLabel, answerLabel, activeQuizId, profileThemeColor, lastTimeOpened, profileImage);
+        return new Profile(profileId, profileName, dateAdded, questionLabel, answerLabel, activeQuizId, profileThemeColor, lastTimeOpened, profileImage,
+                displayAllCards, displaySpecificDeck, allowOnQueryChanged, defaultSorting, quickToggle);
     }
 
 }

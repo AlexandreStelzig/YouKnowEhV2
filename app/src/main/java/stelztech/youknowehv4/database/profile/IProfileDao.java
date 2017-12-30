@@ -23,4 +23,10 @@ public interface IProfileDao {
     boolean updateProfileImage(int profileId, int picture);
     int fetchActiveQuizId();
     boolean setActiveQuizId(int profileId, int quizId);
+    boolean toggleDisplayNumDecksAllCards();
+    boolean toggleDisplayNumDecksSpecificCard();
+    boolean toggleAllowSearchOnQueryChanged();
+    boolean updateDefaultSortPosition(int position);
+    boolean updateQuickToggleReviewHours(int hours);
+
 }

@@ -64,97 +64,97 @@ public class SettingsFragment extends FragmentCommon {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_settings, container, false);
-
-        FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
-        setHasOptionsMenu(true);
-
-        User user = Database.mUserDao.fetchUser();
-
-        exportImportLV = (ListView) view.findViewById(R.id.settings_export_import_lv);
-        deletedCardsLV = (ListView) view.findViewById(R.id.settings_deleted_cards_lv);
-        sortingLV = (ListView) view.findViewById(R.id.settings_sorting_lv);
-        reviewLV = (ListView) view.findViewById(R.id.settings_review_lv);
-        otherLV = (ListView) view.findViewById(R.id.settings_other_lv);
-
-        showOnAllSwitch = (Switch) view.findViewById(R.id.settings_show_on_all_switch);
-        showOnSpecificSwitch = (Switch) view.findViewById(R.id.settings_show_on_specific_switch);
-        allowPracticeAllSwitch = (Switch) view.findViewById(R.id.settings_practice_all_switch);
-        allowOnQueryChangedSwitch = (Switch) view.findViewById(R.id.settings_allow_on_query_changed_switch);
-
-        showOnAllSwitch.setChecked(user.isDisplayNbDecksAllCards());
-        showOnSpecificSwitch.setChecked(user.isDisplayNbDecksSpecificCards());
-        allowPracticeAllSwitch.setChecked(user.isAllowPracticeAll());
-        allowOnQueryChangedSwitch.setChecked(user.isAllowOnQueryChanged());
-
-
-        showOnAllSwitch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showOnAllCardsClicked();
-            }
-        });
-
-        showOnSpecificSwitch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showOnSpecificDeckClicked();
-            }
-        });
-
-
-        allowPracticeAllSwitch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                allowPracticeAllClicked();
-            }
-        });
-
-
-        allowOnQueryChangedSwitch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                allowOnQueryChangedClicked();
-            }
-        });
-
-
-        setupExportImportLV();
-        setupDeletedCardsLV();
-        setupSortingLV();
-        setupReviewLV();
-        setupOtherLV();
-
+//        view = inflater.inflate(R.layout.fragment_settings, container, false);
+//
+//        FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
+//        setHasOptionsMenu(true);
+//
+//        User user = Database.mUserDao.fetchUser();
+//
+//        exportImportLV = (ListView) view.findViewById(R.id.settings_export_import_lv);
+//        deletedCardsLV = (ListView) view.findViewById(R.id.settings_deleted_cards_lv);
+//        sortingLV = (ListView) view.findViewById(R.id.settings_sorting_lv);
+//        reviewLV = (ListView) view.findViewById(R.id.settings_review_lv);
+//        otherLV = (ListView) view.findViewById(R.id.settings_other_lv);
+//
+//        showOnAllSwitch = (Switch) view.findViewById(R.id.settings_show_on_all_switch);
+//        showOnSpecificSwitch = (Switch) view.findViewById(R.id.settings_show_on_specific_switch);
+//        allowPracticeAllSwitch = (Switch) view.findViewById(R.id.settings_practice_all_switch);
+//        allowOnQueryChangedSwitch = (Switch) view.findViewById(R.id.settings_allow_on_query_changed_switch);
+//
+//        showOnAllSwitch.setChecked(user.isDisplayNbDecksAllCards());
+//        showOnSpecificSwitch.setChecked(user.isDisplayNbDecksSpecificCards());
+//        allowPracticeAllSwitch.setChecked(user.isAllowPracticeAll());
+//        allowOnQueryChangedSwitch.setChecked(user.isAllowOnQueryChanged());
+//
+//
+//        showOnAllSwitch.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showOnAllCardsClicked();
+//            }
+//        });
+//
+//        showOnSpecificSwitch.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showOnSpecificDeckClicked();
+//            }
+//        });
+//
+//
+//        allowPracticeAllSwitch.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                allowPracticeAllClicked();
+//            }
+//        });
+//
+//
+//        allowOnQueryChangedSwitch.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                allowOnQueryChangedClicked();
+//            }
+//        });
+//
+//
+//        setupExportImportLV();
+//        setupDeletedCardsLV();
+//        setupSortingLV();
+//        setupReviewLV();
+//        setupOtherLV();
+//
         return view;
     }
 
-    private void allowOnQueryChangedClicked() {
-        Database.mUserDao.toggleAllowSearchOnQueryChanged();
-        User user = Database.mUserDao.fetchUser();
-        allowOnQueryChangedSwitch.setChecked(user.isAllowOnQueryChanged());
-    }
-
-
-    private void showOnAllCardsClicked() {
-        Database.mUserDao.toggleDisplayNumDecksAllCards();
-        User user = Database.mUserDao.fetchUser();
-        showOnAllSwitch.setChecked(user.isDisplayNbDecksAllCards());
-}
-
-    private void showOnSpecificDeckClicked() {
-        Database.mUserDao.toggleDisplayNumDecksSpecificCard();
-        User user = Database.mUserDao.fetchUser();
-        showOnSpecificSwitch.setChecked(user.isDisplayNbDecksSpecificCards());
-    }
-
-    private void allowPracticeAllClicked() {
-        Database.mUserDao.toggleReviewAllCards();
-        User user = Database.mUserDao.fetchUser();
-        allowPracticeAllSwitch.setChecked(user.isAllowPracticeAll());
-        ((MainActivityManager) getActivity()).resetFragmentPractice();
-    }
-
-    private void setupDeletedCardsLV() {
+//    private void allowOnQueryChangedClicked() {
+//        Database.mUserDao.toggleAllowSearchOnQueryChanged();
+//        User user = Database.mUserDao.fetchUser();
+//        allowOnQueryChangedSwitch.setChecked(user.isAllowOnQueryChanged());
+//    }
+//
+//
+//    private void showOnAllCardsClicked() {
+//        Database.mUserDao.toggleDisplayNumDecksAllCards();
+//        User user = Database.mUserDao.fetchUser();
+//        showOnAllSwitch.setChecked(user.isDisplayNbDecksAllCards());
+//}
+//
+//    private void showOnSpecificDeckClicked() {
+//        Database.mUserDao.toggleDisplayNumDecksSpecificCard();
+//        User user = Database.mUserDao.fetchUser();
+//        showOnSpecificSwitch.setChecked(user.isDisplayNbDecksSpecificCards());
+//    }
+//
+//    private void allowPracticeAllClicked() {
+//        Database.mUserDao.toggleReviewAllCards();
+//        User user = Database.mUserDao.fetchUser();
+//        allowPracticeAllSwitch.setChecked(user.isAllowPracticeAll());
+//        ((MainActivityManager) getActivity()).resetFragmentPractice();
+//    }
+//
+//    private void setupDeletedCardsLV() {
 //        final String[] deletedCardsChoices = getContext().getResources().getStringArray(R.array.settings_deleted_cards_options);
 //        ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, deletedCardsChoices);
 //        deletedCardsLV.setAdapter(adapter);
@@ -173,13 +173,13 @@ public class SettingsFragment extends FragmentCommon {
 //        });
 //
 //        Helper.getInstance().setListViewHeightBasedOnChildren(deletedCardsLV);
+//
+//    }
 
-    }
-
-    private void startArchivedActivity() {
-        Intent intent = new Intent(getActivity(), ArchivedActivity.class);
-        getActivity().startActivityForResult(intent, MainActivityManager.RESULT_ANIMATION_RIGHT_TO_LEFT);
-    }
+//    private void startArchivedActivity() {
+//        Intent intent = new Intent(getActivity(), ArchivedActivity.class);
+//        getActivity().startActivityForResult(intent, MainActivityManager.RESULT_ANIMATION_RIGHT_TO_LEFT);
+//    }
 
 
     private void setupExportImportLV() {
@@ -325,73 +325,73 @@ public class SettingsFragment extends FragmentCommon {
     }
 
 
-    private AlertDialog defaultSortDialog() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-
-        builder.setTitle("Sort by");
-
-        builder.setSingleChoiceItems(sortingOptions, SortingStateManager.getInstance().getDefaultSort(),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        Database.mUserDao.updateDefaultSortPosition(which);
-                        dialog.dismiss();
-                        Toast.makeText(getContext(), "Default sort by: " + sortingOptions[which], Toast.LENGTH_SHORT).show();
-
-
-                        sortChoices[0] = "Default sorting: " + sortingOptions[which];
-                        sortAdapter.notifyDataSetChanged();
-
-                    }
-                });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-
-        AlertDialog alert = builder.create();
-        Helper.getInstance().hideKeyboard(getActivity());
-
-
-        return alert;
-    }
-
-    public void showQuickToggleDialog() {
-
-        View viewPicker = View.inflate(getContext(), R.layout.custom_number_picker_dialog, null);
-        AlertDialog.Builder db = new AlertDialog.Builder(getContext());
-        db.setView(viewPicker);
-        db.setTitle("Quick Toggle Review");
-
-        final NumberPicker np = (NumberPicker) viewPicker.findViewById(R.id.numberPicker1);
-        np.setMaxValue(1000); // max value 100
-        np.setMinValue(1);   // min value 0
-        np.setWrapSelectorWheel(false);
-        np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-
-            }
-        });
-
-        np.setValue(Database.mUserDao.fetchUser().getQuickToggleHours());
-
-
-        db.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Database.mUserDao.updateQuickToggleReviewHours(np.getValue());
-                setupReviewLV();
-                Toast.makeText(getContext(), "Default Quick Review Value changed to " + np.getValue(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        AlertDialog dialog = db.show();
-
-    }
+//    private AlertDialog defaultSortDialog() {
+//
+//        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//
+//        builder.setTitle("Sort by");
+//
+//        builder.setSingleChoiceItems(sortingOptions, SortingStateManager.getInstance().getDefaultSort(),
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//
+//                        Database.mUserDao.updateDefaultSortPosition(which);
+//                        dialog.dismiss();
+//                        Toast.makeText(getContext(), "Default sort by: " + sortingOptions[which], Toast.LENGTH_SHORT).show();
+//
+//
+//                        sortChoices[0] = "Default sorting: " + sortingOptions[which];
+//                        sortAdapter.notifyDataSetChanged();
+//
+//                    }
+//                });
+//
+//        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//
+//            }
+//        });
+//
+//        AlertDialog alert = builder.create();
+//        Helper.getInstance().hideKeyboard(getActivity());
+//
+//
+//        return alert;
+//    }
+//
+//    public void showQuickToggleDialog() {
+//
+//        View viewPicker = View.inflate(getContext(), R.layout.custom_number_picker_dialog, null);
+//        AlertDialog.Builder db = new AlertDialog.Builder(getContext());
+//        db.setView(viewPicker);
+//        db.setTitle("Quick Toggle Review");
+//
+//        final NumberPicker np = (NumberPicker) viewPicker.findViewById(R.id.numberPicker1);
+//        np.setMaxValue(1000); // max value 100
+//        np.setMinValue(1);   // min value 0
+//        np.setWrapSelectorWheel(false);
+//        np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+//            @Override
+//            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+//
+//            }
+//        });
+//
+//        np.setValue(Database.mUserDao.fetchUser().getQuickToggleHours());
+//
+//
+//        db.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int which) {
+//                Database.mUserDao.updateQuickToggleReviewHours(np.getValue());
+//                setupReviewLV();
+//                Toast.makeText(getContext(), "Default Quick Review Value changed to " + np.getValue(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//        AlertDialog dialog = db.show();
+//
+//    }
 
 
 }
