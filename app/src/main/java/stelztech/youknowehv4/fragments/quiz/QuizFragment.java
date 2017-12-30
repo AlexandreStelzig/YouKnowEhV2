@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -162,11 +163,11 @@ public class QuizFragment extends FragmentCommon {
 
     private void continueQuizButtonClicked() {
 
-        if(Database.mProfileDao.fetchActiveQuizId() != Profile.NO_PROFILES){
+        if (Database.mProfileDao.fetchActiveQuizId() != Profile.NO_PROFILES) {
             Intent intent = fetchIntentFromQuizMode(Database.mQuizDao.fetchQuizById(activeQuizId).getMode());
             intent.putExtra(QuizActivity.EXTRA_INTENT_CONTINUE, true);
-            getActivity().startActivityForResult(intent, MainActivityManager.RESULT_ANIMATION_RIGHT_TO_LEFT);
-        }else{
+            getActivity().startActivityForResult(intent, MainActivityManager.RESULT_QUIZ_END);
+        } else {
             Toast.makeText(getContext(), "No active quiz", Toast.LENGTH_SHORT).show();
         }
     }
@@ -368,12 +369,14 @@ public class QuizFragment extends FragmentCommon {
                             numDeckTextView.setVisibility(View.VISIBLE);
                             titleTextView.setText("Quiz Decks");
                         } else {
-                            // TODO validation and init info
-
                             if (quizDecksListview.getCheckedItemPositions().size() != 0) {
+
                                 fetchQuizCreationInformation();
-                                dialog.dismiss();
-                                createQuiz();
+
+                                boolean valid = createQuiz();
+
+                                if (valid)
+                                    dialog.dismiss();
 
 
                             } else {
@@ -447,7 +450,7 @@ public class QuizFragment extends FragmentCommon {
         dialog.show();
     }
 
-    private void createQuiz() {
+    private boolean createQuiz() {
 
         int numberOfCards = 0;
         for (int deckId : selectedDeckIdList) {
@@ -455,6 +458,14 @@ public class QuizFragment extends FragmentCommon {
                 numberOfCards += Database.mCardDeckDao.fetchNumberReviewCardsFromDeck(deckId);
             else
                 numberOfCards += Database.mCardDeckDao.fetchNumberCardsFromDeckId(deckId);
+        }
+
+        if (numberOfCards == 0) {
+            Toast.makeText(getContext(), "You need at least 1 card in the decks to start a quiz", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (quizMode == Quiz.MODE.MULTIPLE_CHOICE && numberOfCards < 4) {
+            Toast.makeText(getContext(), "You need at least 4 cards in the decks to start a MC quiz", Toast.LENGTH_SHORT).show();
+            return false;
         }
 
         CustomProgressDialog customProgressDialog = new CustomProgressDialog("Creating Quiz",
@@ -504,7 +515,7 @@ public class QuizFragment extends FragmentCommon {
         };
 
         customProgressDialog.startDialog();
-
+        return true;
     }
 
     private void setIntentExtraAndStartQuiz() {
@@ -570,8 +581,9 @@ public class QuizFragment extends FragmentCommon {
 
     }
 
-    public void onQuizFinishResult(){
+    public void onQuizFinishResult() {
         activeQuizId = Database.mProfileDao.fetchActiveQuizId();
+        Log.d("TEST", "quiz id = " + activeQuizId);
         updateContinueButton();
     }
 }

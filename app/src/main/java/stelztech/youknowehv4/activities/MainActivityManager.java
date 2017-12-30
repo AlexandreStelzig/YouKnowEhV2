@@ -71,6 +71,7 @@ public class MainActivityManager extends AppCompatActivity
     public final static int RESULT_ANIMATION_RIGHT_TO_LEFT = 3;
     public final static int EXPORT_RESULT_ALL = 4;
     public final static int RESULT_QUIZ_END = 5;
+    public final static int PROFILE_UPDATED = 6;
 
     // set fragment after drawer close
     private int mFragmentToSet = INT_NULL;

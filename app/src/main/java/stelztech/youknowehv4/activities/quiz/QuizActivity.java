@@ -331,13 +331,17 @@ public abstract class QuizActivity extends AppCompatActivity {
 
     public void onRepeatFailedCardsButtonClick(View view) {
 
-        if (Database.mQuizCardDao.fetchUnansweredQuizCardsByQuizId(quizId).isEmpty()) {
+        int numbFailedCards = Database.mQuizCardDao.fetchFailedQuizCardsByQuizId(quizId).size();
+
+        if (numbFailedCards == 0) {
             if (Database.mQuizCardDao.fetchNumberFailedQuizCardFromQuizId(quizId) == 0) {
                 Toast.makeText(this, "No failed cards", Toast.LENGTH_SHORT).show();
             } else {
                 resetQuizCardListAndReset();
                 Database.mQuizDao.markQuizAsActive(quizId);
             }
+        } else if (quizMode == Quiz.MODE.MULTIPLE_CHOICE && numbFailedCards < 4) {
+            Toast.makeText(this, "You need at least 4 failed cards to repeat the quiz", Toast.LENGTH_SHORT).show();
         } else {
             replaceContainerWithQuizType();
             Database.mQuizDao.markQuizAsActive(quizId);

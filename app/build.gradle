@@ -47,6 +47,7 @@ dependencies {
     compile 'com.github.florent37:diagonallayout:1.0.7'
     compile 'de.hdodenhof:circleimageview:2.1.0'
 
+    compile 'com.jjoe64:graphview:4.2.1'
 
     testCompile 'junit:junit:4.12'
     compile project(path: ':discrete-scroll-view')

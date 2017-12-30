@@ -9,9 +9,19 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.helper.StaticLabelsFormatter;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
+import java.util.List;
+
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.MainActivityManager;
+import stelztech.youknowehv4.database.Database;
+import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.fragments.FragmentCommon;
+import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 
 /**
  * Created by alex on 2017-04-03.
@@ -31,6 +41,58 @@ public class StatisticsFragment extends FragmentCommon {
                              Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_statistics, container, false);
+        FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
+
+
+        List<Card> cards = Database.mCardDao.fetchAllCards();
+
+
+        for(int counter = 0; counter < cards.size(); counter++){
+
+        }
+
+
+        GraphView graph = (GraphView) view.findViewById(R.id.graph);
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
+                new DataPoint(0, 0),
+                new DataPoint(1, 5),
+                new DataPoint(2, 3),
+                new DataPoint(3, 5),
+                new DataPoint(4, 3),
+                new DataPoint(5, 5),
+                new DataPoint(6, 3),
+                new DataPoint(7, 5),
+                new DataPoint(8, 3),
+                new DataPoint(9, 5),
+                new DataPoint(10, 3),
+                new DataPoint(11, 5),
+                new DataPoint(12, 3),
+                new DataPoint(13, 5),
+                new DataPoint(14, 3)
+        });
+
+        graph.getViewport().setYAxisBoundsManual(true);
+
+        graph.getViewport().setMinY(0);
+        graph.getViewport().setMaxY(5);
+
+        graph.getViewport().setXAxisBoundsManual(true);
+
+        graph.getViewport().setMinX(4);
+        graph.getViewport().setMaxX(8);
+
+        graph.getViewport().setScalable(true);
+        graph.getViewport().setScalableY(false);
+
+        graph.addSeries(series);
+
+//        graph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
+
+        StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
+        staticLabelsFormatter.setHorizontalLabels(new String[]{"", "1 Jan", "2 Jan", "3 Jan", "2 Jan", "3 Jan", "2 Jan", "3 Jan", "2 Jan", "3 Jan", "2 Jan", "3 Jan", "2 Jan", "3 Jan", "2 Jan", "3 Jan"});
+        graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
+        graph.getGridLabelRenderer().setHorizontalLabelsAngle(90);
+
 
         return view;
     }

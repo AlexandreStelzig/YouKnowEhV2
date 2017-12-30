@@ -29,7 +29,7 @@ public class QuizReading extends QuizActivity {
     private Button failButton;
 
     private DiscreteScrollView scrollView;
-    RecyclerView.Adapter adapter;
+    private RecyclerView.Adapter adapter;
 
     private static final float SCROLLVIEW_TRANSFORM_SCALE = 0.8f;
     private static final int TRANSITION_TIME_MILLIS = 50;

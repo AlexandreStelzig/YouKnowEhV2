@@ -98,6 +98,7 @@
 
     <!--colors used by all themes-->
     <color name="white">#FFFFFF</color>
+    <color name="whiteTransparent">#95FFFFFF</color>
     <color name="black">#000000</color>
     <color name="progressbarNeutral">#ff5a5d5a</color>
     <color name="progressbarFail">#FF0000</color>

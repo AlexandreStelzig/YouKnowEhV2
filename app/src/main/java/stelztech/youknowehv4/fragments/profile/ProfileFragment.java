@@ -310,7 +310,9 @@ public class ProfileFragment extends FragmentCommon {
             case R.id.action_settings:
                 // todo open settings
                 Intent i = new Intent(getContext(), ProfileNewEditActivity.class);
-                this.startActivity(i);
+                i.putExtra("ProfileId", Database.mUserDao.fetchActiveProfile().getProfileId());
+
+                getActivity().startActivityForResult(i, MainActivityManager.PROFILE_UPDATED);
                 return true;
         }
         return super.onOptionsItemSelected(item);

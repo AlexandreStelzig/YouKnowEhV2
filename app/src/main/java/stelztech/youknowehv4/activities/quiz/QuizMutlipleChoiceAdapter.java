@@ -13,22 +13,22 @@ import stelztech.youknowehv4.R;
  * Created by alex on 12/2/2017.
  */
 
-public class QuizReadingAdapter extends RecyclerView.Adapter<QuizReadingAdapter.ViewHolder> {
+public class QuizMutlipleChoiceAdapter extends RecyclerView.Adapter<QuizMutlipleChoiceAdapter.ViewHolder> {
 
     private RecyclerView parentRecycler;
     private int itemHeight;
     private int itemWidth;
 
-    private QuizReading quizReading;
+    private QuizMultipleChoice quizMultipleChoice;
 
     private final static float CARD_WIDTH_SCALE = 0.9f;
-    private final static float CARD_HEIGHT_SCALE = 0.55f;
+    private final static float CARD_HEIGHT_SCALE = 0.30f;
 
-    public QuizReadingAdapter(QuizReading quizReading) {
-        this.quizReading = quizReading;
+    public QuizMutlipleChoiceAdapter(QuizMultipleChoice quizMultipleChoice) {
+        this.quizMultipleChoice = quizMultipleChoice;
 
         Point windowDimensions = new Point();
-        quizReading.getWindowManager().getDefaultDisplay().getSize(windowDimensions);
+        quizMultipleChoice.getWindowManager().getDefaultDisplay().getSize(windowDimensions);
         itemHeight = Math.round(windowDimensions.y * CARD_HEIGHT_SCALE);
         itemWidth = Math.round(windowDimensions.x * CARD_WIDTH_SCALE);
     }
@@ -40,29 +40,26 @@ public class QuizReadingAdapter extends RecyclerView.Adapter<QuizReadingAdapter.
     }
 
     @Override
-    public QuizReadingAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public QuizMutlipleChoiceAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View v = inflater.inflate(R.layout.custom_quiz_card_container, parent, false);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
                 itemWidth,
                 itemHeight);
         v.setLayoutParams(params);
-        return new QuizReadingAdapter.ViewHolder(v);
+        return new QuizMutlipleChoiceAdapter.ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(QuizReadingAdapter.ViewHolder holder, int position) {
-        if (quizReading.isOrientationReversed) {
-            holder.questionTextView.setText(quizReading.quizCardList.get(position).getAnswer());
-        } else {
-            holder.questionTextView.setText(quizReading.quizCardList.get(position).getQuestion());
+    public void onBindViewHolder(QuizMutlipleChoiceAdapter.ViewHolder holder, int position) {
 
-        }
+            holder.questionTextView.setText(quizMultipleChoice.quizCardList.get(position).getAnswer());
+
     }
 
     @Override
     public int getItemCount() {
-        return quizReading.getQuizCardList().size();
+        return quizMultipleChoice.getQuizCardList().size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
