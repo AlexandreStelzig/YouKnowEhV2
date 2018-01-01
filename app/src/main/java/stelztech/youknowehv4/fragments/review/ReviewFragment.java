@@ -163,8 +163,8 @@ public class ReviewFragment extends FragmentCommon {
 
         // init orientation text holders
         Profile currentProfile = Database.mUserDao.fetchActiveProfile();
-        questionLabel = currentProfile.getQuestionLabel();
-        answerLabel = currentProfile.getAnswerLabel();
+        questionLabel = currentProfile.getFrontLabel();
+        answerLabel = currentProfile.getBackLabel();
 
         orientationQuestionAnswer = questionLabel + " - " + answerLabel;
         orientationAnswerQuestion = answerLabel + " - " + questionLabel;

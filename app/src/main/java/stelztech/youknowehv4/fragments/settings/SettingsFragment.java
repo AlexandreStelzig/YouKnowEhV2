@@ -224,10 +224,10 @@ public class SettingsFragment extends FragmentCommon {
 //
 //        Profile currentProfile = Database.mUserDao.fetchActiveProfile();
 //        sortingOptions = getResources().getStringArray(R.array.sort_options);
-//        sortingOptions[0] = currentProfile.getQuestionLabel() + " (A-Z)";
-//        sortingOptions[1] = currentProfile.getQuestionLabel() + " (Z-A)";
-//        sortingOptions[2] = currentProfile.getAnswerLabel() + " (A-Z)";
-//        sortingOptions[3] = currentProfile.getAnswerLabel() + " (Z-A)";
+//        sortingOptions[0] = currentProfile.getFrontLabel() + " (A-Z)";
+//        sortingOptions[1] = currentProfile.getFrontLabel() + " (Z-A)";
+//        sortingOptions[2] = currentProfile.getBackLabel() + " (A-Z)";
+//        sortingOptions[3] = currentProfile.getBackLabel() + " (Z-A)";
 //
 //        sortChoices[0] = "Default sorting: " + sortingOptions[SortingStateManager.getInstance().getDefaultSort()];
 //

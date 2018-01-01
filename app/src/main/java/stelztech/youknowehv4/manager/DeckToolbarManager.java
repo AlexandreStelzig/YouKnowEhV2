@@ -44,24 +44,25 @@ public class DeckToolbarManager {
 
         switch (state) {
             case DECK:
-                setMenuItemVisibility(activity, menu, false, true);
+                setMenuItemVisibility(activity, menu, false, true, true);
                 break;
             case DECK_ORDER:
-                setMenuItemVisibility(activity, menu, true, false);
+                setMenuItemVisibility(activity, menu, true, false, false);
                 break;
             default:
-                setMenuItemVisibility(activity, menu, false, false);
+                setMenuItemVisibility(activity, menu, false, false, false);
                 break;
         }
     }
 
-    private void setMenuItemVisibility(Activity activity, Menu menu, boolean isDoneVisible, boolean isDeckOrderVisible) {
+    private void setMenuItemVisibility(Activity activity, Menu menu, boolean isDoneVisible, boolean isDeckOrderVisible, boolean isExportImportVisible) {
 
         ActionBar actionBar = ((MainActivityManager) activity).getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(true);
         activity.findViewById(R.id.spinner_nav_layout).setVisibility(View.GONE);
 
         menu.findItem(R.id.action_done).setVisible(isDoneVisible);
+        menu.findItem(R.id.action_import_export).setVisible(isExportImportVisible);
         menu.findItem(R.id.action_deck_order).setVisible(isDeckOrderVisible);
     }
 

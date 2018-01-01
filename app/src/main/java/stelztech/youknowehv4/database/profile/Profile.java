@@ -14,8 +14,8 @@ public class Profile {
     private int profileId;
     private String profileName;
     private String dateCreated;
-    private String questionLabel;
-    private String answerLabel;
+    private String frontLabel;
+    private String backLabel;
     private int activeQuizId;
     private ThemeManager.THEME_COLORS profileColor;
     private String lastTimeOpened;
@@ -26,12 +26,12 @@ public class Profile {
     private int defaultSortingPosition;
     private int quickToggleHours;
 
-    public Profile(int profileId, String profileName, String dateCreated, String questionLabel, String answerLabel, int activeQuizId, ThemeManager.THEME_COLORS profileColor, String lastTimeOpened, int profileImage, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards, boolean allowOnQueryChanged, int defaultSortingPosition, int quickToggleHours) {
+    public Profile(int profileId, String profileName, String dateCreated, String frontLabel, String backLabel, int activeQuizId, ThemeManager.THEME_COLORS profileColor, String lastTimeOpened, int profileImage, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards, boolean allowOnQueryChanged, int defaultSortingPosition, int quickToggleHours) {
         this.profileId = profileId;
         this.profileName = profileName;
         this.dateCreated = dateCreated;
-        this.questionLabel = questionLabel;
-        this.answerLabel = answerLabel;
+        this.frontLabel = frontLabel;
+        this.backLabel = backLabel;
         this.activeQuizId = activeQuizId;
         this.profileColor = profileColor;
         this.lastTimeOpened = lastTimeOpened;
@@ -91,20 +91,20 @@ public class Profile {
         this.dateCreated = dateCreated;
     }
 
-    public String getQuestionLabel() {
-        return questionLabel;
+    public String getFrontLabel() {
+        return frontLabel;
     }
 
-    public void setQuestionLabel(String questionLabel) {
-        this.questionLabel = questionLabel;
+    public void setFrontLabel(String frontLabel) {
+        this.frontLabel = frontLabel;
     }
 
-    public String getAnswerLabel() {
-        return answerLabel;
+    public String getBackLabel() {
+        return backLabel;
     }
 
-    public void setAnswerLabel(String answerLabel) {
-        this.answerLabel = answerLabel;
+    public void setBackLabel(String backLabel) {
+        this.backLabel = backLabel;
     }
 
     public int getActiveQuizId() {

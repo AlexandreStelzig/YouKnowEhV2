@@ -14,16 +14,16 @@
         android:scaleType="centerCrop"
         android:src="@drawable/city" />
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical">
 
 
         <LinearLayout
+            android:id="@+id/activity_quiz_bar"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -112,12 +112,12 @@
         </LinearLayout>
 
         <FrameLayout
+            android:layout_below="@+id/activity_quiz_bar"
             android:id="@+id/quiz_type_container"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="8"/>
+            android:layout_height="match_parent"/>
 
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </FrameLayout>

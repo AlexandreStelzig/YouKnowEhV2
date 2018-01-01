@@ -9,7 +9,12 @@ import stelztech.youknowehv4.activities.profilepicker.ProfilePickerActivity;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.firsttimeopening.FirstTimeOpeningActivity;
+import stelztech.youknowehv4.manager.CardInfoToolbarManager;
+import stelztech.youknowehv4.manager.CardToolbarManager;
+import stelztech.youknowehv4.manager.FloatingActionButtonManager;
+import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.manager.ThemeManager;
+import stelztech.youknowehv4.utilities.Helper;
 
 /**
  * Created by alex on 2017-04-28.
@@ -25,6 +30,14 @@ public class AppOpeningActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+        Helper helper = Helper.getInstance();
+        helper.setContext(this);
+
+        CardToolbarManager.getInstance().setContext(this);
+        CardInfoToolbarManager.getInstance().setContext(this);
+        FloatingActionButtonManager.getInstance().setContext(this);
+
         Window window = getWindow();
 
 
@@ -35,7 +48,7 @@ public class AppOpeningActivity extends AppCompatActivity {
             Database.mUserDao.createUser();
         }
         if (Database.mProfileDao.fetchAllProfiles().isEmpty()) {
-            Intent i = new Intent(AppOpeningActivity.this, FirstTimeOpeningActivity.class);
+            Intent i = new Intent(AppOpeningActivity.this, ProfilePickerActivity.class);
             startActivity(i);
             finish();
         } else {

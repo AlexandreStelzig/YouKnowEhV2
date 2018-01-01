@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -159,11 +160,20 @@ public class DeckListFragment extends FragmentCommon {
                 case R.id.action_done:
                     actionDone();
                     return true;
+                case R.id.action_import_deck:
+                    ExportImportManager.importDeck(getContext(), getActivity());
+                    return true;
+                case R.id.action_import_multi_decks:
+                    ExportImportManager.importAllDecks(getContext(), getActivity());
+                    return true;
+                case R.id.action_export_all_decks:
+                    ExportImportManager.exportAllToEmail(getContext());
+
+                    return true;
             }
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     public void actionDone() {
         deckOrdering = false;

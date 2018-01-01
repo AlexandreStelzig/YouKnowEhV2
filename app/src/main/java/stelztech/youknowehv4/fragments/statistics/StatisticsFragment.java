@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.StaticLabelsFormatter;
+import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -74,25 +75,29 @@ public class StatisticsFragment extends FragmentCommon {
         graph.getViewport().setYAxisBoundsManual(true);
 
         graph.getViewport().setMinY(0);
-        graph.getViewport().setMaxY(5);
+        graph.getViewport().setMaxY(6);
 
         graph.getViewport().setXAxisBoundsManual(true);
 
-        graph.getViewport().setMinX(4);
-        graph.getViewport().setMaxX(8);
+        graph.getViewport().setMinX(0);
+        graph.getViewport().setMaxX(10);
 
         graph.getViewport().setScalable(true);
-        graph.getViewport().setScalableY(false);
+        graph.getViewport().setScrollable(true);
 
-        graph.addSeries(series);
 
 //        graph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
 
         StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
-        staticLabelsFormatter.setHorizontalLabels(new String[]{"", "1 Jan", "2 Jan", "3 Jan", "2 Jan", "3 Jan", "2 Jan", "3 Jan", "2 Jan", "3 Jan", "2 Jan", "3 Jan", "2 Jan", "3 Jan", "2 Jan", "3 Jan"});
+        staticLabelsFormatter.setHorizontalLabels(new String[]{"", "01 Jan", "02 Jan", "03 Jan", "04 Jan", "05 Jan", "06 Jan", "07 Jan", "08 Jan", "09 Jan", "10 Jan", "12 Jan", "12 Jan", "13 Jan", "14 Jan", "15 Jan"});
         graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
         graph.getGridLabelRenderer().setHorizontalLabelsAngle(90);
 
+
+//        series.setSpacing(50);
+//        series.setAnimated(true);
+
+        graph.addSeries(series);
 
         return view;
     }

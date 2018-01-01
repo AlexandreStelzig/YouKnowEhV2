@@ -53,7 +53,12 @@ public class QuizMutlipleChoiceAdapter extends RecyclerView.Adapter<QuizMutliple
     @Override
     public void onBindViewHolder(QuizMutlipleChoiceAdapter.ViewHolder holder, int position) {
 
+        if (quizMultipleChoice.isOrientationReversed) {
             holder.questionTextView.setText(quizMultipleChoice.quizCardList.get(position).getAnswer());
+        } else {
+            holder.questionTextView.setText(quizMultipleChoice.quizCardList.get(position).getQuestion());
+
+        }
 
     }
 

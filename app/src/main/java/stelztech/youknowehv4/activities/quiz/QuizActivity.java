@@ -331,17 +331,16 @@ public abstract class QuizActivity extends AppCompatActivity {
 
     public void onRepeatFailedCardsButtonClick(View view) {
 
-        int numbFailedCards = Database.mQuizCardDao.fetchFailedQuizCardsByQuizId(quizId).size();
 
-        if (numbFailedCards == 0) {
-            if (Database.mQuizCardDao.fetchNumberFailedQuizCardFromQuizId(quizId) == 0) {
+        if (Database.mQuizCardDao.fetchUnansweredQuizCardsByQuizId(quizId).isEmpty()) {
+            if (quizMode == Quiz.MODE.MULTIPLE_CHOICE && Database.mQuizCardDao.fetchNumberFailedQuizCardFromQuizId(quizId) < 4) {
+                Toast.makeText(this, "4 failed cards are required for MC quiz", Toast.LENGTH_SHORT).show();
+            } else if (Database.mQuizCardDao.fetchNumberFailedQuizCardFromQuizId(quizId) == 0) {
                 Toast.makeText(this, "No failed cards", Toast.LENGTH_SHORT).show();
             } else {
                 resetQuizCardListAndReset();
                 Database.mQuizDao.markQuizAsActive(quizId);
             }
-        } else if (quizMode == Quiz.MODE.MULTIPLE_CHOICE && numbFailedCards < 4) {
-            Toast.makeText(this, "You need at least 4 failed cards to repeat the quiz", Toast.LENGTH_SHORT).show();
         } else {
             replaceContainerWithQuizType();
             Database.mQuizDao.markQuizAsActive(quizId);
@@ -399,6 +398,7 @@ public abstract class QuizActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        currentCardPosition = 0;
                         replaceContainerWithQuizType();
                         resetQuiz();
                     }
@@ -416,7 +416,7 @@ public abstract class QuizActivity extends AppCompatActivity {
         final List<QuizCard> failedQuizCardList = Database.mQuizCardDao.fetchFailedQuizCardsByQuizId(quizId);
 
 
-        QuizFailedQuizCardsDialog quizFailedQuizCardsDialog = new QuizFailedQuizCardsDialog(){
+        QuizFailedQuizCardsDialog quizFailedQuizCardsDialog = new QuizFailedQuizCardsDialog() {
 
             @Override
             public void onCardsSelected(final boolean[] exportList) {
@@ -424,15 +424,15 @@ public abstract class QuizActivity extends AppCompatActivity {
                     @Override
                     public void addFailedQuizCardsToDeck(int deckId) {
                         int numberCards = 0;
-                        for(int counter = 0; counter < exportList.length; counter++){
-                            if(exportList[counter]){
+                        for (int counter = 0; counter < exportList.length; counter++) {
+                            if (exportList[counter]) {
                                 Database.mCardDeckDao.createCardDeck(failedQuizCardList.get(counter).getCardId(), deckId);
                                 numberCards++;
                             }
                         }
                         String deckName = Database.mDeckDao.fetchDeckById(deckId).getDeckName();
                         CardUtilities.mergeDuplicates(null, deckId);
-                        Toast.makeText(QuizActivity.this, numberCards + " failed Cards quiz exported to Deck: '" + deckName + "'",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(QuizActivity.this, numberCards + " failed Cards quiz exported to Deck: '" + deckName + "'", Toast.LENGTH_SHORT).show();
                     }
                 };
                 quizFailedCardsExportOptionsDialog.showExportOptions(QuizActivity.this, QuizActivity.this, failedQuizCardList, exportList, this);
@@ -449,7 +449,6 @@ public abstract class QuizActivity extends AppCompatActivity {
     }
 
     public void onFinishButtonClick(View view) {
-
 
 
         final CustomYesNoDialog customYesNoDialog = new CustomYesNoDialog(this,
@@ -507,4 +506,4 @@ public abstract class QuizActivity extends AppCompatActivity {
 
         customProgressDialog.startDialog();
     }
-  }
+}

@@ -105,7 +105,8 @@ public class QuizMultipleChoice extends QuizActivity {
             buttonList.get(i).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mcButtonClicked((String) buttonList.get(index).getText());
+                    if (!isAnimating)
+                        mcButtonClicked((String) buttonList.get(index).getText());
                 }
             });
         }

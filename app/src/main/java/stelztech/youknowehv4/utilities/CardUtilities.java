@@ -2,9 +2,7 @@ package stelztech.youknowehv4.utilities;
 
 import android.app.Activity;
 import android.text.Html;
-import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -32,8 +30,8 @@ public class CardUtilities {
 
         Profile profile = Database.mUserDao.fetchActiveProfile();
 
-        String questionLabel = profile.getQuestionLabel();
-        String answerLabel = profile.getAnswerLabel();
+        String questionLabel = profile.getFrontLabel();
+        String answerLabel = profile.getBackLabel();
 
 
         String cardQuestion = "<b>" + questionLabel + ": </b>" + cardToDisplay.getQuestion();

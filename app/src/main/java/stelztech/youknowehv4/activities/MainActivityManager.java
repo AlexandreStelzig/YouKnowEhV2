@@ -96,17 +96,9 @@ public class MainActivityManager extends AppCompatActivity
         final FrameLayout frame = (FrameLayout) findViewById(R.id.content_frame);
 
         FloatingActionButtonManager floatingActionButtonManager = FloatingActionButtonManager.getInstance();
-        floatingActionButtonManager.setContext(this);
         floatingActionButtonManager.setState(FloatingActionButtonManager.ActionButtonState.GONE, this);
 
-        CardToolbarManager.getInstance().setContext(this);
-        CardInfoToolbarManager.getInstance().setContext(this);
-
-        Helper helper = Helper.getInstance();
-        helper.setContext(this);
-
-        SortingStateManager sortingStateManager = SortingStateManager.getInstance();
-        sortingStateManager.setContext(this);
+        SortingStateManager.getInstance().setContext(this);
 
         // drawer
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -133,7 +125,7 @@ public class MainActivityManager extends AppCompatActivity
         mAboutFragment = new AboutFragment(7, true);
 
         Intent intent = getIntent();
-        boolean loadProfilePage = intent.getBooleanExtra("ColorChanged", false);
+        boolean loadProfilePage = intent.getBooleanExtra("StartOnProfileFragment", false);
 
         if (loadProfilePage) {
             displayFragment(R.id.profile);

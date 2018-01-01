@@ -92,6 +92,8 @@ public class QuizFragment extends FragmentCommon {
     private ListView quizOptionsListview;
     private ListView quizDecksListview;
     private Switch reviewOnlySwitch;
+    private TextView activeQuizInfoTextView;
+    private TextView activeQuizInfoLabelTextView;
 
 
     @Override
@@ -100,6 +102,8 @@ public class QuizFragment extends FragmentCommon {
 
         view = inflater.inflate(R.layout.fragment_quiz, container, false);
 
+        activeQuizInfoTextView = (TextView) view.findViewById(R.id.fragment_quiz_active_quiz_info);
+        activeQuizInfoLabelTextView = (TextView) view.findViewById(R.id.fragment_quiz_active_quiz_info_label);
 
         activeQuizId = Database.mProfileDao.fetchActiveQuizId();
 
@@ -118,7 +122,7 @@ public class QuizFragment extends FragmentCommon {
         if (blurBuilder == null)
             blurBuilder = new BlurBuilder();
 
-        ImageView imageView = (ImageView) view.findViewById(R.id.quiz_intro_background);
+        ImageView imageView = (ImageView) view.findViewById(R.id.fragment_quiz_intro_background);
 
         Bitmap bitmap = blurBuilder.blur(getContext(), ((BitmapDrawable) imageView.getDrawable()).getBitmap());
         // change the background image
@@ -149,6 +153,8 @@ public class QuizFragment extends FragmentCommon {
         Button continueQuizButton = (Button) view.findViewById(R.id.quiz_continue_button);
         if (activeQuizId == Profile.NO_QUIZ) {
             continueQuizButton.setEnabled(false);
+            activeQuizInfoTextView.setVisibility(View.GONE);
+            activeQuizInfoLabelTextView.setVisibility(View.GONE);
         } else {
             continueQuizButton.setEnabled(true);
             continueQuizButton.setOnClickListener(new View.OnClickListener() {
@@ -157,8 +163,51 @@ public class QuizFragment extends FragmentCommon {
                     continueQuizButtonClicked();
                 }
             });
-
+            activeQuizInfoTextView.setVisibility(View.VISIBLE);
+            activeQuizInfoLabelTextView.setVisibility(View.VISIBLE);
+            updateActiveQuizInfoTextView();
         }
+    }
+
+    private void updateActiveQuizInfoTextView() {
+
+        Quiz quiz = Database.mQuizDao.fetchQuizById(activeQuizId);
+
+        String quizType = "";
+
+        switch (quiz.getMode()) {
+
+            case READING:
+                quizType = "Reading";
+                break;
+            case WRITING:
+                quizType = "Writing";
+                break;
+            case MULTIPLE_CHOICE:
+                quizType = "Multiple Choice";
+                break;
+        }
+
+        String frontLabel = Database.mUserDao.fetchActiveProfile().getFrontLabel();
+        String backLabel = Database.mUserDao.fetchActiveProfile().getBackLabel();
+
+        String orientationText;
+        if(quiz.isReverse()){
+            orientationText = backLabel + " to " + frontLabel;
+        }else{
+            orientationText = frontLabel + " to " + backLabel;
+        }
+
+        int numberPassed = Database.mQuizCardDao.fetchNumberPassedQuizCardFromQuizId(activeQuizId);
+        int numberFailed = Database.mQuizCardDao.fetchNumberFailedQuizCardFromQuizId(activeQuizId);
+        int numberRemaining = Database.mQuizCardDao.fetchNumberQuizCardFromQuizId(activeQuizId) - numberFailed - numberPassed;
+
+
+        String cardsInfo = numberRemaining + " remaining\n" + numberPassed + " passed, " + numberFailed + " failed";
+
+        String info = quizType + "\n" + orientationText + "\n" + cardsInfo;
+
+        activeQuizInfoTextView.setText(info);
     }
 
     private void continueQuizButtonClicked() {
@@ -280,8 +329,8 @@ public class QuizFragment extends FragmentCommon {
         reviewOnlySwitch = (Switch) dialogView.findViewById(R.id.custom_dialog_create_quiz_review_only_switch);
 
 
-        String questionLabel = Database.mUserDao.fetchActiveProfile().getQuestionLabel();
-        String answerLabel = Database.mUserDao.fetchActiveProfile().getAnswerLabel();
+        String questionLabel = Database.mUserDao.fetchActiveProfile().getFrontLabel();
+        String answerLabel = Database.mUserDao.fetchActiveProfile().getBackLabel();
 
         ((RadioButton) dialogView.findViewById(R.id.custom_dialog_create_quiz_orientation_normal))
                 .setText(questionLabel + "\nto\n" + answerLabel);

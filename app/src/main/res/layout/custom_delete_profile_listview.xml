@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textSize="18sp"
-        android:textColor="?colorPrimary"
+        android:textColor="@color/progressbarFail"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp" />
 

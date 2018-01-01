@@ -7,7 +7,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.Orientation;
@@ -18,6 +21,7 @@ import java.util.List;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.MainActivityManager;
+import stelztech.youknowehv4.activities.ProfileNewEditActivity;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.utilities.BlurBuilder;
@@ -54,29 +58,74 @@ public class ProfilePickerActivity extends AppCompatActivity implements Discrete
             blurBuilder = new BlurBuilder();
 
         List<Profile> profiles = Database.mProfileDao.fetchAllProfiles();
-        profilePickerCardModelList = new ArrayList<>();
+
+        final DiscreteScrollView scrollView = (DiscreteScrollView) findViewById(R.id.profile_picker_profiles_scrollview);
+        final LinearLayout noProfileLinearLayout = (LinearLayout) findViewById(R.id.profile_picker_no_profiles_layout);
+        final LinearLayout addButtonLinearLayout = (LinearLayout) findViewById(R.id.profile_picker_add_button_layout);
+
+        if (profiles.isEmpty()) {
+            scrollView.setVisibility(View.GONE);
+            noProfileLinearLayout.setVisibility(View.VISIBLE);
+            addButtonLinearLayout.setVisibility(View.GONE);
+
+            ((Button) findViewById(R.id.profile_picker_create_profile_label)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ThemeManager.getInstance().changeTheme(ThemeManager.THEME_COLORS.BLUE);
+                    Intent i = new Intent(ProfilePickerActivity.this, ProfileNewEditActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+            });
+
+        } else {
+            scrollView.setVisibility(View.VISIBLE);
+            noProfileLinearLayout.setVisibility(View.GONE);
+            addButtonLinearLayout.setVisibility(View.VISIBLE);
 
 
-        for (Profile profile : profiles) {
-            profilePickerCardModelList.add(new ProfilePickerCardModel(profile, this));
+            profilePickerCardModelList = new ArrayList<>();
+
+
+            for (Profile profile : profiles) {
+                profilePickerCardModelList.add(new ProfilePickerCardModel(profile, this));
+            }
+
+
+
+            scrollView.setOrientation(Orientation.HORIZONTAL);
+            scrollView.addOnItemChangedListener(this);
+
+            RecyclerView.Adapter infiniteAdapter = (new ProfilePickerCardAdapter(this));
+
+            scrollView.setAdapter(infiniteAdapter);
+            scrollView.setItemTransitionTimeMillis(TRANSITION_TIME_MILLIS);
+            scrollView.setItemTransformer(new ScaleTransformer.Builder()
+                    .setMinScale(SCROLLVIEW_TRANSFORM_SCALE)
+                    .build());
+            scrollView.setSlideOnFling(true);
+            scrollView.setSlideOnFlingThreshold(FLING_THRESHOLD);
+
+            int openOnIndex = getIntent().getIntExtra("OpenOnIndex", 0);
+            scrollView.scrollToPosition(openOnIndex);
+
+
+            Button addButton = (Button) findViewById(R.id.profile_picker_add_button);
+
+            addButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    // default value
+                    ThemeManager.getInstance().changeTheme(ThemeManager.THEME_COLORS.BLUE);
+                    Intent i = new Intent(ProfilePickerActivity.this, ProfileNewEditActivity.class);
+                    i.putExtra("LastIndex", scrollView.getCurrentItem());
+
+                    startActivity(i);
+                    finish();
+                }
+            });
         }
-
-
-        DiscreteScrollView scrollView = (DiscreteScrollView) findViewById(R.id.profile_picker_profiles_scrollview);
-
-        scrollView.setOrientation(Orientation.HORIZONTAL);
-        scrollView.addOnItemChangedListener(this);
-
-        RecyclerView.Adapter infiniteAdapter = (new ProfilePickerCardAdapter(this));
-
-        scrollView.setAdapter(infiniteAdapter);
-        scrollView.setItemTransitionTimeMillis(TRANSITION_TIME_MILLIS);
-        scrollView.setItemTransformer(new ScaleTransformer.Builder()
-                .setMinScale(SCROLLVIEW_TRANSFORM_SCALE)
-                .build());
-        scrollView.setSlideOnFling(true);
-        scrollView.setSlideOnFlingThreshold(FLING_THRESHOLD);
-
 
     }
 
@@ -103,7 +152,7 @@ public class ProfilePickerActivity extends AppCompatActivity implements Discrete
         return currentCardIndex;
     }
 
-    protected void selectProfile(int position){
+    protected void selectProfile(int position) {
         int profileId = getProfileCards().get(position).getProfileId();
         Database.mUserDao.setActiveProfile(profileId);
         Profile profile = Database.mProfileDao.fetchProfileById(profileId);
@@ -115,6 +164,16 @@ public class ProfilePickerActivity extends AppCompatActivity implements Discrete
         setTheme(ThemeManager.getInstance().getCurrentAppThemeValue());
 
         Intent i = new Intent(this, MainActivityManager.class);
+        startActivity(i);
+        finish();
+    }
+
+    protected void openSettings(int profileId, int lastIndex) {
+        Intent i = new Intent(this, ProfileNewEditActivity.class);
+        i.putExtra("ProfileId", profileId);
+        i.putExtra("ReturnLocation", ProfileNewEditActivity.RETURN_LOCATION.PROFILE_PICKER.toString());
+        i.putExtra("LastIndex", lastIndex);
+
         startActivity(i);
         finish();
     }

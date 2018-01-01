@@ -85,6 +85,11 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
 
     @Override
     public int createProfile(String name) {
+        return createProfile(name, "Front", "Back");
+    }
+
+    @Override
+    public int createProfile(String name, String frontLabel, String backLabel) {
         ContentValues values = new ContentValues();
 
         String date = DateUtilities.getDateNowString();
@@ -92,8 +97,8 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
         values.put(COLUMN_PROFILE_NAME, name);
         values.put(COLUMN_DATE_CREATED, date);
         values.put(COLUMN_DATE_MODIFIED, date);
-        values.put(COLUMN_QUESTION_LABEL, "Question");
-        values.put(COLUMN_ANSWER_LABEL, "Answer");
+        values.put(COLUMN_QUESTION_LABEL, frontLabel);
+        values.put(COLUMN_ANSWER_LABEL, backLabel);
         values.put(COLUMN_ACTIVE_QUIZ_ID, NO_QUIZ);
         values.put(COLUMN_PROFILE_COLOR, String.valueOf(ThemeManager.THEME_COLORS.BLUE));
         values.put(COLUMN_PROFILE_LAST_TIME_OPENED, date);
@@ -113,7 +118,7 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
     }
 
     @Override
-    public boolean updateProfile(int profileId, String name) {
+    public boolean updateProfileName(int profileId, String name) {
         ContentValues values = new ContentValues();
 
         try {
@@ -130,7 +135,7 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
     }
 
     @Override
-    public boolean updateProfileQuestionLabel(int profileId, String questionLabel) {
+    public boolean updateProfileFrontLabel(int profileId, String questionLabel) {
         ContentValues values = new ContentValues();
 
         try {
@@ -147,7 +152,7 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
     }
 
     @Override
-    public boolean updateProfileAnswerLabel(int profileId, String answerLabel) {
+    public boolean updateProfileBackLabel(int profileId, String answerLabel) {
         ContentValues values = new ContentValues();
 
         try {

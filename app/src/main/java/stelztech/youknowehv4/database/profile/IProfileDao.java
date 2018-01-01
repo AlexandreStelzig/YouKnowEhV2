@@ -15,9 +15,10 @@ public interface IProfileDao {
     Profile fetchProfileById(int profileId);
     boolean deleteProfile(int profileId);
     int createProfile(String name);
-    boolean updateProfile(int profileId, String name);
-    boolean updateProfileQuestionLabel(int profileId, String questionLabel);
-    boolean updateProfileAnswerLabel(int profileId, String answerLabel);
+    int createProfile(String name, String frontLabel, String backLabel);
+    boolean updateProfileName(int profileId, String name);
+    boolean updateProfileFrontLabel(int profileId, String questionLabel);
+    boolean updateProfileBackLabel(int profileId, String answerLabel);
     boolean changeProfileColor(int profileId, ThemeManager.THEME_COLORS themeColor);
     boolean updateLastTimeOpened(int profileId, String lastTimeOpenedDate);
     boolean updateProfileImage(int profileId, int picture);

@@ -106,7 +106,8 @@
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp">
 
                     <TextView
                         android:layout_width="0dp"
@@ -114,23 +115,38 @@
                         android:layout_gravity="center"
                         android:layout_weight="0.30"
                         android:text="Front: "
-
                         android:textColor="?textPrimary"
                         android:textSize="16sp" />
 
-                    <EditText
-                        android:id="@+id/profile_front_label"
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:enabled="false"
-                        android:hint="PlaceHolder"
-                        android:inputType="textCapSentences|textAutoCorrect"
-                        android:maxLines="1"
-                        android:textColor="?textPrimary"
-                        android:textSize="16sp" />
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/profile_front_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:clickable="true"
+                            android:ellipsize="end"
+                            android:focusable="false"
+                            android:maxLines="1"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp"
+                            android:text="Front Place Holder"
+                            android:textColor="?textPrimary"
+                            android:textSize="16sp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/colorDivider" />
+
+                    </LinearLayout>
+
 
                 </LinearLayout>
 
@@ -148,19 +164,35 @@
                         android:textColor="?textPrimary"
                         android:textSize="16sp" />
 
-                    <EditText
-                        android:id="@+id/profile_back_label"
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:enabled="false"
-                        android:hint="PlaceHolder"
-                        android:inputType="textCapSentences|textAutoCorrect"
-                        android:maxLines="1"
-                        android:textColor="?textPrimary"
-                        android:textSize="16sp" />
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/profile_back_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:clickable="true"
+                            android:ellipsize="end"
+                            android:focusable="false"
+                            android:maxLines="1"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp"
+                            android:text="Back Place Holder"
+                            android:textColor="?textPrimary"
+                            android:textSize="16sp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/colorDivider" />
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </LinearLayout>

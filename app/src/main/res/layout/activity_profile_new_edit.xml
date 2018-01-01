@@ -71,19 +71,19 @@
                     android:layout_height="wrap_content"
                     android:text="Profile Name: "
                     android:textColor="?colorTextIcon"
+                    android:textStyle="bold"
                     android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/profile_new_edit_profile_name"
+                    style="?android:listSeparatorTextViewStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
                     android:clickable="true"
-                    android:maxLines="1"
-                    style="?android:listSeparatorTextViewStyle"
+                    android:ellipsize="end"
                     android:focusable="false"
+                    android:maxLines="1"
                     android:textColor="?colorTextIcon"
-                    android:textStyle="bold"
                     android:textSize="16sp" />
 
 
@@ -121,7 +121,8 @@
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp">
 
                     <TextView
                         android:layout_width="0dp"
@@ -129,24 +130,38 @@
                         android:layout_gravity="center"
                         android:layout_weight="0.30"
                         android:text="Front: "
-
                         android:textColor="?textPrimary"
                         android:textSize="16sp" />
 
-                    <EditText
-                        android:id="@+id/profile_new_edit_front_label"
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:enabled="false"
-                        android:focusable="false"
-                        android:clickable="true"
-                        android:inputType="textCapSentences|textAutoCorrect"
-                        android:maxLines="1"
-                        android:textColor="?textPrimary"
-                        android:textSize="16sp" />
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/profile_new_edit_front_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:clickable="true"
+                            android:ellipsize="end"
+                            android:focusable="false"
+                            android:maxLines="1"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp"
+                            android:text="Front Place Holder"
+                            android:textColor="?textPrimary"
+                            android:textSize="16sp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/colorDivider" />
+
+                    </LinearLayout>
+
 
                 </LinearLayout>
 
@@ -164,20 +179,35 @@
                         android:textColor="?textPrimary"
                         android:textSize="16sp" />
 
-                    <EditText
-                        android:id="@+id/profile_new_edit_back_label"
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:focusable="false"
-                        android:clickable="true"
-                        android:ellipsize="end"
-                        android:enabled="false"
-                        android:inputType="textCapSentences|textAutoCorrect"
-                        android:maxLines="1"
-                        android:textColor="?textPrimary"
-                        android:textSize="16sp" />
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/profile_new_edit_back_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:clickable="true"
+                            android:ellipsize="end"
+                            android:focusable="false"
+                            android:maxLines="1"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp"
+                            android:text="Back Place Holder"
+                            android:textColor="?textPrimary"
+                            android:textSize="16sp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/colorDivider" />
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </LinearLayout>
@@ -215,21 +245,21 @@
                         android:background="@color/colorPrimary" />
 
                     <Button
-                        android:id="@+id/profile_new_edit__change_color_green_button"
+                        android:id="@+id/profile_new_edit_change_color_green_button"
                         android:layout_width="65dp"
                         android:layout_height="65dp"
                         android:layout_margin="5dp"
                         android:background="@color/colorPrimaryGreen" />
 
                     <Button
-                        android:id="@+id/profile_new_edit__change_color_red_button"
+                        android:id="@+id/profile_new_edit_change_color_red_button"
                         android:layout_width="65dp"
                         android:layout_height="65dp"
                         android:layout_margin="5dp"
                         android:background="@color/colorPrimaryRed" />
 
                     <Button
-                        android:id="@+id/profile_new_edit__change_color_purple_button"
+                        android:id="@+id/profile_new_edit_change_color_purple_button"
                         android:layout_width="65dp"
                         android:layout_height="65dp"
                         android:layout_margin="5dp"
@@ -245,28 +275,28 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/profile_new_edit__change_color_grey_button"
+                        android:id="@+id/profile_new_edit_change_color_grey_button"
                         android:layout_width="65dp"
                         android:layout_height="65dp"
                         android:layout_margin="5dp"
                         android:background="@color/colorPrimaryGrey" />
 
                     <Button
-                        android:id="@+id/profile_new_edit__change_color_pink_button"
+                        android:id="@+id/profile_new_edit_change_color_pink_button"
                         android:layout_width="65dp"
                         android:layout_height="65dp"
                         android:layout_margin="5dp"
                         android:background="@color/colorPrimaryPink" />
 
                     <Button
-                        android:id="@+id/profile_new_edit__change_color_indigo_button"
+                        android:id="@+id/profile_new_edit_change_color_indigo_button"
                         android:layout_width="65dp"
                         android:layout_height="65dp"
                         android:layout_margin="5dp"
                         android:background="@color/colorPrimaryIndigo" />
 
                     <Button
-                        android:id="@+id/profile_new_edit__change_color_orange_button"
+                        android:id="@+id/profile_new_edit_change_color_orange_button"
                         android:layout_width="65dp"
                         android:layout_height="65dp"
                         android:layout_margin="5dp"
@@ -276,6 +306,23 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/profile_new_edit_delete_profile_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@color/white"
+                android:elevation="5dp"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <ListView
+                    android:id="@+id/profile_new_edit_delete_profile_listview"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="?android:attr/listPreferredItemHeight" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

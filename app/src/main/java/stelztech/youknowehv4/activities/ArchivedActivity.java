@@ -97,8 +97,8 @@ public class ArchivedActivity extends AppCompatActivity {
 
 
         Profile currentProfile = Database.mUserDao.fetchActiveProfile();
-        questionLabel = currentProfile.getQuestionLabel();
-        answerLabel = currentProfile.getAnswerLabel();
+        questionLabel = currentProfile.getFrontLabel();
+        answerLabel = currentProfile.getBackLabel();
 
         orientationQuestionAnswer = questionLabel + " - " + answerLabel;
         orientationAnswerQuestion = answerLabel + " - " + questionLabel;
@@ -336,10 +336,10 @@ public class ArchivedActivity extends AppCompatActivity {
         Profile currentProfile = Database.mUserDao.fetchActiveProfile();
 
         String[] sortingOptions = getResources().getStringArray(R.array.sort_options);
-        sortingOptions[0] = currentProfile.getQuestionLabel() + " (A-Z)";
-        sortingOptions[1] = currentProfile.getQuestionLabel() + " (Z-A)";
-        sortingOptions[2] = currentProfile.getAnswerLabel() + " (A-Z)";
-        sortingOptions[3] = currentProfile.getAnswerLabel() + " (Z-A)";
+        sortingOptions[0] = currentProfile.getFrontLabel() + " (A-Z)";
+        sortingOptions[1] = currentProfile.getFrontLabel() + " (Z-A)";
+        sortingOptions[2] = currentProfile.getBackLabel() + " (A-Z)";
+        sortingOptions[3] = currentProfile.getBackLabel() + " (Z-A)";
 
         final String[] sortingChoices = sortingOptions;
         builder.setTitle("Sort by");

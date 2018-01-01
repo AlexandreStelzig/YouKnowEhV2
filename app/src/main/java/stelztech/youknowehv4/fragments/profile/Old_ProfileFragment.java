@@ -23,11 +23,9 @@ import java.util.List;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.MainActivityManager;
-import stelztech.youknowehv4.activities.profilepicker.ProfilePickerActivity;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.fragments.FragmentCommon;
-import stelztech.youknowehv4.utilities.DateUtilities;
 import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.ThemeManager;
@@ -98,7 +96,7 @@ public class Old_ProfileFragment extends FragmentCommon {
             @Override
             public void onClick(View v) {
                 Profile profile = Database.mUserDao.fetchActiveProfile();
-                createDialog(ProfileDialogOptions.UPDATE_QUESTION, profile.getQuestionLabel()).show();
+//                createDialog(ProfileDialogOptions.UPDATE_QUESTION, profile.getFrontLabel()).show();
             }
         });
 
@@ -106,7 +104,7 @@ public class Old_ProfileFragment extends FragmentCommon {
             @Override
             public void onClick(View v) {
                 Profile profile = Database.mUserDao.fetchActiveProfile();
-                createDialog(ProfileDialogOptions.UPDATE_ANSWER, profile.getAnswerLabel()).show();
+//                createDialog(ProfileDialogOptions.UPDATE_ANSWER, profile.getBackLabel()).show();
             }
         });
 
@@ -246,8 +244,8 @@ public class Old_ProfileFragment extends FragmentCommon {
     private void setLabelText() {
 
         Profile profile = Database.mUserDao.fetchActiveProfile();
-        String questionText = profile.getQuestionLabel();
-        String answerText = profile.getAnswerLabel();
+        String questionText = profile.getFrontLabel();
+        String answerText = profile.getBackLabel();
 
         questionLabel.setText(questionText);
         answerLabel.setText(answerText);
@@ -264,13 +262,13 @@ public class Old_ProfileFragment extends FragmentCommon {
 
 
     private void createProfile() {
-        AlertDialog alertDialog = createDialog(ProfileDialogOptions.CREATE_PROFILE, "");
-        alertDialog.show();
+//        AlertDialog alertDialog = createDialog(ProfileDialogOptions.CREATE_PROFILE, "");
+//        alertDialog.show();
     }
 
     private void editProfile() {
-        AlertDialog alertDialog = createDialog(ProfileDialogOptions.UPDATE_PROFILE, Database.mUserDao.fetchActiveProfile().getProfileName());
-        alertDialog.show();
+//        AlertDialog alertDialog = createDialog(ProfileDialogOptions.UPDATE_PROFILE, Database.mUserDao.fetchActiveProfile().getProfileName());
+//        alertDialog.show();
     }
 
     private void deleteProfile() {
@@ -285,138 +283,138 @@ public class Old_ProfileFragment extends FragmentCommon {
         }
     }
 
-    private AlertDialog createDialog(final ProfileDialogOptions dialogType, String text) {
+//    private AlertDialog createDialog(final ProfileDialogOptions dialogType, String text) {
 
-        dialogTextHolder = text;
+//        dialogTextHolder = text;
+//
+//        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//        final EditText input = new EditText(getActivity());
+//        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+//        input.setSingleLine();
+//
+//        FrameLayout container = new FrameLayout(getActivity());
+//        FrameLayout.LayoutParams params =
+//                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        params.leftMargin = getResources().getDimensionPixelSize(R.dimen.default_padding);
+//        params.rightMargin = getResources().getDimensionPixelSize(R.dimen.default_padding);
+//        input.setLayoutParams(params);
+//        input.setText(dialogTextHolder);
+//        container.addView(input);
+//
+//        String message = "";
+//        switch (dialogType) {
+//
+//            case CREATE_PROFILE:
+//                input.setHint("Profile name");
+//                message = ("New Profile");
+//                break;
+//            case UPDATE_PROFILE:
+//                input.setHint("Profile Name");
+//                message = ("Update Profile Name");
+//                break;
+//            case UPDATE_QUESTION:
+//                input.setHint("Question label");
+//                message = ("Update Question Label");
+//                break;
+//            case UPDATE_ANSWER:
+//                input.setHint("Answer label");
+//                message = ("Update Answer Label");
+//                break;
+//        }
+//        builder.setCustomTitle(Helper.getInstance().customTitle(message));
+//
+//
+//        builder.setView(container);
+//
+//        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//            @Override
+//            // when button OK is press
+//            public void onClick(DialogInterface dialog, int which) {
+//                // nothing, will initiate it later
+//            }
+//        });
+//
+//        // if cancel button is press, close dialog
+//        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//
+//            }
+//        });
+//
+//        final AlertDialog alertDialog = builder.create();
+//
+//        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+//            @Override
+//            public void onShow(DialogInterface dialog) {
+//                Button positiveButton = alertDialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+//                positiveButton.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        String temp = dialogTextHolder;
+//                        dialogTextHolder = input.getText().toString();
+//                        // check if valid name
+//                        if (dialogTextHolder.trim().isEmpty()) {
+//                            Toast.makeText(getContext(), "Invalid name: cannot be empty", Toast.LENGTH_SHORT).show();
+//                            return;
+//                        } else if (temp.equals(dialogTextHolder)) {
+//                            Toast.makeText(getContext(), "Profile not updated: same name", Toast.LENGTH_SHORT).show();
+//                            return;
+//                        } else {
+//                            switch (dialogType) {
+//                                case CREATE_PROFILE:
+//
+//                                    if(profileNameExists(dialogTextHolder)){
+//                                        Toast.makeText(getContext(), "Invalid name: profile name already exists", Toast.LENGTH_SHORT).show();
+//                                        break;
+//                                    }
+//
+//                                    int profileId = Database.mProfileDao.createProfile(dialogTextHolder);
+//                                    // set newly created profile to active
+//                                    Database.mUserDao.setActiveProfile(profileId);
+//                                    break;
+//                                case UPDATE_PROFILE:
+//                                    if(profileNameExists(dialogTextHolder)){
+//                                        Toast.makeText(getContext(), "Invalid name: profile name already exists", Toast.LENGTH_SHORT).show();
+//                                        break;
+//                                    }
+//
+//                                    Database.mProfileDao.updateProfileName(Database.mUserDao.fetchActiveProfile().getProfileId(), dialogTextHolder);
+//
+//                                    break;
+//                                case UPDATE_QUESTION:
+//
+//                                    Database.mProfileDao.updateProfileFrontLabel(Database.mUserDao.fetchActiveProfile().getProfileId(), dialogTextHolder);
+//                                    setLabelText();
+//                                    break;
+//                                case UPDATE_ANSWER:
+//
+//                                    Database.mProfileDao.updateProfileBackLabel(Database.mUserDao.fetchActiveProfile().getProfileId(), dialogTextHolder);
+//                                    setLabelText();
+//                                    break;
+//                            }
+//                            Helper.getInstance().hideKeyboard(getActivity());
+//                            alertDialog.dismiss();
+//                        }
+//                    }
+//                });
+//
+//                Button negativeButton = alertDialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE);
+//                negativeButton.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        alertDialog.cancel();
+//                        Helper.getInstance().hideKeyboard(getActivity());
+//                    }
+//                });
+//            }
+//        });
+//
+//        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+//        input.setSelection(input.getText().length());
+//        return alertDialog;
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        final EditText input = new EditText(getActivity());
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        input.setSingleLine();
-
-        FrameLayout container = new FrameLayout(getActivity());
-        FrameLayout.LayoutParams params =
-                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.leftMargin = getResources().getDimensionPixelSize(R.dimen.default_padding);
-        params.rightMargin = getResources().getDimensionPixelSize(R.dimen.default_padding);
-        input.setLayoutParams(params);
-        input.setText(dialogTextHolder);
-        container.addView(input);
-
-        String message = "";
-        switch (dialogType) {
-
-            case CREATE_PROFILE:
-                input.setHint("Profile name");
-                message = ("New Profile");
-                break;
-            case UPDATE_PROFILE:
-                input.setHint("Profile Name");
-                message = ("Update Profile Name");
-                break;
-            case UPDATE_QUESTION:
-                input.setHint("Question label");
-                message = ("Update Question Label");
-                break;
-            case UPDATE_ANSWER:
-                input.setHint("Answer label");
-                message = ("Update Answer Label");
-                break;
-        }
-        builder.setCustomTitle(Helper.getInstance().customTitle(message));
-
-
-        builder.setView(container);
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            // when button OK is press
-            public void onClick(DialogInterface dialog, int which) {
-                // nothing, will initiate it later
-            }
-        });
-
-        // if cancel button is press, close dialog
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-
-        final AlertDialog alertDialog = builder.create();
-
-        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                Button positiveButton = alertDialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE);
-                positiveButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String temp = dialogTextHolder;
-                        dialogTextHolder = input.getText().toString();
-                        // check if valid name
-                        if (dialogTextHolder.trim().isEmpty()) {
-                            Toast.makeText(getContext(), "Invalid name: cannot be empty", Toast.LENGTH_SHORT).show();
-                            return;
-                        } else if (temp.equals(dialogTextHolder)) {
-                            Toast.makeText(getContext(), "Profile not updated: same name", Toast.LENGTH_SHORT).show();
-                            return;
-                        } else {
-                            switch (dialogType) {
-                                case CREATE_PROFILE:
-
-                                    if(profileNameExists(dialogTextHolder)){
-                                        Toast.makeText(getContext(), "Invalid name: profile name already exists", Toast.LENGTH_SHORT).show();
-                                        break;
-                                    }
-
-                                    int profileId = Database.mProfileDao.createProfile(dialogTextHolder);
-                                    // set newly created profile to active
-                                    Database.mUserDao.setActiveProfile(profileId);
-                                    break;
-                                case UPDATE_PROFILE:
-                                    if(profileNameExists(dialogTextHolder)){
-                                        Toast.makeText(getContext(), "Invalid name: profile name already exists", Toast.LENGTH_SHORT).show();
-                                        break;
-                                    }
-
-                                    Database.mProfileDao.updateProfile(Database.mUserDao.fetchActiveProfile().getProfileId(), dialogTextHolder);
-
-                                    break;
-                                case UPDATE_QUESTION:
-
-                                    Database.mProfileDao.updateProfileQuestionLabel(Database.mUserDao.fetchActiveProfile().getProfileId(), dialogTextHolder);
-                                    setLabelText();
-                                    break;
-                                case UPDATE_ANSWER:
-
-                                    Database.mProfileDao.updateProfileAnswerLabel(Database.mUserDao.fetchActiveProfile().getProfileId(), dialogTextHolder);
-                                    setLabelText();
-                                    break;
-                            }
-                            Helper.getInstance().hideKeyboard(getActivity());
-                            alertDialog.dismiss();
-                        }
-                    }
-                });
-
-                Button negativeButton = alertDialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE);
-                negativeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alertDialog.cancel();
-                        Helper.getInstance().hideKeyboard(getActivity());
-                    }
-                });
-            }
-        });
-
-        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        input.setSelection(input.getText().length());
-        return alertDialog;
-
-    }
+//    }
 
     private boolean profileNameExists(String profileName){
         List<Profile> profileList = Database.mProfileDao.fetchAllProfiles();

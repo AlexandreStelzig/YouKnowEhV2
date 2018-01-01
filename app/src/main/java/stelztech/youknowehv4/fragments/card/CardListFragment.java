@@ -53,7 +53,6 @@ import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.deck.Deck;
 import stelztech.youknowehv4.database.profile.Profile;
-import stelztech.youknowehv4.database.user.User;
 
 import static stelztech.youknowehv4.database.carddeck.CardDeck.REVIEW_TOGGLE_ID;
 
@@ -183,8 +182,8 @@ public class CardListFragment extends FragmentCommon {
 
         currentProfile = Database.mUserDao.fetchActiveProfile();
 
-        questionLabel = currentProfile.getQuestionLabel();
-        answerLabel = currentProfile.getAnswerLabel();
+        questionLabel = currentProfile.getFrontLabel();
+        answerLabel = currentProfile.getBackLabel();
 
         orientationQuestionAnswer = questionLabel + " - " + answerLabel;
         orientationAnswerQuestion = answerLabel + " - " + questionLabel;
@@ -488,10 +487,10 @@ public class CardListFragment extends FragmentCommon {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
 
         String[] sortingOptions = getResources().getStringArray(R.array.sort_options);
-        sortingOptions[0] = currentProfile.getQuestionLabel() + " (A-Z)";
-        sortingOptions[1] = currentProfile.getQuestionLabel() + " (Z-A)";
-        sortingOptions[2] = currentProfile.getAnswerLabel() + " (A-Z)";
-        sortingOptions[3] = currentProfile.getAnswerLabel() + " (Z-A)";
+        sortingOptions[0] = currentProfile.getFrontLabel() + " (A-Z)";
+        sortingOptions[1] = currentProfile.getFrontLabel() + " (Z-A)";
+        sortingOptions[2] = currentProfile.getBackLabel() + " (A-Z)";
+        sortingOptions[3] = currentProfile.getBackLabel() + " (Z-A)";
 
         final String[] sortingChoices = sortingOptions;
         builder.setTitle("Sort by");
@@ -654,8 +653,8 @@ public class CardListFragment extends FragmentCommon {
                         if (answerEmpty || questionEmpty) {
                             String toastMessageError = "";
                             Profile profile = Database.mUserDao.fetchActiveProfile();
-                            String questionLabel = profile.getQuestionLabel();
-                            String answerLabel = profile.getAnswerLabel();
+                            String questionLabel = profile.getFrontLabel();
+                            String answerLabel = profile.getBackLabel();
                             if (answerEmpty && questionEmpty)
                                 toastMessageError = questionLabel + " and " + answerLabel + " cannot be empty";
                             else if (questionEmpty && !answerEmpty)
@@ -681,8 +680,8 @@ public class CardListFragment extends FragmentCommon {
 
                                     String toastMessageError = "";
                                     Profile profile = Database.mUserDao.fetchActiveProfile();
-                                    String questionLabel = profile.getQuestionLabel();
-                                    String answerLabel = profile.getAnswerLabel();
+                                    String questionLabel = profile.getFrontLabel();
+                                    String answerLabel = profile.getBackLabel();
 
                                     Toast.makeText(getContext(), "Card not updated: " + questionLabel + " and " + answerLabel + " are the same", Toast.LENGTH_SHORT).show();
                                 } else {
@@ -715,8 +714,8 @@ public class CardListFragment extends FragmentCommon {
                             if (answerEmpty || questionEmpty) {
                                 String toastMessageError = "";
                                 Profile profile = Database.mUserDao.fetchActiveProfile();
-                                String questionLabel = profile.getQuestionLabel();
-                                String answerLabel = profile.getAnswerLabel();
+                                String questionLabel = profile.getFrontLabel();
+                                String answerLabel = profile.getBackLabel();
                                 if (answerEmpty && questionEmpty)
                                     toastMessageError = questionLabel + " and " + answerLabel + " cannot be empty";
                                 else if (!answerEmpty && questionEmpty)

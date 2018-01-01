@@ -135,7 +135,8 @@ public class ProfilePickerCardAdapter extends RecyclerView.Adapter<ProfilePicker
                     int itemClickedPosition = getAdapterPosition();
 
                     if (itemClickedPosition == profilePickerActivity.getCurrentCardIndex()) {
-                        Toast.makeText(profilePickerActivity, "SETTINGS " + itemClickedPosition, Toast.LENGTH_SHORT).show();
+                        ThemeManager.getInstance().changeTheme(profilePickerActivity.getProfileCards().get(itemClickedPosition).getThemeColors());
+                        profilePickerActivity.openSettings(profilePickerActivity.getProfileCards().get(itemClickedPosition).getProfileId(), itemClickedPosition);
                     } else {
                         parentRecycler.smoothScrollToPosition(getAdapterPosition());
                     }

@@ -24,6 +24,7 @@ public class ProfilePickerCardModel {
     private int nbDecks;
     private int nbHoursLastOpened;
     private int profileColor;
+    private ThemeManager.THEME_COLORS themeColors;
 
     public ProfilePickerCardModel(Profile profile, Context context) {
         this.profileId = profile.getProfileId();
@@ -41,6 +42,7 @@ public class ProfilePickerCardModel {
 
         this.nbHoursLastOpened = (int) hours;
         this.profileColor = ThemeManager.getInstance().getThemePrimaryColor(context, profile.getProfileColor());
+        this.themeColors = profile.getProfileColor();
     }
 
     public int getProfileId() {
@@ -97,5 +99,13 @@ public class ProfilePickerCardModel {
 
     public void setProfileColor(int profileColor) {
         this.profileColor = profileColor;
+    }
+
+    public ThemeManager.THEME_COLORS getThemeColors() {
+        return themeColors;
+    }
+
+    public void setThemeColors(ThemeManager.THEME_COLORS themeColors) {
+        this.themeColors = themeColors;
     }
 }

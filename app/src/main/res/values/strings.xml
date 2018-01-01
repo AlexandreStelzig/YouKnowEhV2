@@ -33,6 +33,10 @@
         <item>Change Profile</item>
     </string-array>
 
+    <string-array name="delete_profile_options">
+        <item>Delete Profile</item>
+    </string-array>
+
     <string-array name="profile_preference_options">
         <item>Default Sorting:</item>
         <item>Quick Toggle Time:</item>

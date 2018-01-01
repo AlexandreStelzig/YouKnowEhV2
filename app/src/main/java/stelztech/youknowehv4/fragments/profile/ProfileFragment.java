@@ -21,14 +21,12 @@ import android.widget.Toast;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.ArchivedActivity;
-import stelztech.youknowehv4.activities.CardInfoActivity;
 import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.activities.ProfileNewEditActivity;
 import stelztech.youknowehv4.activities.profilepicker.ProfilePickerActivity;
 import stelztech.youknowehv4.components.CustomProgressDialog;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.profile.Profile;
-import stelztech.youknowehv4.database.user.User;
 import stelztech.youknowehv4.fragments.FragmentCommon;
 import stelztech.youknowehv4.manager.ExportImportManager;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
@@ -54,8 +52,8 @@ public class ProfileFragment extends FragmentCommon {
     private TextView nbCardsLabel;
     private TextView nbDecksLabel;
 
-    private EditText frontLabel;
-    private EditText backLabel;
+    private TextView frontLabel;
+    private TextView backLabel;
 
     private ListView preferencesListView;
     private ListView moreOptionsListView;
@@ -78,8 +76,8 @@ public class ProfileFragment extends FragmentCommon {
         profileNameLabel = (TextView) view.findViewById(R.id.profile_profile_name);
         nbCardsLabel = (TextView) view.findViewById(R.id.profile_number_cards);
         nbDecksLabel = (TextView) view.findViewById(R.id.profile_number_decks);
-        frontLabel = (EditText) view.findViewById(R.id.profile_front_label);
-        backLabel = (EditText) view.findViewById(R.id.profile_back_label);
+        frontLabel = (TextView) view.findViewById(R.id.profile_front_label);
+        backLabel = (TextView) view.findViewById(R.id.profile_back_label);
         preferencesListView = (ListView) view.findViewById(R.id.profile_preferences_listview);
         moreOptionsListView = (ListView) view.findViewById(R.id.profile_more_options_listview);
         changeProfileListView = (ListView) view.findViewById(R.id.profile_change_profile_listview);
@@ -154,6 +152,8 @@ public class ProfileFragment extends FragmentCommon {
                         Database.mUserDao.setActiveProfile(Profile.NO_PROFILES);
 
                         Intent i = new Intent(getActivity(), ProfilePickerActivity.class);
+                        //  todo open on index
+                        //  i.putExtra("OpenOnIndex", profilePickerLastIndex);
                         startActivity(i);
                         getActivity().finish();
                         break;
@@ -166,16 +166,17 @@ public class ProfileFragment extends FragmentCommon {
 
     }
 
+
     private void initPreferenceListView() {
         // export import listview
         preferenceOptions = getContext().getResources().getStringArray(R.array.profile_preference_options);
 
         Profile currentProfile = Database.mUserDao.fetchActiveProfile();
         sortingOptions = getResources().getStringArray(R.array.sort_options);
-        sortingOptions[0] = currentProfile.getQuestionLabel() + " (A-Z)";
-        sortingOptions[1] = currentProfile.getQuestionLabel() + " (Z-A)";
-        sortingOptions[2] = currentProfile.getAnswerLabel() + " (A-Z)";
-        sortingOptions[3] = currentProfile.getAnswerLabel() + " (Z-A)";
+        sortingOptions[0] = currentProfile.getFrontLabel() + " (A-Z)";
+        sortingOptions[1] = currentProfile.getFrontLabel() + " (Z-A)";
+        sortingOptions[2] = currentProfile.getBackLabel() + " (A-Z)";
+        sortingOptions[3] = currentProfile.getBackLabel() + " (Z-A)";
 
         preferenceOptions[0] = preferenceOptions[0] + " " + sortingOptions[Database.mUserDao.fetchActiveProfile().getDefaultSortingPosition()];
         preferenceOptions[1] = preferenceOptions[1] + " " + Database.mUserDao.fetchActiveProfile().getQuickToggleHours() + " hours";
@@ -261,8 +262,8 @@ public class ProfileFragment extends FragmentCommon {
     private void initLabelsText() {
 
         Profile profile = Database.mUserDao.fetchActiveProfile();
-        String frontString = profile.getQuestionLabel();
-        String backString = profile.getAnswerLabel();
+        String frontString = profile.getFrontLabel();
+        String backString = profile.getBackLabel();
 
         frontLabel.setText(frontString);
         backLabel.setText(backString);
@@ -308,11 +309,12 @@ public class ProfileFragment extends FragmentCommon {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_settings:
-                // todo open settings
                 Intent i = new Intent(getContext(), ProfileNewEditActivity.class);
                 i.putExtra("ProfileId", Database.mUserDao.fetchActiveProfile().getProfileId());
+                i.putExtra("ReturnLocation", ProfileNewEditActivity.RETURN_LOCATION.MAIN_ACTIVITY.toString());
 
-                getActivity().startActivityForResult(i, MainActivityManager.PROFILE_UPDATED);
+                getActivity().startActivity(i);
+                getActivity().finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);

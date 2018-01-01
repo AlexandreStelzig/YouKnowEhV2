@@ -2,6 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+
     <item
         android:id="@+id/action_done"
         android:icon="@drawable/ic_done_white_24dp"
@@ -14,5 +16,33 @@
         android:icon="@drawable/ic_low_priority_white_24dp"
         android:title="Modify decks order"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_import_export"
+        android:icon="@drawable/ic_action_export_import_white"
+        android:title="Export/Import"
+        app:showAsAction="always" >
+
+
+        <menu>
+
+            <item
+                android:id="@+id/action_import_deck"
+                android:title="Import Deck (cvs)"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/action_import_multi_decks"
+                android:title="Import Multiple Decks (zip)"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/action_export_all_decks"
+                android:title="Export All Decks (zip)"
+                app:showAsAction="never" />
+
+        </menu>
+
+    </item>
 
 </menu>

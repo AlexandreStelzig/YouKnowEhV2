@@ -51,7 +51,7 @@
 
         <activity
             android:name=".activities.quiz.QuizMultipleChoice"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".firsttimeopening.FirstTimeOpeningActivity"

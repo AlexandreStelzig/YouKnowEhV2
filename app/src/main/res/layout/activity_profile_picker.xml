@@ -9,53 +9,121 @@
         android:id="@+id/profile_picker_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="false"
         android:contentDescription="background"
-        android:scaleType="centerCrop"/>
+        android:fitsSystemWindows="false"
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="0.25"/>
 
         <com.yarolegovich.discretescrollview.DiscreteScrollView
+            android:layout_marginTop="10dp"
             android:id="@+id/profile_picker_profiles_scrollview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="4" />
 
+
         <LinearLayout
+            android:id="@+id/profile_picker_no_profiles_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:background="?colorPrimaryDark"
+            android:gravity="center"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center|bottom"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="Welcome to"
+                    android:textColor="@color/white"
+                    android:textSize="30dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="@string/app_name"
+                    android:textColor="@color/white"
+                    android:textSize="30dp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.5"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="A flash card application to help you learn new languages"
+                    android:textColor="@color/white"
+                    android:textSize="20dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/profile_picker_create_profile_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:drawableRight="@drawable/ic_navigate_next_white_24dp"
+                    android:paddingLeft="5dp"
+                    android:text="Create Profile"
+                    android:textColor="?colorTextIcon"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/profile_picker_add_button_layout"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_gravity="center"
             android:layout_weight="0.75"
-            android:orientation="horizontal">
-
-            <!--<Button-->
-                <!--android:layout_width="50dp"-->
-                <!--android:layout_height="50dp"-->
-                <!--android:background="@drawable/ic_more_vert_profile_white_24dp"/>-->
-
-            <!--<View-->
-                <!--android:layout_width="5dp"-->
-                <!--android:layout_height="0dp"/>-->
+            android:orientation="horizontal"
+            android:layout_marginBottom="15dp">
 
             <Button
+                android:id="@+id/profile_picker_add_button"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:text="add"/>
+                android:text="add" />
 
         </LinearLayout>
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="0.20"/>
 
 
     </LinearLayout>

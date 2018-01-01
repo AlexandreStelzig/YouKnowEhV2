@@ -14,7 +14,6 @@ import android.text.InputType;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -154,8 +153,8 @@ public class CardInfoActivity extends AppCompatActivity {
 
         Profile currentProfile = Database.mUserDao.fetchActiveProfile();
 
-        String questionLabel = currentProfile.getQuestionLabel();
-        String answerLabel = currentProfile.getAnswerLabel();
+        String questionLabel = currentProfile.getFrontLabel();
+        String answerLabel = currentProfile.getBackLabel();
         TextView questionLabelTextView = (TextView) findViewById(R.id.card_info_question_label);
         TextView answerLabelTextView = (TextView) findViewById(R.id.card_info_answer_label);
 
@@ -737,8 +736,8 @@ public class CardInfoActivity extends AppCompatActivity {
         if (question.trim().isEmpty() || answer.trim().isEmpty()) {
             String toastMessageError = "";
             Profile profile = Database.mUserDao.fetchActiveProfile();
-            String questionLabel = profile.getQuestionLabel();
-            String answerLabel = profile.getAnswerLabel();
+            String questionLabel = profile.getFrontLabel();
+            String answerLabel = profile.getBackLabel();
             if (question.trim().isEmpty() && answer.trim().isEmpty())
                 toastMessageError = questionLabel + " and " + answerLabel + " cannot be empty";
             else if (question.trim().isEmpty() && !answer.trim().isEmpty())
@@ -789,8 +788,8 @@ public class CardInfoActivity extends AppCompatActivity {
                 if (question.trim().isEmpty() || answer.trim().isEmpty()) {
                     String toastMessageError = "";
                     Profile profile = Database.mUserDao.fetchActiveProfile();
-                    String questionLabel = profile.getQuestionLabel();
-                    String answerLabel = profile.getAnswerLabel();
+                    String questionLabel = profile.getFrontLabel();
+                    String answerLabel = profile.getBackLabel();
                     if (question.trim().isEmpty() && answer.trim().isEmpty())
                         toastMessageError = questionLabel + " and " + answerLabel + " cannot be empty";
                     else if (question.trim().isEmpty() && !answer.trim().isEmpty())
