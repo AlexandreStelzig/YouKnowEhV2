@@ -18,6 +18,7 @@ public interface IProfileSchema {
     String COLUMN_ANSWER_LABEL = "answer_label";
     String COLUMN_ACTIVE_QUIZ_ID = "active_quiz_id";
     String COLUMN_PROFILE_COLOR = "profile_color";
+    String COLUMN_PROFILE_TYPE = "profile_type";
     String COLUMN_PROFILE_LAST_TIME_OPENED = "last_time_opened";
     String COLUMN_PROFILE_IMAGE = "profile_image";
     String COLUMN_DISPLAY_ALL_CARDS = "display_all_cards";
@@ -34,7 +35,7 @@ public interface IProfileSchema {
             + COLUMN_QUESTION_LABEL + " TEXT NOT NULL,"
             + COLUMN_ANSWER_LABEL + " TEXT NOT NULL,"
             + COLUMN_ACTIVE_QUIZ_ID + " INTEGER,"
-            + COLUMN_PROFILE_IMAGE + " INTEGER,"
+            + COLUMN_PROFILE_IMAGE + " TEXT,"
             + COLUMN_DISPLAY_ALL_CARDS + " BOOLEAN,"
             + COLUMN_DISPLAY_SPECIFIC_DECK + " BOOLEAN,"
             + COLUMN_ALLOW_SEARCH_ON_QUERY_CHANGED + " BOOLEAN,"
@@ -44,6 +45,7 @@ public interface IProfileSchema {
             + COLUMN_DATE_MODIFIED + " TEXT,"
             + COLUMN_PROFILE_LAST_TIME_OPENED + " TEXT,"
             + COLUMN_PROFILE_COLOR + " TEXT,"
+            + COLUMN_PROFILE_TYPE + " TEXT,"
             + " FOREIGN KEY " + "(" + COLUMN_ACTIVE_QUIZ_ID + ")"
             + " REFERENCES " + IQuizSchema.QUIZ_TABLE + "(" + IQuizSchema.COLUMN_QUIZ_ID + ")" + " );";
 

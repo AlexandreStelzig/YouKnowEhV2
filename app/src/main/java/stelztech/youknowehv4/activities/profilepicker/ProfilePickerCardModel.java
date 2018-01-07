@@ -1,12 +1,16 @@
 package stelztech.youknowehv4.activities.profilepicker;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.profile.Profile;
+import stelztech.youknowehv4.utilities.BitmapUtilities;
 import stelztech.youknowehv4.utilities.DateUtilities;
 import stelztech.youknowehv4.manager.ThemeManager;
 
@@ -18,7 +22,7 @@ public class ProfilePickerCardModel {
 
 
     private int profileId;
-    private int thumbnailImage;
+    private Bitmap thumbnailImage;
     private String name;
     private int nbCards;
     private int nbDecks;
@@ -28,7 +32,13 @@ public class ProfilePickerCardModel {
 
     public ProfilePickerCardModel(Profile profile, Context context) {
         this.profileId = profile.getProfileId();
-        this.thumbnailImage = profile.getProfileImage();
+
+        try{
+            this.thumbnailImage = BitmapUtilities.getBitmapFromFile(profile.getProfileImagePath());
+        } catch (Exception e){
+            this.thumbnailImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.default1);
+        }
+
         this.name = profile.getProfileName();
         this.nbCards = Database.mCardDao.fetchNumberOfCardsByProfileId(profile.getProfileId());
         this.nbDecks = Database.mDeckDao.fetchNumberOfDecksByProfileId(profile.getProfileId());
@@ -53,11 +63,11 @@ public class ProfilePickerCardModel {
         this.profileId = profileId;
     }
 
-    public int getThumbnailImage() {
+    public Bitmap getThumbnailImage() {
         return thumbnailImage;
     }
 
-    public void setThumbnailImage(int thumbnailImage) {
+    public void setThumbnailImage(Bitmap thumbnailImage) {
         this.thumbnailImage = thumbnailImage;
     }
 

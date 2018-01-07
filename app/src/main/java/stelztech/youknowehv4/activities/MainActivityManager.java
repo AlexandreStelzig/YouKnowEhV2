@@ -26,12 +26,8 @@ import stelztech.youknowehv4.fragments.profile.ProfileFragment;
 import stelztech.youknowehv4.fragments.quiz.QuizFragment;
 import stelztech.youknowehv4.fragments.statistics.StatisticsFragment;
 import stelztech.youknowehv4.fragments.review.ReviewFragment;
-import stelztech.youknowehv4.fragments.profile.Old_ProfileFragment;
 import stelztech.youknowehv4.utilities.CardUtilities;
-import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
-import stelztech.youknowehv4.manager.CardInfoToolbarManager;
-import stelztech.youknowehv4.manager.CardToolbarManager;
 import stelztech.youknowehv4.manager.ExportImportManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.manager.ThemeManager;
@@ -67,11 +63,12 @@ public class MainActivityManager extends AppCompatActivity
 
     // Activity results
     public final static int CARD_RESULT = 1;
-    public final static int EXPORT_RESULT = 2;
+    public final static int IMPORT_RESULT = 2;
     public final static int RESULT_ANIMATION_RIGHT_TO_LEFT = 3;
-    public final static int EXPORT_RESULT_ALL = 4;
+    public final static int IMPORT_ALL_RESULT = 4;
     public final static int RESULT_QUIZ_END = 5;
     public final static int PROFILE_UPDATED = 6;
+    public final static int IMPORT_TO_EXISTING_RESULT = 7;
 
     // set fragment after drawer close
     private int mFragmentToSet = INT_NULL;
@@ -339,7 +336,7 @@ public class MainActivityManager extends AppCompatActivity
     }
 
     // returns the currently selected deck in card list
-    public long getCurrentDeckIdSelected() {
+    public int getCurrentDeckIdSelected() {
         return mCardListFragment.getCurrentDeckIdSelected();
     }
 
@@ -373,7 +370,7 @@ public class MainActivityManager extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        //TODO add if statements
+
 
         if (requestCode == CARD_RESULT) {
             overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
@@ -396,14 +393,23 @@ public class MainActivityManager extends AppCompatActivity
 //                mCardListFragment.populateListView(getCurrentDeckIdSelected());
             }
 
-        } else if (requestCode == EXPORT_RESULT) {
+        } else if (requestCode == IMPORT_RESULT) {
             if (resultCode == RESULT_OK) {
                 Uri selectedDocument = data.getData();
-                ExportImportManager.readCSV(this, selectedDocument, null);
+                ExportImportManager.readCSV(this, selectedDocument, null, ExportImportManager.CREATE_NEW_DECK);
+            }
+        }else if (requestCode == IMPORT_TO_EXISTING_RESULT) {
+            if (resultCode == RESULT_OK) {
+                int deckId = getCurrentDeckIdSelected();
+
+                Uri selectedDocument = data.getData();
+                ExportImportManager.readCSV(this, selectedDocument, null, deckId);
+                CardUtilities.mergeDuplicates(null, deckId);
+                mCardListFragment.populateListView(deckId);
             }
         } else if (requestCode == RESULT_ANIMATION_RIGHT_TO_LEFT) {
             overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
-        } else if (requestCode == EXPORT_RESULT_ALL) {
+        } else if (requestCode == IMPORT_ALL_RESULT) {
             if (resultCode == RESULT_OK) {
 
                 final CustomProgressDialog customProgressDialog = new CustomProgressDialog("Importing Decks", 100, MainActivityManager.this, MainActivityManager.this) {
@@ -416,7 +422,13 @@ public class MainActivityManager extends AppCompatActivity
 
                     @Override
                     public void informationLoaded() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
 
+                                mDeckListFragment.reloadData();
+                            }
+                        });
                     }
                 };
                 customProgressDialog.startDialog();
@@ -427,8 +439,9 @@ public class MainActivityManager extends AppCompatActivity
 
             mQuizFragment.onQuizFinishResult();
 
-
         }
+
+
     }
 
 

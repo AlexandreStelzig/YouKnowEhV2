@@ -1,6 +1,7 @@
 package stelztech.youknowehv4.utilities;
 
 import android.app.Activity;
+import android.os.Build;
 import android.text.Html;
 
 import java.util.Date;
@@ -82,7 +83,12 @@ public class CardUtilities {
 
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(activity);
         builder.setTitle("Quick Info");
-        builder.setMessage(Html.fromHtml(message)).setPositiveButton("done", null).show();
+        builder.setCancelable(false);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            builder.setMessage( Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY)).setPositiveButton("done", null).show();
+        } else {
+            builder.setMessage(Html.fromHtml(message)).setPositiveButton("done", null).show();
+        }
     }
 
 

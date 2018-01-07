@@ -55,6 +55,8 @@ public final class ExportImportManager {
 
     private final static String EXPORT_TAG = "_YKHExport";
 
+    public final static int CREATE_NEW_DECK = -1;
+
 
     private static File saveCSVFile(Context context, String location, Deck deckToExport, List<Card> cardList) {
 
@@ -92,7 +94,7 @@ public final class ExportImportManager {
                 data[0] = cardTemp.getQuestion();
                 data[1] = cardTemp.getAnswer();
                 data[2] = cardTemp.getMoreInfo();
-                if(!cardDeck.isReview() && !DateUtilities.isValidDate(cardDeck.getReviewToggleDate()))
+                if (!cardDeck.isReview() && !DateUtilities.isValidDate(cardDeck.getReviewToggleDate()))
                     data[3] = "" + CardDeck.REVIEW_TOGGLE_ID;
                 else
                     data[3] = cardDeck.getReviewToggleDate();
@@ -125,7 +127,7 @@ public final class ExportImportManager {
     }
 
 
-    public static boolean readCSV(Context context, Uri uri, CustomProgressDialog customProgressDialog) {
+    public static boolean readCSV(Context context, Uri uri, CustomProgressDialog customProgressDialog, int deckId) {
 
         if (!isExternalStorageAvailable() || isExternalStorageReadOnly()) {
 //            Toast.makeText(context, "Storage not available or read only", Toast.LENGTH_SHORT).show();
@@ -144,11 +146,11 @@ public final class ExportImportManager {
                 fileName = fileName.substring(0, index);
 
 
-                if(customProgressDialog != null)
+                if (customProgressDialog != null)
                     customProgressDialog.setDialogTitle("Importing '" + fileName + "'");
             }
 
-           // Toast.makeText(context, fileName, Toast.LENGTH_SHORT);
+            // Toast.makeText(context, fileName, Toast.LENGTH_SHORT);
 
             InputStream myInput = context.getContentResolver().openInputStream(uri);
             CSVReader reader = new CSVReader(new InputStreamReader(myInput));
@@ -204,7 +206,8 @@ public final class ExportImportManager {
             return false;
         }
 
-        int deckId = Database.mDeckDao.createDeck(fileName);
+        if (deckId == CREATE_NEW_DECK)
+            deckId = Database.mDeckDao.createDeck(fileName);
 
         for (int i = 0; i < cardHolderList.size(); i++) {
             String question = cardHolderList.get(i).getQuestion();
@@ -221,7 +224,7 @@ public final class ExportImportManager {
 
                 if (isValidDate)
                     Database.mCardDeckDao.setReviewToggleDate(cardId, deckId, date);
-                else if(date.equals("" + CardDeck.REVIEW_TOGGLE_ID) || date.toLowerCase().trim().equals("false")){
+                else if (date.equals("" + CardDeck.REVIEW_TOGGLE_ID) || date.toLowerCase().trim().equals("false")) {
                     Database.mCardDeckDao.changeCardReviewTime(cardId, deckId, CardDeck.REVIEW_TOGGLE_ID);
                 }
             }
@@ -357,13 +360,13 @@ public final class ExportImportManager {
 
             zipinputstream.close();
 
-            if(customProgressDialog != null)
+            if (customProgressDialog != null)
                 customProgressDialog.setMax(files.size());
 
             for (int i = 0; i < files.size(); i++) {
-                readCSV(context, Uri.fromFile(files.get(i)), customProgressDialog);
+                readCSV(context, Uri.fromFile(files.get(i)), customProgressDialog, CREATE_NEW_DECK);
 
-                if(customProgressDialog != null)
+                if (customProgressDialog != null)
                     customProgressDialog.setProgress(i + 1);
             }
 
@@ -436,19 +439,19 @@ public final class ExportImportManager {
         emailIntent.putExtra(Intent.EXTRA_STREAM, uris);
 
 
-        if(Build.VERSION.SDK_INT>=24){
-            try{
+        if (Build.VERSION.SDK_INT >= 24) {
+            try {
                 Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
                 m.invoke(null);
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        try{
+        try {
             context.startActivity(emailIntent);
 
-        } catch (Exception exception){
+        } catch (Exception exception) {
             Toast.makeText(context, "Error - couldn't start the email activity", Toast.LENGTH_SHORT).show();
         }
     }
@@ -457,11 +460,26 @@ public final class ExportImportManager {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("text/csv");   //xlxs only
-//        intent.addCategory(Intent.CATEGORY_OPENABLE);
 
         try {
-            activity.startActivityForResult(Intent.createChooser(intent, "Select a File to Upload"),
-                    MainActivityManager.EXPORT_RESULT);
+            activity.startActivityForResult(Intent.createChooser(intent, "Select Deck to import"),
+                    MainActivityManager.IMPORT_RESULT);
+            Toast.makeText(context, "Select a Deck to import", Toast.LENGTH_SHORT).show();
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(context, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public static void importToExistingDeck(Context context, Activity activity, int deckId) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.putExtra("deckIdToImport", deckId);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/csv");   //xlxs only
+
+        try {
+            activity.startActivityForResult(Intent.createChooser(intent, "Select a Deck to import"),
+                    MainActivityManager.IMPORT_TO_EXISTING_RESULT);
             Toast.makeText(context, "Select a Deck to import", Toast.LENGTH_SHORT).show();
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(context, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
@@ -477,8 +495,8 @@ public final class ExportImportManager {
 //        intent.addCategory(Intent.CATEGORY_OPENABLE);
 
         try {
-            activity.startActivityForResult(Intent.createChooser(intent, "Select a File to Upload"),
-                    MainActivityManager.EXPORT_RESULT_ALL);
+            activity.startActivityForResult(Intent.createChooser(intent, "Select Decks to import"),
+                    MainActivityManager.IMPORT_ALL_RESULT);
             Toast.makeText(context, "Select a zip file with Decks to import", Toast.LENGTH_SHORT).show();
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(context, "Please install a File Manager.", Toast.LENGTH_SHORT).show();

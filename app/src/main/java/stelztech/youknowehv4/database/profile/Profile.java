@@ -1,5 +1,7 @@
 package stelztech.youknowehv4.database.profile;
 
+import android.graphics.Bitmap;
+
 import stelztech.youknowehv4.manager.ThemeManager;
 
 /**
@@ -7,6 +9,12 @@ import stelztech.youknowehv4.manager.ThemeManager;
  */
 
 public class Profile {
+
+    public enum PROFILE_TYPE{
+        SCHOOL,
+        LANGUAGE,
+        OTHER
+    }
 
     public static final int NO_PROFILES = -1;
     public static final int NO_QUIZ = -1;
@@ -18,15 +26,16 @@ public class Profile {
     private String backLabel;
     private int activeQuizId;
     private ThemeManager.THEME_COLORS profileColor;
+    private PROFILE_TYPE profileType;
     private String lastTimeOpened;
-    private int profileImage;
+    private String profileImagePath;
     private boolean displayNbDecksAllCards;
     private boolean displayNbDecksSpecificCards;
     private boolean allowOnQueryChanged;
     private int defaultSortingPosition;
     private int quickToggleHours;
 
-    public Profile(int profileId, String profileName, String dateCreated, String frontLabel, String backLabel, int activeQuizId, ThemeManager.THEME_COLORS profileColor, String lastTimeOpened, int profileImage, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards, boolean allowOnQueryChanged, int defaultSortingPosition, int quickToggleHours) {
+    public Profile(int profileId, String profileName, String dateCreated, String frontLabel, String backLabel, int activeQuizId, ThemeManager.THEME_COLORS profileColor, PROFILE_TYPE profileType, String lastTimeOpened, String profileImagePath, boolean displayNbDecksAllCards, boolean displayNbDecksSpecificCards, boolean allowOnQueryChanged, int defaultSortingPosition, int quickToggleHours) {
         this.profileId = profileId;
         this.profileName = profileName;
         this.dateCreated = dateCreated;
@@ -34,13 +43,35 @@ public class Profile {
         this.backLabel = backLabel;
         this.activeQuizId = activeQuizId;
         this.profileColor = profileColor;
+        this.profileType = profileType;
         this.lastTimeOpened = lastTimeOpened;
-        this.profileImage = profileImage;
+        this.profileImagePath = profileImagePath;
         this.displayNbDecksAllCards = displayNbDecksAllCards;
         this.displayNbDecksSpecificCards = displayNbDecksSpecificCards;
         this.allowOnQueryChanged = allowOnQueryChanged;
         this.defaultSortingPosition = defaultSortingPosition;
         this.quickToggleHours = quickToggleHours;
+    }
+
+
+    public static int getNoProfiles() {
+        return NO_PROFILES;
+    }
+
+    public static int getNoQuiz() {
+        return NO_QUIZ;
+    }
+
+    public PROFILE_TYPE getProfileType() {
+        return profileType;
+    }
+
+    public void setProfileType(PROFILE_TYPE profileType) {
+        this.profileType = profileType;
+    }
+
+    public void setProfileImagePath(String profileImagePath) {
+        this.profileImagePath = profileImagePath;
     }
 
     public String getLastTimeOpened() {
@@ -51,12 +82,12 @@ public class Profile {
         this.lastTimeOpened = lastTimeOpened;
     }
 
-    public int getProfileImage() {
-        return profileImage;
+    public String getProfileImagePath() {
+        return profileImagePath;
     }
 
-    public void setProfileImage(int profileImage) {
-        this.profileImage = profileImage;
+    public void setProfileImage(String profileImage) {
+        this.profileImagePath = profileImage;
     }
 
     public ThemeManager.THEME_COLORS getProfileColor() {

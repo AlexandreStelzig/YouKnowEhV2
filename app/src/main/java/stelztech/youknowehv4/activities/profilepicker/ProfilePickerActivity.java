@@ -1,10 +1,14 @@
 package stelztech.youknowehv4.activities.profilepicker;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -24,6 +28,7 @@ import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.activities.ProfileNewEditActivity;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.profile.Profile;
+import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.utilities.BlurBuilder;
 import stelztech.youknowehv4.manager.ThemeManager;
 
@@ -37,6 +42,8 @@ public class ProfilePickerActivity extends AppCompatActivity implements Discrete
     private int currentCardIndex = 0;
 
     private List<ProfilePickerCardModel> profilePickerCardModelList;
+
+    private static final int REQUEST_WRITE_STORAGE = 112;
 
     // others
     private BlurBuilder blurBuilder;
@@ -52,6 +59,14 @@ public class ProfilePickerActivity extends AppCompatActivity implements Discrete
 
         setContentView(R.layout.activity_profile_picker);
 
+
+        boolean hasPermission = (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+        if (!hasPermission) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_WRITE_STORAGE);
+        }
 
         // init blurBuilder with default values
         if (blurBuilder == null)
@@ -92,7 +107,6 @@ public class ProfilePickerActivity extends AppCompatActivity implements Discrete
             }
 
 
-
             scrollView.setOrientation(Orientation.HORIZONTAL);
             scrollView.addOnItemChangedListener(this);
 
@@ -129,12 +143,10 @@ public class ProfilePickerActivity extends AppCompatActivity implements Discrete
 
     }
 
-    public void setLayoutBackground(int image) {
+    public void setLayoutBackground(Bitmap image) {
 
-        // blur the image
-        Bitmap bitmap = blurBuilder.blur(this, BitmapFactory.decodeResource(getResources(), image));
         // change the background image
-        ((ImageView) findViewById(R.id.profile_picker_background)).setImageBitmap(bitmap);
+        ((ImageView) findViewById(R.id.profile_picker_background)).setImageBitmap(image);
     }
 
     @Override
@@ -163,6 +175,10 @@ public class ProfilePickerActivity extends AppCompatActivity implements Discrete
         themeManager.changeTheme(color);
         setTheme(ThemeManager.getInstance().getCurrentAppThemeValue());
 
+
+        SortingStateManager.getInstance().setContext(this);
+        SortingStateManager.getInstance().changeStateByPosition(profile.getDefaultSortingPosition());
+
         Intent i = new Intent(this, MainActivityManager.class);
         startActivity(i);
         finish();
@@ -176,6 +192,19 @@ public class ProfilePickerActivity extends AppCompatActivity implements Discrete
 
         startActivity(i);
         finish();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_WRITE_STORAGE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //reload my activity with permission granted or use the features what required the permission
+                }
+            }
+        }
     }
 
 }

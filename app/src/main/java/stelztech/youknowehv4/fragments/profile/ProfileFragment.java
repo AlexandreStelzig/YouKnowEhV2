@@ -3,6 +3,7 @@ package stelztech.youknowehv4.fragments.profile;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
@@ -13,11 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.List;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.ArchivedActivity;
@@ -31,6 +35,7 @@ import stelztech.youknowehv4.fragments.FragmentCommon;
 import stelztech.youknowehv4.manager.ExportImportManager;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
+import stelztech.youknowehv4.utilities.BitmapUtilities;
 import stelztech.youknowehv4.utilities.CardUtilities;
 import stelztech.youknowehv4.utilities.DateUtilities;
 import stelztech.youknowehv4.utilities.Helper;
@@ -147,13 +152,15 @@ public class ProfileFragment extends FragmentCommon {
                 switch (position) {
                     // change profile
                     case 0:
+                        Profile profile = Database.mUserDao.fetchActiveProfile();
+                        Database.mProfileDao.updateLastTimeOpened(profile.getProfileId(), DateUtilities.getDateNowString());
 
-                        Database.mProfileDao.updateLastTimeOpened(Database.mUserDao.fetchActiveProfile().getProfileId(), DateUtilities.getDateNowString());
                         Database.mUserDao.setActiveProfile(Profile.NO_PROFILES);
 
                         Intent i = new Intent(getActivity(), ProfilePickerActivity.class);
-                        //  todo open on index
-                        //  i.putExtra("OpenOnIndex", profilePickerLastIndex);
+
+
+                        i.putExtra("OpenOnIndex", findPositionToOpen(profile.getProfileName()));
                         startActivity(i);
                         getActivity().finish();
                         break;
@@ -164,6 +171,17 @@ public class ProfileFragment extends FragmentCommon {
 
         Helper.getInstance().setListViewHeightBasedOnChildren(changeProfileListView);
 
+    }
+
+    private int findPositionToOpen(String profileName) {
+        List<Profile> profileList = Database.mProfileDao.fetchAllProfiles();
+
+        for (int i = 0; i < profileList.size(); i++) {
+            if (profileList.get(i).getProfileName().equals(profileName)) {
+                return i;
+            }
+        }
+        return 0;
     }
 
 
@@ -271,8 +289,16 @@ public class ProfileFragment extends FragmentCommon {
     }
 
     private void initHeader() {
-
         Profile activeProfile = Database.mUserDao.fetchActiveProfile();
+
+
+
+        try{
+            ((ImageView) view.findViewById(R.id.profile_header)).setImageBitmap(BitmapUtilities.getBitmapFromFile(activeProfile.getProfileImagePath()));
+        } catch (Exception e){
+            ((ImageView) view.findViewById(R.id.profile_header)).setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.default1));
+        }
+
 
         profileNameLabel.setText(activeProfile.getProfileName());
 
@@ -347,6 +373,7 @@ public class ProfileFragment extends FragmentCommon {
             }
         });
 
+        builder.setCancelable(false);
         AlertDialog alert = builder.create();
         Helper.getInstance().hideKeyboard(getActivity());
 

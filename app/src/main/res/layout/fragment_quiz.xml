@@ -11,7 +11,7 @@
         android:contentDescription="background"
         android:fitsSystemWindows="false"
         android:scaleType="centerCrop"
-        android:src="@drawable/city" />
+        android:src="@drawable/default1" />
 
 
     <LinearLayout

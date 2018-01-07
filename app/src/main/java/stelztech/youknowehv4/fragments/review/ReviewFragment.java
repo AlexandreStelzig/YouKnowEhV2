@@ -432,6 +432,7 @@ public class ReviewFragment extends FragmentCommon {
         String cardInfo = "\'" + undoCard.getQuestion() + "/" + undoCard.getAnswer() + "\'";
         Toast.makeText(getContext(), cardInfo + " added back to review", Toast.LENGTH_SHORT).show();
         setButtonsEnable();
+        resetShowButtonLabel();
     }
 
     private int findCardIndex(Card card) {
@@ -849,7 +850,17 @@ public class ReviewFragment extends FragmentCommon {
                 helper.convertPracticeToggleToString(ReviewToggle.HOURS_24), helper.convertPracticeToggleToString(ReviewToggle.HOURS_48),
                 helper.convertPracticeToggleToString(ReviewToggle.DAYS_3), helper.convertPracticeToggleToString(ReviewToggle.DAYS_5)};
 
-        Card currentCard = mCardList.get(currentQuestion);
+
+        Card currentCard;
+
+        if(showingPrevious){
+            currentCard = previousCard;
+        }else if(showingUndo){
+            currentCard = undoCard;
+        }else{
+            int indexToRemove = questionOrder.get(currentQuestion);
+            currentCard = mCardList.get(indexToRemove);
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Toggle From Review: " + currentCard.getQuestion() + " / " + currentCard.getAnswer())
@@ -1086,6 +1097,8 @@ public class ReviewFragment extends FragmentCommon {
 
             }
         });
+
+        builder.setCancelable(false);
 
         final android.app.AlertDialog alert = builder.create();
 

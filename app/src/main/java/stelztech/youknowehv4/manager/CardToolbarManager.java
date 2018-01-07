@@ -34,6 +34,7 @@ public class CardToolbarManager {
     private final boolean SORT_IS_VISIBLE = true;
     private final boolean QUICK_CREATE_IS_VISIBLE = true;
     private final boolean FILTER_PRACTICE_IS_VISIBLE = true;
+    private final boolean IMPORT_CARDS_IS_VISIBLE = true;
 
     private static CardToolbarManager instance;
     private Context context;
@@ -61,32 +62,32 @@ public class CardToolbarManager {
             case CARD:
                 setMenuItemVisibility(activity, menu, DROPDOWN_IS_VISIBLE, SEARCH_IS_VISIBLE,
                         REVERSES_IS_VISIBLE, !DONE_IS_VISIBLE, EDIT_DECK_IS_VISIBLE, !CANCEL_IS_VISIBLE,
-                        TOGGLE_PRACTICE_IS_VISIBLE, SORT_IS_VISIBLE, QUICK_CREATE_IS_VISIBLE, FILTER_PRACTICE_IS_VISIBLE);
+                        TOGGLE_PRACTICE_IS_VISIBLE, SORT_IS_VISIBLE, QUICK_CREATE_IS_VISIBLE, FILTER_PRACTICE_IS_VISIBLE, IMPORT_CARDS_IS_VISIBLE);
                 break;
             case CARD_LIST_EDIT:
                 setMenuItemVisibility(activity, menu, !DROPDOWN_IS_VISIBLE, !SEARCH_IS_VISIBLE,
                         REVERSES_IS_VISIBLE, DONE_IS_VISIBLE, !EDIT_DECK_IS_VISIBLE, CANCEL_IS_VISIBLE,
-                        !TOGGLE_PRACTICE_IS_VISIBLE, SORT_IS_VISIBLE, !QUICK_CREATE_IS_VISIBLE, !FILTER_PRACTICE_IS_VISIBLE);
+                        !TOGGLE_PRACTICE_IS_VISIBLE, SORT_IS_VISIBLE, !QUICK_CREATE_IS_VISIBLE, !FILTER_PRACTICE_IS_VISIBLE, IMPORT_CARDS_IS_VISIBLE);
                 break;
             case SEARCH:
                 setMenuItemVisibility(activity, menu, !DROPDOWN_IS_VISIBLE, SEARCH_IS_VISIBLE,
                         REVERSES_IS_VISIBLE, !DONE_IS_VISIBLE, !EDIT_DECK_IS_VISIBLE, !CANCEL_IS_VISIBLE,
-                        !TOGGLE_PRACTICE_IS_VISIBLE, SORT_IS_VISIBLE, !QUICK_CREATE_IS_VISIBLE, FILTER_PRACTICE_IS_VISIBLE);
+                        !TOGGLE_PRACTICE_IS_VISIBLE, SORT_IS_VISIBLE, !QUICK_CREATE_IS_VISIBLE, FILTER_PRACTICE_IS_VISIBLE, !IMPORT_CARDS_IS_VISIBLE);
                 break;
             case SEARCH_ALL:
                 setMenuItemVisibility(activity, menu, !DROPDOWN_IS_VISIBLE, SEARCH_IS_VISIBLE,
                         REVERSES_IS_VISIBLE, !DONE_IS_VISIBLE, !EDIT_DECK_IS_VISIBLE, !CANCEL_IS_VISIBLE,
-                        !TOGGLE_PRACTICE_IS_VISIBLE, SORT_IS_VISIBLE, !QUICK_CREATE_IS_VISIBLE, !FILTER_PRACTICE_IS_VISIBLE);
+                        !TOGGLE_PRACTICE_IS_VISIBLE, SORT_IS_VISIBLE, !QUICK_CREATE_IS_VISIBLE, !FILTER_PRACTICE_IS_VISIBLE, !IMPORT_CARDS_IS_VISIBLE);
                 break;
             case ALL_CARDS:
                 setMenuItemVisibility(activity, menu, DROPDOWN_IS_VISIBLE, SEARCH_IS_VISIBLE,
                         REVERSES_IS_VISIBLE, !DONE_IS_VISIBLE, !EDIT_DECK_IS_VISIBLE, !CANCEL_IS_VISIBLE,
-                        !TOGGLE_PRACTICE_IS_VISIBLE, SORT_IS_VISIBLE, QUICK_CREATE_IS_VISIBLE, !FILTER_PRACTICE_IS_VISIBLE);
+                        !TOGGLE_PRACTICE_IS_VISIBLE, SORT_IS_VISIBLE, QUICK_CREATE_IS_VISIBLE, !FILTER_PRACTICE_IS_VISIBLE, !IMPORT_CARDS_IS_VISIBLE);
                 break;
             default:
                 setMenuItemVisibility(activity, menu, !DROPDOWN_IS_VISIBLE, !SEARCH_IS_VISIBLE,
                         !REVERSES_IS_VISIBLE, !DONE_IS_VISIBLE, !EDIT_DECK_IS_VISIBLE, !CANCEL_IS_VISIBLE,
-                        !TOGGLE_PRACTICE_IS_VISIBLE, !SORT_IS_VISIBLE, !QUICK_CREATE_IS_VISIBLE, !FILTER_PRACTICE_IS_VISIBLE);
+                        !TOGGLE_PRACTICE_IS_VISIBLE, !SORT_IS_VISIBLE, !QUICK_CREATE_IS_VISIBLE, !FILTER_PRACTICE_IS_VISIBLE, !IMPORT_CARDS_IS_VISIBLE);
                 break;
         }
     }
@@ -95,7 +96,7 @@ public class CardToolbarManager {
     private void setMenuItemVisibility(Activity activity, Menu menu, boolean isDropdownVisible, boolean isSearchVisible,
                                        boolean isReverseVisible, boolean isDoneVisible, boolean isEditDeckCardsVisible,
                                        boolean isCancelVisible, boolean isTogglePracticeVisible, boolean isSortVisible,
-                                       boolean isQuickCreateVisible, boolean isFilterPracticeVisible) {
+                                       boolean isQuickCreateVisible, boolean isFilterPracticeVisible, boolean isImportCardsVisible) {
 
         ActionBar actionBar = ((MainActivityManager) activity).getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(!isDropdownVisible);
@@ -119,6 +120,7 @@ public class CardToolbarManager {
         menu.findItem(R.id.action_sort).setVisible(isSortVisible);
         menu.findItem(R.id.action_quick_create).setVisible(isQuickCreateVisible);
         menu.findItem(R.id.action_filter_practice).setVisible(isFilterPracticeVisible);
+        menu.findItem(R.id.action_import_cards_to_deck).setVisible(isImportCardsVisible);
 
     }
 

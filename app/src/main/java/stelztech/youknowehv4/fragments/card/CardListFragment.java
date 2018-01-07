@@ -45,6 +45,7 @@ import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.fragments.FragmentCommon;
+import stelztech.youknowehv4.manager.ExportImportManager;
 import stelztech.youknowehv4.utilities.CardUtilities;
 import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
@@ -201,8 +202,6 @@ public class CardListFragment extends FragmentCommon {
         listView.setAdapter(customListAdapter);
 
         populateSpinner();
-
-//        populateListView(getCurrentDeckIdSelected());
 
         return view;
     }
@@ -371,6 +370,9 @@ public class CardListFragment extends FragmentCommon {
                 case R.id.action_sort:
                     sortDialog().show();
                     return true;
+                case R.id.action_import_cards_to_deck:
+                    ExportImportManager.importToExistingDeck(getContext(), getActivity(), getCurrentDeckIdSelected());
+                    return true;
                 case R.id.action_quick_create:
                     quickCreateUpdateDialog(CardQuickDialogOption.QUICK_NEW, null).show();
                     return true;
@@ -494,7 +496,7 @@ public class CardListFragment extends FragmentCommon {
 
         final String[] sortingChoices = sortingOptions;
         builder.setTitle("Sort by");
-
+        builder.setCancelable(false);
         builder.setSingleChoiceItems(sortingChoices, SortingStateManager.getInstance().getSelectedPosition(),
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -619,6 +621,7 @@ public class CardListFragment extends FragmentCommon {
             });
         }
 
+        builder.setCancelable(false);
 
         final AlertDialog aDialog = builder.create();
 

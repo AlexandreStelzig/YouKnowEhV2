@@ -370,6 +370,7 @@ public class ArchivedActivity extends AppCompatActivity {
             }
         });
 
+        builder.setCancelable(false);
         AlertDialog alert = builder.create();
         Helper.getInstance().hideKeyboard(this);
 
@@ -389,7 +390,10 @@ public class ArchivedActivity extends AppCompatActivity {
         String message = cardQuestion + "\n" + cardAnswer + "\n"
                 + cardDateCreated + "\n" + cardDateModified;
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+
+        builder.setCancelable(false);
         builder.setMessage(message).setPositiveButton("done", null).show();
+
     }
 
     ////// CUSTOM ADAPTER //////

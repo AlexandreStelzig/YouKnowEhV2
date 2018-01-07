@@ -57,8 +57,8 @@ public class ViewPagerProfile extends Fragment{
             return;
         }
 
-        int profileId = Database.mProfileDao.createProfile(profileText);
-        Database.mUserDao.setActiveProfile(profileId);
+//        int profileId = Database.mProfileDao.createProfile(profileText);
+//        Database.mUserDao.setActiveProfile(profileId);
 
         Toast.makeText(getContext(), "Profile successfully created", Toast.LENGTH_SHORT).show();
 

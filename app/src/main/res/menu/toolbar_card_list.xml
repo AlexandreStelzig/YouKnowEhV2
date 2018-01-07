@@ -53,6 +53,12 @@
                 app:showAsAction="never" />
 
             <item
+                android:id="@+id/action_import_cards_to_deck"
+                android:icon="@drawable/ic_action_import"
+                android:title="Import Cards"
+                app:showAsAction="never" />
+
+            <item
                 android:id="@+id/action_reverse"
                 android:icon="@drawable/ic_import_export_black_24dp"
                 android:title="Reverse Orientation"

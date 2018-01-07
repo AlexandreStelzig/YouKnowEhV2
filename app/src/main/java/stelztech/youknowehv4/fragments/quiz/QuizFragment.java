@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -46,6 +47,7 @@ import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.database.quiz.Quiz;
 import stelztech.youknowehv4.database.quizcard.QuizCard;
 import stelztech.youknowehv4.fragments.FragmentCommon;
+import stelztech.youknowehv4.utilities.BitmapUtilities;
 import stelztech.youknowehv4.utilities.BlurBuilder;
 import stelztech.youknowehv4.components.CustomProgressDialog;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
@@ -124,6 +126,12 @@ public class QuizFragment extends FragmentCommon {
 
         ImageView imageView = (ImageView) view.findViewById(R.id.fragment_quiz_intro_background);
 
+        Profile activeProfile = Database.mUserDao.fetchActiveProfile();
+        try{
+            imageView.setImageBitmap(BitmapUtilities.getBitmapFromFile(activeProfile.getProfileImagePath()));
+        } catch (Exception e){
+            imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.default1));
+        }
         Bitmap bitmap = blurBuilder.blur(getContext(), ((BitmapDrawable) imageView.getDrawable()).getBitmap());
         // change the background image
         imageView.setImageBitmap(bitmap);

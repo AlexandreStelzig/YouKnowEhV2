@@ -4,8 +4,11 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +17,7 @@ import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.DbContentProvider;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.deck.Deck;
-import stelztech.youknowehv4.database.user.User;
+import stelztech.youknowehv4.utilities.BitmapUtilities;
 import stelztech.youknowehv4.utilities.DateUtilities;
 import stelztech.youknowehv4.manager.ThemeManager;
 
@@ -84,12 +87,7 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
     }
 
     @Override
-    public int createProfile(String name) {
-        return createProfile(name, "Front", "Back");
-    }
-
-    @Override
-    public int createProfile(String name, String frontLabel, String backLabel) {
+    public int createProfile(String name, String frontLabel, String backLabel, String imagePath, ThemeManager.THEME_COLORS themeColor, Profile.PROFILE_TYPE profileType ) {
         ContentValues values = new ContentValues();
 
         String date = DateUtilities.getDateNowString();
@@ -100,14 +98,15 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
         values.put(COLUMN_QUESTION_LABEL, frontLabel);
         values.put(COLUMN_ANSWER_LABEL, backLabel);
         values.put(COLUMN_ACTIVE_QUIZ_ID, NO_QUIZ);
-        values.put(COLUMN_PROFILE_COLOR, String.valueOf(ThemeManager.THEME_COLORS.BLUE));
+        values.put(COLUMN_PROFILE_COLOR, String.valueOf(themeColor));
         values.put(COLUMN_PROFILE_LAST_TIME_OPENED, date);
-        values.put(COLUMN_PROFILE_IMAGE, R.drawable.city);
+        values.put(COLUMN_PROFILE_IMAGE, imagePath);
         values.put(COLUMN_DEFAULT_SORTING, 0);
         values.put(COLUMN_DISPLAY_ALL_CARDS, 1);
         values.put(COLUMN_DISPLAY_SPECIFIC_DECK, 1);
         values.put(COLUMN_ALLOW_SEARCH_ON_QUERY_CHANGED, 0);
         values.put(COLUMN_QUICK_TOGGLE_REVIEW, 12);
+        values.put(COLUMN_PROFILE_TYPE, String.valueOf(profileType));
 
         try {
             return super.insert(PROFILE_TABLE, values);
@@ -200,13 +199,13 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
     }
 
     @Override
-    public boolean updateProfileImage(int profileId, int picture) {
+    public boolean updateProfileImage(int profileId, String imagePath) {
         ContentValues values = new ContentValues();
 
         try {
             String date = DateUtilities.getDateNowString();
 
-            values.put(COLUMN_PROFILE_IMAGE, picture);
+            values.put(COLUMN_PROFILE_IMAGE, imagePath);
             values.put(COLUMN_DATE_MODIFIED, date);
 
             return super.update(PROFILE_TABLE, values, COLUMN_PROFILE_ID + "=" + profileId, null) > 0;
@@ -339,8 +338,9 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
         String answerLabel = cursor.getString(cursor.getColumnIndex(COLUMN_ANSWER_LABEL));
         int activeQuizId = cursor.getInt(cursor.getColumnIndex(COLUMN_ACTIVE_QUIZ_ID));
         String profileColor = cursor.getString(cursor.getColumnIndex(COLUMN_PROFILE_COLOR));
+        String profileTypeString = cursor.getString(cursor.getColumnIndex(COLUMN_PROFILE_TYPE));
         String lastTimeOpened = cursor.getString(cursor.getColumnIndex(COLUMN_PROFILE_LAST_TIME_OPENED));
-        int profileImage = cursor.getInt(cursor.getColumnIndex(COLUMN_PROFILE_IMAGE));
+        String profileImagePath = cursor.getString(cursor.getColumnIndex(COLUMN_PROFILE_IMAGE));
         int defaultSorting = cursor.getInt(cursor.getColumnIndex(COLUMN_DEFAULT_SORTING));
         boolean displayAllCards = cursor.getInt(cursor.getColumnIndex(COLUMN_DISPLAY_ALL_CARDS)) > 0;
         boolean displaySpecificDeck = cursor.getInt(cursor.getColumnIndex(COLUMN_DISPLAY_SPECIFIC_DECK)) > 0;
@@ -348,9 +348,12 @@ public class ProfileDao extends DbContentProvider implements IProfileDao, IProfi
         int quickToggle = cursor.getInt(cursor.getColumnIndex(COLUMN_QUICK_TOGGLE_REVIEW));
 
         ThemeManager.THEME_COLORS profileThemeColor = ThemeManager.THEME_COLORS.valueOf(profileColor);
+        Profile.PROFILE_TYPE profileType = Profile.PROFILE_TYPE.valueOf(profileTypeString);
 
-        return new Profile(profileId, profileName, dateAdded, questionLabel, answerLabel, activeQuizId, profileThemeColor, lastTimeOpened, profileImage,
+        return new Profile(profileId, profileName, dateAdded, questionLabel, answerLabel, activeQuizId, profileThemeColor, profileType, lastTimeOpened, profileImagePath,
                 displayAllCards, displaySpecificDeck, allowOnQueryChanged, defaultSorting, quickToggle);
     }
+
+
 
 }

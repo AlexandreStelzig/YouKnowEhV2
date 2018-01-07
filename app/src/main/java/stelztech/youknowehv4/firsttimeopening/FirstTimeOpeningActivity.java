@@ -37,7 +37,6 @@ public class FirstTimeOpeningActivity extends FragmentActivity {
     private Fragment currentFragment;
 
 
-    private static final int REQUEST_WRITE_STORAGE = 112;
 
 
     @Override
@@ -55,13 +54,7 @@ public class FirstTimeOpeningActivity extends FragmentActivity {
         mViewPagerProfile = new ViewPagerProfile();
         mViewPagerWelcome = new ViewPagerWelcome();
 
-        boolean hasPermission = (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
-        if (!hasPermission) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    REQUEST_WRITE_STORAGE);
-        }
+
 
 
 //        mPager.setPageTransformer(true, new ZoomOutPageTransformer());
@@ -119,16 +112,5 @@ public class FirstTimeOpeningActivity extends FragmentActivity {
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQUEST_WRITE_STORAGE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //reload my activity with permission granted or use the features what required the permission
-                }
-            }
-        }
 
-    }
 }

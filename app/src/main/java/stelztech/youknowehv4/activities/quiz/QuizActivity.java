@@ -3,6 +3,7 @@ package stelztech.youknowehv4.activities.quiz;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +32,7 @@ import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.database.quiz.Quiz;
 import stelztech.youknowehv4.database.quizcard.QuizCard;
 import stelztech.youknowehv4.manager.ThemeManager;
+import stelztech.youknowehv4.utilities.BitmapUtilities;
 import stelztech.youknowehv4.utilities.BlurBuilder;
 import stelztech.youknowehv4.utilities.CardUtilities;
 import stelztech.youknowehv4.utilities.QuizCardsUtilities;
@@ -90,6 +92,14 @@ public abstract class QuizActivity extends AppCompatActivity {
         remainingText = (TextView) findViewById(R.id.quiz_progress_bar_remaining_text);
 
         ImageView imageView = (ImageView) findViewById(R.id.quiz_background);
+        Profile activeProfile = Database.mUserDao.fetchActiveProfile();
+
+        try{
+            imageView.setImageBitmap(BitmapUtilities.getBitmapFromFile(activeProfile.getProfileImagePath()));
+        } catch (Exception e){
+            imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.default1));
+        }
+
         Bitmap bitmap = new BlurBuilder().blur(this, ((BitmapDrawable) imageView.getDrawable()).getBitmap());
         // change the background image
         imageView.setImageBitmap(bitmap);

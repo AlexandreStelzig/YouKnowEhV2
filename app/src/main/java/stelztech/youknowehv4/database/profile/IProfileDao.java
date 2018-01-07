@@ -14,14 +14,13 @@ public interface IProfileDao {
     List<Profile> fetchAllProfiles();
     Profile fetchProfileById(int profileId);
     boolean deleteProfile(int profileId);
-    int createProfile(String name);
-    int createProfile(String name, String frontLabel, String backLabel);
+    int createProfile(String name, String frontLabel, String backLabel, String imagePath, ThemeManager.THEME_COLORS themeColor, Profile.PROFILE_TYPE profileType);
     boolean updateProfileName(int profileId, String name);
     boolean updateProfileFrontLabel(int profileId, String questionLabel);
     boolean updateProfileBackLabel(int profileId, String answerLabel);
     boolean changeProfileColor(int profileId, ThemeManager.THEME_COLORS themeColor);
     boolean updateLastTimeOpened(int profileId, String lastTimeOpenedDate);
-    boolean updateProfileImage(int profileId, int picture);
+    boolean updateProfileImage(int profileId, String imagePath);
     int fetchActiveQuizId();
     boolean setActiveQuizId(int profileId, int quizId);
     boolean toggleDisplayNumDecksAllCards();

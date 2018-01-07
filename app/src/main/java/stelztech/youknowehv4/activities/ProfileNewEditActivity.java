@@ -1,8 +1,16 @@
 package stelztech.youknowehv4.activities;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -10,11 +18,17 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.esafirm.imagepicker.features.ImagePicker;
+import com.esafirm.imagepicker.model.Image;
+
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import stelztech.youknowehv4.R;
@@ -23,9 +37,9 @@ import stelztech.youknowehv4.components.CustomEditTextDialog;
 import stelztech.youknowehv4.components.CustomYesNoDialog;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.profile.Profile;
-import stelztech.youknowehv4.fragments.profile.CustomCenterProfileListviewAdapter;
+import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.manager.ThemeManager;
-import stelztech.youknowehv4.utilities.DateUtilities;
+import stelztech.youknowehv4.utilities.BitmapUtilities;
 import stelztech.youknowehv4.utilities.Helper;
 
 /**
@@ -52,13 +66,26 @@ public class ProfileNewEditActivity extends AppCompatActivity {
     private TextView frontLabelEditText;
     private TextView backLabelEditText;
 
+    private ImageView headerImage;
+
     private String profileNameHolder;
     private String frontLabelHolder;
     private String backLabelHolder;
     private ThemeManager.THEME_COLORS themeColorHolder;
+    private String profileTypeHolder;
 
     private ListView deleteProfileListView;
 
+    private String headerImagePath;
+
+    private Button blueColorButton;
+    private Button greenColorButton;
+    private Button redColorButton;
+    private Button purpleColorButton;
+    private Button greyColorButton;
+    private Button pinkColorButton;
+    private Button orangeColorButton;
+    private Button indigoColorButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,11 +115,15 @@ public class ProfileNewEditActivity extends AppCompatActivity {
         frontLabelEditText = (TextView) findViewById(R.id.profile_new_edit_front_label);
         backLabelEditText = (TextView) findViewById(R.id.profile_new_edit_back_label);
         deleteProfileListView = (ListView) findViewById(R.id.profile_new_edit_delete_profile_listview);
+        headerImage = (ImageView) findViewById(R.id.profile_header);
+
+
 
         profileNameHolder = getIntent().getStringExtra("InitProfileName");
         frontLabelHolder = getIntent().getStringExtra("InitFrontName");
         backLabelHolder = getIntent().getStringExtra("InitBackName");
         themeColorHolder = ThemeManager.getInstance().getCurrentTheme();
+        profileTypeHolder = getIntent().getStringExtra("InitType");
 
         if(profileNameHolder == null)
             profileNameHolder = "Profile";
@@ -100,6 +131,8 @@ public class ProfileNewEditActivity extends AppCompatActivity {
             frontLabelHolder = "Front";
         if(backLabelHolder == null)
             backLabelHolder = "Back";
+        if(profileTypeHolder == null)
+            profileTypeHolder = String.valueOf(Profile.PROFILE_TYPE.LANGUAGE);
 
 
 
@@ -116,9 +149,81 @@ public class ProfileNewEditActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("New Profile");
         }
 
+
         initComponentsOnClick();
         setupColorChangeButtons();
+        initHeaderOnClick();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            setColorButtonSelected();
+        }
 
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void setColorButtonSelected() {
+
+        blueColorButton.setForeground(null);
+        greenColorButton.setForeground(null);
+        redColorButton.setForeground(null);
+        purpleColorButton.setForeground(null);
+        greyColorButton.setForeground(null);
+        pinkColorButton.setForeground(null);
+        orangeColorButton.setForeground(null);
+        indigoColorButton.setForeground(null);
+
+        switch (themeColorHolder){
+            case BLUE:
+                blueColorButton.setForeground(ContextCompat.getDrawable(this, R.drawable.button_selected));
+                break;
+            case GREEN:
+                greenColorButton.setForeground(ContextCompat.getDrawable(this, R.drawable.button_selected));
+                break;
+            case RED:
+                redColorButton.setForeground(ContextCompat.getDrawable(this, R.drawable.button_selected));
+                break;
+            case PURPLE:
+                purpleColorButton.setForeground(ContextCompat.getDrawable(this, R.drawable.button_selected));
+                break;
+            case GREY:
+                greyColorButton.setForeground(ContextCompat.getDrawable(this, R.drawable.button_selected));
+                break;
+            case PINK:
+                pinkColorButton.setForeground(ContextCompat.getDrawable(this, R.drawable.button_selected));
+                break;
+            case ORANGE:
+                orangeColorButton.setForeground(ContextCompat.getDrawable(this, R.drawable.button_selected));
+                break;
+            case INDIGO:
+                indigoColorButton.setForeground(ContextCompat.getDrawable(this, R.drawable.button_selected));
+                break;
+        }
+    }
+
+    private void initHeaderOnClick() {
+        ((ImageView) findViewById(R.id.profile_new_edit_header_edit)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ImagePicker.create(ProfileNewEditActivity.this).limit(10) // max images can be selected (99 by default)
+                        .showCamera(false) // show camera or not (true by default)
+                        .folderMode(true)
+                        .single()
+                        .theme(ThemeManager.getInstance().getCurrentAppThemeNoActionBarValue())
+                        .start(1); // start image picker activity with request code
+
+                String path = Environment.getExternalStorageDirectory().toString() + "/Pictures/You Know Eh?";
+                Log.d("Files", "Path: " + path);
+                File directory = new File(path);
+                File[] files = directory.listFiles();
+                Log.d("Files", "Size: "+ files.length);
+                for (int i = 0; i < files.length; i++)
+                {
+                    Log.d("Files", "FileName:" + files[i].getName());
+                }
+
+                Log.d("TEST", (android.os.Environment.DIRECTORY_DCIM));
+
+            }
+        });
     }
 
     private void initComponentsOnClick() {
@@ -271,6 +376,13 @@ public class ProfileNewEditActivity extends AppCompatActivity {
         frontLabelEditText.setText(profile.getFrontLabel());
         backLabelEditText.setText(profile.getBackLabel());
 
+
+
+        try{
+            headerImage.setImageBitmap(BitmapUtilities.getBitmapFromFile(profile.getProfileImagePath()));
+        } catch (Exception e){
+            headerImage.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.default1));
+        }
     }
 
     private void setProfileInfoFieldsTextNew() {
@@ -315,13 +427,19 @@ public class ProfileNewEditActivity extends AppCompatActivity {
 
         if (profileNameExist(profileNameHolder)) {
             Toast.makeText(ProfileNewEditActivity.this, "Profile creation failed: Profile name already exists", Toast.LENGTH_SHORT).show();
-        } else {
+        }
+        else{
 
-            int newProfileId = Database.mProfileDao.createProfile(profileNameHolder, frontLabelHolder, backLabelHolder);
+            int newProfileId = Database.mProfileDao.createProfile(profileNameHolder, frontLabelHolder, backLabelHolder,
+                    headerImagePath, themeColorHolder,  Profile.PROFILE_TYPE.valueOf(profileTypeHolder));
             Database.mUserDao.setActiveProfile(newProfileId);
             Database.mProfileDao.changeProfileColor(newProfileId, themeColorHolder);
 
             Toast.makeText(this, "Profile successfully created", Toast.LENGTH_SHORT).show();
+
+
+            SortingStateManager.getInstance().setContext(this);
+            SortingStateManager.getInstance().changeStateByPosition(Database.mProfileDao.fetchProfileById(newProfileId).getDefaultSortingPosition());
 
             Intent i = new Intent(this, MainActivityManager.class);
             startActivity(i);
@@ -331,9 +449,10 @@ public class ProfileNewEditActivity extends AppCompatActivity {
 
     }
 
+
     private void setupColorChangeButtons() {
 
-        Button blueColorButton = (Button) findViewById(R.id.profile_new_edit_change_color_blue_button);
+        blueColorButton = (Button) findViewById(R.id.profile_new_edit_change_color_blue_button);
         blueColorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -341,7 +460,7 @@ public class ProfileNewEditActivity extends AppCompatActivity {
             }
         });
 
-        Button greenColorButton = (Button) findViewById(R.id.profile_new_edit_change_color_green_button);
+        greenColorButton = (Button) findViewById(R.id.profile_new_edit_change_color_green_button);
         greenColorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -349,7 +468,7 @@ public class ProfileNewEditActivity extends AppCompatActivity {
             }
         });
 
-        Button redColorButton = (Button) findViewById(R.id.profile_new_edit_change_color_red_button);
+        redColorButton = (Button) findViewById(R.id.profile_new_edit_change_color_red_button);
         redColorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -357,7 +476,7 @@ public class ProfileNewEditActivity extends AppCompatActivity {
             }
         });
 
-        Button purpleColorButton = (Button) findViewById(R.id.profile_new_edit_change_color_purple_button);
+        purpleColorButton = (Button) findViewById(R.id.profile_new_edit_change_color_purple_button);
         purpleColorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -365,7 +484,7 @@ public class ProfileNewEditActivity extends AppCompatActivity {
             }
         });
 
-        Button greyColorButton = (Button) findViewById(R.id.profile_new_edit_change_color_grey_button);
+        greyColorButton = (Button) findViewById(R.id.profile_new_edit_change_color_grey_button);
         greyColorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -373,7 +492,7 @@ public class ProfileNewEditActivity extends AppCompatActivity {
             }
         });
 
-        Button pinkColorButton = (Button) findViewById(R.id.profile_new_edit_change_color_pink_button);
+        pinkColorButton = (Button) findViewById(R.id.profile_new_edit_change_color_pink_button);
         pinkColorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -381,7 +500,7 @@ public class ProfileNewEditActivity extends AppCompatActivity {
             }
         });
 
-        Button orangeColorButton = (Button) findViewById(R.id.profile_new_edit_change_color_orange_button);
+        orangeColorButton = (Button) findViewById(R.id.profile_new_edit_change_color_orange_button);
         orangeColorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -389,7 +508,7 @@ public class ProfileNewEditActivity extends AppCompatActivity {
             }
         });
 
-        Button indigoColorButton = (Button) findViewById(R.id.profile_new_edit_change_color_indigo_button);
+        indigoColorButton = (Button) findViewById(R.id.profile_new_edit_change_color_indigo_button);
         indigoColorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -399,6 +518,8 @@ public class ProfileNewEditActivity extends AppCompatActivity {
     }
 
     private void changeColorAndReloadActivity(ThemeManager.THEME_COLORS color) {
+
+        themeColorHolder = color;
 
         ThemeManager themeManager = ThemeManager.getInstance();
         if (themeManager.getCurrentTheme() != color) {
@@ -410,6 +531,7 @@ public class ProfileNewEditActivity extends AppCompatActivity {
                 intent.putExtra("InitProfileName", profileNameHolder);
                 intent.putExtra("InitFrontName", frontLabelHolder);
                 intent.putExtra("InitBackName", backLabelHolder);
+                intent.putExtra("InitType", profileTypeHolder);
 
             }
             themeManager.changeTheme(color);
@@ -493,5 +615,24 @@ public class ProfileNewEditActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+            ArrayList<Image> images = (ArrayList<Image>) ImagePicker.getImages(data);
+            File imgFile = new  File(images.get(0).getPath());
+            if(imgFile.exists()){
+                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                headerImage.setImageBitmap(myBitmap);
+                headerImagePath = imgFile.getAbsolutePath();
+
+                if(profileMode == PROFILE_MODE.EDIT){
+                    Database.mProfileDao.updateProfileImage(profileId, imgFile.getAbsolutePath());
+                }
+            }
+        }
     }
 }

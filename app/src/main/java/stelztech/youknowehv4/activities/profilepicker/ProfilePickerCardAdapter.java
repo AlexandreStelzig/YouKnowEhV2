@@ -1,6 +1,7 @@
 package stelztech.youknowehv4.activities.profilepicker;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -64,9 +65,14 @@ public class ProfilePickerCardAdapter extends RecyclerView.Adapter<ProfilePicker
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         ProfilePickerCardModel profilePickerCardModel = profilePickerActivity.getProfileCards().get(position);
-        Glide.with(holder.itemView.getContext())
-                .load(profilePickerCardModel.getThumbnailImage())
-                .into(holder.image);
+
+
+        Bitmap bitmap = profilePickerCardModel.getThumbnailImage();
+        holder.image.setImageBitmap(bitmap);
+
+//        Glide.with(holder.itemView.getContext())
+//                .load(bitmap)
+//                .into(holder.image);
         holder.cardContainer.setBackgroundColor(profilePickerCardModel.getProfileColor());
         holder.nbCardTextView.setText(profilePickerCardModel.getNbCards() + "");
         holder.nbDeckTextView.setText(profilePickerCardModel.getNbDecks() + "");
@@ -112,6 +118,7 @@ public class ProfilePickerCardAdapter extends RecyclerView.Adapter<ProfilePicker
             nbDeckTextView = (TextView) itemView.findViewById(R.id.profile_picker_nb_deck_textview);
             profileNameTextView = (TextView) itemView.findViewById(R.id.profile_picker_profile_card_name_textview);
             lastOpenedTextView = (TextView) itemView.findViewById(R.id.profile_picker_card_last_opened_textview);
+
 
             // on click listener for the container itself
             itemView.findViewById(R.id.profile_picker_card_container).setOnClickListener(new View.OnClickListener() {

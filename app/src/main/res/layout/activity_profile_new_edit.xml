@@ -22,7 +22,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="150dp">
+                android:layout_height="175dp">
 
                 <ImageView
                     android:id="@+id/profile_header"
@@ -30,10 +30,11 @@
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/city" />
+                    android:src="@drawable/default1" />
 
 
                 <ImageView
+                    android:id="@+id/profile_new_edit_header_edit"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_centerHorizontal="true"
@@ -64,27 +65,46 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="10dp">
+                android:padding="15dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Profile Name: "
+                    android:layout_gravity="center"
                     android:textColor="?colorTextIcon"
                     android:textStyle="bold"
                     android:textSize="16sp" />
 
-                <TextView
-                    android:id="@+id/profile_new_edit_profile_name"
-                    style="?android:listSeparatorTextViewStyle"
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:ellipsize="end"
-                    android:focusable="false"
-                    android:maxLines="1"
-                    android:textColor="?colorTextIcon"
-                    android:textSize="16sp" />
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/profile_new_edit_profile_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:clickable="true"
+                        android:ellipsize="end"
+                        android:focusable="false"
+                        android:maxLines="1"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="Profile Name Place Holder"
+                        android:textStyle="bold"
+                        android:textColor="?colorTextIcon"
+                        android:textSize="16sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorDivider" />
+
+                </LinearLayout>
 
 
             </LinearLayout>
@@ -107,7 +127,7 @@
                 android:background="@color/white"
                 android:elevation="5dp"
                 android:orientation="vertical"
-                android:padding="10dp">
+                android:padding="15dp">
 
 
                 <TextView
@@ -221,7 +241,7 @@
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:orientation="vertical"
-                android:padding="10dp">
+                android:padding="15dp">
 
                 <TextView
                     android:layout_width="wrap_content"

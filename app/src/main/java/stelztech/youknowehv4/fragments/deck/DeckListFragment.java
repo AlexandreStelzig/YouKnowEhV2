@@ -168,7 +168,6 @@ public class DeckListFragment extends FragmentCommon {
                     return true;
                 case R.id.action_export_all_decks:
                     ExportImportManager.exportAllToEmail(getContext());
-
                     return true;
             }
         }
@@ -266,6 +265,7 @@ public class DeckListFragment extends FragmentCommon {
         String deckPosition = "Deck Position: " + deck.getPosition();
         String message = deckName + "\n" + nbCards + "\n" + dateCreated + "\n" + dateModified + "\n" + deckPosition;
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+        builder.setCancelable(false);
         builder.setMessage(message).setPositiveButton("done", null).show();
     }
 
@@ -734,4 +734,7 @@ public class DeckListFragment extends FragmentCommon {
         return loading;
     }
 
+    public void reloadData(){
+        populateListView();
+    }
 }
