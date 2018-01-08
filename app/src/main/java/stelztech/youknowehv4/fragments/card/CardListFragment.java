@@ -45,7 +45,7 @@ import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.fragments.FragmentCommon;
-import stelztech.youknowehv4.manager.ExportImportManager;
+import stelztech.youknowehv4.manager.exportimport.ExportImportManager;
 import stelztech.youknowehv4.utilities.CardUtilities;
 import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;

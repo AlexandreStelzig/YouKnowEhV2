@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/custom_deck_item_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/custom_quiz_history_type"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:lines="1"
+            android:padding="5dp"
+            android:text="Quiz Type"
+            android:textColor="?textPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/custom_quiz_history_orientation"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="center_vertical|end"
+            android:lines="1"
+            android:padding="3dp"
+            android:textStyle="bold"
+            android:text="Korean to English"
+            android:textColor="?textPrimary"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.25"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/custom_quiz_history_start_date"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:lines="1"
+                android:padding="3dp"
+                android:text="Start: PlaceHolder"
+                android:textColor="?textPrimary"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/custom_quiz_history_end_date"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:lines="1"
+                android:padding="3dp"
+                android:text="End: PlaceHolder"
+                android:textColor="?textPrimary"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/custom_quiz_history_time"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:lines="1"
+                android:padding="3dp"
+                android:text="Time: PlaceHolder"
+                android:textColor="?textPrimary"
+                android:textSize="18sp" />
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.75"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/custom_quiz_history_nb_passed"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:gravity="center_vertical|end"
+                android:lines="1"
+                android:text="#### Passed"
+                android:textColor="@color/progressbarPass"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/custom_quiz_history_nb_failed"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:gravity="center_vertical|end"
+                android:lines="1"
+                android:text="#### Failed"
+                android:textColor="@color/progressbarFail"
+                android:textSize="18sp" />
+
+
+            <TextView
+                android:id="@+id/custom_quiz_history_nb_skipped"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:gravity="center_vertical|end"
+                android:lines="1"
+                android:text="#### Skipped"
+                android:textColor="@color/progressbarNeutral"
+                android:textSize="18sp" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>
+

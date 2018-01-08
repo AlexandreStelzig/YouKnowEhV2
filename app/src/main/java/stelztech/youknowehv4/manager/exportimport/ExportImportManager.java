@@ -1,4 +1,4 @@
-package stelztech.youknowehv4.manager;
+package stelztech.youknowehv4.manager.exportimport;
 
 
 import android.app.Activity;
@@ -39,6 +39,7 @@ import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.carddeck.CardDeck;
 import stelztech.youknowehv4.database.deck.Deck;
 import stelztech.youknowehv4.database.profile.Profile;
+import stelztech.youknowehv4.database.quiz.Quiz;
 import stelztech.youknowehv4.utilities.DateUtilities;
 
 /**
@@ -54,6 +55,7 @@ public final class ExportImportManager {
     private final static String storingFolder = "/YouKnowEh/Export";
 
     private final static String EXPORT_TAG = "_YKHExport";
+    private final static String EXPORT_QUIZ_TAG = "_YKHQuizExport";
 
     public final static int CREATE_NEW_DECK = -1;
 
@@ -386,6 +388,15 @@ public final class ExportImportManager {
             emailIntent.setType("text/plain");
             emailIntent.putExtra(Intent.EXTRA_STREAM, U);
 
+            if (Build.VERSION.SDK_INT >= 24) {
+                try {
+                    Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                    m.invoke(null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
 
             context.startActivity(emailIntent);
         }
@@ -405,6 +416,14 @@ public final class ExportImportManager {
         emailIntent.setType("text/plain");
         emailIntent.putExtra(Intent.EXTRA_STREAM, U);
 
+        if (Build.VERSION.SDK_INT >= 24) {
+            try {
+                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                m.invoke(null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         context.startActivity(emailIntent);
 
@@ -456,6 +475,187 @@ public final class ExportImportManager {
         }
     }
 
+
+    public static void exportQuizHistoryToEmail(Context context, String name, List<Quiz> quizList) {
+
+        File file = saveQuizHistoryCSVFile(context, name, quizList);
+
+        if (file != null) {
+            Uri U = Uri.fromFile(file);
+            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+            emailIntent.setType("text/plain");
+            emailIntent.putExtra(Intent.EXTRA_STREAM, U);
+
+            if (Build.VERSION.SDK_INT >= 24) {
+                try {
+                    Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                    m.invoke(null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            context.startActivity(emailIntent);
+        }
+    }
+
+    private static File saveQuizHistoryCSVFile(Context context, String name, List<Quiz> quizList) {
+
+        // check if available and not read only
+        if (!isExternalStorageAvailable() || isExternalStorageReadOnly()) {
+            Toast.makeText(context, "Storage not available or read only", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+
+        int numberOfQuizzes = quizList.size();
+
+        File sdCard = Environment.getExternalStorageDirectory();
+        File dir = new File(sdCard.getAbsolutePath() + storingFolder);
+        if (!dir.exists()) {
+            dir.mkdirs();
+            if (!dir.exists()) {
+                Toast.makeText(context, "Give app permission to access storage to export: " + name, Toast.LENGTH_SHORT).show();
+                return null;
+            }
+        }
+
+
+        File file = new File(dir, name + "_QuizHistory.csv");
+        FileOutputStream os = null;
+
+        try {
+            CSVWriter writer = new CSVWriter(new FileWriter(file));
+
+            String[] data = new String[7];
+            for (int counter = 0; counter < numberOfQuizzes; counter++) {
+
+                Quiz quizTemp = quizList.get(counter);
+                data[0] = String.valueOf(quizTemp.getMode());
+                data[1] = String.valueOf(quizTemp.isReverse());
+                data[2] = String.valueOf(quizTemp.getTotalPassed());
+                data[3] = String.valueOf(quizTemp.getTotalFailed());
+                data[4] = String.valueOf(quizTemp.getTotalSkipped());
+                data[5] = quizTemp.getDateCreated();
+                data[6] = quizTemp.getDateFinished();
+
+                writer.writeNext(data);
+
+            }
+            writer.close();
+
+
+        } catch (IOException e) {
+            Toast.makeText(context, "Failed to export: " + name, Toast.LENGTH_SHORT).show();
+            return null;
+        } catch (Exception e) {
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            return null;
+        } finally {
+            try {
+                if (null != os)
+                    os.close();
+
+            } catch (Exception ignored) {
+            }
+        }
+
+
+        return file;
+    }
+
+    public static boolean readQuizHistoryCSV(Context context, Uri uri, CustomProgressDialog customProgressDialog) {
+
+        if (!isExternalStorageAvailable() || isExternalStorageReadOnly()) {
+            return false;
+        }
+
+        List<QuizHistoryHolder> quizHistoryHolderList = new ArrayList<QuizHistoryHolder>();
+        String fileName = getFileName(context, uri);
+        try {
+            if (fileName.contains(".")) {
+                int index = fileName.indexOf(".");
+                fileName = fileName.substring(0, index);
+
+
+                if (customProgressDialog != null)
+                    customProgressDialog.setDialogTitle("Importing '" + fileName + "'");
+            }
+
+
+            InputStream myInput = context.getContentResolver().openInputStream(uri);
+            CSVReader reader = new CSVReader(new InputStreamReader(myInput));
+
+            String[] nextLine;
+            while ((nextLine = reader.readNext()) != null) {
+
+                if (nextLine.length > 7) {
+                    return false;
+                } else {
+                    String type = "";
+                    String reverse = "";
+                    String pass = "";
+                    String failed = "";
+                    String skipped = "";
+                    String dateCreated = "";
+                    String dateFinished = "";
+                    int rowCounter = 0;
+                    for (int i = 0; i < nextLine.length; i++) {
+                        if (rowCounter == 0) {
+                            type = nextLine[0];
+                        } else if (rowCounter == 1) {
+                            reverse = nextLine[1];
+                        } else if (rowCounter == 2) {
+                            pass = nextLine[2];
+                        } else if (rowCounter == 3) {
+                            failed = nextLine[3];
+                        } else if (rowCounter == 4) {
+                            skipped = nextLine[4];
+                        } else if (rowCounter == 5) {
+                            dateCreated = nextLine[5];
+                        } else if (rowCounter == 6) {
+                            dateFinished = nextLine[6];
+                        }
+                        rowCounter++;
+                    }
+
+                    // todo validation here
+
+                    quizHistoryHolderList.add(new QuizHistoryHolder(type, reverse, pass, failed, skipped, dateCreated, dateFinished));
+
+                }
+            }
+
+        } catch (Exception e) {
+            Log.e("ExportImportManager", e.toString());
+            return false;
+        }
+
+        for (int i = 0; i < quizHistoryHolderList.size(); i++) {
+            QuizHistoryHolder quizHistoryHolderTemp = quizHistoryHolderList.get(i);
+
+            Quiz.MODE mode = Quiz.MODE.valueOf(quizHistoryHolderTemp.getQuizMode());
+            Quiz.STATE state = Quiz.STATE.FINISHED_QUIZ;
+            boolean isReverse = !(quizHistoryHolderTemp.getOrientationReverse().toLowerCase().equals("false") || quizHistoryHolderTemp.getOrientationReverse().equals("0"));
+            int numberPassed = Integer.parseInt(quizHistoryHolderTemp.getNumberPassed());
+            int numberFailed = Integer.parseInt(quizHistoryHolderTemp.getNumberFailed());
+            int numberSkipped = Integer.parseInt(quizHistoryHolderTemp.getNumberSkipped());
+
+            String dateCreated = quizHistoryHolderTemp.getDateCreated();
+            if (dateCreated.isEmpty() || !DateUtilities.isValidDate(dateCreated)) {
+                dateCreated = DateUtilities.getDateNowString();
+            }
+
+            String dateFinished = quizHistoryHolderTemp.getDateFinished();
+            if (dateFinished.isEmpty() || !DateUtilities.isValidDate(dateFinished)) {
+                dateFinished = DateUtilities.getDateNowString();
+            }
+            Database.mQuizDao.createQuiz(mode, isReverse, numberPassed, numberFailed, numberSkipped, dateCreated, dateFinished, state);
+        }
+
+        return true;
+    }
+
     public static void importDeck(Context context, Activity activity) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -465,6 +665,21 @@ public final class ExportImportManager {
             activity.startActivityForResult(Intent.createChooser(intent, "Select Deck to import"),
                     MainActivityManager.IMPORT_RESULT);
             Toast.makeText(context, "Select a Deck to import", Toast.LENGTH_SHORT).show();
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(context, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public static void importQuizHistory(Context context, Activity activity) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/csv");   //xlxs only
+
+        try {
+            activity.startActivityForResult(Intent.createChooser(intent, "Select Quiz to import"),
+                    MainActivityManager.IMPORT_QUIZ_HISTORY_RESULT);
+            Toast.makeText(context, "Select a Quiz to import", Toast.LENGTH_SHORT).show();
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(context, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
         }
@@ -546,70 +761,4 @@ public final class ExportImportManager {
         return false;
     }
 
-
-    private static class CardHolder {
-        private String question;
-        private String answer;
-        private String note;
-        private String reviewToggleDate;
-        private String dateCreated;
-        private String dateModified;
-
-        public CardHolder(String question, String answer, String note, String reviewToggleDate, String dateCreated, String dateModified) {
-            this.question = question;
-            this.answer = answer;
-            this.note = note;
-            this.reviewToggleDate = reviewToggleDate;
-            this.dateCreated = dateCreated;
-            this.dateModified = dateModified;
-        }
-
-        public String getDateCreated() {
-            return dateCreated;
-        }
-
-        public void setDateCreated(String dateCreated) {
-            this.dateCreated = dateCreated;
-        }
-
-        public String getDateModified() {
-            return dateModified;
-        }
-
-        public void setDateModified(String dateModified) {
-            this.dateModified = dateModified;
-        }
-
-        public String getReviewToggleDate() {
-            return reviewToggleDate;
-        }
-
-        public void setReviewToggleDate(String reviewToggleDate) {
-            this.reviewToggleDate = reviewToggleDate;
-        }
-
-        public String getQuestion() {
-            return question;
-        }
-
-        public void setQuestion(String question) {
-            this.question = question;
-        }
-
-        public String getAnswer() {
-            return answer;
-        }
-
-        public void setAnswer(String answer) {
-            this.answer = answer;
-        }
-
-        public String getNote() {
-            return note;
-        }
-
-        public void setNote(String note) {
-            this.note = note;
-        }
-    }
 }

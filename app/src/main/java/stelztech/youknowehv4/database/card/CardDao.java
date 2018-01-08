@@ -32,7 +32,7 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
     @Override
     public List<Card> fetchAllCards() {
 
-        long activeProfileId = Database.mUserDao.fetchActiveProfile().getProfileId();
+        int activeProfileId = Database.mUserDao.fetchActiveProfile().getProfileId();
         cursor = super.rawQuery("SELECT * FROM " + CARD_TABLE + " WHERE "
                 + COLUMN_ARCHIVED + "=" + 0 + " AND "
                 + COLUMN_PROFILE_ID + "=" + activeProfileId, null);

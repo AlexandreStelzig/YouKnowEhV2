@@ -1,9 +1,6 @@
 package stelztech.youknowehv4.fragments.settings;
 
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
@@ -14,23 +11,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.NumberPicker;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.activities.ArchivedActivity;
 import stelztech.youknowehv4.activities.MainActivityManager;
-import stelztech.youknowehv4.components.CustomProgressDialog;
-import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.fragments.FragmentCommon;
-import stelztech.youknowehv4.utilities.CardUtilities;
 import stelztech.youknowehv4.utilities.Helper;
-import stelztech.youknowehv4.manager.FloatingActionButtonManager;
-import stelztech.youknowehv4.manager.ExportImportManager;
-import stelztech.youknowehv4.manager.SortingStateManager;
-import stelztech.youknowehv4.database.profile.Profile;
-import stelztech.youknowehv4.database.user.User;
+import stelztech.youknowehv4.manager.exportimport.ExportImportManager;
 
 /**
  * Created by alex on 2017-04-03.

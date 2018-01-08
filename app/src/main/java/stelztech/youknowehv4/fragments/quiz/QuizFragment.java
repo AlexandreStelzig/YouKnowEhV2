@@ -36,6 +36,7 @@ import java.util.Random;
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.MainActivityManager;
 import stelztech.youknowehv4.activities.quiz.QuizActivity;
+import stelztech.youknowehv4.activities.quiz.QuizHistoryActivity;
 import stelztech.youknowehv4.activities.quiz.QuizMultipleChoice;
 import stelztech.youknowehv4.activities.quiz.QuizReading;
 import stelztech.youknowehv4.activities.quiz.QuizWriting;
@@ -141,11 +142,11 @@ public class QuizFragment extends FragmentCommon {
 
     private void initButtons() {
 
-        Button newQuizButton = (Button) view.findViewById(R.id.quiz_new_button);
 
         FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
         setHasOptionsMenu(true);
 
+        Button newQuizButton = (Button) view.findViewById(R.id.quiz_new_button);
         newQuizButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -154,6 +155,15 @@ public class QuizFragment extends FragmentCommon {
         });
 
         updateContinueButton();
+
+        Button quiHistory = (Button) view.findViewById(R.id.quiz_history_button);
+        quiHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), QuizHistoryActivity.class);
+                getActivity().startActivity(intent);
+            }
+        });
     }
 
     private void updateContinueButton() {
@@ -640,7 +650,6 @@ public class QuizFragment extends FragmentCommon {
 
     public void onQuizFinishResult() {
         activeQuizId = Database.mProfileDao.fetchActiveQuizId();
-        Log.d("TEST", "quiz id = " + activeQuizId);
         updateContinueButton();
     }
 }

@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -40,7 +39,7 @@ import stelztech.youknowehv4.fragments.FragmentCommon;
 import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
 import stelztech.youknowehv4.manager.DeckToolbarManager;
-import stelztech.youknowehv4.manager.ExportImportManager;
+import stelztech.youknowehv4.manager.exportimport.ExportImportManager;
 import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.deck.Deck;
 

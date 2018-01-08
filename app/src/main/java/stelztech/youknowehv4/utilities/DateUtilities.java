@@ -14,6 +14,8 @@ public class DateUtilities {
 
     public final static String DEFAULT_DATE_FORMAT = "MM/dd/yyyy HH:mm:ss";
 
+    public final static String DATE_FORMAT_DISPLAY = "EEE, dd MMM yyyy";
+
 
     public static String getDateNowString() {
         DateFormat df = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
@@ -49,6 +51,15 @@ public class DateUtilities {
             return false;
         }
         return true;
+    }
+
+    public static String convertDateToDisplayString(String dateString){
+
+        Date date = stringToDate(dateString);
+
+        SimpleDateFormat dt1 = new SimpleDateFormat(DATE_FORMAT_DISPLAY);
+        return dt1.format(date);
+
     }
 
 }

@@ -28,7 +28,7 @@ import stelztech.youknowehv4.fragments.statistics.StatisticsFragment;
 import stelztech.youknowehv4.fragments.review.ReviewFragment;
 import stelztech.youknowehv4.utilities.CardUtilities;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
-import stelztech.youknowehv4.manager.ExportImportManager;
+import stelztech.youknowehv4.manager.exportimport.ExportImportManager;
 import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.manager.ThemeManager;
 
@@ -69,6 +69,7 @@ public class MainActivityManager extends AppCompatActivity
     public final static int RESULT_QUIZ_END = 5;
     public final static int PROFILE_UPDATED = 6;
     public final static int IMPORT_TO_EXISTING_RESULT = 7;
+    public final static int IMPORT_QUIZ_HISTORY_RESULT = 8;
 
     // set fragment after drawer close
     private int mFragmentToSet = INT_NULL;
@@ -395,17 +396,55 @@ public class MainActivityManager extends AppCompatActivity
 
         } else if (requestCode == IMPORT_RESULT) {
             if (resultCode == RESULT_OK) {
-                Uri selectedDocument = data.getData();
-                ExportImportManager.readCSV(this, selectedDocument, null, ExportImportManager.CREATE_NEW_DECK);
+
+                final CustomProgressDialog customProgressDialog = new CustomProgressDialog("Importing Deck", 100, MainActivityManager.this, MainActivityManager.this) {
+                    @Override
+                    public void loadInformation() {
+
+                        Uri selectedDocument = data.getData();
+                        ExportImportManager.readCSV(MainActivityManager.this, selectedDocument, null, ExportImportManager.CREATE_NEW_DECK);
+                        CardUtilities.mergeDuplicates(this, -1);
+                    }
+
+                    @Override
+                    public void informationLoaded() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mDeckListFragment.reloadData();
+                            }
+                        });
+                    }
+                };
+                customProgressDialog.startDialog();
+
             }
         }else if (requestCode == IMPORT_TO_EXISTING_RESULT) {
             if (resultCode == RESULT_OK) {
-                int deckId = getCurrentDeckIdSelected();
 
-                Uri selectedDocument = data.getData();
-                ExportImportManager.readCSV(this, selectedDocument, null, deckId);
-                CardUtilities.mergeDuplicates(null, deckId);
-                mCardListFragment.populateListView(deckId);
+                final int deckId = getCurrentDeckIdSelected();
+
+                final CustomProgressDialog customProgressDialog = new CustomProgressDialog("Importing Cards", 100, MainActivityManager.this, MainActivityManager.this) {
+                    @Override
+                    public void loadInformation() {
+
+                        Uri selectedDocument = data.getData();
+                        ExportImportManager.readCSV(MainActivityManager.this, selectedDocument, null, deckId);
+                        CardUtilities.mergeDuplicates(null, deckId);
+                    }
+
+                    @Override
+                    public void informationLoaded() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mCardListFragment.populateListView(deckId);
+                            }
+                        });
+                    }
+                };
+                customProgressDialog.startDialog();
+
             }
         } else if (requestCode == RESULT_ANIMATION_RIGHT_TO_LEFT) {
             overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);

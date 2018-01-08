@@ -73,6 +73,7 @@ public class ProfilePickerCardAdapter extends RecyclerView.Adapter<ProfilePicker
 //        Glide.with(holder.itemView.getContext())
 //                .load(bitmap)
 //                .into(holder.image);
+
         holder.cardContainer.setBackgroundColor(profilePickerCardModel.getProfileColor());
         holder.nbCardTextView.setText(profilePickerCardModel.getNbCards() + "");
         holder.nbDeckTextView.setText(profilePickerCardModel.getNbDecks() + "");

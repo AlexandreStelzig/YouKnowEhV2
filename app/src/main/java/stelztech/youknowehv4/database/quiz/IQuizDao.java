@@ -9,10 +9,11 @@ import stelztech.youknowehv4.database.profile.Profile;
  */
 
 public interface IQuizDao {
-    List<Quiz> fetchAllQuizzes();
+    List<Quiz> fetchAllFinishedQuizzesForActiveProfile();
     Quiz fetchQuizById(int quizId);
     boolean deleteQuiz(int quizId);
     int createQuiz( Quiz.MODE mode, boolean reverse, boolean reviewOnly);
+    int createQuiz( Quiz.MODE mode, boolean reverse, int nbPassed, int nbFailed, int nbSkipped, String dateCreate, String dateFinished, Quiz.STATE quizState);
     boolean markQuizAsQuizFinished(int quizId);
     boolean markQuizAsRoundFinished(int quizId);
     boolean markQuizAsActive(int quizId);
