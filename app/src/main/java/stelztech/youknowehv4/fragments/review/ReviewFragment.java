@@ -41,6 +41,7 @@ import stelztech.youknowehv4.database.card.Card;
 import stelztech.youknowehv4.database.deck.Deck;
 import stelztech.youknowehv4.database.profile.Profile;
 import stelztech.youknowehv4.fragments.FragmentCommon;
+import stelztech.youknowehv4.manager.SortingStateManager;
 import stelztech.youknowehv4.utilities.CardUtilities;
 import stelztech.youknowehv4.utilities.Helper;
 import stelztech.youknowehv4.manager.FloatingActionButtonManager;
@@ -110,6 +111,7 @@ public class ReviewFragment extends FragmentCommon {
     private final int SPINNER_OFFSET = 1;
 
     private boolean alwaysShowAnswer = false;
+    private boolean reviewByDateAdded = false;
 
     // orientation labels
     private String orientationQuestionAnswer;
@@ -304,6 +306,12 @@ public class ReviewFragment extends FragmentCommon {
         else
             alwaysShowAnswerItem.setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_check_box_outline_blank_black_24dp));
 
+        final MenuItem reviewByDateAddedItem = menu.findItem(R.id.action_review_by_date_added);
+        if (reviewByDateAdded)
+            reviewByDateAddedItem.setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_check_box_black_24dp));
+        else
+            reviewByDateAddedItem.setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_check_box_outline_blank_black_24dp));
+
     }
 
     @Override
@@ -396,6 +404,21 @@ public class ReviewFragment extends FragmentCommon {
                     showingUndo = showingPrevious = false;
                     getActivity().invalidateOptionsMenu();
                     loadNewData = true;
+                    switchPracticeCards();
+
+                    return true;
+
+                case R.id.action_review_by_date_added:
+                    previousCard = undoCard = null;
+                    showingUndo = showingPrevious = false;
+                    loadNewData = true;
+
+                    reviewByDateAdded = !reviewByDateAdded;
+                    if (reviewByDateAdded)
+                        item.setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_check_box_black_24dp));
+                    else
+                        item.setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_check_box_outline_blank_black_24dp));
+
                     switchPracticeCards();
 
                     return true;
@@ -652,7 +675,9 @@ public class ReviewFragment extends FragmentCommon {
                     // reset
                     previousCard = mCardList.get(questionOrder.get(currentQuestion));
 
-                    randomizeQuestionOrder();
+                    if (!reviewByDateAdded)
+                        randomizeQuestionOrder();
+                    currentQuestion = 0;
                     setQuestionAnswerText();
                     Toast.makeText(getContext(), "Order reset", Toast.LENGTH_SHORT).show();
                 }
@@ -724,7 +749,6 @@ public class ReviewFragment extends FragmentCommon {
             }
 
         }
-        currentQuestion = 0;
     }
 
     private void setQuestionAnswerText() {
@@ -853,11 +877,11 @@ public class ReviewFragment extends FragmentCommon {
 
         Card currentCard;
 
-        if(showingPrevious){
+        if (showingPrevious) {
             currentCard = previousCard;
-        }else if(showingUndo){
+        } else if (showingUndo) {
             currentCard = undoCard;
-        }else{
+        } else {
             int indexToRemove = questionOrder.get(currentQuestion);
             currentCard = mCardList.get(indexToRemove);
         }
@@ -1133,6 +1157,10 @@ public class ReviewFragment extends FragmentCommon {
                 mCardList = Database.mCardDeckDao.fetchReviewCardsByDeckId(deckId);
             }
 
+            if (reviewByDateAdded) {
+                SortingStateManager.getInstance().sortCardListByState(mCardList, SortingStateManager.SortingStates.DATE_CREATED_OLD_NEW);
+            }
+
             questionOrder.clear();
 
             // init order
@@ -1141,8 +1169,12 @@ public class ReviewFragment extends FragmentCommon {
             }
 
             setQuestionAnswerOrder();
-            randomizeQuestionOrder();
 
+            if (!reviewByDateAdded) {
+                randomizeQuestionOrder();
+            }
+
+            currentQuestion = 0;
             return null;
         }
 

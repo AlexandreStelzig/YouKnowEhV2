@@ -1,8 +1,13 @@
 package stelztech.youknowehv4.manager;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.graphics.BitmapFactory;
 import android.support.v4.content.ContextCompat;
+import android.util.TypedValue;
 
 import stelztech.youknowehv4.R;
 
@@ -132,32 +137,46 @@ public class ThemeManager {
         int color = ContextCompat.getColor(context, R.color.colorPrimary);
         switch (theme) {
             case BLUE:
-                color =  ContextCompat.getColor(context, R.color.colorPrimary);
+                color = ContextCompat.getColor(context, R.color.colorPrimary);
                 break;
             case GREEN:
-                color =  ContextCompat.getColor(context, R.color.colorPrimaryGreen);
+                color = ContextCompat.getColor(context, R.color.colorPrimaryGreen);
                 break;
             case RED:
-                color =  ContextCompat.getColor(context, R.color.colorPrimaryRed);
+                color = ContextCompat.getColor(context, R.color.colorPrimaryRed);
                 break;
             case PURPLE:
-                color =  ContextCompat.getColor(context, R.color.colorPrimaryPurple);
+                color = ContextCompat.getColor(context, R.color.colorPrimaryPurple);
                 break;
             case GREY:
-                color =  ContextCompat.getColor(context, R.color.colorPrimaryGrey);
+                color = ContextCompat.getColor(context, R.color.colorPrimaryGrey);
                 break;
             case PINK:
-                color =  ContextCompat.getColor(context, R.color.colorPrimaryPink);
+                color = ContextCompat.getColor(context, R.color.colorPrimaryPink);
                 break;
             case ORANGE:
-                color =  ContextCompat.getColor(context, R.color.colorPrimaryOrange);
+                color = ContextCompat.getColor(context, R.color.colorPrimaryOrange);
                 break;
             case INDIGO:
-                color =  ContextCompat.getColor(context, R.color.colorPrimaryIndigo);
+                color = ContextCompat.getColor(context, R.color.colorPrimaryIndigo);
                 break;
         }
 
         return color;
+    }
+
+    public void setApplicationTheme(Activity activity, boolean themeWithActionBar) {
+        if (themeWithActionBar)
+            activity.setTheme(ThemeManager.getInstance().getCurrentAppThemeValue());
+        else
+            activity.setTheme(ThemeManager.getInstance().getCurrentAppThemeNoActionBarValue());
+        TypedValue typedValue = new TypedValue();
+        TypedArray a = activity.obtainStyledAttributes(typedValue.data, new int[]{R.attr.colorPrimary});
+        int color = a.getColor(0, 0);
+        a.recycle();
+        ActivityManager.TaskDescription taskDescription = new ActivityManager.TaskDescription(activity.getString(R.string.app_name),
+                BitmapFactory.decodeResource(activity.getResources(), R.mipmap.ic_launcher), color);
+        (activity).setTaskDescription(taskDescription);
     }
 
     public THEME_COLORS getCurrentTheme() {

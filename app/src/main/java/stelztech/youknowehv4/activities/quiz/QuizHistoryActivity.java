@@ -61,7 +61,7 @@ public class QuizHistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setTheme(ThemeManager.getInstance().getCurrentAppThemeValue());
+        ThemeManager.getInstance().setApplicationTheme(this, true);
         setContentView(R.layout.fragment_list);
 
         // intro animation

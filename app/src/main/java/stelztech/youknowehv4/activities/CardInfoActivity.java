@@ -111,7 +111,7 @@ public class CardInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setTheme(ThemeManager.getInstance().getCurrentAppThemeValue());
+        ThemeManager.getInstance().setApplicationTheme(this, true);
 
         overridePendingTransition(R.anim.enter, R.anim.exit);
 

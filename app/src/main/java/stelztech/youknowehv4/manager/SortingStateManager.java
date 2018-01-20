@@ -47,7 +47,7 @@ public class SortingStateManager {
 
     }
 
-    public void setContext(Context context){
+    public void setContext(Context context) {
         this.context = context;
     }
 
@@ -64,8 +64,13 @@ public class SortingStateManager {
 
     public List<Card> sortCardList(List<Card> cardList) {
 
+        return sortCardListByState(cardList, currentState);
+    }
+
+    public List<Card> sortCardListByState(List<Card> cardList, SortingStates state) {
+
         List<Card> cardListSorted = cardList;
-        switch (currentState) {
+        switch (state) {
 
             case AZ_QUESTION:
                 cardListSorted = sortAlphabetically_Card_Question(cardList);
@@ -327,7 +332,7 @@ public class SortingStateManager {
         return 0;
     }
 
-    public int getDefaultSort(){
+    public int getDefaultSort() {
         return Database.mUserDao.fetchActiveProfile().getDefaultSortingPosition();
     }
 

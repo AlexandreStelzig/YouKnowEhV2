@@ -91,7 +91,7 @@ public class ProfileNewEditActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setTheme(ThemeManager.getInstance().getCurrentAppThemeValue());
+        ThemeManager.getInstance().setApplicationTheme(this, true);
         setContentView(R.layout.activity_profile_new_edit);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);

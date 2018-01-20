@@ -5,10 +5,53 @@
     android:orientation="vertical"
     android:padding="5dp">
 
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_margin="5dp"
+        android:background="@drawable/custom_spinner_background">
 
-  <com.jjoe64.graphview.GraphView
-    android:layout_width="match_parent"
-    android:layout_height="300dp"
-    android:id="@+id/graph" />
+    </Spinner>
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Spinner
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_weight="2"
+            android:layout_margin="5dp"
+            android:background="@drawable/custom_spinner_background">
+
+        </Spinner>
+
+        <EditText
+            android:id="@+id/fragment_statistics_start_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:clickable="true"
+            android:inputType="none" />
+
+        <EditText
+            android:id="@+id/fragment_statistics_start_end"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:clickable="true"
+            android:inputType="none" />
+
+    </LinearLayout>
+
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>

@@ -173,7 +173,7 @@ public class ProfilePickerActivity extends AppCompatActivity implements Discrete
 
         Database.mProfileDao.changeProfileColor(Database.mUserDao.fetchActiveProfile().getProfileId(), color);
         themeManager.changeTheme(color);
-        setTheme(ThemeManager.getInstance().getCurrentAppThemeValue());
+        ThemeManager.getInstance().setApplicationTheme(this, true);
 
 
         SortingStateManager.getInstance().setContext(this);

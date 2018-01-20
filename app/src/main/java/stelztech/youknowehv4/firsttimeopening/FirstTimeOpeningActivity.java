@@ -44,7 +44,7 @@ public class FirstTimeOpeningActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_time_opening);
 
-        setTheme(ThemeManager.getInstance().getCurrentAppThemeValue());
+        ThemeManager.getInstance().setApplicationTheme(this, true);
 
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.pager);

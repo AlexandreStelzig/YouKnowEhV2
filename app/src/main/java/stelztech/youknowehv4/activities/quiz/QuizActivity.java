@@ -76,7 +76,7 @@ public abstract class QuizActivity extends AppCompatActivity {
 
         fetchExtraIntentInformation();
 
-        setTheme(ThemeManager.getInstance().getCurrentAppThemeValue());
+        ThemeManager.getInstance().setApplicationTheme(this, true);
         setContentView(R.layout.activity_quiz);
 
         // intro animation

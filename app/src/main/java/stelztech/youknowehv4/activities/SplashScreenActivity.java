@@ -24,7 +24,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setTheme(ThemeManager.getInstance().getCurrentAppThemeNoActionBarValue());
+        ThemeManager.getInstance().setApplicationTheme(this, false);
 
         setContentView(R.layout.activity_splash_screen);
 

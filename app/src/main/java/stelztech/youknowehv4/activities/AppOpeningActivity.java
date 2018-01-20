@@ -1,10 +1,13 @@
 package stelztech.youknowehv4.activities;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -36,7 +39,6 @@ public class AppOpeningActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
 
         String path = Environment.getExternalStorageDirectory().toString() + "/Pictures/You Know Eh?";

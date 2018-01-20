@@ -35,8 +35,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
-                    android:text="You Know Eh? is a flash cards application that serves the
-                     purposes of learning new languages faster by repetitive memorization."
+                    android:text="You Know Eh? is a flash cards application that serves the purposes of learning new languages faster by repetitive memorization."
                     android:textColor="?textPrimary"
                     android:textSize="16dp" />
 

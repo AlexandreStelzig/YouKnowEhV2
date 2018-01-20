@@ -19,8 +19,6 @@ import android.widget.Toast;
 import java.util.Objects;
 
 import stelztech.youknowehv4.R;
-import stelztech.youknowehv4.database.Database;
-import stelztech.youknowehv4.fragments.profile.Old_ProfileFragment;
 import stelztech.youknowehv4.utilities.Helper;
 
 /**

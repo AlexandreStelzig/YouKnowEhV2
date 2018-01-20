@@ -69,7 +69,7 @@ public class DeckListFragment extends FragmentCommon {
     // list
     private List<Deck> deckList;
     private List<Integer> nbCardsInDeckList;
-    private CustomListAdapter customListAdapter;
+    private DeckCustomListAdapter deckCustomListAdapter;
 
     // dialog
     private String deckNameHolder;
@@ -79,7 +79,6 @@ public class DeckListFragment extends FragmentCommon {
     private ProgressBar progressBar;
 
     private boolean deckOrdering;
-    private int deckOrderingLastElement;
 
     private boolean scrollToTop = false;
 
@@ -106,7 +105,6 @@ public class DeckListFragment extends FragmentCommon {
 
         deckOrdering = false;
         loading = false;
-        deckOrderingLastElement = -1;
 
 
         LinearLayout orientationLayout = (LinearLayout) view.findViewById(R.id.listview_card_orientation_layout);
@@ -120,8 +118,8 @@ public class DeckListFragment extends FragmentCommon {
 
         deckList = new ArrayList<Deck>();
 
-        customListAdapter = new CustomListAdapter(getContext());
-        listView.setAdapter(customListAdapter);
+        deckCustomListAdapter = new DeckCustomListAdapter(this, getContext());
+        listView.setAdapter(deckCustomListAdapter);
 
         populateListView();
 
@@ -153,7 +151,7 @@ public class DeckListFragment extends FragmentCommon {
                         deckOrdering = true;
                         FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
                         getActivity().invalidateOptionsMenu();
-                        customListAdapter.notifyDataSetChanged(); // valid
+                        deckCustomListAdapter.notifyDataSetChanged(); // valid
                     }
                     return true;
                 case R.id.action_done:
@@ -175,10 +173,9 @@ public class DeckListFragment extends FragmentCommon {
 
     public void actionDone() {
         deckOrdering = false;
-        deckOrderingLastElement = -1;
         FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.DECK, getActivity());
         getActivity().invalidateOptionsMenu();
-        customListAdapter.notifyDataSetChanged(); // valid
+        deckCustomListAdapter.notifyDataSetChanged(); // valid
         Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
     }
 
@@ -288,7 +285,7 @@ public class DeckListFragment extends FragmentCommon {
             placerholderTextView.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
         }
-        customListAdapter.notifyDataSetChanged(); // valid
+        deckCustomListAdapter.notifyDataSetChanged(); // valid
         setNumberDeckText();
         Toast.makeText(getContext(), "\"" + deckDeletedName + "\" deck deleted", Toast.LENGTH_SHORT).show();
     }
@@ -366,9 +363,9 @@ public class DeckListFragment extends FragmentCommon {
                                     Deck deck = addToDatabase(deckNameHolder);
                                     nbCardsInDeckList.add(0);
                                     deckList.add(deck);
-                                    customListAdapter.notifyDataSetChanged(); // valid
+                                    deckCustomListAdapter.notifyDataSetChanged(); // valid
                                     alertDialog.dismiss();
-                                    listView.smoothScrollToPosition(customListAdapter.getCount() - 1);
+                                    listView.smoothScrollToPosition(deckCustomListAdapter.getCount() - 1);
 
                                     if (deckList.size() == 1) {
                                         placerholderTextView.setVisibility(View.GONE);
@@ -381,7 +378,7 @@ public class DeckListFragment extends FragmentCommon {
                                     if (!deckNameHolder.equals((String) deckList.get(indexSelected).getDeckName())) {
                                         updateDatabase();
                                         deckList.get(indexSelected).setDeckName(deckNameHolder);
-                                        customListAdapter.notifyDataSetChanged(); // valid
+                                        deckCustomListAdapter.notifyDataSetChanged(); // valid
                                         alertDialog.dismiss();
                                     } else {
                                         Toast.makeText(getContext(), "Invalid: same name", Toast.LENGTH_SHORT).show();
@@ -494,194 +491,6 @@ public class DeckListFragment extends FragmentCommon {
 
     ////// CUSTOM ADAPTER //////
 
-    private class CustomListAdapter extends BaseAdapter {
-        Context context;
-
-        private LayoutInflater inflater = null;
-
-        public CustomListAdapter(Context context) {
-            // TODO Auto-generated constructor stub
-            super();
-            this.context = context;
-            inflater = (LayoutInflater) context.
-                    getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
-
-        @Override
-        public int getCount() {
-            // TODO Auto-generated method stub
-            return deckList.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            // TODO Auto-generated method stub
-            return position;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            // TODO Auto-generated method stub
-            return position;
-        }
-
-        public class Holder {
-            TextView deckName;
-            TextView numberOfCardsLabel;
-            LinearLayout deckLayout;
-            LinearLayout deckOptionLayout;
-            LinearLayout reorderLayout;
-            TextView reorderTextView;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-
-            Holder holder = null;
-            if (convertView == null) {
-
-                convertView = inflater.inflate(R.layout.custom_deck_item, null);
-                holder = new Holder();
-
-                holder.deckName = (TextView) convertView.findViewById(R.id.custom_deck_item_name);
-                holder.numberOfCardsLabel = (TextView) convertView.findViewById(R.id.custom_deck_item_nb_cards_label);
-                holder.deckLayout = (LinearLayout) convertView.findViewById(R.id.custom_deck_item_layout);
-                holder.deckOptionLayout = (LinearLayout) convertView.findViewById(R.id.custom_deck_option_layout);
-                holder.reorderLayout = (LinearLayout) convertView.findViewById(R.id.custom_deck_reorder_layout);
-                holder.reorderTextView = (TextView) convertView.findViewById(R.id.custom_deck_item_reorder_textview);
-
-                convertView.setTag(holder);
-            } else {
-                holder = (Holder) convertView.getTag();
-            }
-
-
-            // all
-
-
-            holder.deckOptionLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    indexSelected = position;
-                    getActivity().openContextMenu(listView);
-                }
-            });
-
-
-            holder.deckName.setText(deckList.get(position).getDeckName());
-
-//            int nbCards = dbManager.getCardsFromDeck(deckList.get(position).getDeckId()).size();
-            int nbCards = nbCardsInDeckList.get(position);
-
-            if (nbCards == 1)
-                holder.numberOfCardsLabel.setText("1 Card");
-            else
-                holder.numberOfCardsLabel.setText(nbCards + " Cards");
-
-
-            convertView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!deckOrdering) {
-                        indexSelected = position;
-                        ((MainActivityManager) getActivity()).displayDeckInfo(deckList.get(indexSelected).getDeckId());
-                    }
-                }
-            });
-
-
-            if (deckOrdering) {
-                holder.reorderLayout.setVisibility(View.VISIBLE);
-                holder.deckOptionLayout.setVisibility(View.GONE);
-                int positionInDeck = deckList.get(position).getPosition();
-                String positionString = positionInDeck + "";
-                if (positionString.length() == 1)
-                    positionString = "0" + positionString;
-                holder.reorderTextView.setText(positionString);
-            } else {
-                holder.reorderLayout.setVisibility(View.GONE);
-                holder.deckOptionLayout.setVisibility(View.VISIBLE);
-            }
-
-
-            holder.reorderLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showDeckOrderingDialog(deckList.get(position));
-                }
-            });
-
-            if (!deckOrdering) {
-                convertView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-
-                        indexSelected = position;
-
-                        return false;
-                    }
-                });
-            } else {
-                convertView.setOnLongClickListener(null);
-            }
-
-            if (deckOrdering && deckOrderingLastElement == position) {
-                holder.deckLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_grey));
-
-            } else {
-                holder.deckLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_normal));
-            }
-
-
-            return convertView;
-
-        }
-
-        private void showDeckOrderingDialog(final Deck deck) {
-
-
-            View viewPicker = View.inflate(getContext(), R.layout.custom_number_picker_dialog, null);
-            android.app.AlertDialog.Builder db = new android.app.AlertDialog.Builder(getContext());
-            db.setView(viewPicker);
-            db.setTitle("Deck Order: " + deck.getDeckName());
-
-            final NumberPicker np = (NumberPicker) viewPicker.findViewById(R.id.numberPicker1);
-            np.setMaxValue(deckList.size());
-            np.setMinValue(1);
-            np.setWrapSelectorWheel(false);
-            np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-                @Override
-                public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-
-                }
-            });
-
-            np.setValue(deck.getPosition());
-
-
-            db.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    int oldValue = deck.getPosition();
-                    int newPosition = np.getValue();
-
-                    Database.mDeckDao.changeDeckPosition(newPosition, deck);
-
-                    deckList = Database.mDeckDao.fetchAllDecks();
-                    nbCardsInDeckList.clear();
-
-                    for (int i = 0; i < deckList.size(); i++) {
-                        nbCardsInDeckList.add(Database.mCardDeckDao.fetchCardsByDeckId(deckList.get(i).getDeckId()).size());
-                    }
-                    customListAdapter.notifyDataSetChanged();
-                }
-            });
-            android.app.AlertDialog dialog = db.show();
-
-        }
-
-    }
-
-
     private class LoadData extends AsyncTask<String, Void, String> {
 
 
@@ -709,7 +518,7 @@ public class DeckListFragment extends FragmentCommon {
 
                 placerholderTextView.setVisibility(View.GONE);
 
-                customListAdapter.notifyDataSetChanged();
+                deckCustomListAdapter.notifyDataSetChanged();
 
                 registerForContextMenu(listView);
 
@@ -735,5 +544,35 @@ public class DeckListFragment extends FragmentCommon {
 
     public void reloadData(){
         populateListView();
+    }
+
+    protected List<Deck> getDeckList(){
+        return deckList;
+    }
+
+    protected void setIndexSelected(int indexSelected){
+        this.indexSelected = indexSelected;
+    }
+
+    protected List<Integer> getNbCardsInDeckList() {
+        return nbCardsInDeckList;
+    }
+
+    protected ListView getListView() {
+        return listView;
+    }
+
+
+    protected void changeDeckPosition(int position, Deck deck){
+
+        Database.mDeckDao.changeDeckPosition(position, deck);
+
+        deckList = Database.mDeckDao.fetchAllDecks();
+        nbCardsInDeckList.clear();
+
+        for (int i = 0; i < deckList.size(); i++) {
+            nbCardsInDeckList.add(Database.mCardDeckDao.fetchCardsByDeckId(deckList.get(i).getDeckId()).size());
+        }
+        deckCustomListAdapter.notifyDataSetChanged();
     }
 }

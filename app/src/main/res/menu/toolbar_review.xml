@@ -50,6 +50,12 @@
                 app:showAsAction="never" />
 
             <item
+                android:id="@+id/action_review_by_date_added"
+                android:icon="@drawable/ic_check_box_outline_blank_black_24dp"
+                android:title="Review By Date Added"
+                app:showAsAction="never" />
+
+            <item
                 android:id="@+id/action_shuffle"
                 android:icon="@drawable/ic_shuffle_black_24dp"
                 android:title="Shuffle Order"

@@ -1,6 +1,7 @@
 package stelztech.youknowehv4.fragments.statistics;
 
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
@@ -8,14 +9,25 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.EditText;
 
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.helper.StaticLabelsFormatter;
-import com.jjoe64.graphview.series.BarGraphSeries;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import stelztech.youknowehv4.R;
 import stelztech.youknowehv4.activities.MainActivityManager;
@@ -44,60 +56,85 @@ public class StatisticsFragment extends FragmentCommon {
         view = inflater.inflate(R.layout.fragment_statistics, container, false);
         FloatingActionButtonManager.getInstance().setState(FloatingActionButtonManager.ActionButtonState.GONE, getActivity());
 
-
-        List<Card> cards = Database.mCardDao.fetchAllCards();
-
-
-        for(int counter = 0; counter < cards.size(); counter++){
-
-        }
+        BarChart chart = (BarChart) view.findViewById(R.id.chart);
 
 
-        GraphView graph = (GraphView) view.findViewById(R.id.graph);
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
-                new DataPoint(0, 0),
-                new DataPoint(1, 5),
-                new DataPoint(2, 3),
-                new DataPoint(3, 5),
-                new DataPoint(4, 3),
-                new DataPoint(5, 5),
-                new DataPoint(6, 3),
-                new DataPoint(7, 5),
-                new DataPoint(8, 3),
-                new DataPoint(9, 5),
-                new DataPoint(10, 3),
-                new DataPoint(11, 5),
-                new DataPoint(12, 3),
-                new DataPoint(13, 5),
-                new DataPoint(14, 3)
+
+        final Calendar myCalendar = Calendar.getInstance();
+
+        final EditText edittext= (EditText) view.findViewById(R.id.fragment_statistics_start_date);
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabel();
+            }
+
+            private void updateLabel() {
+                String myFormat = "MM/dd/yy"; //In which you need put here
+                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+                edittext.setText(sdf.format(myCalendar.getTime()));
+            }
+
+        };
+
+        edittext.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                new DatePickerDialog(getContext(), date, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
         });
 
-        graph.getViewport().setYAxisBoundsManual(true);
-
-        graph.getViewport().setMinY(0);
-        graph.getViewport().setMaxY(6);
-
-        graph.getViewport().setXAxisBoundsManual(true);
-
-        graph.getViewport().setMinX(0);
-        graph.getViewport().setMaxX(10);
-
-        graph.getViewport().setScalable(true);
-        graph.getViewport().setScrollable(true);
 
 
-//        graph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
+//        YourData[] dataObjects = ...;
 
-        StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
-        staticLabelsFormatter.setHorizontalLabels(new String[]{"", "01 Jan", "02 Jan", "03 Jan", "04 Jan", "05 Jan", "06 Jan", "07 Jan", "08 Jan", "09 Jan", "10 Jan", "12 Jan", "12 Jan", "13 Jan", "14 Jan", "15 Jan"});
-        graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
-        graph.getGridLabelRenderer().setHorizontalLabelsAngle(90);
+        List<BarEntry> entries = new ArrayList<BarEntry>();
+//        entries.add(new BarEntry(1,10));
+//        entries.add(new BarEntry(2,8));
+//        entries.add(new BarEntry(3,2));
+//        entries.add(new BarEntry(4,6));
+//        entries.add(new BarEntry(5,8));
+//        entries.add(new BarEntry(6,20));
+        entries.add(new BarEntry(1,15));
+        entries.add(new BarEntry(370,4));
+        entries.add(new BarEntry(770,4));
+
+        BarDataSet dataSet = new BarDataSet(entries, "Label"); // add entries to dataset
+
+        IAxisValueFormatter xAxisFormatter = new DayAxisValueFormatter(chart);
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+//        xAxis.setTypeface(mTfLight);
+        xAxis.setDrawGridLines(false);
+        xAxis.setGranularity(1f); // only intervals of 1 day
+        xAxis.setLabelCount(7);
+        xAxis.setValueFormatter(xAxisFormatter);
+
+        BarData lineData = new BarData(dataSet);
+        lineData.setBarWidth(0.9f);
+        chart.setData(lineData);
+        chart.setFitBars(true); // make the x-axis fit exactly all bars
+        chart.invalidate(); // refresh
+        chart.setScaleYEnabled(false);
 
 
-//        series.setSpacing(50);
-//        series.setAnimated(true);
+//        for (YourData data : dataObjects) {
+//
+//            // turn your data into Entry objects
+//            entries.add(new BarEntry())
+//        }
 
-        graph.addSeries(series);
 
         return view;
     }
