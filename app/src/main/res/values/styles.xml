@@ -27,6 +27,7 @@
         <item name="colorDividerLight">@color/colorDividerLight</item>
         <item name="colorButtonDisabled">@color/colorButtonDisabled</item>
         <item name="colorPrimarySelected">@color/colorPrimarySelected</item>
+
     </style>
 
     <style name="AppThemeBlue.NoActionBar">

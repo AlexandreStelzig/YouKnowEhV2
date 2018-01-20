@@ -36,6 +36,8 @@
           android:layout_margin="5dp"
           android:background="@drawable/button_drawable_selector"
           android:text="ANSWER 1"
+          android:padding="5dp"
+          android:textSize="18sp"
           android:textColor="?colorTextIcon"/>
 
       <Button
@@ -44,6 +46,8 @@
           android:layout_height="wrap_content"
           android:layout_gravity="center"
           android:layout_margin="5dp"
+          android:padding="5dp"
+          android:textSize="18sp"
           android:background="@drawable/button_drawable_selector"
           android:text="ANSWER 2"
           android:textColor="?colorTextIcon"/>
@@ -53,7 +57,9 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_gravity="center"
+          android:padding="5dp"
           android:layout_margin="5dp"
+          android:textSize="18sp"
           android:background="@drawable/button_drawable_selector"
           android:text="ANSWER 3"
           android:textColor="?colorTextIcon"/>
@@ -61,8 +67,10 @@
       <Button
           android:id="@+id/quiz_mc_answer4"
           android:layout_width="match_parent"
+          android:padding="5dp"
           android:layout_height="wrap_content"
           android:layout_gravity="center"
+          android:textSize="18sp"
           android:layout_margin="5dp"
           android:background="@drawable/button_drawable_selector"
           android:text="ANSWER 4"

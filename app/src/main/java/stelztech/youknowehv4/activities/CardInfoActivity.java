@@ -234,7 +234,7 @@ public class CardInfoActivity extends AppCompatActivity {
     private void initState(CardInfoState state) {
         switch (state) {
             case NEW:
-                mInitialDeckId = getIntent().getLongExtra("initialDeckId", 1L);
+                mInitialDeckId = getIntent().getIntExtra("initialDeckId", -1);
                 setStateNew();
                 break;
             case VIEW:
@@ -405,7 +405,7 @@ public class CardInfoActivity extends AppCompatActivity {
     private void setStateView() {
 
         goBackToViewModeFromEdit = false;
-        getSupportActionBar().setTitle("View Card");
+        getSupportActionBar().setTitle("Card Information");
         currentState = CardInfoState.VIEW;
         initActivityInformationView();
         setKeyboardVisibility(false);

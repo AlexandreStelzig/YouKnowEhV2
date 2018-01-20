@@ -44,7 +44,7 @@
 
     <string-array name="profile_more_options_options">
         <item>Merge Duplicates Cards</item>
-        <item>View Archived Cards</item>
+        <item>View Deleted Cards</item>
         <item>Export Profile</item>
         <item>Export All Profiles</item>
     </string-array>

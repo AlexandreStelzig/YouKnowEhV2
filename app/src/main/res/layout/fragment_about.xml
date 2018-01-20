@@ -25,7 +25,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="What is this? "
+                    android:text="About this App "
                     android:textColor="?colorPrimary"
                     android:textSize="16dp"
                     android:textStyle="bold" />
@@ -35,7 +35,8 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
-                    android:text="You Know Eh? is a flash cards application that serves the purposes of learning new languages faster by repetitive memorization."
+                    android:text="You Know Eh? is a flash cards application that serves the
+                     purposes of learning new languages faster by repetitive memorization."
                     android:textColor="?textPrimary"
                     android:textSize="16dp" />
 
