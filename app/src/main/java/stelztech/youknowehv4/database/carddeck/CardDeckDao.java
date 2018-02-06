@@ -18,10 +18,12 @@ import java.util.List;
 import stelztech.youknowehv4.database.Database;
 import stelztech.youknowehv4.database.DbContentProvider;
 import stelztech.youknowehv4.database.card.Card;
+import stelztech.youknowehv4.database.card.ICardSchema;
 import stelztech.youknowehv4.database.deck.Deck;
 import stelztech.youknowehv4.utilities.DateUtilities;
 import stelztech.youknowehv4.manager.SortingStateManager;
 
+import static stelztech.youknowehv4.database.card.ICardSchema.CARD_TABLE;
 import static stelztech.youknowehv4.database.carddeck.CardDeck.REVIEW_TOGGLE_ID;
 
 
@@ -82,6 +84,14 @@ public class CardDeckDao extends DbContentProvider implements ICardDeckDao, ICar
         cardList = SortingStateManager.getInstance().sortCardList(cardList);
 
         return cardList;
+    }
+
+    public int fetchNumberOfCardsCreatedOnDateByDeckId(int deckId, String date) {
+        return (int) DatabaseUtils.longForQuery(mDb, "SELECT COUNT(*) FROM " + CARD_DECK_TABLE + " INNER JOIN " + ICardSchema.CARD_TABLE
+                + " ON " + CARD_DECK_TABLE + "." + COLUMN_CARD_ID + "=" +ICardSchema.CARD_TABLE+"."+ ICardSchema.COLUMN_CARD_ID
+                + " WHERE " + CARD_DECK_TABLE + "."
+                + COLUMN_DECK_ID + "=" + deckId + " AND "
+                + ICardSchema.CARD_TABLE + "." + ICardSchema.COLUMN_DATE_CREATED + " LIKE '%" + date +"%'", null);
     }
 
     @Override

@@ -15,6 +15,7 @@ public interface ICardDeckDao {
     List<Card> fetchCardsByDeckId(int deckId);
     List<Deck> fetchDecksByCardId(int cardId);
     boolean revalidateReviewCards();
+    int fetchNumberOfCardsCreatedOnDateByDeckId(int deckId, String date);
     List<Card> fetchReviewCardsByDeckId(int deckId);
     boolean deleteCardDeck(int cardId, int deckId);
     int createCardDeck(int cardId, int deckId);

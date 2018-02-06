@@ -28,7 +28,7 @@ public class DateUtilities {
         return Calendar.getInstance().getTime();
     }
 
-    public static String dateToString(String date){
+    public static String dateToString(Date date){
         return date.toString();
     }
 
