@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/YouKnowEhV2.iml" filepath="$PROJECT_DIR$/YouKnowEhV2.iml" />
       <module fileurl="file://$PROJECT_DIR$/YouKnowEhV4.iml" filepath="$PROJECT_DIR$/YouKnowEhV4.iml" />
-      <module fileurl="file://C:\Users\alex\git\YouKnowEhV2\YouKnowEhV4.iml" filepath="C:\Users\alex\git\YouKnowEhV2\YouKnowEhV4.iml" />
+      <module fileurl="file://C:/Users/alex/git/YouKnowEhV2/YouKnowEhV4.iml" filepath="C:/Users/alex/git/YouKnowEhV2/YouKnowEhV4.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/discrete-scroll-view/discrete-scroll-view.iml" filepath="$PROJECT_DIR$/discrete-scroll-view/discrete-scroll-view.iml" />
     </modules>

@@ -269,7 +269,8 @@ public class CardDeckDao extends DbContentProvider implements ICardDeckDao, ICar
 
     @Override
     public int fetchNumberCardsFromDeckId(int deckId) {
-
+        return (int) DatabaseUtils.longForQuery(mDb, "SELECT COUNT(*) FROM " + CARD_DECK_TABLE + " WHERE "
+                + COLUMN_DECK_ID + "=" + deckId, null);
     }
 
     @Override
