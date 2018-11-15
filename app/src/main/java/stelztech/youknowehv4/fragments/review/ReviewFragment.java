@@ -385,7 +385,7 @@ public class ReviewFragment extends FragmentCommon {
 
                             Deck deckAssociated;
                             if (!isSelectedDeckAll())
-                                deckAssociated = deckList.get(selectedSpinnerPosition - 1);
+                                deckAssociated = deckList.get(selectedSpinnerPosition - SPINNER_OFFSET);
                             else
                                 deckAssociated = null;
 
@@ -440,7 +440,7 @@ public class ReviewFragment extends FragmentCommon {
     }
 
     private void undoLastToggledClicked() {
-        int deckPosition = selectedSpinnerPosition - 1;
+        int deckPosition = selectedSpinnerPosition - SPINNER_OFFSET;
         Database.mCardDeckDao.changeCardReviewTime(undoCard.getCardId(),
                 deckList.get(deckPosition).getDeckId(), REVIEW_TOGGLE_ID);
         mCardList.add(undoCard);
@@ -923,7 +923,7 @@ public class ReviewFragment extends FragmentCommon {
         String cardInfo = "";
 
         if (showingUndo) {
-            int deckPosition = selectedSpinnerPosition - 1;
+            int deckPosition = selectedSpinnerPosition - SPINNER_OFFSET;
 
             showingUndo = false;
 
@@ -954,7 +954,7 @@ public class ReviewFragment extends FragmentCommon {
 
             undoCard = previousCard;
 
-            int deckPosition = selectedSpinnerPosition - 1;
+            int deckPosition = selectedSpinnerPosition - SPINNER_OFFSET;
 
             showingPrevious = false;
             getActivity().invalidateOptionsMenu();
@@ -986,7 +986,7 @@ public class ReviewFragment extends FragmentCommon {
 
         } else {
 
-            int deckPosition = selectedSpinnerPosition - 1;
+            int deckPosition = selectedSpinnerPosition - SPINNER_OFFSET;
             int indexRemoved = questionOrder.get(currentQuestion);
 
             Card removeCard = mCardList.get(indexRemoved);
@@ -1066,7 +1066,7 @@ public class ReviewFragment extends FragmentCommon {
         }
 
 
-        final int deckPosition = selectedSpinnerPosition - 1;
+        final int deckPosition = selectedSpinnerPosition - SPINNER_OFFSET;
 
         // display a checkbox list
         builder.setMultiChoiceItems(deckListDisplayName, isPartOfDeckList, new DialogInterface.OnMultiChoiceClickListener() {

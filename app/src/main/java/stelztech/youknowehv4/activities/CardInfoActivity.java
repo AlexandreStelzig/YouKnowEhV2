@@ -874,8 +874,8 @@ public class CardInfoActivity extends AppCompatActivity {
         }
 
 
-        dateCreatedTV.setText(DateUtilities.dateToString(card.getDateCreated()));
-        dateModifiedTV.setText(DateUtilities.dateToString(card.getDateModified()));
+        dateCreatedTV.setText((card.getDateCreated()));
+        dateModifiedTV.setText((card.getDateModified()));
     }
 
     private void setEditTextEditable(boolean isEditable) {

@@ -213,11 +213,11 @@ public class ProfileNewEditActivity extends AppCompatActivity {
                 String path = Environment.getExternalStorageDirectory().toString() + "/Pictures/You Know Eh?";
                 Log.d("Files", "Path: " + path);
                 File directory = new File(path);
+
                 File[] files = directory.listFiles();
                 Log.d("Files", "Size: "+ files.length);
-                for (int i = 0; i < files.length; i++)
-                {
-                    Log.d("Files", "FileName:" + files[i].getName());
+                for (File file : files) {
+                    Log.d("Files", "FileName:" + file.getName());
                 }
 
                 Log.d("TEST", (android.os.Environment.DIRECTORY_DCIM));

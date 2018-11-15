@@ -28,7 +28,7 @@
 
             <item
                 android:id="@+id/action_import_deck"
-                android:title="Import Deck (cvs)"
+                android:title="Import Deck (csv)"
                 app:showAsAction="never" />
 
             <item

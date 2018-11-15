@@ -20,14 +20,14 @@
             <item
                 android:icon="@drawable/ic_action_import"
                 android:id="@+id/action_quiz_history_import"
-                android:title="Import Quiz History (cvs)"
+                android:title="Import Quiz History (csv)"
                 app:showAsAction="never" />
 
 
             <item
                 android:icon="@drawable/ic_action_export"
                 android:id="@+id/action_quiz_history_export"
-                android:title="Export Quiz History (cvs)"
+                android:title="Export Quiz History (csv)"
                 app:showAsAction="never" />
 
         </menu>

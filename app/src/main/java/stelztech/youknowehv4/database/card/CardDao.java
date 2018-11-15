@@ -219,6 +219,13 @@ public class CardDao extends DbContentProvider implements ICardDao, ICardSchema 
                 + COLUMN_PROFILE_ID + "=" + profileId, null);
     }
 
+    @Override
+    public int fetchNumberOfCardsCreatedOnDate(int profileId, String date) {
+        return (int) DatabaseUtils.longForQuery(mDb, "SELECT COUNT(*) FROM " + CARD_TABLE + " WHERE "
+                + COLUMN_PROFILE_ID + "=" + profileId + " AND "
+                + COLUMN_DATE_CREATED + " LIKE '%" + date +"%'", null);
+    }
+
 
     @Override
     protected Card cursorToEntity(Cursor cursor) {
